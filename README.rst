@@ -1,3 +1,6 @@
+.. image:: https://img.shields.io/travis/r3w0p/bobocep/master.svg
+   :target: https://travis-ci.org/r3w0p/bobocep
+   :alt: Travis CI
 
 .. image:: https://img.shields.io/badge/donate-buy%20me%20a%20coffee-orange.svg
    :target: https://www.buymeacoffee.com/r3w0p

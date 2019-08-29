@@ -18,8 +18,12 @@ branches:
 # Dependencies
 install:
   - pip install -r requirements.txt
-  - pip install pytest coverage flake8 tox
+  - pip install flake8 pytest coverage coveralls
 
 # Tests
 script:
-  - tox
+  - flake8 bobocep
+  - coverage run --source=bobocep/ setup.py test
+
+after_success:
+  - coveralls
