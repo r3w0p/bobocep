@@ -1,0 +1,25 @@
+# Python
+language: python
+
+python:
+  - 3.7
+
+matrix:
+  include:
+    - python: 3.7
+      dist: xenial
+      sudo: true
+
+# Branch Whitelist
+branches:
+  only:
+    - master
+
+# Dependencies
+install:
+  - pip install -r requirements.txt
+  - pip install pytest coverage flake8 tox
+
+# Tests
+script:
+  - tox
