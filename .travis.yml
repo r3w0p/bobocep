@@ -28,6 +28,7 @@ script:
   - cp -a $TRAVIS_BUILD_DIR/. /tmp/bobocep
   - cd /tmp/bobocep/docs
   - sphinx-apidoc -o source/modules ../bobocep && make html
+  - cd $TRAVIS_BUILD_DIR
 
 after_success:
   - coveralls
