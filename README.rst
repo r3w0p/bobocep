@@ -14,9 +14,21 @@
    :target: https://lgtm.com/projects/g/r3w0p/bobocep/context:python
    :alt: LGTM Code Quality
 
+.. image:: https://img.shields.io/pypi/v/bobocep
+   :target: https://pypi.org/project/bobocep/
+   :alt: PyPI Version
+
+.. image:: https://img.shields.io/pypi/pyversions/bobocep
+   :target: https://pypi.org/project/bobocep/
+   :alt: Python Versions
+
 .. image:: https://img.shields.io/github/license/r3w0p/bobocep
    :target: https://github.com/r3w0p/bobocep/blob/master/LICENSE
    :alt: License
+
+.. image:: https://img.shields.io/github/last-commit/r3w0p/bobocep
+   :target: https://github.com/r3w0p/bobocep/graphs/commit-activity
+   :alt: Last Commit
 
 .. image:: https://img.shields.io/badge/docs-pages-informational
    :target: https://r3w0p.github.io/bobocep/
