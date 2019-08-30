@@ -28,12 +28,17 @@ script:
 
 after_success:
   - coveralls
-  - cd docs && sphinx-apidoc -o source/modules ../bobocep && make html
-
 
 deploy:
+  - provider: pypi
+    user: __token__
+    password: $TOKEN_PYPI
+    #on:
+    #  tags: true
+
   - provider: pages
     github-token: $TOKEN_GITHUB_PAGES
+    script: cd docs && sphinx-apidoc -o source/modules ../bobocep && make html && cd ..
     skip_cleanup: true
     keep_history: true
     local-dir: docs/build/html
@@ -42,8 +47,3 @@ deploy:
     on:
       branch: master
 
-  - provider: pypi
-    user: __token__
-    password: $TOKEN_PYPI
-    #on:
-    #  tags: true
