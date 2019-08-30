@@ -37,8 +37,8 @@ deploy:
       tags: true
 
   - provider: pages
+    script: bash docs/gen_html.sh
     github-token: $TOKEN_GITHUB_PAGES
-    script: ./docs/gen_html.sh
     skip_cleanup: true
     keep_history: true
     local-dir: docs/build/html
