@@ -12,7 +12,7 @@ The :code:`BoboPattern` API is provided to define patterns.
 When we define a pattern, we are defining **layers** of an automaton, where each layer has one or more states.
 This is demonstrated in the figure below.
 
-.. figure:: _static/patterns/automaton.png
+.. figure:: _static/automaton.png
    :alt: Automaton
 
    The relationship between automaton states and their labels.

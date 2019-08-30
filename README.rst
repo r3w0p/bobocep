@@ -1,3 +1,7 @@
+.. image:: https://img.shields.io/badge/docs-pages-informational
+   :target: https://r3w0p.github.io/bobocep/
+   :alt: Documentation
+
 .. image:: https://img.shields.io/travis/r3w0p/bobocep/master.svg
    :target: https://travis-ci.org/r3w0p/bobocep
    :alt: Travis CI

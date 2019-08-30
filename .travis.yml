@@ -30,14 +30,20 @@ after_success:
   - coveralls
   - cd docs && sphinx-apidoc -o source/modules ../bobocep && make html
 
-# Deploy Docs to GitHub Pages
+
 deploy:
-  provider: pages
-  github-token: $TOKEN_GITHUB_PAGES
-  skip_cleanup: true
-  keep_history: false
-  local-dir: docs/build/html
-  target_branch: gh-pages
-  verbose: true
-  on:
-    branch: master
+  - provider: pages
+    github-token: $TOKEN_GITHUB_PAGES
+    skip_cleanup: true
+    keep_history: true
+    local-dir: docs/build/html
+    target_branch: gh-pages
+    verbose: true
+    on:
+      branch: master
+
+  - provider: pypi
+    user: __token__
+    password: $TOKEN_PYPI
+    #on:
+    #  tags: true
