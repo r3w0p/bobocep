@@ -29,14 +29,6 @@ script:
 after_success:
   - coveralls
 
-before_deploy:
-  if ! [[ $TAG_DEPLOY_GITHUB_PAGES ]]; then
-    cd docs &&
-    sphinx-apidoc -o source/modules ../bobocep &&
-    make html &&
-    cd ..;
-  fi
-
 deploy:
   - provider: pypi
     user: __token__
@@ -45,7 +37,7 @@ deploy:
       tags: true
 
   - provider: pages
-    tag_name: $TAG_DEPLOY_GITHUB_PAGES
+    script: echo "MYSCRIPT" && cd docs && sphinx-apidoc -o source/modules ../bobocep && make html && cd ..
     github-token: $TOKEN_GITHUB_PAGES
     skip_cleanup: true
     keep_history: true
