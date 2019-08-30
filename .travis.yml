@@ -28,16 +28,18 @@ script:
 
 after_success:
   - coveralls
-  - cp -a $TRAVIS_BUILD_DIR/docs/. /tmp/docs
+  - cp -a docs/. /tmp/docs
+  - cp README.rst /tmp
   - cd /tmp/docs
-  - sphinx-apidoc -o source/modules $TRAVIS_BUILD_DIR/bobocep && make html
+  - sphinx-apidoc -o source/modules $TRAVIS_BUILD_DIR/bobocep
+  - make html
 
 deploy:
   - provider: pypi
     user: __token__
     password: $TOKEN_PYPI_BOBOCEP
-    on:
-      tags: true
+#    on:
+#      tags: true
 
   - provider: pages
     github-token: $TOKEN_GITHUB_PAGES

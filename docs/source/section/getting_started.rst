@@ -29,7 +29,7 @@ are generated on complex event detection, both of which are subclasses of the :c
 Architecture
 ============
 
-.. figure:: _static/architecture.png
+.. figure:: ../_static/architecture.png
    :alt: Architecture
 
    The :code:`bobocep` architecture.
