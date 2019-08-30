@@ -29,7 +29,7 @@ script:
 after_success:
   - coveralls
   - cp -a docs/. docshtml
-  - cd docshtml && sphinx-apidoc -o source/modules bobocep && make html && mv -a . /tmp/docshtml
+  - cd docshtml && sphinx-apidoc -o source/modules bobocep && make html && cd .. && mv docshtml /tmp/docshtml
 
 deploy:
   - provider: pypi
