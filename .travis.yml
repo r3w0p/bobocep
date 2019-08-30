@@ -31,10 +31,10 @@ after_success:
 
 before_deploy:
   if ! [[ $TAG_DEPLOY_GITHUB_PAGES ]]; then
-    cd docs
-    sphinx-apidoc -o source/modules ../bobocep
-    make html
-    cd ..
+    cd docs &&
+    sphinx-apidoc -o source/modules ../bobocep &&
+    make html &&
+    cd ..;
   fi
 
 deploy:
