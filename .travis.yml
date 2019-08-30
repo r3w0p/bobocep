@@ -37,7 +37,7 @@ deploy:
       tags: true
 
   - provider: pages
-    script: bash docs/gen_html.sh
+    script: bash scripts/gen_html.sh
     github-token: $TOKEN_GITHUB_PAGES
     skip_cleanup: true
     keep_history: true
