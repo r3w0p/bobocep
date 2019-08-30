@@ -32,13 +32,13 @@ after_success:
 deploy:
   - provider: pypi
     user: __token__
-    password: $TOKEN_PYPI
-    #on:
-    #  tags: true
+    password: $TOKEN_PYPI_BOBOCEP
+    on:
+      tags: true
 
   - provider: pages
     github-token: $TOKEN_GITHUB_PAGES
-    script: cd docs && sphinx-apidoc -o source/modules ../bobocep && make html && cd ..
+    script: ./docs/gen_html.sh
     skip_cleanup: true
     keep_history: true
     local-dir: docs/build/html
@@ -46,4 +46,3 @@ deploy:
     verbose: true
     on:
       branch: master
-
