@@ -28,11 +28,8 @@ script:
 
 after_success:
   - coveralls
-  - cp -a docs/. /tmp/docs
-  - cp README.rst /tmp
-  - cd /tmp/docs
-  - sphinx-apidoc -o source/modules $TRAVIS_BUILD_DIR/bobocep
-  - make html
+  - cp -a docs/. docshtml
+  - cd docshtml && sphinx-apidoc -o source/modules bobocep && make html && mv -a . /tmp/docshtml
 
 deploy:
   - provider: pypi
@@ -45,7 +42,7 @@ deploy:
     github-token: $TOKEN_GITHUB_PAGES
     skip_cleanup: true
     keep_history: true
-    local-dir: /tmp/docs/build/html
+    local-dir: /tmp/docshtml/build/html
     target_branch: gh-pages
     verbose: true
     #on:
