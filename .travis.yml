@@ -18,8 +18,8 @@ branches:
 # Dependencies
 install:
   - pip install -r requirements.txt
-  - pip install flake8 pytest coverage coveralls
-  - pip install Sphinx sphinx_rtd_theme
+  - pip install -r requirements_tests.txt
+  - pip install -r requirements_docs.txt
 
 # Tests
 script:
@@ -36,8 +36,8 @@ deploy:
   - provider: pypi
     user: __token__
     password: $TOKEN_PYPI_BOBOCEP
-    on:
-      tags: true
+#   on:
+#     tags: true
 
   - provider: pages
     github-token: $TOKEN_GITHUB_PAGES
@@ -46,5 +46,5 @@ deploy:
     local-dir: /tmp/bobocep/docs/build/html
     target_branch: gh-pages
     verbose: true
-    #on:
-    #  tags: true
+#   on:
+#     tags: true
