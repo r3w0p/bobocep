@@ -33,8 +33,11 @@ after_success:
 # Deploy Docs to GitHub Pages
 deploy:
   provider: pages
-  skip_cleanup: true
   github-token: $TOKEN_GITHUB_PAGES
+  skip_cleanup: true
+  keep_history: false
   local-dir: docs/build/html
+  target_branch: gh-pages
+  verbose: true
   on:
-    branch: gh-pages
+    branch: master
