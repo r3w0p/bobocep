@@ -34,8 +34,7 @@ after_success:
 deploy:
   provider: pages
   skip_cleanup: true
-  keep_history: true
   github-token: $TOKEN_GITHUB_PAGES
   local-dir: docs/build/html
   on:
-    branch: master
+    branch: gh-pages
