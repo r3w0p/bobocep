@@ -19,6 +19,7 @@ branches:
 install:
   - pip install -r requirements.txt
   - pip install flake8 pytest coverage coveralls
+  - pip install Sphinx sphinx_rtd_theme
 
 # Tests
 script:
@@ -27,3 +28,15 @@ script:
 
 after_success:
   - coveralls
+  - cd docs && sphinx-apidoc -o source/modules ../bobocep && make html
+
+# Deploy Docs to GitHub Pages
+deploy:
+  provider: pages
+  skip-cleanup: true
+  keep-history: true
+  on:
+    branch: master
+  github-token: $TOKEN_GITHUB_PAGES
+  local-dir: docs/build/html
+  committer-from-gh: true

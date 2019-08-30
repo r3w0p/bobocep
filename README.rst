@@ -2,6 +2,22 @@
    :target: https://travis-ci.org/r3w0p/bobocep
    :alt: Travis CI
 
+.. image:: https://coveralls.io/repos/github/r3w0p/bobocep/badge.svg?branch=master
+   :target: https://coveralls.io/github/r3w0p/bobocep?branch=master
+   :alt: Coveralls
+
+.. image:: https://img.shields.io/lgtm/alerts/g/r3w0p/bobocep.svg?logo=lgtm&logoWidth=18
+   :target: https://lgtm.com/projects/g/r3w0p/bobocep/alerts/
+   :alt: LGTM Alerts
+
+.. image:: https://img.shields.io/lgtm/grade/python/github/r3w0p/bobocep
+   :target: https://lgtm.com/projects/g/r3w0p/bobocep/context:python
+   :alt: LGTM Code Quality
+
+.. image:: https://img.shields.io/github/license/r3w0p/bobocep
+   :target: https://github.com/r3w0p/bobocep/blob/master/LICENSE
+   :alt: License
+
 .. image:: https://img.shields.io/badge/donate-buy%20me%20a%20coffee-orange.svg
    :target: https://www.buymeacoffee.com/r3w0p
    :alt: Buy Me A Coffee
