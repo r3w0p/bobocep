@@ -25,24 +25,25 @@ install:
 script:
   - flake8 bobocep
   - coverage run --source=bobocep/ setup.py test
+  - cp -a $TRAVIS_BUILD_DIR/. /tmp/bobocep
+  - cd /tmp/bobocep/docs
+  - sphinx-apidoc -o source/modules ../bobocep && make html
 
 after_success:
   - coveralls
-  - cp -a docs/. docshtml
-  - cd docshtml && sphinx-apidoc -o source/modules bobocep && make html && cd .. && mv docshtml /tmp/docshtml
 
 deploy:
   - provider: pypi
     user: __token__
     password: $TOKEN_PYPI_BOBOCEP
-#    on:
-#      tags: true
+    on:
+      tags: true
 
   - provider: pages
     github-token: $TOKEN_GITHUB_PAGES
     skip_cleanup: true
     keep_history: true
-    local-dir: /tmp/docshtml/build/html
+    local-dir: /tmp/bobocep/docs/build/html
     target_branch: gh-pages
     verbose: true
     #on:
