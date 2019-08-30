@@ -37,7 +37,8 @@ deploy:
       tags: true
 
   - provider: pages
-    script: bash scripts/gen_html.sh
+    script:
+      - cd docs && sphinx-apidoc -o source/modules ../bobocep && make html && cd ..
     github-token: $TOKEN_GITHUB_PAGES
     skip_cleanup: true
     keep_history: true
