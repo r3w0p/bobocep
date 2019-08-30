@@ -28,6 +28,9 @@ script:
 
 after_success:
   - coveralls
+  - cp -a $TRAVIS_BUILD_DIR/docs/. /tmp/docs
+  - cd /tmp/docs
+  - sphinx-apidoc -o source/modules $TRAVIS_BUILD_DIR/bobocep && make html
 
 deploy:
   - provider: pypi
@@ -37,11 +40,10 @@ deploy:
       tags: true
 
   - provider: pages
-    script: echo "MYSCRIPT" && cd docs && sphinx-apidoc -o source/modules ../bobocep && make html && cd ..
     github-token: $TOKEN_GITHUB_PAGES
     skip_cleanup: true
     keep_history: true
-    local-dir: docs/build/html
+    local-dir: /tmp/docs/build/html
     target_branch: gh-pages
     verbose: true
     #on:
