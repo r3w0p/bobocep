@@ -42,13 +42,19 @@ The predicate is a function that takes two arguments:
 - The event that is attempting to fulfil the criteria.
 - A :code:`BoboHistory` instance that contains all of the previous events that have currently been accepted by the
   run of the automaton.
+- A list of recently accepted complex events, represented as :code:`CompositeEvent` instances.
 
 In Python, we can define a predicate function in two ways.
 A regular `function <https://docs.python.org/3/tutorial/controlflow.html?#defining-functions>`_.
 
 .. code:: python
 
-    def my_function(event: BoboEvent, history: BoboHistory) -> bool:
+    from typing import List
+    from bobocep.rules.events.bobo_event import BoboEvent
+    from bobocep.rules.events.histories.bobo_history import BoboHistory
+    from bobocep.rules.events.composite_event import CompositeEvent
+
+    def my_function(event: BoboEvent, history: BoboHistory, recents: List[CompositeEvent]) -> bool:
         # return [...]
 
     predicate = my_function
@@ -58,9 +64,10 @@ i.e. an *anonymous function*.
 
 .. code:: python
 
-    predicate = lambda e, h: # [...]
+    predicate = lambda e, h, r: # [...]
 
-Where :code:`e` is the :code:`BoboEvent` instance and :code:`h` is the :code:`BoboHistory` instance.
+Where :code:`e` is the :code:`BoboEvent` instance, :code:`h` is the :code:`BoboHistory` instance, and :code:`r` is the
+list of recently accepted complex events.
 When the predicate is defined, it needs to be placed into a :code:`BoboPredicateFunction` instance, as follows.
 
 .. code:: python
@@ -166,7 +173,7 @@ generated.
 .. code:: python
 
     pattern.haltcondition(
-        BoboPredicateFunction(lambda e, h: isinstance(e, CompositeEvent) and e.name == 'B')
+        BoboPredicateFunction(lambda e, h, r: isinstance(e, CompositeEvent) and e.name == 'B')
 
 Each successive call of :code:`haltcondition` will add another predicate to the list.
 

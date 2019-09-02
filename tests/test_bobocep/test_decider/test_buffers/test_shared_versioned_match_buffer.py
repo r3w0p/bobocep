@@ -20,8 +20,9 @@ LABEL_LAYER_C = 'layer_c'
 
 event_a = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 event_b = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
+event_c = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 
-stub_predicate = BoboPredicateFunction(lambda e, h: True)
+stub_predicate = BoboPredicateFunction(lambda e, h, r: True)
 
 stub_pattern = BoboPattern() \
     .followed_by(LABEL_LAYER_A, stub_predicate) \
@@ -162,10 +163,6 @@ class TestSharedVersionedMatchBuffer(unittest.TestCase):
         run_id_a_incr = generate_unique_string()
         run_id_b = generate_unique_string()
 
-        event_a = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
-        event_b = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
-        event_c = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
-
         # create two versions for run a and run b
         version_a = RunVersion()
         version_a.add_level(run_id_a)
@@ -238,9 +235,6 @@ class TestSharedVersionedMatchBuffer(unittest.TestCase):
         version_b.add_level(run_id_b)
         version_b_str = version_b.get_version_as_str()
 
-        # shared event between run a and b
-        event_a = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
-
         # put event for run a
         buffer.put_event(nfa_name=NFA_NAME_A,
                          run_id=run_id_a,
@@ -282,10 +276,6 @@ class TestSharedVersionedMatchBuffer(unittest.TestCase):
     def test_to_dict_1_nfa_1_version_3_events_3_labels(self):
         buffer = SharedVersionedMatchBuffer()
         run_id_a = generate_unique_string()
-
-        event_a = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
-        event_b = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
-        event_c = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 
         version_a = RunVersion()
         version_a.add_level(run_id_a)

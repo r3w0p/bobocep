@@ -24,7 +24,7 @@ class TestBoboAction(unittest.TestCase):
         timestamp = EpochNSClock.generate_timestamp()
         name = "c_name"
         history = BoboHistory()
-        data = {"key": "value"}
+        data = {"c_key": "c_value"}
 
         c_event = CompositeEvent(timestamp=timestamp,
                                  name=name,

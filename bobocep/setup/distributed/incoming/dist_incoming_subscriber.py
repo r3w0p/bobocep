@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from bobocep.rules.events.bobo_event import BoboEvent
+from bobocep.rules.events.histories.bobo_history import BoboHistory
 
 
 class IDistIncomingSubscriber(ABC):
@@ -66,6 +67,25 @@ class IDistIncomingSubscriber(ABC):
 
         :param run_id: The ID of the halted run.
         :type run_id: str
+        """
+
+    @abstractmethod
+    def on_dist_run_final(self,
+                          nfa_name: str,
+                          run_id: str,
+                          history: BoboHistory) -> None:
+        """
+        When a run has reached its final state on on another :code:`bobocep`
+        instance.
+
+        :param nfa_name: The NFA name.
+        :type nfa_name: str
+
+        :param run_id: The ID of the accepted run.
+        :type run_id: str
+
+        :param history: The history of the accepted run.
+        :type history: BoboHistory
         """
 
     @abstractmethod

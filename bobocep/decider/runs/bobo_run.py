@@ -1,6 +1,7 @@
 from copy import copy
 from threading import RLock
-
+from typing import List
+from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.decider.buffers.shared_versioned_match_buffer import \
     SharedVersionedMatchBuffer
 from bobocep.decider.runs.abstract_run import AbstractRun
@@ -155,12 +156,16 @@ class BoboRun(AbstractRun):
 
         return "{}-{}".format(nfa_name, start_event_id)
 
-    def process(self, event: BoboEvent) -> None:
+    def process(self, event: BoboEvent, recents: List[CompositeEvent]) -> None:
         """
         Process an event.
 
         :param event: The event to process.
         :type event: BoboEvent
+
+        :param recents: Recently accepted complex events of the corresponding
+                        automaton.
+        :type recents: List[CompositeEvent]
 
         :raises RuntimeError: Run has already halted.
         """
@@ -175,11 +180,11 @@ class BoboRun(AbstractRun):
                 self.id,
                 self.version)
 
-            if self._any_preconditions_failed(event, history) or \
-                    self._any_haltconditions_passed(event, history):
+            if self._any_preconditions_failed(event, history, recents) or \
+                    self._any_haltconditions_passed(event, history, recents):
                 self.halt()
             else:
-                self._handle_state(self.current_state, event, history)
+                self._handle_state(self.current_state, event, history, recents)
 
     def last_process_cloned(self) -> bool:
         """
@@ -267,7 +272,8 @@ class BoboRun(AbstractRun):
     def _handle_state(self,
                       state: BoboState,
                       event: BoboEvent,
-                      history: BoboHistory) -> None:
+                      history: BoboHistory,
+                      recents: List[CompositeEvent]) -> None:
         transition = self.nfa.transitions.get(state.name)
 
         if transition is None:
@@ -279,7 +285,7 @@ class BoboRun(AbstractRun):
             trans_state = self.nfa.states[trans_state_name]
 
             # state successfully fulfilled
-            if trans_state.process(event, history):
+            if trans_state.process(event, history, recents):
                 # negated i.e. should NOT have occurred, so halt
                 if trans_state.is_negated:
                     self.halt()
@@ -305,7 +311,7 @@ class BoboRun(AbstractRun):
                 # if optional, or if state is negated: move to the next state
                 if transition.is_deterministic and \
                         (trans_state.is_optional or trans_state.is_negated):
-                    self._handle_state(trans_state, event, history)
+                    self._handle_state(trans_state, event, history, recents)
 
                 # halt if requires strict contiguity
                 elif transition.is_strict:
@@ -362,7 +368,9 @@ class BoboRun(AbstractRun):
         if self.nfa.accepting_state.name == trans_state.name:
             if notify:
                 self._notify_final(new_history)
-            self.halt(notify=notify)
+
+            # do not notify halt if final
+            self.halt(notify=False)
 
         elif notify:
             self._notify_transition(
@@ -378,18 +386,20 @@ class BoboRun(AbstractRun):
 
     def _any_preconditions_failed(self,
                                   event: BoboEvent,
-                                  history: BoboHistory) -> bool:
+                                  history: BoboHistory,
+                                  recents: List[CompositeEvent]) -> bool:
         """If any preconditions are False, return True."""
 
-        return any(not p.evaluate(event, history)
+        return any(not p.evaluate(event, history, recents)
                    for p in self.nfa.preconditions)
 
     def _any_haltconditions_passed(self,
                                    event: BoboEvent,
-                                   history: BoboHistory) -> bool:
+                                   history: BoboHistory,
+                                   recents: List[CompositeEvent]) -> bool:
         """If any haltconditions are True, return True."""
 
-        return any(p.evaluate(event, history)
+        return any(p.evaluate(event, history, recents)
                    for p in self.nfa.haltconditions)
 
     def _notify_transition(self,

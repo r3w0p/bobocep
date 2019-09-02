@@ -4,6 +4,8 @@ from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.predicates.windows.bobo_predicate_window import \
     BoboPredicateWindow
+from typing import List
+from bobocep.rules.events.composite_event import CompositeEvent
 
 
 class WindowSliding(BoboPredicateWindow, ABC):
@@ -29,7 +31,10 @@ class WindowSliding(BoboPredicateWindow, ABC):
         :return: A historical event.
         """
 
-    def evaluate(self, event: BoboEvent, history: BoboHistory) -> bool:
+    def evaluate(self,
+                 event: BoboEvent,
+                 history: BoboHistory,
+                 recents: List[CompositeEvent]) -> bool:
         event_history = self.get_previous_event(history)
         return (event.timestamp -
                 event_history.timestamp) <= self._interval_ns

@@ -5,29 +5,32 @@ from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.events.primitive_event import PrimitiveEvent
 
+P_NAME = "p_name"
+P_DATA = {"p_key": "p_value"}
+
+C_NAME = "c_name"
+C_DATA = {"c_key": "c_value"}
+
 
 class TestBoboHistory(unittest.TestCase):
 
     def test_to_dict(self):
         # Create primitive event
         p_timestamp = EpochNSClock.generate_timestamp()
-        p_data = "p_data"
         p_event = PrimitiveEvent(
             timestamp=p_timestamp,
-            data=p_data
+            data=P_DATA
         )
         p_hist = "p_hist"
 
         # Create composite event
         c_timestamp = EpochNSClock.generate_timestamp()
-        c_name = "c_name"
         c_history = BoboHistory()
-        c_data = "c_data"
         c_event = CompositeEvent(
             timestamp=c_timestamp,
-            name=c_name,
+            name=C_NAME,
             history=c_history,
-            data=c_data
+            data=C_DATA
         )
         c_hist = "c_hist"
 

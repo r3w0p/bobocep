@@ -52,14 +52,10 @@ class BoboProducer(AbstractProducer,
         :return: True if event was successfully handled, False otherwise.
         """
 
-    def on_decider_complex_event(self, nfa_name: str, history: BoboHistory):
+    def on_decider_complex_event(self, nfa_name: str, event: CompositeEvent):
         with self._lock:
             if not self._cancelled:
-                self._event_queue.put_nowait(
-                    CompositeEvent(
-                        timestamp=EpochNSClock.generate_timestamp(),
-                        name=nfa_name,
-                        history=history))
+                self._event_queue.put_nowait(event)
 
     def subscribe(self,
                   event_name: str,

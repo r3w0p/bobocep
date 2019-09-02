@@ -28,7 +28,7 @@ event_a = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 event_b = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 event_c = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 
-stub_predicate = BoboPredicateFunction(lambda e, h: True)
+stub_predicate = BoboPredicateFunction(lambda e, h, r: True)
 
 state_invalid = BoboState(
     name=STATE_NAME_INVALID,
@@ -70,21 +70,31 @@ class BoboRunSubscriber(IRunSubscriber):
         self.final = []
         self.halt = []
 
-    def on_run_transition(self, run_id: str, state_name_from: str,
-                          state_name_to: str, event: BoboEvent,
+    def on_run_transition(self,
+                          run_id: str,
+                          state_name_from: str,
+                          state_name_to: str,
+                          event: BoboEvent,
                           notify: bool) -> None:
         self.transition.append(run_id)
 
-    def on_run_clone(self, state_name: str, event: BoboEvent,
-                     parent_run_id: str, force_parent: bool,
+    def on_run_clone(self,
+                     state_name: str,
+                     event: BoboEvent,
+                     parent_run_id: str,
+                     force_parent: bool,
                      notify: bool) -> None:
         self.clone.append("" if parent_run_id is None else parent_run_id)
 
-    def on_run_final(self, run_id: str, history: BoboHistory,
+    def on_run_final(self,
+                     run_id: str,
+                     history: BoboHistory,
                      notify: bool) -> None:
         self.final.append(run_id)
 
-    def on_run_halt(self, run_id: str, notify: bool) -> None:
+    def on_run_halt(self,
+                    run_id: str,
+                    notify: bool) -> None:
         self.halt.append(run_id)
 
 
@@ -97,9 +107,9 @@ class TestBoboRun(unittest.TestCase):
 
         self.assertFalse(run.is_halted())
 
-        run.process(event=event_a)
-        run.process(event=event_b)
-        run.process(event=event_c)
+        run.process(event=event_a, recents=[])
+        run.process(event=event_b, recents=[])
+        run.process(event=event_c, recents=[])
 
         self.assertTrue(run.is_halted())
 
@@ -109,11 +119,11 @@ class TestBoboRun(unittest.TestCase):
             pattern=stub_pattern)
 
         self.assertEqual(0, len(runsub.transition))
-        run.process(event=event_a)
+        run.process(event=event_a, recents=[])
         self.assertEqual(1, len(runsub.transition))
 
         run.unsubscribe(runsub)
-        run.process(event=event_b)
+        run.process(event=event_b, recents=[])
         self.assertEqual(1, len(runsub.transition))
 
     def test_halt(self):
@@ -136,7 +146,7 @@ class TestBoboRun(unittest.TestCase):
 
         # can't process new events
         with self.assertRaises(RuntimeError):
-            run.process(event=event_a)
+            run.process(event=event_a, recents=[])
 
         # can't halt
         with self.assertRaises(RuntimeError):
@@ -155,7 +165,8 @@ class TestBoboRun(unittest.TestCase):
             run._handle_state(
                 state=state_invalid,
                 event=event_a,
-                history=BoboHistory())
+                history=BoboHistory(),
+                recents=[])
 
     def test_proceed_invalid_states(self):
         run, runsub = run_setup(

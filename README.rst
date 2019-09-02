@@ -7,32 +7,38 @@
    :alt: Coveralls
 
 .. image:: https://img.shields.io/lgtm/alerts/g/r3w0p/bobocep.svg?logo=lgtm&logoWidth=18
-   :target: https://lgtm.com/projects/g/r3w0p/bobocep/alerts/
+   :target: https://lgtm.com/projects/g/r3w0p/bobocep/alerts
    :alt: LGTM Alerts
 
 .. image:: https://img.shields.io/lgtm/grade/python/github/r3w0p/bobocep
    :target: https://lgtm.com/projects/g/r3w0p/bobocep/context:python
    :alt: LGTM Code Quality
 
+.. image:: https://img.shields.io/github/last-commit/r3w0p/bobocep
+   :target: https://github.com/r3w0p/bobocep/graphs/commit-activity
+   :alt: Last Commit
+
+|
+
 .. image:: https://img.shields.io/pypi/v/bobocep
-   :target: https://pypi.org/project/bobocep/
+   :target: https://pypi.org/project/bobocep
    :alt: PyPI Version
 
 .. image:: https://img.shields.io/pypi/pyversions/bobocep
-   :target: https://pypi.org/project/bobocep/
+   :target: https://pypi.org/project/bobocep
    :alt: Python Versions
 
 .. image:: https://img.shields.io/github/license/r3w0p/bobocep
    :target: https://github.com/r3w0p/bobocep/blob/master/LICENSE
    :alt: License
 
-.. image:: https://img.shields.io/github/last-commit/r3w0p/bobocep
-   :target: https://github.com/r3w0p/bobocep/graphs/commit-activity
-   :alt: Last Commit
-
 .. image:: https://img.shields.io/badge/docs-pages-informational
-   :target: https://r3w0p.github.io/bobocep/
+   :target: https://r3w0p.github.io/bobocep
    :alt: Documentation
+
+.. image:: https://img.shields.io/badge/code-github-24292e
+   :target: https://github.com/r3w0p/bobocep
+   :alt: GitHub Repository
 
 .. image:: https://img.shields.io/badge/donate-buy%20me%20a%20coffee-orange.svg
    :target: https://www.buymeacoffee.com/r3w0p

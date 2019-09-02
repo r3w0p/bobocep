@@ -7,6 +7,7 @@ from bobocep.setup.distributed.incoming.dist_incoming_subscriber import \
     IDistIncomingSubscriber
 from bobocep.setup.distributed.outgoing.dist_outgoing_subscriber import \
     IDistOutgoingSubscriber
+from bobocep.rules.events.histories.bobo_history import BoboHistory
 
 
 class DistDecider(BoboDecider,
@@ -114,7 +115,9 @@ class DistDecider(BoboDecider,
                 next_state_name,
                 next_event)
 
-    def on_dist_run_halt(self, nfa_name: str, run_id: str):
+    def on_dist_run_halt(self,
+                         nfa_name: str,
+                         run_id: str):
         with self._lock:
             handler = self._nfa_handlers.get(nfa_name)
 
@@ -122,6 +125,18 @@ class DistDecider(BoboDecider,
                 raise RuntimeError
 
             handler.force_run_halt(run_id)
+
+    def on_dist_run_final(self,
+                          nfa_name: str,
+                          run_id: str,
+                          history: BoboHistory) -> None:
+        with self._lock:
+            handler = self._nfa_handlers.get(nfa_name)
+
+            if handler is None:
+                raise RuntimeError
+
+            handler.force_run_final(run_id=run_id, history=history)
 
     def on_sync_response(self, sync_id: str, body: str):
         """"""

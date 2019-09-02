@@ -60,6 +60,7 @@ class BoboDistOutgoing(BoboTask,
         self._queue_transition = Queue()
         self._queue_clone = Queue()
         self._queue_halt = Queue()
+        self._queue_final = Queue()
 
         self._subs = []
         self._connection = connection
@@ -75,6 +76,7 @@ class BoboDistOutgoing(BoboTask,
             self._send_events(self._queue_transition, bdc.TRANSITION)
             self._send_events(self._queue_clone, bdc.CLONE)
             self._send_events(self._queue_halt, bdc.HALT)
+            self._send_events(self._queue_final, bdc.FINAL)
 
     def _cancel(self):
         self._is_synced = False
@@ -200,8 +202,13 @@ class BoboDistOutgoing(BoboTask,
     def on_handler_final(self,
                          nfa_name: str,
                          run_id: str,
-                         history: BoboHistory):
-        """"""
+                         event: CompositeEvent):
+        if not self._cancelled:
+            self._queue_final.put_nowait({
+                bdc.NFA_NAME: nfa_name,
+                bdc.RUN_ID: run_id,
+                bdc.EVENT: event.to_dict()
+            })
 
     def on_dist_run_transition(self,
                                nfa_name: str,
@@ -221,4 +228,10 @@ class BoboDistOutgoing(BoboTask,
     def on_dist_run_halt(self,
                          nfa_name: str,
                          run_id: str):
+        """"""
+
+    def on_dist_run_final(self,
+                          nfa_name: str,
+                          run_id: str,
+                          event: BoboEvent) -> None:
         """"""

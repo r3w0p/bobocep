@@ -56,6 +56,8 @@ class BoboDistIncoming(BoboTask,
         channel.queue_bind(exchange=exchange_name, queue=queue_name,
                            routing_key=bdc.HALT)
         channel.queue_bind(exchange=exchange_name, queue=queue_name,
+                           routing_key=bdc.FINAL)
+        channel.queue_bind(exchange=exchange_name, queue=queue_name,
                            routing_key=bdc.SYNC_REQ)
         channel.queue_bind(exchange=exchange_name, queue=queue_name,
                            routing_key=bdc.SYNC_RES)
@@ -117,6 +119,9 @@ class BoboDistIncoming(BoboTask,
         elif method.routing_key == bdc.HALT:
             self._handle_halt(body)
 
+        elif method.routing_key == bdc.FINAL:
+            self._handle_final(body)
+
         elif method.routing_key == bdc.SYNC_REQ:
             self._handle_sync_request(ch, method, properties, body)
 
@@ -164,6 +169,19 @@ class BoboDistIncoming(BoboTask,
             subscriber.on_dist_run_halt(
                 nfa_name=nfa_name,
                 run_id=run_id
+            )
+
+    def _handle_final(self, data: str) -> None:
+        json_data = json.loads(data)
+        nfa_name = json_data[bdc.NFA_NAME]
+        run_id = json_data[bdc.RUN_ID]
+        history = BoboRuleBuilder.history(json_data[bdc.HISTORY])
+
+        for subscriber in self._subs:
+            subscriber.on_dist_run_final(
+                nfa_name=nfa_name,
+                run_id=run_id,
+                history=history
             )
 
     def _handle_sync_request(self, ch, method, properties, body):

@@ -15,7 +15,7 @@ LABEL_LAYER_A = 'layer_a'
 LABEL_LAYER_B = 'layer_b'
 LABEL_LAYER_C = 'layer_c'
 
-stub_predicate = BoboPredicateFunction(lambda e, h: True)
+stub_predicate = BoboPredicateFunction(lambda e, h, r: True)
 
 stub_pattern = BoboPattern() \
     .followed_by(LABEL_LAYER_A, stub_predicate) \

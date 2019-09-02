@@ -100,9 +100,9 @@ We will define a simple pattern below, as follows.
     from bobocep.rules.predicates.windows.sliding.window_sliding_first import WindowSlidingFirst
 
     pattern_abc = BoboPattern() \
-        .followed_by(label="data_a", predicate=lambda e, h: e.data == 'a') \
-        .followed_by(label="data_b", predicate=lambda e, h: e.data == 'b') \
-        .followed_by(label="data_c", predicate=lambda e, h: e.data == 'c') \
+        .followed_by(label="data_a", predicate=lambda e, h, r: e.data == 'a') \
+        .followed_by(label="data_b", predicate=lambda e, h, r: e.data == 'b') \
+        .followed_by(label="data_c", predicate=lambda e, h, r: e.data == 'c') \
         .precondition(WindowSlidingFirst(interval_sec=10))
 
 This pattern states that we need three events, where the data for the three events are :code:`'a'`, :code:`'b'`,
@@ -157,7 +157,7 @@ If a :code:`CompositeEvent` with name "A" is being generated every 3 seconds, bu
 
 .. code:: python
 
-    from bobocep.rules.actions.producer.rate_limit_action import RateLimitAction
+    from bobocep.rules.actions.rate_limit_action import RateLimitAction
 
     setup.config_producer(RateLimitAction({'A': 60}))
 

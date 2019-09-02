@@ -11,6 +11,7 @@ from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.setup.task.bobo_task import BoboTask
+from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
 
 
 class BoboDecider(AbstractDecider,
@@ -74,19 +75,19 @@ class BoboDecider(AbstractDecider,
     def on_handler_final(self,
                          nfa_name: str,
                          run_id: str,
-                         history: BoboHistory) -> None:
+                         event: CompositeEvent) -> None:
         with self._lock:
             if not self._cancelled:
                 self._notify_new_complex_event(
-                    nfa_name=nfa_name, history=history)
+                    nfa_name=nfa_name,
+                    event=event)
 
     def _notify_new_complex_event(self,
                                   nfa_name: str,
-                                  history: BoboHistory):
+                                  event: CompositeEvent):
         if nfa_name in self._subs:
             for sub in self._subs[nfa_name]:
-                sub.on_decider_complex_event(
-                    nfa_name=nfa_name, history=history)
+                sub.on_decider_complex_event(nfa_name=nfa_name, event=event)
 
     def subscribe(self,
                   nfa_name: str,

@@ -1,5 +1,6 @@
 import unittest
 from time import sleep
+from typing import List
 
 from bobocep.decider.buffers.shared_versioned_match_buffer import \
     SharedVersionedMatchBuffer
@@ -16,6 +17,7 @@ from bobocep.rules.predicates.bobo_predicate_function import \
     BoboPredicateFunction
 from bobocep.rules.predicates.windows.sliding.window_sliding_last import \
     WindowSlidingLast
+from bobocep.rules.events.composite_event import CompositeEvent
 
 STATE_A = "state_a"
 STATE_B = "state_b"
@@ -36,19 +38,27 @@ VAL_3 = "3"
 VAL_4 = "4"
 
 
-def predicate_key_a_value_a(event: BoboEvent, history: BoboHistory):
+def predicate_key_a_value_a(event: BoboEvent,
+                            history: BoboHistory,
+                            recents: List[CompositeEvent]):
     return event.data[KEY] == VAL_1
 
 
-def predicate_key_a_value_b(event: BoboEvent, history: BoboHistory):
+def predicate_key_a_value_b(event: BoboEvent,
+                            history: BoboHistory,
+                            recents: List[CompositeEvent]):
     return event.data[KEY] == VAL_2
 
 
-def predicate_key_a_value_c(event: BoboEvent, history: BoboHistory):
+def predicate_key_a_value_c(event: BoboEvent,
+                            history: BoboHistory,
+                            recents: List[CompositeEvent]):
     return event.data[KEY] == VAL_3
 
 
-def predicate_key_a_value_d(event: BoboEvent, history: BoboHistory):
+def predicate_key_a_value_d(event: BoboEvent,
+                            history: BoboHistory,
+                            recents: List[CompositeEvent]):
     return event.data[KEY] == VAL_4
 
 
@@ -72,10 +82,11 @@ class NFAHandlerSubscriber(INFAHandlerSubscriber):
                          event: BoboEvent):
         self.clone.append(run_id)
 
-    def on_handler_final(self, nfa_name: str, run_id: str,
-                         history: BoboHistory):
+    def on_handler_final(self, nfa_name: str,
+                         run_id: str,
+                         event: CompositeEvent):
         self.final.append(run_id)
-        self.final_history.append(history)
+        self.final_history.append(event.history)
 
     def on_handler_halt(self, nfa_name: str, run_id: str):
         self.halt.append(run_id)
@@ -161,4 +172,4 @@ class TestWindowSlidingLast(unittest.TestCase):
         handler.process(event_b)
         handler.process(event_c)
 
-        self.assertEqual(len(handlersub.halt), 1)
+        self.assertEqual(len(handlersub.final), 1)

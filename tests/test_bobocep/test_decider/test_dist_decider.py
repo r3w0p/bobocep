@@ -1,5 +1,5 @@
 import unittest
-
+from typing import List
 from bobocep.decider.buffers.shared_versioned_match_buffer import \
     SharedVersionedMatchBuffer
 from bobocep.decider.dist_decider import DistDecider
@@ -15,7 +15,9 @@ from bobocep.rules.predicates.bobo_predicate_function import \
     BoboPredicateFunction
 
 
-def stub_predicate(event: BoboEvent, history: BoboHistory):
+def stub_predicate(event: BoboEvent,
+                   history: BoboHistory,
+                   recents: List[CompositeEvent]):
     return True
 
 

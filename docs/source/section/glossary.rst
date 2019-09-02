@@ -36,6 +36,13 @@ Event
 
 Finish me.
 
+
+History
+=======
+
+Finish me.
+
+
 Primitive
 ---------
 
@@ -56,6 +63,13 @@ It has several purposes:
 - Provides state clearance, so that windowed automata have an event to trigger window checks.
 - As a workaround to design automata that can reach the accepting state if *nothing* happens within some time interval
   (i.e. check if a null event is received after the time interval).
+
+
+Recents
+=======
+
+Finish me.
+
 
 Run
 ===

@@ -3,6 +3,8 @@ from abc import abstractmethod
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.predicates.abstract_predicate import AbstractPredicate
+from typing import List
+from bobocep.rules.events.composite_event import CompositeEvent
 
 
 class BoboPredicate(AbstractPredicate):
@@ -12,7 +14,10 @@ class BoboPredicate(AbstractPredicate):
         super().__init__()
 
     @abstractmethod
-    def evaluate(self, event: BoboEvent, history: BoboHistory) -> bool:
+    def evaluate(self,
+                 event: BoboEvent,
+                 history: BoboHistory,
+                 recents: List[CompositeEvent]) -> bool:
         """Evaluates the predicate.
 
         :param event: An event.
@@ -20,6 +25,10 @@ class BoboPredicate(AbstractPredicate):
 
         :param history: A history of events.
         :type history: BoboHistory
+
+        :param recents: Recently accepted complex events of the corresponding
+                        automaton.
+        :type recents: List[CompositeEvent]
 
         :return: True if the predicate evaluates to True,
                  False otherwise.

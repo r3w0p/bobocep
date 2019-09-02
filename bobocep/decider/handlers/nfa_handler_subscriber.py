@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
+from bobocep.rules.events.composite_event import CompositeEvent
 
 
 class INFAHandlerSubscriber(ABC):
@@ -58,7 +59,7 @@ class INFAHandlerSubscriber(ABC):
     def on_handler_final(self,
                          nfa_name: str,
                          run_id: str,
-                         history: BoboHistory) -> None:
+                         event: CompositeEvent) -> None:
         """Triggers a response when a run reaches its final state.
 
         :param nfa_name: The NFA name.
@@ -67,8 +68,8 @@ class INFAHandlerSubscriber(ABC):
         :param run_id: The run ID.
         :type run_id: str
 
-        :param history: The history of events that led to run completion.
-        :type history: BoboHistory
+        :param event: The complex event.
+        :type event: CompositeEvent
         """
 
     @abstractmethod

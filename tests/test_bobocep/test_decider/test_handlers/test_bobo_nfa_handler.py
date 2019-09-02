@@ -1,5 +1,5 @@
 import unittest
-
+from typing import List
 from bobocep.decider.buffers.shared_versioned_match_buffer import \
     SharedVersionedMatchBuffer
 from bobocep.decider.handlers.bobo_nfa_handler import BoboNFAHandler
@@ -13,6 +13,7 @@ from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.rules.nfas.patterns.bobo_pattern import BoboPattern
 from bobocep.rules.predicates.bobo_predicate_function import \
     BoboPredicateFunction
+from bobocep.rules.events.composite_event import CompositeEvent
 
 NFA_NAME_A = "NFA_NAME_A"
 NFA_NAME_INVALID = "NFA_NAME_INVALID"
@@ -39,19 +40,27 @@ VALUE_D = "value_d"
 VALUE_E = "value_e"
 
 
-def predicate_key_a_value_a(event: BoboEvent, history: BoboHistory):
+def predicate_key_a_value_a(event: BoboEvent,
+                            history: BoboHistory,
+                            recents: List[CompositeEvent]):
     return event.data[KEY_A] == VALUE_A
 
 
-def predicate_key_a_value_b(event: BoboEvent, history: BoboHistory):
+def predicate_key_a_value_b(event: BoboEvent,
+                            history: BoboHistory,
+                            recents: List[CompositeEvent]):
     return event.data[KEY_A] == VALUE_B
 
 
-def predicate_key_a_value_c(event: BoboEvent, history: BoboHistory):
+def predicate_key_a_value_c(event: BoboEvent,
+                            history: BoboHistory,
+                            recents: List[CompositeEvent]):
     return event.data[KEY_A] == VALUE_C
 
 
-def predicate_key_a_value_d(event: BoboEvent, history: BoboHistory):
+def predicate_key_a_value_d(event: BoboEvent,
+                            history: BoboHistory,
+                            recents: List[CompositeEvent]):
     return event.data[KEY_A] == VALUE_D
 
 
@@ -133,9 +142,9 @@ class NFAHandlerSubscriber(INFAHandlerSubscriber):
     def on_handler_final(self,
                          nfa_name: str,
                          run_id: str,
-                         history: BoboHistory):
+                         event: CompositeEvent):
         self.final.append(run_id)
-        self.final_history.append(history)
+        self.final_history.append(event.history)
 
     def on_handler_halt(self,
                         nfa_name: str,

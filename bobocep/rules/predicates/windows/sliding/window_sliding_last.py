@@ -2,6 +2,8 @@ from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.predicates.windows.sliding.window_sliding import \
     WindowSliding
+from typing import List
+from bobocep.rules.events.composite_event import CompositeEvent
 
 
 class WindowSlidingLast(WindowSliding):

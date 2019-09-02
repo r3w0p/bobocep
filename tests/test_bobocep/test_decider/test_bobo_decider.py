@@ -32,7 +32,7 @@ event_comp = CompositeEvent(
     name=COMPOSITE_NAME,
     history=BoboHistory())
 
-stub_predicate = BoboPredicateFunction(lambda e, h: True)
+stub_predicate = BoboPredicateFunction(lambda e, h, r: True)
 
 stub_pattern = BoboPattern() \
     .followed_by(LABEL_LAYER_A, stub_predicate) \
@@ -51,10 +51,11 @@ class NFAHandlerSubscriber(IDeciderSubscriber):
         self.final = []
         self.final_history = []
 
-    def on_decider_complex_event(self, nfa_name: str,
-                                 history: BoboHistory) -> None:
+    def on_decider_complex_event(self,
+                                 nfa_name: str,
+                                 event: CompositeEvent) -> None:
         self.final.append(nfa_name)
-        self.final_history.append(history)
+        self.final_history.append(event.history)
 
 
 class TestBoboDecider(unittest.TestCase):
