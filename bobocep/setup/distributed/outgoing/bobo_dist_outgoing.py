@@ -15,6 +15,7 @@ from bobocep.setup.distributed.incoming.dist_incoming_subscriber import \
 from bobocep.setup.distributed.outgoing.dist_outgoing_subscriber import \
     IDistOutgoingSubscriber
 from bobocep.setup.task.bobo_task import BoboTask
+from bobocep.rules.events.composite_event import CompositeEvent
 
 
 class BoboDistOutgoing(BoboTask,
