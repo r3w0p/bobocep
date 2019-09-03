@@ -1,6 +1,7 @@
 import unittest
 from time import sleep
 from typing import List
+
 from bobocep.decider.buffers.shared_versioned_match_buffer import \
     SharedVersionedMatchBuffer
 from bobocep.decider.handlers.bobo_nfa_handler import BoboNFAHandler
@@ -9,6 +10,7 @@ from bobocep.decider.handlers.nfa_handler_subscriber import \
 from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
 from bobocep.rules.bobo_rule_builder import BoboRuleBuilder
 from bobocep.rules.events.bobo_event import BoboEvent
+from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.rules.nfas.patterns.bobo_pattern import BoboPattern
@@ -16,7 +18,6 @@ from bobocep.rules.predicates.bobo_predicate_function import \
     BoboPredicateFunction
 from bobocep.rules.predicates.windows.sliding.window_sliding_first import \
     WindowSlidingFirst
-from bobocep.rules.events.composite_event import CompositeEvent
 
 STATE_A = "state_a"
 STATE_B = "state_b"

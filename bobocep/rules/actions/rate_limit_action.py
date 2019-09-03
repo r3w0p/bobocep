@@ -1,6 +1,6 @@
+from threading import RLock
 from time import time_ns
 from typing import Dict
-from threading import RLock
 
 from bobocep.rules.actions.bobo_action import BoboAction
 from bobocep.rules.events.composite_event import CompositeEvent

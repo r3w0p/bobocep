@@ -1,13 +1,14 @@
 from copy import copy
 from threading import RLock
 from typing import List
-from bobocep.rules.events.composite_event import CompositeEvent
+
 from bobocep.decider.buffers.shared_versioned_match_buffer import \
     SharedVersionedMatchBuffer
 from bobocep.decider.runs.abstract_run import AbstractRun
 from bobocep.decider.runs.run_subscriber import IRunSubscriber
 from bobocep.decider.versions.run_version import RunVersion
 from bobocep.rules.events.bobo_event import BoboEvent
+from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.nfas.bobo_nfa import BoboNFA
 from bobocep.rules.states.bobo_state import BoboState

@@ -1,10 +1,10 @@
 from abc import abstractmethod
+from typing import List
 
 from bobocep.rules.events.bobo_event import BoboEvent
+from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.predicates.abstract_predicate import AbstractPredicate
-from typing import List
-from bobocep.rules.events.composite_event import CompositeEvent
 
 
 class BoboPredicate(AbstractPredicate):

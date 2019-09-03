@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
 from bobocep.rules.events.bobo_event import BoboEvent
-from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.events.composite_event import CompositeEvent
 
 

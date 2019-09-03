@@ -9,9 +9,7 @@ from bobocep.producer.producer_subscriber import IProducerSubscriber
 from bobocep.receiver.receiver_subscriber import IReceiverSubscriber
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.composite_event import CompositeEvent
-from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.setup.task.bobo_task import BoboTask
-from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
 
 
 class BoboDecider(AbstractDecider,

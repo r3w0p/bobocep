@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
+from typing import List
 
 from bobocep.rules.events.bobo_event import BoboEvent
+from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.predicates.windows.bobo_predicate_window import \
     BoboPredicateWindow
-from typing import List
-from bobocep.rules.events.composite_event import CompositeEvent
 
 
 class WindowSliding(BoboPredicateWindow, ABC):

@@ -1,5 +1,6 @@
 from threading import RLock
 from typing import List
+
 from bobocep.decider.buffers.shared_versioned_match_buffer import \
     SharedVersionedMatchBuffer
 from bobocep.decider.handlers.abstract_handler import AbstractHandler
@@ -7,11 +8,11 @@ from bobocep.decider.handlers.nfa_handler_subscriber import \
     INFAHandlerSubscriber
 from bobocep.decider.runs.bobo_run import BoboRun
 from bobocep.decider.runs.run_subscriber import IRunSubscriber
+from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
 from bobocep.rules.events.bobo_event import BoboEvent
+from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.nfas.bobo_nfa import BoboNFA
-from bobocep.rules.events.composite_event import CompositeEvent
-from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
 
 
 class BoboNFAHandler(AbstractHandler, IRunSubscriber):

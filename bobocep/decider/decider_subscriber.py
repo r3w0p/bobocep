@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.events.composite_event import CompositeEvent
 
 
@@ -8,7 +7,8 @@ class IDeciderSubscriber(ABC):
     """An interface to subscribe to Decider events."""
 
     @abstractmethod
-    def on_decider_complex_event(self, nfa_name: str, event: CompositeEvent) -> None:
+    def on_decider_complex_event(self, nfa_name: str,
+                                 event: CompositeEvent) -> None:
         """
         When a Decider identifies a complex event in the event stream.
 

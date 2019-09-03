@@ -3,11 +3,11 @@ from bobocep.decider.bobo_decider_builder import BoboDeciderBuilder
 from bobocep.decider.handlers.bobo_nfa_handler import BoboNFAHandler
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.composite_event import CompositeEvent
+from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.setup.distributed.incoming.dist_incoming_subscriber import \
     IDistIncomingSubscriber
 from bobocep.setup.distributed.outgoing.dist_outgoing_subscriber import \
     IDistOutgoingSubscriber
-from bobocep.rules.events.histories.bobo_history import BoboHistory
 
 
 class DistDecider(BoboDecider,

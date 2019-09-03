@@ -1,8 +1,9 @@
 import unittest
 from typing import List
-from bobocep.rules.events.composite_event import CompositeEvent
+
 from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
 from bobocep.rules.events.bobo_event import BoboEvent
+from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.rules.predicates.bobo_predicate_function import \

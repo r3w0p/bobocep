@@ -1,7 +1,8 @@
 from inspect import isfunction, signature
 from typing import Callable, List
-from bobocep.rules.events.composite_event import CompositeEvent
+
 from bobocep.rules.events.bobo_event import BoboEvent
+from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.predicates.bobo_predicate import BoboPredicate
 
