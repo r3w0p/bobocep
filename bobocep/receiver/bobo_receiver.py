@@ -40,12 +40,11 @@ class BoboReceiver(AbstractReceiver,
         while not self._data_queue.empty():
             data = self._data_queue.get_nowait()
 
-            if data is not None:
-                if self._validator.validate(data):
-                    self._notify_primitive_event(
-                        self._formatter.format(data))
-                else:
-                    self._notify_invalid_data(data)
+            if self._validator.validate(data):
+                self._notify_primitive_event(
+                    self._formatter.format(data))
+            else:
+                self._notify_invalid_data(data)
 
     def add_data(self, data) -> None:
         """

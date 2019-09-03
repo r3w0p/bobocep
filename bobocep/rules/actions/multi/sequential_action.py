@@ -40,6 +40,8 @@ class SequentialAction(MultiAction):
                 results.append(True)
             elif self._early_stop:
                 return False
+            else:
+                results.append(False)
 
         return all(r is True for r in results) if self._all_success \
             else any(r is True for r in results)

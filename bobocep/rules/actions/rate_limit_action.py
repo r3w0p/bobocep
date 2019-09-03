@@ -1,5 +1,4 @@
 from threading import RLock
-from time import time_ns
 from typing import Dict
 
 from bobocep.rules.actions.bobo_action import BoboAction
@@ -15,7 +14,8 @@ class RateLimitAction(BoboAction):
 
     :param limit_dict: Key-value pairs, where the key is the CompositeEvent
                        name and the value is the desired rate, in seconds.
-    :type limit_dict: Dict[str, int]
+                       Defaults to an empty dict.
+    :type limit_dict: Dict[str, int], optional
 
     :param rate_other: The rate for all other events that have not been named,
                        defaults to 0.
@@ -23,27 +23,35 @@ class RateLimitAction(BoboAction):
     """
 
     def __init__(self,
-                 limit_dict: Dict[str, int],
+                 limit_dict: Dict[str, int] = None,
                  rate_other: int = 0) -> None:
         super().__init__()
 
-        self._limit_dict = limit_dict
+        self._limit_dict = limit_dict if limit_dict is not None else {}
         self._names = list(self._limit_dict.keys())
         self._rate_other = rate_other
         self._last = {}
         self._lock = RLock()
 
-    def set_limit(self, name: str, limit: int) -> None:
+    def get_limits(self) -> Dict[str, int]:
+        """
+        :return: A dict, where the keys are the names to limit and the
+                 values are the desired rates for each name, in seconds.
+        """
+        with self._lock:
+            return self._limit_dict.copy()
+
+    def set_limit(self, name: str, rate: int) -> None:
         """
         :param name: The CompositeEvent name.
         :type name: str
 
-        :param limit: The limit for the event.
-        :type limit: int
+        :param rate: The rate for the name.
+        :type rate: int
         """
 
         with self._lock:
-            self._limit_dict[name] = limit
+            self._limit_dict[name] = rate
 
             if name not in self._names:
                 self._names.append(name)
@@ -58,6 +66,11 @@ class RateLimitAction(BoboAction):
                 if name not in self._last:
                     self._last[name] = 0
 
-                return (time_ns() - self._last[name]) / 1e-9 >= rate
+                accept = (event.timestamp - self._last[name]) / 1e9 >= rate
+
+                if accept:
+                    self._last[name] = event.timestamp
+
+                return accept
 
             return True

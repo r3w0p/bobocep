@@ -102,6 +102,7 @@ class TestBoboRuleBuilder(unittest.TestCase):
         c_name = "c_name"
         c_history = {}
         c_data = "c_data"
+        c_id = "c_id"
 
         with self.assertRaises(RuntimeError):
             BoboRuleBuilder.composite({
@@ -109,6 +110,7 @@ class TestBoboRuleBuilder(unittest.TestCase):
                 CompositeEvent.NAME: c_name,
                 CompositeEvent.HISTORY: c_history,
                 CompositeEvent.DATA: c_data,
+                CompositeEvent.ID: c_id
             })
 
         with self.assertRaises(RuntimeError):
@@ -117,6 +119,7 @@ class TestBoboRuleBuilder(unittest.TestCase):
                 CompositeEvent.NAME: None,
                 CompositeEvent.HISTORY: c_history,
                 CompositeEvent.DATA: c_data,
+                CompositeEvent.ID: c_id
             })
 
         with self.assertRaises(RuntimeError):
@@ -125,6 +128,16 @@ class TestBoboRuleBuilder(unittest.TestCase):
                 CompositeEvent.NAME: c_name,
                 CompositeEvent.HISTORY: None,
                 CompositeEvent.DATA: c_data,
+                CompositeEvent.ID: c_id
+            })
+
+        with self.assertRaises(RuntimeError):
+            BoboRuleBuilder.composite({
+                CompositeEvent.TIMESTAMP: c_timestamp,
+                CompositeEvent.NAME: c_name,
+                CompositeEvent.HISTORY: c_history,
+                CompositeEvent.DATA: c_data,
+                CompositeEvent.ID: None
             })
 
     def test_history(self):

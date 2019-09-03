@@ -32,13 +32,9 @@ class TestBoboReceiver(unittest.TestCase):
     def test_process_valid_data(self):
         rec = BoboReceiver(StrDictValidator(), PrimitiveEventFormatter())
         recsub = ReceiverSubscriber()
-
         rec.subscribe(recsub)
 
-        data_list = [
-            {},
-            KEY_VAL_1
-        ]
+        data_list = [{}, KEY_VAL_1]
 
         rec.setup()
         for data in data_list:
@@ -52,6 +48,23 @@ class TestBoboReceiver(unittest.TestCase):
 
         self.assertEqual(recsub.events[0].data, data_list[0])
         self.assertEqual(recsub.events[1].data, data_list[1])
+
+    def test_process_invalid_data(self):
+        rec = BoboReceiver(StrDictValidator(), PrimitiveEventFormatter())
+        recsub = ReceiverSubscriber()
+        rec.subscribe(recsub)
+
+        data_list = [None, "abc", 123]
+
+        rec.setup()
+        for data in data_list:
+            rec.add_data(data)
+            rec.loop()
+
+        self.assertEqual(len(recsub.invalid), 3)
+        self.assertEqual(recsub.invalid[0], data_list[0])
+        self.assertEqual(recsub.invalid[1], data_list[1])
+        self.assertEqual(recsub.invalid[2], data_list[2])
 
     def test_receiver_subscribe_unsubscribe(self):
         rec = BoboReceiver(StrDictValidator(), PrimitiveEventFormatter())

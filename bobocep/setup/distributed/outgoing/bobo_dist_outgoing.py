@@ -10,12 +10,12 @@ from bobocep.decider.dist_decider import DistDecider
 from bobocep.decider.handlers.nfa_handler_subscriber import \
     INFAHandlerSubscriber
 from bobocep.rules.events.bobo_event import BoboEvent
+from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.setup.distributed.incoming.dist_incoming_subscriber import \
     IDistIncomingSubscriber
 from bobocep.setup.distributed.outgoing.dist_outgoing_subscriber import \
     IDistOutgoingSubscriber
 from bobocep.setup.task.bobo_task import BoboTask
-from bobocep.rules.events.composite_event import CompositeEvent
 
 
 class BoboDistOutgoing(BoboTask,
