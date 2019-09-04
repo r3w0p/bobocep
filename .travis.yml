@@ -47,8 +47,8 @@ deploy:
     user: __token__
     password: $TOKEN_PYPI_BOBOCEP
     on:
+      branch: master
       tags: true
-      all_branches: true
 
   - provider: pages
     github-token: $TOKEN_GITHUB_PAGES
@@ -58,5 +58,5 @@ deploy:
     target_branch: gh-pages
     verbose: true
     on:
+      branch: master
       tags: true
-      all_branches: true
