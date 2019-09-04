@@ -11,12 +11,6 @@ matrix:
       sudo: true
 
 
-# Branch Whitelist
-branches:
-  only:
-    - master
-
-
 # Dependencies
 before_install:
   - sudo apt-get update -y
