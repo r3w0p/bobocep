@@ -48,6 +48,7 @@ deploy:
     password: $TOKEN_PYPI_BOBOCEP
     on:
       tags: true
+      all_branches: true
 
   - provider: pages
     github-token: $TOKEN_GITHUB_PAGES
@@ -58,3 +59,4 @@ deploy:
     verbose: true
     on:
       tags: true
+      all_branches: true
