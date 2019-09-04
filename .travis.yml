@@ -18,6 +18,14 @@ branches:
 
 
 # Dependencies
+before_install:
+  - sudo apt-get update -y
+  - sudo apt-get install erlang logrotate rabbitmq-server -y
+  - sudo apt-get -f install -y
+  - sudo service rabbitmq-server start
+
+
+# Python Dependencies
 install:
   - pip install -r requirements.txt
   - pip install -r requirements_tests.txt
