@@ -89,6 +89,7 @@ class BoboRunSubscriber(IRunSubscriber):
     def on_run_final(self,
                      run_id: str,
                      history: BoboHistory,
+                     halt: bool,
                      notify: bool) -> None:
         self.final.append(run_id)
 

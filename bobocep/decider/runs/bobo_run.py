@@ -432,6 +432,7 @@ class BoboRun(AbstractRun):
             subscriber.on_run_final(
                 run_id=self.id,
                 history=history,
+                halt=False,
                 notify=True)
 
     def _notify_halt(self) -> None:

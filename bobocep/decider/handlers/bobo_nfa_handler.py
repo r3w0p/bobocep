@@ -202,8 +202,29 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
     def on_run_final(self,
                      run_id: str,
                      history: BoboHistory,
+                     halt: bool = False,
                      notify: bool = True) -> None:
+        """
+        :raises RuntimeError: Run ID not found.
+        :raises RuntimeError: Run has already halted.
+        """
+
         with self._lock:
+            run = self._runs.get(run_id)
+
+            if run is None:
+                raise RuntimeError(
+                    "Run {} not found in handler for NFA {}.".format(
+                        run_id, self.nfa.name))
+
+            if run.is_halted():
+                raise RuntimeError(
+                    "Run {} has already halted for NFA {}.".format(
+                        run_id, self.nfa.name))
+
+            if halt:
+                run.halt(notify=False)
+
             event = CompositeEvent(
                 timestamp=EpochNSClock.generate_timestamp(),
                 name=self.nfa.name,
@@ -356,25 +377,13 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
 
         :param history: The history of the accepted run.
         :type history: BoboHistory
-
-        :raises RuntimeError: Run ID not found.
-        :raises RuntimeError: Run has already halted.
         """
 
         with self._lock:
-            run = self._runs.get(run_id)
-
-            if run is None:
-                raise RuntimeError(
-                    "Run {} not found in handler for NFA {}.".format(
-                        run_id, self.nfa.name))
-
-            if run.is_halted():
-                raise RuntimeError(
-                    "Run {} has already halted for NFA {}.".format(
-                        run_id, self.nfa.name))
-
-            self.on_run_final(run_id=run_id, history=history, notify=False)
+            self.on_run_final(run_id=run_id,
+                              history=history,
+                              halt=True,
+                              notify=False)
 
     def subscribe(self, subscriber: INFAHandlerSubscriber) -> None:
         """

@@ -6,6 +6,7 @@ from bobocep.decider.buffers.shared_versioned_match_buffer import \
 from bobocep.decider.handlers.bobo_nfa_handler import BoboNFAHandler
 from bobocep.decider.handlers.nfa_handler_subscriber import \
     INFAHandlerSubscriber
+from bobocep.decider.runs.bobo_run import BoboRun
 from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
 from bobocep.rules.bobo_rule_builder import BoboRuleBuilder
 from bobocep.rules.events.bobo_event import BoboEvent
@@ -177,6 +178,122 @@ class TestBoboNFAHandler(unittest.TestCase):
         handler.process(event_d)
 
         self.assertEqual(len(handlersub.final), 1)
+
+    def test_add_then_remove_run_no_halt_no_notify(self):
+        nfa, buffer, handler, handlersub = handler_setup(
+            nfa_name=NFA_NAME_A,
+            pattern=pattern_relaxed)
+
+        run_a = BoboRun(buffer=buffer, nfa=nfa, event=event_a)
+
+        # add run
+        handler.add_run(run_a)
+        self.assertDictEqual(handler._runs, {
+            run_a.id: run_a
+        })
+
+        # remove run
+        handler.remove_run(run_a.id, halt=False, notify=False)
+
+        self.assertDictEqual(handler._runs, {})
+        self.assertFalse(run_a.is_halted())
+        self.assertListEqual([], handlersub.halt)
+
+    def test_add_then_remove_run_halt_notify(self):
+        nfa, buffer, handler, handlersub = handler_setup(
+            nfa_name=NFA_NAME_A,
+            pattern=pattern_relaxed)
+
+        run_a = BoboRun(buffer=buffer, nfa=nfa, event=event_a)
+
+        # add run
+        handler.add_run(run_a)
+        self.assertDictEqual(handler._runs, {
+            run_a.id: run_a
+        })
+
+        # remove run
+        handler.remove_run(run_a.id, halt=True, notify=True)
+
+        self.assertDictEqual(handler._runs, {})
+        self.assertTrue(run_a.is_halted())
+        self.assertListEqual([run_a.id], handlersub.halt)
+
+    def test_add_then_clear_runs_no_halt_no_notify(self):
+        nfa, buffer, handler, handlersub = handler_setup(
+            nfa_name=NFA_NAME_A,
+            pattern=pattern_relaxed)
+
+        run_a = BoboRun(buffer=buffer, nfa=nfa, event=event_a)
+        run_b = BoboRun(buffer=buffer, nfa=nfa, event=event_b)
+        run_c = BoboRun(buffer=buffer, nfa=nfa, event=event_c)
+
+        # add runs
+        handler.add_run(run_a)
+        handler.add_run(run_b)
+        handler.add_run(run_c)
+
+        self.assertDictEqual(handler._runs, {
+            run_a.id: run_a,
+            run_b.id: run_b,
+            run_c.id: run_c
+        })
+
+        # clear runs
+        handler.clear_runs(halt=False, notify=False)
+
+        self.assertDictEqual(handler._runs, {})
+        self.assertFalse(run_a.is_halted())
+        self.assertFalse(run_b.is_halted())
+        self.assertFalse(run_c.is_halted())
+        self.assertListEqual([], handlersub.halt)
+
+    def test_add_then_clear_runs_halt_notify(self):
+        nfa, buffer, handler, handlersub = handler_setup(
+            nfa_name=NFA_NAME_A,
+            pattern=pattern_relaxed)
+
+        run_a = BoboRun(buffer=buffer, nfa=nfa, event=event_a)
+        run_b = BoboRun(buffer=buffer, nfa=nfa, event=event_b)
+        run_c = BoboRun(buffer=buffer, nfa=nfa, event=event_c)
+
+        # add runs
+        handler.add_run(run_a)
+        handler.add_run(run_b)
+        handler.add_run(run_c)
+
+        self.assertDictEqual(handler._runs, {
+            run_a.id: run_a,
+            run_b.id: run_b,
+            run_c.id: run_c
+        })
+
+        # clear runs
+        handler.clear_runs(halt=True, notify=True)
+
+        self.assertDictEqual(handler._runs, {})
+        self.assertTrue(run_a.is_halted())
+        self.assertTrue(run_b.is_halted())
+        self.assertTrue(run_c.is_halted())
+        self.assertListEqual(handlersub.halt, [
+            run_a.id,
+            run_b.id,
+            run_c.id
+        ])
+
+    def test_duplicate_run_id(self):
+        nfa, buffer, handler, handlersub = handler_setup(
+            nfa_name=NFA_NAME_A,
+            pattern=pattern_relaxed)
+
+        run_id = "abc123"
+        run_a = BoboRun(buffer=buffer, nfa=nfa, event=event_a, run_id=run_id)
+        run_b = BoboRun(buffer=buffer, nfa=nfa, event=event_b, run_id=run_id)
+
+        self.assertIsNone(handler.add_run(run_a))
+
+        with self.assertRaises(RuntimeError):
+            handler.add_run(run_b)
 
     def test_deterministic_relaxed_success(self):
         nfa, buffer, handler, handlersub = handler_setup(
@@ -735,3 +852,55 @@ class TestBoboNFAHandlerHalt(unittest.TestCase):
 
         with self.assertRaises(RuntimeError):
             handler.force_run_halt(run_id=run.id)
+
+
+class TestBoboNFAHandlerFinal(unittest.TestCase):
+
+    def test_force_run_final(self):
+        nfa, buffer, handler, handlersub = handler_setup(
+            nfa_name=NFA_NAME_A,
+            pattern=pattern_relaxed)
+
+        run_state_a = state_from_layer(nfa=nfa, label=LABEL_LAYER_A)
+
+        handler.process(event_a)
+
+        # only one run has been created
+        runs = list(handler._runs.values())
+        self.assertEqual(1, len(runs))
+
+        run = runs[0]
+        self.assertEqual(event_a, run.event)
+        self.assertEqual(run_state_a.name, run.current_state.name)
+
+        handler.process(event_b)
+
+        history = BoboHistory()
+        handler.force_run_final(run_id=run.id, history=history)
+
+        self.assertTrue(run.is_halted())
+
+    def test_force_run_final_invalid_run(self):
+        nfa, buffer, handler, handlersub = handler_setup(
+            nfa_name=NFA_NAME_A,
+            pattern=pattern_relaxed)
+
+        handler.process(event_a)
+
+        with self.assertRaises(RuntimeError):
+            handler.force_run_final(run_id=RUN_ID_INVALID,
+                                    history=BoboHistory())
+
+    def test_force_run_halt_already_halted(self):
+        nfa, buffer, handler, handlersub = handler_setup(
+            nfa_name=NFA_NAME_A,
+            pattern=pattern_relaxed)
+
+        handler.process(event_a)
+        run = list(handler._runs.values())[0]
+
+        # no notification keeps run in handler while halted
+        run.halt(notify=False)
+
+        with self.assertRaises(RuntimeError):
+            handler.force_run_final(run_id=run.id, history=BoboHistory())
