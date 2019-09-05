@@ -54,9 +54,8 @@ class BoboReceiver(AbstractReceiver,
         :type data: any
         """
 
-        with self._lock:
-            if not self._cancelled:
-                self._data_queue.put_nowait(data)
+        if not self._cancelled:
+            self._data_queue.put_nowait(data)
 
     def subscribe(self, subscriber: IReceiverSubscriber) -> None:
         """

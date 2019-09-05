@@ -11,7 +11,7 @@ setup(
     author="r3w0p",
     author_email='',
     name='bobocep',
-    version='0.25.13',
+    version='0.25.14',
     description="A fault-tolerant complex event processing engine designed "
                 "for edge computing in IoT systems.",
     long_description=long_description,

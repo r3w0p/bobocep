@@ -51,9 +51,8 @@ class BoboForwarder(AbstractForwarder,
                     self._notify_failure(event)
 
     def on_accepted_producer_event(self, event: CompositeEvent):
-        with self._lock:
-            if not self._cancelled:
-                self._event_queue.put_nowait(event)
+        if not self._cancelled:
+            self._event_queue.put_nowait(event)
 
     def subscribe(self, subscriber: IForwarderSubscriber) -> None:
         """

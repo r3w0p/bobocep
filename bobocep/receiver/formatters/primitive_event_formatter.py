@@ -14,4 +14,5 @@ class PrimitiveEventFormatter(AbstractFormatter):
         :param data: The data to format.
         :return: A new PrimitiveEvent instance containing the data.
         """
-        return PrimitiveEvent(EpochNSClock.generate_timestamp(), data)
+        return PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp(),
+                              data=data)

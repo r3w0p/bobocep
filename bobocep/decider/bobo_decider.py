@@ -65,14 +65,12 @@ class BoboDecider(AbstractDecider,
         return list(self._nfa_handlers.values())
 
     def on_receiver_event(self, event: BoboEvent) -> None:
-        with self._lock:
-            if not self._cancelled:
-                self._event_queue.put(event)
+        if not self._cancelled:
+            self._event_queue.put(event)
 
     def on_accepted_producer_event(self, event: CompositeEvent) -> None:
-        with self._lock:
-            if not self._cancelled:
-                self._event_queue.put(event)
+        if not self._cancelled:
+            self._event_queue.put(event)
 
     def on_handler_final(self,
                          nfa_name: str,

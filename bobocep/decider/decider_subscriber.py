@@ -7,7 +7,8 @@ class IDeciderSubscriber(ABC):
     """An interface to subscribe to Decider events."""
 
     @abstractmethod
-    def on_decider_complex_event(self, nfa_name: str,
+    def on_decider_complex_event(self,
+                                 nfa_name: str,
                                  event: CompositeEvent) -> None:
         """
         When a Decider identifies a complex event in the event stream.
