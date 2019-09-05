@@ -27,4 +27,4 @@ class BoboComplexEvent:
 
         self.name = name
         self.pattern = pattern
-        self.action = action if action is not None else NoAction
+        self.action = action if action is not None else NoAction()
