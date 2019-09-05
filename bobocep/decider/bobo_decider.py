@@ -1,4 +1,5 @@
 from queue import Queue
+from typing import List
 
 from bobocep.decider.abstract_decider import AbstractDecider
 from bobocep.decider.decider_subscriber import IDeciderSubscriber
@@ -59,6 +60,9 @@ class BoboDecider(AbstractDecider,
                 else:
                     raise RuntimeError("NFA handler name {} already in use."
                                        .format(nfa_handler.nfa.name))
+
+    def get_handlers(self) -> List[BoboNFAHandler]:
+        return list(self._nfa_handlers.values())
 
     def on_receiver_event(self, event: BoboEvent) -> None:
         with self._lock:

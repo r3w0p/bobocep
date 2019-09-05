@@ -1,10 +1,12 @@
 from abc import abstractmethod
 
+from bobocep.producer.producer_subscriber import IProducerSubscriber
 from bobocep.rules.actions.abstract_action import AbstractAction
 from bobocep.rules.events.composite_event import CompositeEvent
 
 
-class BoboAction(AbstractAction):
+class BoboAction(AbstractAction,
+                 IProducerSubscriber):
     """A :code:`bobocep` action."""
 
     def __init__(self) -> None:
@@ -20,3 +22,9 @@ class BoboAction(AbstractAction):
 
         :return: True if the action was successful, False otherwise.
         """
+
+    def on_accepted_producer_event(self, event: CompositeEvent) -> None:
+        self.perform_action(event)
+
+    def on_rejected_producer_event(self, event: CompositeEvent) -> None:
+        """"""

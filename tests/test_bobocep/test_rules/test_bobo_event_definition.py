@@ -11,25 +11,25 @@ class TestBoboEventDefinition(unittest.TestCase):
     def test_constructor_one_action(self):
         name = "evdef_name"
         pattern = BoboPattern()
-        actions = [NoAction()]
+        action = NoAction()
 
         evdef = BoboComplexEvent(name=name,
                                  pattern=pattern,
-                                 actions=actions)
+                                 action=action)
 
         self.assertEqual(name, evdef.name)
         self.assertEqual(pattern, evdef.pattern)
-        self.assertListEqual(actions, evdef.actions)
+        self.assertEqual(action, evdef.action)
 
     def test_constructor_actions_is_none(self):
         name = "evdef_name"
         pattern = BoboPattern()
-        actions = None
+        action = None
 
         evdef = BoboComplexEvent(name=name,
                                  pattern=pattern,
-                                 actions=actions)
+                                 action=action)
 
         self.assertEqual(name, evdef.name)
         self.assertEqual(pattern, evdef.pattern)
-        self.assertListEqual([], evdef.actions)
+        self.assertIsInstance(evdef.action, NoAction)

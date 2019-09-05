@@ -435,17 +435,16 @@ class BoboSetup:
             # Decider subscriptions
             self._decider.subscribe(event_def.name, self._producer)
 
-            if self._distributed:
-                self._decider.subscribe(event_def.name, self._manager.outgoing)
-
             # Producer subscriptions
             self._producer.subscribe(event_def.name, self._forwarder)
-
-            for action in event_def.actions:
-                self._producer.subscribe(event_def.name, action)
+            self._producer.subscribe(event_def.name, event_def.action)
 
             if self._recursive:
                 self._producer.subscribe(event_def.name, self._decider)
+
+        if self._distributed:
+            for handler in self._decider.get_handlers():
+                handler.subscribe(self._manager.outgoing)
 
     def _config_extra_subscriptions(self):
         # receiver

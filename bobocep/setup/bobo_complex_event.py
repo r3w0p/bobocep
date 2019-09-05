@@ -1,6 +1,5 @@
-from typing import List
-
 from bobocep.rules.actions.bobo_action import BoboAction
+from bobocep.rules.actions.no_action import NoAction
 from bobocep.rules.nfas.patterns.bobo_pattern import BoboPattern
 
 
@@ -15,16 +14,17 @@ class BoboComplexEvent:
     :param pattern: The complex event pattern.
     :type pattern: BoboPattern
 
-    :param actions: The actions to perform, defaults to an empty list.
-    :type actions: List[BoboAction], optional
+    :param action: The action to perform, defaults to a NoAction instance
+                   that always returns :code:`True`.
+    :type action: BoboAction, optional
     """
 
     def __init__(self,
                  name: str,
                  pattern: BoboPattern,
-                 actions: List[BoboAction] = None) -> None:
+                 action: BoboAction = None) -> None:
         super().__init__()
 
         self.name = name
         self.pattern = pattern
-        self.actions = actions if actions is not None else []
+        self.action = action if action is not None else NoAction

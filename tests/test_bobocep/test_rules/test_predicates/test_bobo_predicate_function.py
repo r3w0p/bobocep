@@ -48,6 +48,7 @@ class TestBoboPredicateFunction(unittest.TestCase):
 
     def test_invalid_not_callable(self):
         with self.assertRaises(RuntimeError):
+            # noinspection PyTypeChecker
             BoboPredicateFunction(123)
 
     def test_invalid_function_no_params(self):
