@@ -93,12 +93,14 @@ class BoboProducer(AbstractProducer,
                     self._subs[event_name].remove(unsubscriber)
 
     def _notify_accepted(self, event: CompositeEvent):
-        for subscriber in self._subs[event.name]:
-            subscriber.on_accepted_producer_event(event)
+        for event_subscribers in self._subs[event.name]:
+            for subscriber in event_subscribers:
+                subscriber.on_accepted_producer_event(event)
 
     def _notify_rejected(self, event: CompositeEvent):
-        for subscriber in self._subs[event.name]:
-            subscriber.on_rejected_producer_event(event)
+        for event_subscribers in self._subs[event.name]:
+            for subscriber in event_subscribers:
+                subscriber.on_rejected_producer_event(event)
 
     def _setup(self) -> None:
         """"""
