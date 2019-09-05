@@ -46,9 +46,9 @@ deploy:
   - provider: pypi
     user: __token__
     password: $TOKEN_PYPI_BOBOCEP
-    on:
-      all_branches: true
-      tags: true
+#    on:
+#      all_branches: true
+#      tags: true
 
   - provider: pages
     github-token: $TOKEN_GITHUB_PAGES
@@ -57,6 +57,6 @@ deploy:
     local-dir: /tmp/bobocep/docs/build/html
     target_branch: gh-pages
     verbose: true
-    on:
-      all_branches: true
-      tags: true
+#    on:
+#      all_branches: true
+#      tags: true
