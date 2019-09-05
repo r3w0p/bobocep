@@ -107,6 +107,7 @@ class BoboRun(AbstractRun):
         self.version = version
         self._last_process_cloned = last_process_cloned
         self._halted = halted
+        self._final = False
         self._subs = []
         self._lock = RLock()
 
@@ -128,7 +129,8 @@ class BoboRun(AbstractRun):
             # create version from existing, and
             # put and link last event to new version
             if self.version is None:
-                self.version = RunVersion(parent_version=parent_run.version)
+                self.version = RunVersion(
+                    parent_version=parent_run.version)
                 self.version.add_level(self.id)
 
             if put_event:
@@ -140,6 +142,10 @@ class BoboRun(AbstractRun):
                     event=self.event,
                     new_run_id=self.id,
                     new_version=self.version.get_version_as_str())
+
+        # immediately final if start state is final state
+        if self.nfa.start_is_final:
+            self._set_final(history=None, notify=False)
 
     @staticmethod
     def _generate_id(nfa_name: str, start_event_id: str) -> str:
@@ -183,7 +189,7 @@ class BoboRun(AbstractRun):
 
             if self._any_preconditions_failed(event, history, recents) or \
                     self._any_haltconditions_passed(event, history, recents):
-                self.halt()
+                self.set_halt()
             else:
                 self._handle_state(self.current_state, event, history, recents)
 
@@ -203,40 +209,37 @@ class BoboRun(AbstractRun):
         with self._lock:
             return self._halted
 
-    def halt(self, notify: bool = True) -> None:
+    def is_final(self) -> bool:
+        """
+        :return: True if run has reached its final state, False otherwise.
+        """
+
+        with self._lock:
+            return self._final
+
+    def set_halt(self, notify: bool = True) -> None:
         """
         Halt the run.
 
         :param notify: Whether to notify run subscribers of the halting,
                        default to True.
         :type notify: bool, optional
-
-        :raises RuntimeError: Run has already halted.
         """
 
         with self._lock:
-            if self._halted:
-                raise RuntimeError("Run {} has already halted."
-                                   .format(self.id))
+            if not self._halted:
+                self._halted = True
 
-            self._halted = True
-
-            if notify:
-                self._notify_halt()
+                if notify:
+                    self._notify_halt()
 
     def subscribe(self, subscriber: IRunSubscriber) -> None:
         """
         :param subscriber: Subscribes to the run.
         :type subscriber: IRunSubscriber
-
-        :raises RuntimeError: Run has already halted.
         """
 
         with self._lock:
-            if self._halted:
-                raise RuntimeError("Run {} has already halted."
-                                   .format(self.id))
-
             if subscriber not in self._subs:
                 self._subs.append(subscriber)
 
@@ -270,6 +273,22 @@ class BoboRun(AbstractRun):
                 self.LAST_PROCESS_CLONED: self._last_process_cloned
             }
 
+    def _set_final(self,
+                   history: BoboHistory = None,
+                   notify: bool = True) -> None:
+        if notify:
+            self._notify_final(
+                history if history is not None else
+                self.buffer.get_all_events(
+                    self.nfa.name,
+                    self.id,
+                    self.version))
+
+        # do not notify halt if final
+        self.set_halt(notify=False)
+
+        self._final = True
+
     def _handle_state(self,
                       state: BoboState,
                       event: BoboEvent,
@@ -289,7 +308,7 @@ class BoboRun(AbstractRun):
             if trans_state.process(event, history, recents):
                 # negated i.e. should NOT have occurred, so halt
                 if trans_state.is_negated:
-                    self.halt()
+                    self.set_halt()
                     break
 
                 if not transition.is_deterministic:
@@ -316,7 +335,7 @@ class BoboRun(AbstractRun):
 
                 # halt if requires strict contiguity
                 elif transition.is_strict:
-                    self.halt()
+                    self.set_halt()
                     break
 
     def _proceed(self,
@@ -366,12 +385,8 @@ class BoboRun(AbstractRun):
             self.version)
 
         # halt if final, else transition
-        if self.nfa.accepting_state.name == trans_state.name:
-            if notify:
-                self._notify_final(new_history)
-
-            # do not notify halt if final
-            self.halt(notify=False)
+        if self.nfa.final_state.name == trans_state.name:
+            self._set_final(new_history, notify=notify)
 
         elif notify:
             self._notify_transition(

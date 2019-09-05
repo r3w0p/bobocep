@@ -150,7 +150,7 @@ class TestBoboNFABuilder(unittest.TestCase):
         self.assertEqual(4, len(nfa.states))
         self.assertEqual(4, len(nfa.transitions))
         self.assertEqual(state_name_a, nfa.start_state.name)
-        self.assertEqual(state_name_d, nfa.accepting_state.name)
+        self.assertEqual(state_name_d, nfa.final_state.name)
         self.assertEqual(0, len(nfa.preconditions))
 
         # states
@@ -219,7 +219,7 @@ class TestBoboNFABuilder(unittest.TestCase):
         self.assertEqual(3, len(nfa.states))
         self.assertEqual(3, len(nfa.transitions))
         self.assertEqual(state_name_a, nfa.start_state.name)
-        self.assertEqual(state_name_c, nfa.accepting_state.name)
+        self.assertEqual(state_name_c, nfa.final_state.name)
         self.assertEqual(0, len(nfa.preconditions))
 
         # states
@@ -279,7 +279,7 @@ class TestBoboNFABuilder(unittest.TestCase):
         self.assertEqual(3, len(nfa.states))
         self.assertEqual(3, len(nfa.transitions))
         self.assertEqual(state_name_a, nfa.start_state.name)
-        self.assertEqual(state_name_c, nfa.accepting_state.name)
+        self.assertEqual(state_name_c, nfa.final_state.name)
         self.assertEqual(0, len(nfa.preconditions))
 
         # states
@@ -339,7 +339,7 @@ class TestBoboNFABuilder(unittest.TestCase):
         self.assertEqual(3, len(nfa.states))
         self.assertEqual(3, len(nfa.transitions))
         self.assertEqual(state_name_a, nfa.start_state.name)
-        self.assertEqual(state_name_c, nfa.accepting_state.name)
+        self.assertEqual(state_name_c, nfa.final_state.name)
         self.assertEqual(0, len(nfa.preconditions))
 
         # states
@@ -401,7 +401,7 @@ class TestBoboNFABuilder(unittest.TestCase):
         self.assertEqual(4, len(nfa.states))
         self.assertEqual(4, len(nfa.transitions))
         self.assertEqual(state_name_a, nfa.start_state.name)
-        self.assertEqual(state_name_c, nfa.accepting_state.name)
+        self.assertEqual(state_name_c, nfa.final_state.name)
         self.assertEqual(0, len(nfa.preconditions))
 
         # states
@@ -467,7 +467,7 @@ class TestBoboNFABuilder(unittest.TestCase):
         self.assertEqual(5, len(nfa.states))
         self.assertEqual(5, len(nfa.transitions))
         self.assertEqual(state_name_a1, nfa.start_state.name)
-        self.assertEqual(state_name_a5, nfa.accepting_state.name)
+        self.assertEqual(state_name_a5, nfa.final_state.name)
 
         # states
         self.assertEqual(state_name_a1, nfa.states[state_name_a1].name)
@@ -513,7 +513,7 @@ class TestBoboNFABuilder(unittest.TestCase):
         self.assertEqual(3, len(nfa.states))
         self.assertEqual(3, len(nfa.transitions))
         self.assertEqual(state_name_a, nfa.start_state.name)
-        self.assertEqual(state_name_c, nfa.accepting_state.name)
+        self.assertEqual(state_name_c, nfa.final_state.name)
 
         # states
         self.assertEqual(state_name_a, nfa.states[state_name_a].name)

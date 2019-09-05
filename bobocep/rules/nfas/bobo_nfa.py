@@ -21,8 +21,8 @@ class BoboNFA(AbstractNFA):
     :param start_state_name: The name of the start state.
     :type start_state_name: str
 
-    :param accepting_state_name: The name of the accepting/final state.
-    :type accepting_state_name: str
+    :param final_state_name: The name of the final state.
+    :type final_state_name: str
 
     :param preconditions: Predicates checked before any state's predicate
                           whereby, if *any* precondition returns False,
@@ -40,7 +40,7 @@ class BoboNFA(AbstractNFA):
                  states: Dict[str, BoboState],
                  transitions: Dict[str, BoboTransition],
                  start_state_name: str,
-                 accepting_state_name: str,
+                 final_state_name: str,
                  preconditions: List[BoboPredicate],
                  haltconditions: List[BoboPredicate]) -> None:
         super().__init__()
@@ -49,6 +49,8 @@ class BoboNFA(AbstractNFA):
         self.states = states
         self.transitions = transitions
         self.start_state = states[start_state_name]
-        self.accepting_state = states[accepting_state_name]
+        self.final_state = states[final_state_name]
         self.preconditions = preconditions
         self.haltconditions = haltconditions
+
+        self.start_is_final = start_state_name == final_state_name

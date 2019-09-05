@@ -295,6 +295,21 @@ class TestBoboNFAHandler(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             handler.add_run(run_b)
 
+    def test_only_one_state_in_nfa(self):
+        pattern_one = BoboPattern().followed_by(
+            LABEL_LAYER_A,
+            BoboPredicateFunction(predicate_key_a_value_a))
+
+        nfa, buffer, handler, handlersub = handler_setup(
+            nfa_name=NFA_NAME_A,
+            pattern=pattern_one)
+
+        handler.process(event_a)
+
+        self.assertEqual(len(handlersub.final_history), 1)
+        self.assertDictEqual(handlersub.final_history[0].events,
+                             {LABEL_LAYER_A: [event_a]})
+
     def test_deterministic_relaxed_success(self):
         nfa, buffer, handler, handlersub = handler_setup(
             nfa_name=NFA_NAME_A,
@@ -711,7 +726,7 @@ class TestBoboNFAHandlerTransition(unittest.TestCase):
                 state_name_to=STATE_NAME_INVALID,
                 event=event_b)
 
-    def test_force_transition_to_accepting_state(self):
+    def test_force_transition_to_final_state(self):
         nfa, buffer, handler, handlersub = handler_setup(
             nfa_name=NFA_NAME_A,
             pattern=pattern_relaxed)
@@ -848,7 +863,7 @@ class TestBoboNFAHandlerHalt(unittest.TestCase):
         run = list(handler._runs.values())[0]
 
         # no notification keeps run in handler while halted
-        run.halt(notify=False)
+        run.set_halt(notify=False)
 
         with self.assertRaises(RuntimeError):
             handler.force_run_halt(run_id=run.id)
@@ -890,17 +905,3 @@ class TestBoboNFAHandlerFinal(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             handler.force_run_final(run_id=RUN_ID_INVALID,
                                     history=BoboHistory())
-
-    def test_force_run_halt_already_halted(self):
-        nfa, buffer, handler, handlersub = handler_setup(
-            nfa_name=NFA_NAME_A,
-            pattern=pattern_relaxed)
-
-        handler.process(event_a)
-        run = list(handler._runs.values())[0]
-
-        # no notification keeps run in handler while halted
-        run.halt(notify=False)
-
-        with self.assertRaises(RuntimeError):
-            handler.force_run_final(run_id=run.id, history=BoboHistory())

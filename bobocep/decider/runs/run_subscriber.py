@@ -37,7 +37,7 @@ class IRunSubscriber(ABC):
                      event: BoboEvent,
                      parent_run_id: str,
                      force_parent: bool,
-                     notify: bool) -> None:
+                     notify: bool):
         """Triggers a response when a clone occurs in a run. Newly created runs
         are considered to be cloned but without a parent run.
 

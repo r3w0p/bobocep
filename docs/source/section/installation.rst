@@ -16,7 +16,7 @@ The :code:`bobocep` software requires the following.
   such as `RabbitMQ <https://www.rabbitmq.com/>`_.
   This is only required if you want to distribute :code:`bobocep` across multiple devices.
 
-You can download the latest version via :code:`pip` using the following command:
+You can install the latest version via :code:`pip` using the following command:
 
 .. code:: console
 
@@ -33,57 +33,67 @@ This section will guide you into setting up :code:`bobocep` on a Raspberry Pi.
 It assumes you are using `Raspbian OS <https://www.raspberrypi.org/downloads/>`_ and that you will use RabbitMQ for
 the message broker.
 
-Init
-++++
+Dependencies
+++++++++++++
 
-To begin, we will update Raspbian and install some necessary programs.
+To begin, we will update Raspbian and install all of the necessary dependencies.
 
 .. code:: console
 
     sudo apt-get update -y
-    sudo apt install wget -y
-
+    sudo apt install build-essential wget erlang logrotate rabbitmq-server tk-dev libncurses5-dev \
+        libncursesw5-dev libreadline6-dev libdb5.3-dev libgdbm-dev libsqlite3-dev libssl-dev libbz2-dev \
+        libexpat1-dev liblzma-dev zlib1g-dev libffi-dev -y
+    sudo apt-get -f install -y
 
 Python 3.7
 ++++++++++
 
-@@@
-@@@
-    TODO make sure these steps are correct before committing.
-@@@
-@@@
-
-Next we need to download Python 3.7.
-We will download the file for Python 3.7.3.
+We will download Python 3.7.4, unpack it, then enter the newly created directory containing its files.
 
 .. code:: console
 
-    wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tar.xz
-    tar -xf Python-3.7.3.tar.xz
+    wget https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tar.xz
+    tar -xf Python-3.7.4.tar.xz
+    cd Python-3.7.4
+
+Next, we will configure and install Python.
 
 .. code:: console
 
-    cd Python-3.7.3
-    sh ./configure --enable-optimizations
-    make
-    make altinstall
+    ./configure
+    make -j 4
+    sudo make altinstall
 
-Finally, we will update pip.
+Finally, we will update pip to the latest version.
 
 .. code:: console
 
     python3.7 -m pip install --upgrade pip
 
 
-
 RabbitMQ
 ++++++++
 
+RabbitMQ and its dependencies have already been installed in previous steps.
+We will now start the server.
 
+.. code:: console
 
+    service rabbitmq-server start
+
+If you would like access to the `Management Plugin <https://www.rabbitmq.com/management.html>`_, you can install it
+and configure a user account for it with administrator privileges, as follows.
+
+.. code:: console
+
+    rabbitmq-plugins enable rabbitmq_management
+    rabbitmqctl add_user USERNAME PASSWORD
+    rabbitmqctl set_user_tags USERNAME administrator
+    rabbitmqctl set_permissions -p / USERNAME ".*" ".*" ".*"
 
 .. note:: These instructions will probably give you an older version of RabbitMQ.
-          If you require a modern version, consider reading the RabbitMQ guides
+          If you require a later version, consider reading the RabbitMQ guides
           `here <https://www.rabbitmq.com/download.html>`_.
 
 

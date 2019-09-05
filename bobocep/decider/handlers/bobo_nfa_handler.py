@@ -55,6 +55,7 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
             self._check_event_against_runs(event, recents)
 
             if self.nfa.start_state.process(event, {}, recents):
+                # only notify if start state isn't also final state
                 self.on_run_clone(
                     state_name=self.nfa.start_state.name,
                     event=event,
@@ -108,7 +109,7 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
 
             if run is not None:
                 if halt:
-                    run.halt(notify=notify)
+                    run.set_halt(notify=notify)
 
                 # remove current run version from the pointers of all
                 # match events in buffer
@@ -193,7 +194,17 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
 
             self.add_run(clone_run)
 
-            if notify:
+            if clone_run.is_final():
+                self.on_run_final(
+                    run_id=clone_run.id,
+                    history=BoboHistory({
+                        clone_run.current_state.label: [clone_run.event]
+                    }),
+                    halt=True,
+                    notify=notify
+                )
+
+            elif notify:
                 self._notify_clone(
                     run_id=clone_run.id,
                     state_name=clone_run.current_state.name,
@@ -206,7 +217,6 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
                      notify: bool = True) -> None:
         """
         :raises RuntimeError: Run ID not found.
-        :raises RuntimeError: Run has already halted.
         """
 
         with self._lock:
@@ -217,13 +227,8 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
                     "Run {} not found in handler for NFA {}.".format(
                         run_id, self.nfa.name))
 
-            if run.is_halted():
-                raise RuntimeError(
-                    "Run {} has already halted for NFA {}.".format(
-                        run_id, self.nfa.name))
-
             if halt:
-                run.halt(notify=False)
+                run.set_halt(notify=False)
 
             event = CompositeEvent(
                 timestamp=EpochNSClock.generate_timestamp(),
@@ -365,12 +370,12 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
                     "Run {} has already halted for NFA {}.".format(
                         run_id, self.nfa.name))
 
-            run.halt(notify=False)
+            run.set_halt(notify=False)
             self.on_run_halt(run_id, notify=False)
 
     def force_run_final(self, run_id: str, history: BoboHistory):
         """
-        Forces a run to reach its accepting state without notification.
+        Forces a run to reach its final state without notification.
 
         :param run_id: The run ID.
         :type run_id: str

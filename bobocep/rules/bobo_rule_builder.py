@@ -143,7 +143,7 @@ class BoboRuleBuilder(ABC):
         :type pattern: BoboPattern
 
         :raises RuntimeError: Pattern does not contain any layers.
-        :raises RuntimeError: The start and the accepting state must not
+        :raises RuntimeError: The start and the final state must not
                               contain loops, be negated, be optional, or be
                               nondeterministic.
         :raises RuntimeError: State names must be unique.
@@ -157,7 +157,7 @@ class BoboRuleBuilder(ABC):
         nfa_states = {}
         nfa_transitions = {}
         nfa_start_state_name = None
-        nfa_accepting_state_name = None
+        nfa_final_state_name = None
         nfa_preconditions = pattern.preconditions
         nfa_haltconditions = pattern.haltconditions
 
@@ -169,11 +169,11 @@ class BoboRuleBuilder(ABC):
 
         for i, layer in enumerate(pattern.layers):
 
-            # start / accepting states must be "normal"
+            # start / final states must be "normal"
             if (i == 0 or i == len_layers - 1) and (layer.loop or layer.negated
                                                     or layer.optional or
                                                     len(layer.predicates) > 1):
-                raise RuntimeError("The start and the accepting state must "
+                raise RuntimeError("The start and final states must "
                                    "not contain loops, be negated, be "
                                    "optional, or be nondeterministic")
 
@@ -195,9 +195,9 @@ class BoboRuleBuilder(ABC):
                 if i == 0 and j == 0:
                     nfa_start_state_name = state_names[0]
 
-                # last state is the accepting state
+                # last state is the final state
                 if i == len_layers - 1 and j == layer.times - 1:
-                    nfa_accepting_state_name = state_names[-1]
+                    nfa_final_state_name = state_names[-1]
 
                 # duplicate state name found
                 for state_name in state_names:
@@ -231,14 +231,14 @@ class BoboRuleBuilder(ABC):
                 last_states = states
                 last_layer = layer
 
-        # add empty transition for accepting state
-        nfa_transitions[nfa_accepting_state_name] = BoboTransition(
+        # add empty transition for final state
+        nfa_transitions[nfa_final_state_name] = BoboTransition(
             state_names=[], strict=False)
 
         return BoboNFA(name=name_nfa,
                        states=nfa_states,
                        transitions=nfa_transitions,
                        start_state_name=nfa_start_state_name,
-                       accepting_state_name=nfa_accepting_state_name,
+                       final_state_name=nfa_final_state_name,
                        preconditions=nfa_preconditions,
                        haltconditions=nfa_haltconditions)

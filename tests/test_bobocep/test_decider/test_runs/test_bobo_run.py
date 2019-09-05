@@ -101,7 +101,7 @@ class BoboRunSubscriber(IRunSubscriber):
 
 class TestBoboRun(unittest.TestCase):
 
-    def test_run_from_start_to_accepting_state(self):
+    def test_run_from_start_to_final_state(self):
         run, runsub = run_setup(
             nfa_name=NFA_NAME_A,
             pattern=stub_pattern)
@@ -133,29 +133,10 @@ class TestBoboRun(unittest.TestCase):
             pattern=stub_pattern)
 
         self.assertFalse(run.is_halted())
-        run.halt()
+        run.set_halt()
 
         self.assertTrue(run.is_halted())
         self.assertEqual(1, len(runsub.halt))
-
-    def test_run_already_halted(self):
-        run, runsub = run_setup(
-            nfa_name=NFA_NAME_A,
-            pattern=stub_pattern)
-
-        run.halt()
-
-        # can't process new events
-        with self.assertRaises(RuntimeError):
-            run.process(event=event_a, recents=[])
-
-        # can't halt
-        with self.assertRaises(RuntimeError):
-            run.halt()
-
-        # can't subscribe
-        with self.assertRaises(RuntimeError):
-            run.subscribe(subscriber=BoboRunSubscriber())
 
     def test_handle_state_not_in_nfa(self):
         run, runsub = run_setup(
@@ -178,7 +159,7 @@ class TestBoboRun(unittest.TestCase):
             run._proceed(
                 event=event_a,
                 original_state=state_invalid,
-                trans_state=run.nfa.accepting_state,
+                trans_state=run.nfa.final_state,
                 increment=False,
                 notify=True)
 
