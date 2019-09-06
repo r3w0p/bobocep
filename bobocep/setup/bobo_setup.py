@@ -13,10 +13,12 @@ from bobocep.forwarder.bobo_forwarder import BoboForwarder
 from bobocep.forwarder.forwarder_subscriber import IForwarderSubscriber
 from bobocep.producer.action_producer import ActionProducer
 from bobocep.producer.producer_subscriber import IProducerSubscriber
-from bobocep.receiver.bobo_null_data_generator import BoboNullDataGenerator
 from bobocep.receiver.bobo_receiver import BoboReceiver
 from bobocep.receiver.formatters.primitive_event_formatter import \
     PrimitiveEventFormatter
+from bobocep.receiver.generators.bobo_null_data import BoboNullData
+from bobocep.receiver.generators.bobo_null_data_generator import \
+    BoboNullDataGenerator
 from bobocep.receiver.receiver_subscriber import IReceiverSubscriber
 from bobocep.receiver.validators.abstract_validator import \
     AbstractValidator
@@ -72,10 +74,10 @@ class BoboSetup:
         self._action_producer = None
         self._action_forwarder = None
 
-        self._null_data = False
+        self._req_null_data = False
         self._null_data_generator = None
         self._null_data_delay = 0
-        self._null_data_data = {}
+        self._null_data_obj = None
 
         self._distributed = False
         self._manager = None
@@ -271,7 +273,7 @@ class BoboSetup:
 
     def config_null_data(self,
                          delay_sec: float,
-                         null_data) -> None:
+                         null_data: BoboNullData) -> None:
         """
         Configure static data to be input periodically into the Receiver.
 
@@ -282,14 +284,14 @@ class BoboSetup:
         :param null_data: The data to send. Ensure that it is able to pass the
                           Receiver's validation criteria. Otherwise, the null
                           data will not enter the system.
-        :type null_data: any
+        :type null_data: BoboNullData
         """
 
         with self._lock:
             if self.is_inactive():
-                self._null_data = True
+                self._req_null_data = True
                 self._null_data_delay = max(0.1, delay_sec)
-                self._null_data_data = null_data
+                self._null_data_obj = null_data
 
     def start(self) -> None:
         """Start the setup.
@@ -377,10 +379,10 @@ class BoboSetup:
             task=self._receiver,
             delay=self._delay)
 
-        if self._null_data:
+        if self._req_null_data:
             self._null_data_generator = BoboNullDataGenerator(
                 receiver=self._receiver,
-                null_data=self._null_data_data)
+                null_data=self._null_data_obj)
 
             self._null_event_thread = BoboTaskThread(
                 task=self._null_data_generator,

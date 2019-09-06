@@ -222,7 +222,7 @@ class BoboRun(AbstractRun):
         Halt the run.
 
         :param notify: Whether to notify run subscribers of the halting,
-                       default to True.
+                       defaults to True.
         :type notify: bool, optional
         """
 
