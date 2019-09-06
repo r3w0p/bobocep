@@ -8,8 +8,8 @@ from bobocep.decider.versions.run_version import RunVersion
 from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
 from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.rules.nfas.patterns.bobo_pattern import BoboPattern
-from bobocep.rules.predicates.bobo_predicate_function import \
-    BoboPredicateFunction
+from bobocep.rules.predicates.bobo_predicate_callable import \
+    BoboPredicateCallable
 
 NFA_NAME_A = "NFA_NAME_A"
 NFA_NAME_B = "NFA_NAME_B"
@@ -22,7 +22,7 @@ event_a = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 event_b = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 event_c = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 
-stub_predicate = BoboPredicateFunction(lambda e, h, r: True)
+stub_predicate = BoboPredicateCallable(lambda e, h, r: True)
 
 stub_pattern = BoboPattern() \
     .followed_by(LABEL_LAYER_A, stub_predicate) \

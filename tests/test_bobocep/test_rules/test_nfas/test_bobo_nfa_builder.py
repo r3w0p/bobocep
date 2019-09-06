@@ -6,8 +6,8 @@ from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.nfas.patterns.bobo_pattern import BoboPattern
-from bobocep.rules.predicates.bobo_predicate_function import \
-    BoboPredicateFunction
+from bobocep.rules.predicates.bobo_predicate_callable import \
+    BoboPredicateCallable
 
 STATE_A = "state_a"
 STATE_B = "state_b"
@@ -53,8 +53,8 @@ class TestBoboNFABuilder(unittest.TestCase):
             BoboRuleBuilder.nfa(NFA_NAME_A, BoboPattern())
 
     def test_invalid_first_state_is_loop(self):
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b = BoboPredicateFunction(predicate_key_a_value_b)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b = BoboPredicateCallable(predicate_key_a_value_b)
 
         pattern = BoboPattern() \
             .followed_by(LABEL_LAYER_A, predicate_a, loop=True) \
@@ -64,8 +64,8 @@ class TestBoboNFABuilder(unittest.TestCase):
             BoboRuleBuilder.nfa(NFA_NAME_A, pattern)
 
     def test_invalid_first_state_is_negated(self):
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b = BoboPredicateFunction(predicate_key_a_value_b)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b = BoboPredicateCallable(predicate_key_a_value_b)
 
         pattern = BoboPattern() \
             .not_followed_by(LABEL_LAYER_A, predicate_a) \
@@ -75,8 +75,8 @@ class TestBoboNFABuilder(unittest.TestCase):
             BoboRuleBuilder.nfa(NFA_NAME_A, pattern)
 
     def test_invalid_first_state_is_optional(self):
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b = BoboPredicateFunction(predicate_key_a_value_b)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b = BoboPredicateCallable(predicate_key_a_value_b)
 
         pattern = BoboPattern() \
             .followed_by(LABEL_LAYER_A, predicate_a, optional=True) \
@@ -86,9 +86,9 @@ class TestBoboNFABuilder(unittest.TestCase):
             BoboRuleBuilder.nfa(NFA_NAME_A, pattern)
 
     def test_invalid_first_states_are_nondeterministic(self):
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b = BoboPredicateFunction(predicate_key_a_value_b)
-        predicate_c = BoboPredicateFunction(predicate_key_a_value_c)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b = BoboPredicateCallable(predicate_key_a_value_b)
+        predicate_c = BoboPredicateCallable(predicate_key_a_value_c)
 
         pattern = BoboPattern() \
             .followed_by_any(LABEL_LAYER_A, [predicate_a, predicate_b]) \
@@ -98,9 +98,9 @@ class TestBoboNFABuilder(unittest.TestCase):
             BoboRuleBuilder.nfa(NFA_NAME_A, pattern)
 
     def test_invalid_accepting_states_are_nondeterministic(self):
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b = BoboPredicateFunction(predicate_key_a_value_b)
-        predicate_c = BoboPredicateFunction(predicate_key_a_value_c)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b = BoboPredicateCallable(predicate_key_a_value_b)
+        predicate_c = BoboPredicateCallable(predicate_key_a_value_c)
 
         pattern = BoboPattern() \
             .followed_by(LABEL_LAYER_A, predicate_a) \
@@ -110,8 +110,8 @@ class TestBoboNFABuilder(unittest.TestCase):
             BoboRuleBuilder.nfa(NFA_NAME_A, pattern)
 
     def test_invalid_duplicate_labels(self):
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b = BoboPredicateFunction(predicate_key_a_value_b)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b = BoboPredicateCallable(predicate_key_a_value_b)
 
         pattern = BoboPattern() \
             .followed_by(LABEL_LAYER_A, predicate_a) \
@@ -121,10 +121,10 @@ class TestBoboNFABuilder(unittest.TestCase):
             BoboRuleBuilder.nfa(NFA_NAME_A, pattern)
 
     def test_generate_nfa_deterministic_append_patterns(self):
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b = BoboPredicateFunction(predicate_key_a_value_b)
-        predicate_c = BoboPredicateFunction(predicate_key_a_value_c)
-        predicate_d = BoboPredicateFunction(predicate_key_a_value_d)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b = BoboPredicateCallable(predicate_key_a_value_b)
+        predicate_c = BoboPredicateCallable(predicate_key_a_value_c)
+        predicate_d = BoboPredicateCallable(predicate_key_a_value_d)
 
         pattern_1 = BoboPattern() \
             .followed_by(LABEL_LAYER_A, predicate_a) \
@@ -199,9 +199,9 @@ class TestBoboNFABuilder(unittest.TestCase):
         self.assertFalse(nfa.transitions[state_name_d].is_strict)
 
     def test_generate_nfa_deterministic_all_relaxed(self):
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b = BoboPredicateFunction(predicate_key_a_value_b)
-        predicate_c = BoboPredicateFunction(predicate_key_a_value_c)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b = BoboPredicateCallable(predicate_key_a_value_b)
+        predicate_c = BoboPredicateCallable(predicate_key_a_value_c)
 
         pattern = BoboPattern() \
             .followed_by(LABEL_LAYER_A, predicate_a) \
@@ -259,9 +259,9 @@ class TestBoboNFABuilder(unittest.TestCase):
         self.assertFalse(nfa.transitions[state_name_c].is_strict)
 
     def test_generate_nfa_deterministic_all_strict(self):
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b = BoboPredicateFunction(predicate_key_a_value_b)
-        predicate_c = BoboPredicateFunction(predicate_key_a_value_c)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b = BoboPredicateCallable(predicate_key_a_value_b)
+        predicate_c = BoboPredicateCallable(predicate_key_a_value_c)
 
         pattern = BoboPattern() \
             .next(LABEL_LAYER_A, predicate_a) \
@@ -319,9 +319,9 @@ class TestBoboNFABuilder(unittest.TestCase):
         self.assertFalse(nfa.transitions[state_name_c].is_strict)
 
     def test_generate_nfa_deterministic_negated(self):
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b = BoboPredicateFunction(predicate_key_a_value_b)
-        predicate_c = BoboPredicateFunction(predicate_key_a_value_c)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b = BoboPredicateCallable(predicate_key_a_value_b)
+        predicate_c = BoboPredicateCallable(predicate_key_a_value_c)
 
         pattern = BoboPattern() \
             .followed_by(LABEL_LAYER_A, predicate_a) \
@@ -379,10 +379,10 @@ class TestBoboNFABuilder(unittest.TestCase):
         self.assertFalse(nfa.transitions[state_name_c].is_strict)
 
     def test_generate_nfa_nondeterministic_all_relaxed(self):
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b1 = BoboPredicateFunction(predicate_key_a_value_b)
-        predicate_b2 = BoboPredicateFunction(predicate_key_a_value_c)
-        predicate_c = BoboPredicateFunction(predicate_key_a_value_d)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b1 = BoboPredicateCallable(predicate_key_a_value_b)
+        predicate_b2 = BoboPredicateCallable(predicate_key_a_value_c)
+        predicate_c = BoboPredicateCallable(predicate_key_a_value_d)
 
         pattern = BoboPattern() \
             .followed_by(LABEL_LAYER_A, predicate_a) \
@@ -450,7 +450,7 @@ class TestBoboNFABuilder(unittest.TestCase):
         self.assertFalse(nfa.transitions[state_name_c].is_strict)
 
     def test_generate_nfa_times(self):
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
 
         pattern = BoboPattern() \
             .followed_by(LABEL_LAYER_A, predicate_a, times=5)
@@ -494,9 +494,9 @@ class TestBoboNFABuilder(unittest.TestCase):
         self.assertListEqual([], nfa.transitions[state_name_a5].state_names)
 
     def test_generate_nfa_loop(self):
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b = BoboPredicateFunction(predicate_key_a_value_b)
-        predicate_c = BoboPredicateFunction(predicate_key_a_value_c)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b = BoboPredicateCallable(predicate_key_a_value_b)
+        predicate_c = BoboPredicateCallable(predicate_key_a_value_c)
 
         pattern = BoboPattern() \
             .followed_by(LABEL_LAYER_A, predicate_a) \

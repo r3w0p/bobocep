@@ -14,8 +14,8 @@ from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.rules.nfas.patterns.bobo_pattern import BoboPattern
-from bobocep.rules.predicates.bobo_predicate_function import \
-    BoboPredicateFunction
+from bobocep.rules.predicates.bobo_predicate_callable import \
+    BoboPredicateCallable
 
 NFA_NAME_A = "NFA_NAME_A"
 NFA_NAME_INVALID = "NFA_NAME_INVALID"
@@ -88,13 +88,13 @@ event_e = PrimitiveEvent(
 
 pattern_relaxed = BoboPattern() \
     .followed_by(LABEL_LAYER_A,
-                 BoboPredicateFunction(predicate_key_a_value_a)) \
+                 BoboPredicateCallable(predicate_key_a_value_a)) \
     .followed_by(LABEL_LAYER_B,
-                 BoboPredicateFunction(predicate_key_a_value_b)) \
+                 BoboPredicateCallable(predicate_key_a_value_b)) \
     .followed_by(LABEL_LAYER_C,
-                 BoboPredicateFunction(predicate_key_a_value_c)) \
+                 BoboPredicateCallable(predicate_key_a_value_c)) \
     .followed_by(LABEL_LAYER_D,
-                 BoboPredicateFunction(predicate_key_a_value_d))
+                 BoboPredicateCallable(predicate_key_a_value_d))
 
 
 def handler_setup(nfa_name, pattern):
@@ -298,7 +298,7 @@ class TestBoboNFAHandler(unittest.TestCase):
     def test_only_one_state_in_nfa(self):
         pattern_one = BoboPattern().followed_by(
             LABEL_LAYER_A,
-            BoboPredicateFunction(predicate_key_a_value_a))
+            BoboPredicateCallable(predicate_key_a_value_a))
 
         nfa, buffer, handler, handlersub = handler_setup(
             nfa_name=NFA_NAME_A,
@@ -330,14 +330,14 @@ class TestBoboNFAHandler(unittest.TestCase):
     def test_deterministic_relaxed_optional(self):
         pattern_optional = BoboPattern() \
             .followed_by(LABEL_LAYER_A,
-                         BoboPredicateFunction(predicate_key_a_value_a)) \
+                         BoboPredicateCallable(predicate_key_a_value_a)) \
             .followed_by(LABEL_LAYER_B,
-                         BoboPredicateFunction(predicate_key_a_value_b),
+                         BoboPredicateCallable(predicate_key_a_value_b),
                          optional=True) \
             .followed_by(LABEL_LAYER_C,
-                         BoboPredicateFunction(predicate_key_a_value_c)) \
+                         BoboPredicateCallable(predicate_key_a_value_c)) \
             .followed_by(LABEL_LAYER_D,
-                         BoboPredicateFunction(predicate_key_a_value_d))
+                         BoboPredicateCallable(predicate_key_a_value_d))
 
         nfa, buffer, handler, handlersub = handler_setup(
             nfa_name=NFA_NAME_A,
@@ -356,13 +356,13 @@ class TestBoboNFAHandler(unittest.TestCase):
     def test_deterministic_relaxed_negated_success(self):
         pattern_negated = BoboPattern() \
             .followed_by(LABEL_LAYER_A,
-                         BoboPredicateFunction(predicate_key_a_value_a)) \
+                         BoboPredicateCallable(predicate_key_a_value_a)) \
             .not_followed_by(LABEL_LAYER_B,
-                             BoboPredicateFunction(predicate_key_a_value_b)) \
+                             BoboPredicateCallable(predicate_key_a_value_b)) \
             .followed_by(LABEL_LAYER_C,
-                         BoboPredicateFunction(predicate_key_a_value_c)) \
+                         BoboPredicateCallable(predicate_key_a_value_c)) \
             .followed_by(LABEL_LAYER_D,
-                         BoboPredicateFunction(predicate_key_a_value_d))
+                         BoboPredicateCallable(predicate_key_a_value_d))
 
         nfa, buffer, handler, handlersub = handler_setup(
             nfa_name=NFA_NAME_A,
@@ -381,13 +381,13 @@ class TestBoboNFAHandler(unittest.TestCase):
     def test_deterministic_relaxed_negated_failure(self):
         pattern_negated = BoboPattern() \
             .followed_by(LABEL_LAYER_A,
-                         BoboPredicateFunction(predicate_key_a_value_a)) \
+                         BoboPredicateCallable(predicate_key_a_value_a)) \
             .not_followed_by(LABEL_LAYER_B,
-                             BoboPredicateFunction(predicate_key_a_value_b)) \
+                             BoboPredicateCallable(predicate_key_a_value_b)) \
             .followed_by(LABEL_LAYER_C,
-                         BoboPredicateFunction(predicate_key_a_value_c)) \
+                         BoboPredicateCallable(predicate_key_a_value_c)) \
             .followed_by(LABEL_LAYER_D,
-                         BoboPredicateFunction(predicate_key_a_value_d))
+                         BoboPredicateCallable(predicate_key_a_value_d))
 
         nfa, buffer, handler, handlersub = handler_setup(
             nfa_name=NFA_NAME_A,
@@ -401,13 +401,13 @@ class TestBoboNFAHandler(unittest.TestCase):
     def test_deterministic_strict_success(self):
         pattern_strict = BoboPattern() \
             .next(LABEL_LAYER_A,
-                  BoboPredicateFunction(predicate_key_a_value_a)) \
+                  BoboPredicateCallable(predicate_key_a_value_a)) \
             .next(LABEL_LAYER_B,
-                  BoboPredicateFunction(predicate_key_a_value_b)) \
+                  BoboPredicateCallable(predicate_key_a_value_b)) \
             .next(LABEL_LAYER_C,
-                  BoboPredicateFunction(predicate_key_a_value_c)) \
+                  BoboPredicateCallable(predicate_key_a_value_c)) \
             .next(LABEL_LAYER_D,
-                  BoboPredicateFunction(predicate_key_a_value_d))
+                  BoboPredicateCallable(predicate_key_a_value_d))
 
         nfa, buffer, handler, handlersub = handler_setup(
             nfa_name=NFA_NAME_A,
@@ -428,13 +428,13 @@ class TestBoboNFAHandler(unittest.TestCase):
     def test_deterministic_strict_failure(self):
         pattern_strict = BoboPattern() \
             .next(LABEL_LAYER_A,
-                  BoboPredicateFunction(predicate_key_a_value_a)) \
+                  BoboPredicateCallable(predicate_key_a_value_a)) \
             .next(LABEL_LAYER_B,
-                  BoboPredicateFunction(predicate_key_a_value_b)) \
+                  BoboPredicateCallable(predicate_key_a_value_b)) \
             .next(LABEL_LAYER_C,
-                  BoboPredicateFunction(predicate_key_a_value_c)) \
+                  BoboPredicateCallable(predicate_key_a_value_c)) \
             .next(LABEL_LAYER_D,
-                  BoboPredicateFunction(predicate_key_a_value_d))
+                  BoboPredicateCallable(predicate_key_a_value_d))
 
         nfa, buffer, handler, handlersub = handler_setup(
             nfa_name=NFA_NAME_A,
@@ -448,13 +448,13 @@ class TestBoboNFAHandler(unittest.TestCase):
     def test_deterministic_strict_negated_success(self):
         pattern_strict_negated = BoboPattern() \
             .next(LABEL_LAYER_A,
-                  BoboPredicateFunction(predicate_key_a_value_a)) \
+                  BoboPredicateCallable(predicate_key_a_value_a)) \
             .not_next(LABEL_LAYER_B,
-                      BoboPredicateFunction(predicate_key_a_value_b)) \
+                      BoboPredicateCallable(predicate_key_a_value_b)) \
             .next(LABEL_LAYER_C,
-                  BoboPredicateFunction(predicate_key_a_value_c)) \
+                  BoboPredicateCallable(predicate_key_a_value_c)) \
             .next(LABEL_LAYER_D,
-                  BoboPredicateFunction(predicate_key_a_value_d))
+                  BoboPredicateCallable(predicate_key_a_value_d))
 
         nfa, buffer, handler, handlersub = handler_setup(
             nfa_name=NFA_NAME_A,
@@ -473,13 +473,13 @@ class TestBoboNFAHandler(unittest.TestCase):
     def test_deterministic_strict_negated_failure(self):
         pattern_strict_negated = BoboPattern() \
             .next(LABEL_LAYER_A,
-                  BoboPredicateFunction(predicate_key_a_value_a)) \
+                  BoboPredicateCallable(predicate_key_a_value_a)) \
             .not_next(LABEL_LAYER_B,
-                      BoboPredicateFunction(predicate_key_a_value_b)) \
+                      BoboPredicateCallable(predicate_key_a_value_b)) \
             .next(LABEL_LAYER_C,
-                  BoboPredicateFunction(predicate_key_a_value_c)) \
+                  BoboPredicateCallable(predicate_key_a_value_c)) \
             .next(LABEL_LAYER_D,
-                  BoboPredicateFunction(predicate_key_a_value_d))
+                  BoboPredicateCallable(predicate_key_a_value_d))
 
         nfa, buffer, handler, handlersub = handler_setup(
             nfa_name=NFA_NAME_A,
@@ -495,12 +495,12 @@ class TestBoboNFAHandler(unittest.TestCase):
     def test_haltconditions(self):
         pattern_haltcond = BoboPattern() \
             .followed_by(LABEL_LAYER_A,
-                         BoboPredicateFunction(predicate_key_a_value_a)) \
+                         BoboPredicateCallable(predicate_key_a_value_a)) \
             .followed_by(LABEL_LAYER_B,
-                         BoboPredicateFunction(predicate_key_a_value_b)) \
+                         BoboPredicateCallable(predicate_key_a_value_b)) \
             .followed_by(LABEL_LAYER_C,
-                         BoboPredicateFunction(predicate_key_a_value_c)) \
-            .haltcondition(BoboPredicateFunction(predicate_key_a_value_d))
+                         BoboPredicateCallable(predicate_key_a_value_c)) \
+            .haltcondition(BoboPredicateCallable(predicate_key_a_value_d))
 
         nfa, buffer, handler, handlersub = handler_setup(
             nfa_name=NFA_NAME_A,
@@ -521,13 +521,13 @@ class TestBoboNFAHandlerNondeterminism(unittest.TestCase):
     def test_nondeterministic_success(self):
         pattern_nondet = BoboPattern() \
             .followed_by(LABEL_LAYER_A,
-                         BoboPredicateFunction(predicate_key_a_value_a)) \
+                         BoboPredicateCallable(predicate_key_a_value_a)) \
             .followed_by_any(LABEL_LAYER_B_C,
-                             [BoboPredicateFunction(predicate_key_a_value_b),
-                              BoboPredicateFunction(
+                             [BoboPredicateCallable(predicate_key_a_value_b),
+                              BoboPredicateCallable(
                                   predicate_key_a_value_c)]) \
             .next(LABEL_LAYER_D,
-                  BoboPredicateFunction(predicate_key_a_value_d))
+                  BoboPredicateCallable(predicate_key_a_value_d))
 
         nfa, buffer, handler, handlersub = handler_setup(
             nfa_name=NFA_NAME_A,
@@ -563,14 +563,14 @@ class TestBoboNFAHandlerNondeterminism(unittest.TestCase):
     def test_nondeterministic_loop_success(self):
         pattern_loop = BoboPattern() \
             .followed_by(LABEL_LAYER_A,
-                         BoboPredicateFunction(predicate_key_a_value_a)) \
+                         BoboPredicateCallable(predicate_key_a_value_a)) \
             .followed_by(LABEL_LAYER_B,
-                         BoboPredicateFunction(predicate_key_a_value_b),
+                         BoboPredicateCallable(predicate_key_a_value_b),
                          loop=True) \
             .followed_by(LABEL_LAYER_C,
-                         BoboPredicateFunction(predicate_key_a_value_c)) \
+                         BoboPredicateCallable(predicate_key_a_value_c)) \
             .followed_by(LABEL_LAYER_D,
-                         BoboPredicateFunction(predicate_key_a_value_d))
+                         BoboPredicateCallable(predicate_key_a_value_d))
 
         nfa, buffer, handler, handlersub = handler_setup(
             nfa_name=NFA_NAME_A,

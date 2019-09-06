@@ -14,8 +14,8 @@ from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.rules.nfas.patterns.bobo_pattern import BoboPattern
-from bobocep.rules.predicates.bobo_predicate_function import \
-    BoboPredicateFunction
+from bobocep.rules.predicates.bobo_predicate_callable import \
+    BoboPredicateCallable
 from bobocep.rules.predicates.windows.sliding.window_sliding_last import \
     WindowSlidingLast
 
@@ -104,9 +104,9 @@ class TestWindowSlidingLast(unittest.TestCase):
         timestamp_b = timestamp_a + window_range_ns
         timestamp_c = timestamp_b + window_range_ns
 
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b = BoboPredicateFunction(predicate_key_a_value_b)
-        predicate_c = BoboPredicateFunction(predicate_key_a_value_c)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b = BoboPredicateCallable(predicate_key_a_value_b)
+        predicate_c = BoboPredicateCallable(predicate_key_a_value_c)
         predicate_first_window = WindowSlidingLast(
             window_range_ns)
 
@@ -146,9 +146,9 @@ class TestWindowSlidingLast(unittest.TestCase):
         timestamp_b = timestamp_a + window_range_ns
         timestamp_c = timestamp_b + window_range_ns + 1
 
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b = BoboPredicateFunction(predicate_key_a_value_b)
-        predicate_c = BoboPredicateFunction(predicate_key_a_value_c)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b = BoboPredicateCallable(predicate_key_a_value_b)
+        predicate_c = BoboPredicateCallable(predicate_key_a_value_c)
         predicate_first_window = WindowSlidingLast(
             window_range_ns)
 

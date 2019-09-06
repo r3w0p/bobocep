@@ -9,8 +9,8 @@ from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
 from bobocep.rules.bobo_rule_builder import BoboRuleBuilder
 from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.rules.nfas.patterns.bobo_pattern import BoboPattern
-from bobocep.rules.predicates.bobo_predicate_function import \
-    BoboPredicateFunction
+from bobocep.rules.predicates.bobo_predicate_callable import \
+    BoboPredicateCallable
 
 NFA_NAME_A = "NFA_NAME_A"
 RUN_ID_A = "run_id_a"
@@ -31,7 +31,7 @@ PREV_IDS_A = {KEY_PREV_A: VAL_PREV_A}
 
 event_a = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 
-stub_predicate = BoboPredicateFunction(lambda e, h, r: True)
+stub_predicate = BoboPredicateCallable(lambda e, h, r: True)
 
 stub_pattern = BoboPattern() \
     .followed_by(LABEL_LAYER_A, stub_predicate) \

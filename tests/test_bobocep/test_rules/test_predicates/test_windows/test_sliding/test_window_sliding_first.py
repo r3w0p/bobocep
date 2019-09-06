@@ -14,8 +14,8 @@ from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.rules.nfas.patterns.bobo_pattern import BoboPattern
-from bobocep.rules.predicates.bobo_predicate_function import \
-    BoboPredicateFunction
+from bobocep.rules.predicates.bobo_predicate_callable import \
+    BoboPredicateCallable
 from bobocep.rules.predicates.windows.sliding.window_sliding_first import \
     WindowSlidingFirst
 
@@ -105,9 +105,9 @@ class NFAHandlerSubscriber(INFAHandlerSubscriber):
 class TestWindowSlidingFirst(unittest.TestCase):
 
     def test_sliding_first_window_to_final(self):
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b = BoboPredicateFunction(predicate_key_a_value_b)
-        predicate_c = BoboPredicateFunction(predicate_key_a_value_c)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b = BoboPredicateCallable(predicate_key_a_value_b)
+        predicate_c = BoboPredicateCallable(predicate_key_a_value_c)
         predicate_first_window = WindowSlidingFirst(
             interval_sec=range_sec)
 
@@ -138,9 +138,9 @@ class TestWindowSlidingFirst(unittest.TestCase):
                               LABEL_LAYER_C: [event_c]})
 
     def test_sliding_first_window_to_halt(self):
-        predicate_a = BoboPredicateFunction(predicate_key_a_value_a)
-        predicate_b = BoboPredicateFunction(predicate_key_a_value_b)
-        predicate_c = BoboPredicateFunction(predicate_key_a_value_c)
+        predicate_a = BoboPredicateCallable(predicate_key_a_value_a)
+        predicate_b = BoboPredicateCallable(predicate_key_a_value_b)
+        predicate_c = BoboPredicateCallable(predicate_key_a_value_c)
         predicate_first_window = WindowSlidingFirst(
             interval_sec=range_sec)
 

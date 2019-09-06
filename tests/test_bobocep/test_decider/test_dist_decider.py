@@ -12,8 +12,8 @@ from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.rules.nfas.patterns.bobo_pattern import BoboPattern
-from bobocep.rules.predicates.bobo_predicate_function import \
-    BoboPredicateFunction
+from bobocep.rules.predicates.bobo_predicate_callable import \
+    BoboPredicateCallable
 
 
 def stub_predicate(event: BoboEvent,
@@ -23,9 +23,9 @@ def stub_predicate(event: BoboEvent,
 
 
 stub_pattern = BoboPattern() \
-    .followed_by('layer_1', BoboPredicateFunction(stub_predicate)) \
-    .followed_by('layer_2', BoboPredicateFunction(stub_predicate)) \
-    .followed_by('layer_3', BoboPredicateFunction(stub_predicate))
+    .followed_by('layer_1', BoboPredicateCallable(stub_predicate)) \
+    .followed_by('layer_2', BoboPredicateCallable(stub_predicate)) \
+    .followed_by('layer_3', BoboPredicateCallable(stub_predicate))
 
 stub_nfa = BoboRuleBuilder.nfa('nfa_name', stub_pattern)
 

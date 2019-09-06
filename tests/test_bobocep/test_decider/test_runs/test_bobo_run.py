@@ -10,8 +10,8 @@ from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.rules.nfas.patterns.bobo_pattern import BoboPattern
-from bobocep.rules.predicates.bobo_predicate_function import \
-    BoboPredicateFunction
+from bobocep.rules.predicates.bobo_predicate_callable import \
+    BoboPredicateCallable
 from bobocep.rules.states.bobo_state import BoboState
 
 NFA_NAME_A = "NFA_NAME_A"
@@ -28,7 +28,7 @@ event_a = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 event_b = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 event_c = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 
-stub_predicate = BoboPredicateFunction(lambda e, h, r: True)
+stub_predicate = BoboPredicateCallable(lambda e, h, r: True)
 
 state_invalid = BoboState(
     name=STATE_NAME_INVALID,

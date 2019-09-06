@@ -6,8 +6,8 @@ from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.events.primitive_event import PrimitiveEvent
-from bobocep.rules.predicates.bobo_predicate_function import \
-    BoboPredicateFunction
+from bobocep.rules.predicates.bobo_predicate_callable import \
+    BoboPredicateCallable
 from bobocep.rules.states.bobo_state import BoboState
 
 STATE_A = "state_a"
@@ -36,7 +36,7 @@ class TestBoboState(unittest.TestCase):
         event = PrimitiveEvent(EpochNSClock.generate_timestamp(), KEY_VALUE)
         history = BoboHistory()
         recents = []
-        predicate = BoboPredicateFunction(predicate_key_value)
+        predicate = BoboPredicateCallable(predicate_key_value)
         state = BoboState(STATE_A, LABEL_LAYER_A, predicate)
 
         self.assertTrue(state.process(event, history, recents))
@@ -47,7 +47,7 @@ class TestBoboState(unittest.TestCase):
                                        KEY_VALUE)
         history = BoboHistory({STATE_A: [history_event]})
         recents = []
-        predicate = BoboPredicateFunction(
+        predicate = BoboPredicateCallable(
             predicate_first_history_key_value)
         state = BoboState(STATE_A, LABEL_LAYER_A, predicate)
 

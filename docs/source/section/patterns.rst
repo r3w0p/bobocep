@@ -68,13 +68,13 @@ i.e. an *anonymous function*.
 
 Where :code:`e` is the :code:`BoboEvent` instance, :code:`h` is the :code:`BoboHistory` instance, and :code:`r` is the
 list of recently accepted complex events.
-When the predicate is defined, it needs to be placed into a :code:`BoboPredicateFunction` instance, as follows.
+When the predicate is defined, it needs to be placed into a :code:`BoboPredicateCallable` instance, as follows.
 
 .. code:: python
 
-    from bobocep.rules.predicates.bobo_predicate_function import BoboPredicateFunction
+    from bobocep.rules.predicates.bobo_predicate_callable import BoboPredicateCallable
 
-    pred_func = BoboPredicateFunction(predicate)
+    pred_func = BoboPredicateCallable(predicate)
 
 If the predicate returns :code:`True`, the state associated with the predicate becomes the next state of the run.
 If :code:`False`, the run will take some other action, depending on the **contiguity** policy associated with the
@@ -173,7 +173,7 @@ generated.
 .. code:: python
 
     pattern.haltcondition(
-        BoboPredicateFunction(lambda e, h, r: isinstance(e, CompositeEvent) and e.name == 'B')
+        BoboPredicateCallable(lambda e, h, r: isinstance(e, CompositeEvent) and e.name == 'B')
 
 Each successive call of :code:`haltcondition` will add another predicate to the list.
 
