@@ -34,7 +34,7 @@ class WindowSliding(BoboPredicateWindow, ABC):
     def evaluate(self,
                  event: BoboEvent,
                  history: BoboHistory,
-                 recents: List[CompositeEvent]) -> bool:
+                 recent: List[CompositeEvent]) -> bool:
         event_history = self.get_previous_event(history)
         return (event.timestamp -
                 event_history.timestamp) <= self._interval_ns

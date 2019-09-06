@@ -24,25 +24,25 @@ NFA_NAME_A = "NFA_NAME_A"
 
 def predicate_key_a_value_a(event: BoboEvent,
                             history: BoboHistory,
-                            recents: List[CompositeEvent]):
+                            recent: List[CompositeEvent]):
     return event.data == 1
 
 
 def predicate_key_a_value_b(event: BoboEvent,
                             history: BoboHistory,
-                            recents: List[CompositeEvent]):
+                            recent: List[CompositeEvent]):
     return event.data == 2
 
 
 def predicate_key_a_value_c(event: BoboEvent,
                             history: BoboHistory,
-                            recents: List[CompositeEvent]):
+                            recent: List[CompositeEvent]):
     return event.data == 3
 
 
 def predicate_key_a_value_d(event: BoboEvent,
                             history: BoboHistory,
-                            recents: List[CompositeEvent]):
+                            recent: List[CompositeEvent]):
     return event.data == 4
 
 

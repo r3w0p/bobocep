@@ -17,7 +17,7 @@ class BoboPredicate(AbstractPredicate):
     def evaluate(self,
                  event: BoboEvent,
                  history: BoboHistory,
-                 recents: List[CompositeEvent]) -> bool:
+                 recent: List[CompositeEvent]) -> bool:
         """Evaluates the predicate.
 
         :param event: An event.
@@ -26,9 +26,9 @@ class BoboPredicate(AbstractPredicate):
         :param history: A history of events.
         :type history: BoboHistory
 
-        :param recents: Recently accepted complex events of the corresponding
+        :param recent: Recently accepted complex events of the corresponding
                         automaton.
-        :type recents: List[CompositeEvent]
+        :type recent: List[CompositeEvent]
 
         :return: True if the predicate evaluates to True,
                  False otherwise.

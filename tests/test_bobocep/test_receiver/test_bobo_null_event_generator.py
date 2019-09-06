@@ -21,10 +21,17 @@ class TestBoboNullEventGenerator(unittest.TestCase):
         self.assertFalse(nullgen._cancelled)
 
         nullgen.setup()
-        nullgen.loop()
 
+        # attempt without activating generator
+        nullgen.loop()
+        self.assertEqual(0, receiver._data_queue.qsize())
+
+        # activate
+        nullgen.activate()
+        nullgen.loop()
         self.assertEqual(1, receiver._data_queue.qsize())
         self.assertEqual(null_data, receiver._data_queue.get_nowait())
 
+        # cancel
         nullgen.cancel()
         self.assertTrue(nullgen._cancelled)

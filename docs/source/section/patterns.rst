@@ -37,14 +37,15 @@ Transitions
 
 Building a pattern requires building a sequence of **transitions** between layers of states.
 To cause a state transition, an event is required to fulfil the criteria of the state's **predicate**.
-The predicate is a function that takes two arguments:
+The predicate is a function that takes three arguments:
 
 - The event that is attempting to fulfil the criteria.
 - A :code:`BoboHistory` instance that contains all of the previous events that have currently been accepted by the
   run of the automaton.
-- A list of recently accepted complex events, represented as :code:`CompositeEvent` instances.
+- Recently accepted complex events, represented as a list of :code:`CompositeEvent` instances in descending order,
+  with the most recent event at the start of the list.
 
-In Python, we can define a predicate function in two ways.
+In Python, we can define a predicate in three ways.
 A regular `function <https://docs.python.org/3/tutorial/controlflow.html?#defining-functions>`_.
 
 .. code:: python
@@ -54,17 +55,31 @@ A regular `function <https://docs.python.org/3/tutorial/controlflow.html?#defini
     from bobocep.rules.events.histories.bobo_history import BoboHistory
     from bobocep.rules.events.composite_event import CompositeEvent
 
-    def my_function(event: BoboEvent, history: BoboHistory, recents: List[CompositeEvent]) -> bool:
+    def my_function(event: BoboEvent, history: BoboHistory, recent: List[CompositeEvent]) -> bool:
         # return [...]
 
     predicate = my_function
 
-Or, a `lambda <https://docs.python.org/3/tutorial/controlflow.html?#lambda-expressions>`_ expression
-i.e. an *anonymous function*.
+A `lambda <https://docs.python.org/3/tutorial/controlflow.html?#lambda-expressions>`_ expression
+i.e. *anonymous function*.
 
 .. code:: python
 
     predicate = lambda e, h, r: # [...]
+
+
+Or, an object's `method <https://docs.python.org/3/tutorial/classes.html#a-first-look-at-classes>`_.
+
+.. code:: python
+
+    class MyClass:
+
+        def my_method(self, event: BoboEvent, history: BoboHistory, recent: List[CompositeEvent]) -> bool:
+            # return [...]
+
+    obj = MyClass()
+    predicate = obj.my_method
+
 
 Where :code:`e` is the :code:`BoboEvent` instance, :code:`h` is the :code:`BoboHistory` instance, and :code:`r` is the
 list of recently accepted complex events.
@@ -74,7 +89,7 @@ When the predicate is defined, it needs to be placed into a :code:`BoboPredicate
 
     from bobocep.rules.predicates.bobo_predicate_callable import BoboPredicateCallable
 
-    pred_func = BoboPredicateCallable(predicate)
+    pred_call = BoboPredicateCallable(predicate)
 
 If the predicate returns :code:`True`, the state associated with the predicate becomes the next state of the run.
 If :code:`False`, the run will take some other action, depending on the **contiguity** policy associated with the
@@ -98,7 +113,7 @@ The :code:`next` interface is used for strict contiguity.
 
     pattern.next(
         label="label_strict",
-        predicate=pred_func)
+        predicate=pred_call)
 
 
 Relaxed
@@ -112,7 +127,7 @@ The :code:`followed_by` interface is used for relaxed contiguity.
 
     pattern.followed_by(
         label="label_relaxed",
-        predicate=pred_func)
+        predicate=pred_call)
 
 
 Non-Deterministic Relaxed
@@ -126,9 +141,9 @@ The :code:`followed_by_any` interface is used for non-deterministic relaxed cont
     pattern.followed_by_any(
         label="label_nondet",
         predicates=[
-            pred_func_1,
-            pred_func_2,
-            pred_func_n
+            pred_call_1,
+            pred_call_2,
+            pred_call_n
         ])
 
 

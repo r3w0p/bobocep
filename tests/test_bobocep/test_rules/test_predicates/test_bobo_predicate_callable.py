@@ -58,14 +58,14 @@ class TestBoboPredicateCallableFunction(unittest.TestCase):
     def test_valid_function(self):
         f = BoboPredicateCallable(valid_function)
         history = BoboHistory()
-        recents = []
+        recent = []
 
         self.assertTrue(f.evaluate(
             event=PrimitiveEvent(
                 EpochNSClock.generate_timestamp(),
                 KEY_VALUE),
             history=history,
-            recents=recents))
+            recent=recent))
 
     def test_invalid_function_no_params(self):
         with self.assertRaises(RuntimeError):
@@ -86,14 +86,14 @@ class TestBoboPredicateCallableMethod(unittest.TestCase):
         obj = TestBoboPredicateCallableMethods()
         f = BoboPredicateCallable(obj.valid_method)
         history = BoboHistory()
-        recents = []
+        recent = []
 
         self.assertTrue(f.evaluate(
             event=PrimitiveEvent(
                 EpochNSClock.generate_timestamp(),
                 KEY_VALUE),
             history=history,
-            recents=recents))
+            recent=recent))
 
     def test_invalid_method_no_params(self):
         with self.assertRaises(RuntimeError):

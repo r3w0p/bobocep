@@ -18,7 +18,7 @@ from bobocep.rules.predicates.bobo_predicate_callable import \
 
 def stub_predicate(event: BoboEvent,
                    history: BoboHistory,
-                   recents: List[CompositeEvent]):
+                   recent: List[CompositeEvent]):
     return True
 
 

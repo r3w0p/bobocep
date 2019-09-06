@@ -34,5 +34,5 @@ class WindowFixed(BoboPredicateWindow):
     def evaluate(self,
                  event: BoboEvent,
                  history: BoboHistory,
-                 recents: List[CompositeEvent]) -> bool:
+                 recent: List[CompositeEvent]) -> bool:
         return self._lower_ns <= event.timestamp <= self._upper_ns

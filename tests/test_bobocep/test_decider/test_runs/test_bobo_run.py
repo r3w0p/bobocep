@@ -108,9 +108,9 @@ class TestBoboRun(unittest.TestCase):
 
         self.assertFalse(run.is_halted())
 
-        run.process(event=event_a, recents=[])
-        run.process(event=event_b, recents=[])
-        run.process(event=event_c, recents=[])
+        run.process(event=event_a, recent=[])
+        run.process(event=event_b, recent=[])
+        run.process(event=event_c, recent=[])
 
         self.assertTrue(run.is_halted())
 
@@ -120,11 +120,11 @@ class TestBoboRun(unittest.TestCase):
             pattern=stub_pattern)
 
         self.assertEqual(0, len(runsub.transition))
-        run.process(event=event_a, recents=[])
+        run.process(event=event_a, recent=[])
         self.assertEqual(1, len(runsub.transition))
 
         run.unsubscribe(runsub)
-        run.process(event=event_b, recents=[])
+        run.process(event=event_b, recent=[])
         self.assertEqual(1, len(runsub.transition))
 
     def test_halt(self):
@@ -148,7 +148,7 @@ class TestBoboRun(unittest.TestCase):
                 state=state_invalid,
                 event=event_a,
                 history=BoboHistory(),
-                recents=[])
+                recent=[])
 
     def test_proceed_invalid_states(self):
         run, runsub = run_setup(

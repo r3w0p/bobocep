@@ -24,9 +24,27 @@ class BoboNullDataGenerator(BoboTask):
 
         self.receiver = receiver
         self.null_data = null_data if null_data is not None else {}
+        self._active = False
 
     def _loop(self) -> None:
-        self.receiver.add_data(copy(self.null_data))
+        if self._active:
+            self.receiver.add_data(copy(self.null_data))
+
+    def activate(self) -> None:
+        """
+        Activates the null data generator.
+        """
+
+        with self._lock:
+            self._active = True
+
+    def deactivate(self) -> None:
+        """
+        Deactivates the null data generator.
+        """
+
+        with self._lock:
+            self._active = False
 
     def _setup(self) -> None:
         """"""

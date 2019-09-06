@@ -163,16 +163,16 @@ class BoboRun(AbstractRun):
 
         return "{}-{}".format(nfa_name, start_event_id)
 
-    def process(self, event: BoboEvent, recents: List[CompositeEvent]) -> None:
+    def process(self, event: BoboEvent, recent: List[CompositeEvent]) -> None:
         """
         Process an event.
 
         :param event: The event to process.
         :type event: BoboEvent
 
-        :param recents: Recently accepted complex events of the corresponding
+        :param recent: Recently accepted complex events of the corresponding
                         automaton.
-        :type recents: List[CompositeEvent]
+        :type recent: List[CompositeEvent]
 
         :raises RuntimeError: Run has already halted.
         """
@@ -187,11 +187,11 @@ class BoboRun(AbstractRun):
                 self.id,
                 self.version)
 
-            if self._any_preconditions_failed(event, history, recents) or \
-                    self._any_haltconditions_passed(event, history, recents):
+            if self._any_preconditions_failed(event, history, recent) or \
+                    self._any_haltconditions_passed(event, history, recent):
                 self.set_halt()
             else:
-                self._handle_state(self.current_state, event, history, recents)
+                self._handle_state(self.current_state, event, history, recent)
 
     def last_process_cloned(self) -> bool:
         """
@@ -293,7 +293,7 @@ class BoboRun(AbstractRun):
                       state: BoboState,
                       event: BoboEvent,
                       history: BoboHistory,
-                      recents: List[CompositeEvent]) -> None:
+                      recent: List[CompositeEvent]) -> None:
         transition = self.nfa.transitions.get(state.name)
 
         if transition is None:
@@ -305,7 +305,7 @@ class BoboRun(AbstractRun):
             trans_state = self.nfa.states[trans_state_name]
 
             # state successfully fulfilled
-            if trans_state.process(event, history, recents):
+            if trans_state.process(event, history, recent):
                 # negated i.e. should NOT have occurred, so halt
                 if trans_state.is_negated:
                     self.set_halt()
@@ -331,7 +331,7 @@ class BoboRun(AbstractRun):
                 # if optional, or if state is negated: move to the next state
                 if transition.is_deterministic and \
                         (trans_state.is_optional or trans_state.is_negated):
-                    self._handle_state(trans_state, event, history, recents)
+                    self._handle_state(trans_state, event, history, recent)
 
                 # halt if requires strict contiguity
                 elif transition.is_strict:
@@ -403,19 +403,19 @@ class BoboRun(AbstractRun):
     def _any_preconditions_failed(self,
                                   event: BoboEvent,
                                   history: BoboHistory,
-                                  recents: List[CompositeEvent]) -> bool:
+                                  recent: List[CompositeEvent]) -> bool:
         """If any preconditions are False, return True."""
 
-        return any(not p.evaluate(event, history, recents)
+        return any(not p.evaluate(event, history, recent)
                    for p in self.nfa.preconditions)
 
     def _any_haltconditions_passed(self,
                                    event: BoboEvent,
                                    history: BoboHistory,
-                                   recents: List[CompositeEvent]) -> bool:
+                                   recent: List[CompositeEvent]) -> bool:
         """If any haltconditions are True, return True."""
 
-        return any(p.evaluate(event, history, recents)
+        return any(p.evaluate(event, history, recent)
                    for p in self.nfa.haltconditions)
 
     def _notify_transition(self,

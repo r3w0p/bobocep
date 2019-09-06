@@ -49,7 +49,7 @@ class BoboState(AbstractState):
     def process(self,
                 event: BoboEvent,
                 history: BoboHistory,
-                recents: List[CompositeEvent]) -> bool:
+                recent: List[CompositeEvent]) -> bool:
         """Evaluates the state predicate.
 
         :param event: The event used in the evaluation.
@@ -59,13 +59,13 @@ class BoboState(AbstractState):
                         corresponding automaton.
         :type history: BoboHistory
 
-        :param recents: Recently accepted complex events of the corresponding
+        :param recent: Recently accepted complex events of the corresponding
                         automaton.
-        :type recents: List[CompositeEvent]
+        :type recent: List[CompositeEvent]
 
         :return: True if the state's predicate evaluates to True,
                  False otherwise.
         :rtype: bool
         """
 
-        return self.predicate.evaluate(event, history, recents)
+        return self.predicate.evaluate(event, history, recent)

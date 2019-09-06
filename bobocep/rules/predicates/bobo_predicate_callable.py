@@ -38,5 +38,5 @@ class BoboPredicateCallable(BoboPredicate):
     def evaluate(self,
                  event: BoboEvent,
                  history: BoboHistory,
-                 recents: List[CompositeEvent]) -> bool:
-        return self._call(event, history, recents)
+                 recent: List[CompositeEvent]) -> bool:
+        return self._call(event, history, recent)
