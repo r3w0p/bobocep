@@ -23,4 +23,4 @@ class ActionProducer(BoboProducer):
         self._action = action
 
     def _handle_composite_event(self, event: CompositeEvent) -> bool:
-        return self._action.perform_action(event)
+        return self._action.execute(event)[0]

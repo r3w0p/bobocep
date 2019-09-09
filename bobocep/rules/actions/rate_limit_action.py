@@ -56,7 +56,7 @@ class RateLimitAction(BoboAction):
             if name not in self._names:
                 self._names.append(name)
 
-    def perform_action(self, event: CompositeEvent) -> bool:
+    def _perform_action(self, event: CompositeEvent) -> bool:
         with self._lock:
             name = event.name
             rate = self._limit_dict[name] if name in self._names \

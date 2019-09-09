@@ -13,7 +13,7 @@ class StubBoboAction(BoboAction):
 
         self.events = []
 
-    def perform_action(self, event: CompositeEvent) -> bool:
+    def _perform_action(self, event: CompositeEvent) -> bool:
         self.events.append(event)
         return True
 
@@ -33,5 +33,5 @@ class TestBoboAction(unittest.TestCase):
 
         stubaction = StubBoboAction()
 
-        self.assertTrue(stubaction.perform_action(c_event))
+        self.assertTrue(stubaction.execute(c_event)[0])
         self.assertListEqual([c_event], stubaction.events)

@@ -16,5 +16,5 @@ class NoAction(BoboAction):
 
         self._bool_return = bool_return
 
-    def perform_action(self, event: CompositeEvent) -> bool:
+    def _perform_action(self, event: CompositeEvent) -> bool:
         return self._bool_return

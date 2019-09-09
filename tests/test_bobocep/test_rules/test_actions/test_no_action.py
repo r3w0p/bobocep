@@ -19,4 +19,4 @@ class TestNoAction(unittest.TestCase):
                                  history=history,
                                  data=data)
 
-        self.assertTrue(NoAction().perform_action(c_event))
+        self.assertTrue(NoAction().execute(c_event)[0])

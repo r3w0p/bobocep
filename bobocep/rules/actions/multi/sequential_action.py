@@ -12,13 +12,16 @@ class SequentialAction(MultiAction):
     :param actions: The actions to execute, in list order.
     :type actions: List[BoboAction]
 
-    :param all_success: All actions must be successful for perform_action to
-                        return True, defaults to True.
+    :param all_success: All actions must be successful to be a successful
+                        execution; otherwise, the success of *at least one*
+                        action would result in an overall success,
+                        Defaults to True.
     :type all_success: bool, optional
 
     :param early_stop: Will immediately return False on the first unsuccessful
                        action and not execute any remaining actions,
-                       defaults to True.
+                       defaults to True. Note that any uncaught exception would
+                       still cause an early stop and immediate failure.
     :type early_stop: bool, optional
     """
 
@@ -32,11 +35,11 @@ class SequentialAction(MultiAction):
         self._all_success = all_success
         self._early_stop = early_stop
 
-    def perform_action(self, event: CompositeEvent) -> bool:
+    def _perform_action(self, event: CompositeEvent) -> bool:
         results = []
 
         for action in self._actions:
-            if action.perform_action(event):
+            if action.execute(event)[0]:
                 results.append(True)
             elif self._early_stop:
                 return False

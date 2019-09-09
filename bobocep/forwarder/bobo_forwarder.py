@@ -3,14 +3,14 @@ from queue import Queue
 
 from bobocep.forwarder.abstract_forwarder import AbstractForwarder
 from bobocep.forwarder.forwarder_subscriber import IForwarderSubscriber
-from bobocep.producer.producer_subscriber import IProducerSubscriber
+from bobocep.rules.actions.action_subscriber import IActionSubscriber
 from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.setup.task.bobo_task import BoboTask
 
 
 class BoboForwarder(AbstractForwarder,
                     BoboTask,
-                    IProducerSubscriber,
+                    IActionSubscriber,
                     ABC):
     """A :code:`bobocep` event forwarder that forwards CompositeEvent
     instances.
@@ -50,7 +50,13 @@ class BoboForwarder(AbstractForwarder,
                 else:
                     self._notify_failure(event)
 
-    def on_accepted_producer_event(self, event: CompositeEvent):
+    def on_action_success(self, event: CompositeEvent) -> None:
+        if not self._cancelled:
+            self._event_queue.put_nowait(event)
+
+    def on_action_failure(self,
+                          event: CompositeEvent,
+                          exception: Exception = None) -> None:
         if not self._cancelled:
             self._event_queue.put_nowait(event)
 
@@ -82,9 +88,6 @@ class BoboForwarder(AbstractForwarder,
     def _notify_failure(self, event: CompositeEvent):
         for subscriber in self._subs:
             subscriber.on_forwarder_failure_event(event)
-
-    def on_rejected_producer_event(self, event: CompositeEvent) -> None:
-        """"""
 
     def _setup(self) -> None:
         """"""
