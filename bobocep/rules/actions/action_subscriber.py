@@ -7,7 +7,7 @@ class IActionSubscriber(ABC):
     """An interface to subscribe to Action events."""
 
     @abstractmethod
-    def on_action_success(self, event: CompositeEvent) -> None:
+    def on_action_success(self, event: CompositeEvent):
         """
         When an action is successful in its execution.
 
@@ -18,7 +18,7 @@ class IActionSubscriber(ABC):
     @abstractmethod
     def on_action_failure(self,
                           event: CompositeEvent,
-                          exception: Exception = None) -> None:
+                          exception: Exception = None):
         """
         When an action is unsuccessful in its execution.
 

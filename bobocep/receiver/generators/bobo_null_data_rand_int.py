@@ -20,7 +20,8 @@ class BoboNullDataRandInt(BoboNullData):
         super().__init__()
 
         if imin >= imax:
-            raise RuntimeError("Value of imin {} must be lower than imax {}."
+            raise RuntimeError("Minimum value {} must be lower than "
+                               "maximum value {}."
                                .format(imin, imax))
 
         self._imin = imin

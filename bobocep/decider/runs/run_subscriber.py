@@ -12,7 +12,7 @@ class IRunSubscriber(ABC):
                           state_name_from: str,
                           state_name_to: str,
                           event: BoboEvent,
-                          notify: bool) -> None:
+                          notify: bool):
         """Triggers a response when a state transition occurs in a run.
 
         :param run_id: The run ID.
@@ -63,7 +63,7 @@ class IRunSubscriber(ABC):
                      run_id: str,
                      history: BoboHistory,
                      halt: bool,
-                     notify: bool) -> None:
+                     notify: bool):
         """Triggers a response when a run reaches its final state.
 
         :param run_id: The run ID.
@@ -83,7 +83,7 @@ class IRunSubscriber(ABC):
     @abstractmethod
     def on_run_halt(self,
                     run_id: str,
-                    notify: bool) -> None:
+                    notify: bool):
         """Triggers a response when a run halts. This occurs if a run reaches
         its final state, or if a run halts prematurely.
 

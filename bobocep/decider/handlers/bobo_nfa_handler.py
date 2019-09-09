@@ -55,13 +55,23 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
             self._check_event_against_runs(event, recent)
 
             if self.nfa.start_state.process(event, {}, recent):
-                # only notify if start state isn't also final state
-                self.on_run_clone(
+                # only notify clone if start state isn't the final state
+                clone_run = self.on_run_clone(
                     state_name=self.nfa.start_state.name,
                     event=event,
                     parent_run_id=None,
                     force_parent=False,
-                    notify=True)
+                    notify=not self.nfa.start_is_final)
+
+                if clone_run.is_final():
+                    self.on_run_final(
+                        run_id=clone_run.id,
+                        history=BoboHistory({
+                            clone_run.current_state.label: [clone_run.event]
+                        }),
+                        halt=True,
+                        notify=True
+                    )
 
     def _check_event_against_runs(self,
                                   event: BoboEvent,
@@ -159,11 +169,13 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
                      event: BoboEvent,
                      parent_run_id: str = None,
                      force_parent: bool = False,
-                     notify: bool = True) -> None:
+                     notify: bool = True) -> BoboRun:
         """
         :raises RuntimeError: No parent run found when either one is specified
                               or force_parent is True.
         :raises RuntimeError: State name not found in automaton.
+
+        :return: The newly cloned run.
         """
 
         with self._lock:
@@ -194,21 +206,13 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
 
             self.add_run(clone_run)
 
-            if clone_run.is_final():
-                self.on_run_final(
-                    run_id=clone_run.id,
-                    history=BoboHistory({
-                        clone_run.current_state.label: [clone_run.event]
-                    }),
-                    halt=True,
-                    notify=notify
-                )
-
-            elif notify:
+            if notify:
                 self._notify_clone(
                     run_id=clone_run.id,
                     state_name=clone_run.current_state.name,
                     event=clone_run.event)
+
+            return clone_run
 
     def on_run_final(self,
                      run_id: str,
@@ -235,11 +239,11 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
                 name=self.nfa.name,
                 history=history)
 
-            if notify:
-                self._notify_final(run_id, event)
-
             self._add_recent(event)
             self.remove_run(run_id)
+
+            if notify:
+                self._notify_final(run_id, event)
 
     def on_run_halt(self,
                     run_id: str,

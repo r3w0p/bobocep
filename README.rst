@@ -44,6 +44,10 @@
    :target: https://www.buymeacoffee.com/r3w0p
    :alt: Buy Me A Coffee
 
+.. image:: https://img.shields.io/badge/donate-PayPal-blue.svg
+   :target: https://www.paypal.me/apowpow
+   :alt: PayPal
+
 |
 
 :code:`bobocep` is a `complex event processing <https://en.wikipedia.org/wiki/Complex_event_processing>`_ (CEP) engine

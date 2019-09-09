@@ -9,7 +9,7 @@ class IDeciderSubscriber(ABC):
     @abstractmethod
     def on_decider_complex_event(self,
                                  nfa_name: str,
-                                 event: CompositeEvent) -> None:
+                                 event: CompositeEvent):
         """
         When a Decider identifies a complex event in the event stream.
 

@@ -7,7 +7,7 @@ class IProducerSubscriber(ABC):
     """An interface to subscribe to Producer events."""
 
     @abstractmethod
-    def on_accepted_producer_event(self, event: CompositeEvent) -> None:
+    def on_accepted_producer_event(self, event: CompositeEvent):
         """
         Complex events accepted by a Producer.
 
@@ -16,7 +16,7 @@ class IProducerSubscriber(ABC):
         """
 
     @abstractmethod
-    def on_rejected_producer_event(self, event: CompositeEvent) -> None:
+    def on_rejected_producer_event(self, event: CompositeEvent):
         """
         Complex events rejected by a Producer.
 

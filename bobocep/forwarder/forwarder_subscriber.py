@@ -7,7 +7,7 @@ class IForwarderSubscriber(ABC):
     """An interface to subscribe to Forwarder events."""
 
     @abstractmethod
-    def on_forwarder_success_event(self, event: CompositeEvent) -> None:
+    def on_forwarder_success_event(self, event: CompositeEvent):
         """
         Events that have been successfully forwarded.
 
@@ -16,7 +16,7 @@ class IForwarderSubscriber(ABC):
         """
 
     @abstractmethod
-    def on_forwarder_failure_event(self, event: CompositeEvent) -> None:
+    def on_forwarder_failure_event(self, event: CompositeEvent):
         """
         Events that failed to be forwarded.
 

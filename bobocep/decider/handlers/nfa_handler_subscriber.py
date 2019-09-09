@@ -12,7 +12,7 @@ class INFAHandlerSubscriber(ABC):
                               run_id: str,
                               state_name_from: str,
                               state_name_to: str,
-                              event: BoboEvent) -> None:
+                              event: BoboEvent):
         """
         Triggers a response when a state transition occurs in a run.
 
@@ -37,7 +37,7 @@ class INFAHandlerSubscriber(ABC):
                          nfa_name: str,
                          run_id: str,
                          state_name: str,
-                         event: BoboEvent) -> None:
+                         event: BoboEvent):
         """Triggers a response when a clone occurs in a run. Newly created runs
         are considered to be cloned but without a parent run.
 
@@ -58,7 +58,7 @@ class INFAHandlerSubscriber(ABC):
     def on_handler_final(self,
                          nfa_name: str,
                          run_id: str,
-                         event: CompositeEvent) -> None:
+                         event: CompositeEvent):
         """Triggers a response when a run reaches its final state.
 
         :param nfa_name: The NFA name.
@@ -74,7 +74,7 @@ class INFAHandlerSubscriber(ABC):
     @abstractmethod
     def on_handler_halt(self,
                         nfa_name: str,
-                        run_id: str) -> None:
+                        run_id: str):
         """Triggers a response when a run halts. This occurs if a run reaches
         its final state, or if a run halts prematurely.
 

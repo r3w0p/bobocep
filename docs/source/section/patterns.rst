@@ -163,8 +163,8 @@ time limit.
 This is important for *state clearance* i.e. ensuring runs are always eventually halted and removed from memory,
 to prevent an endless build-up of incomplete runs with no means of halting.
 
-For example, if we want to ensure that all events occur within 1 minute of each other, we can use the
-:code:`BoboPredicateWindowSlidingFirst` class to specify the time interval, in seconds, that can exist between
+For example, if we want to ensure that all events occur within 1 minute of each other, we can use
+:code:`WindowSlidingFirst` to specify the time interval, in seconds, that can exist between
 the first event accepted by a run and the current event being checked.
 
 .. code:: python
