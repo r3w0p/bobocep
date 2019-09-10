@@ -455,21 +455,30 @@ class BoboSetup:
                     max_recent=self._max_recent)
             )
 
-            # Decider subscriptions
+            # Decider -> Producer
             self._decider.subscribe(event_def.name, self._producer)
 
-            # Producer subscriptions
-            self._producer.subscribe(event_def.name, event_def.action)
+            # Producer -> Forwarder
+            self._producer.subscribe(event_def.name, self._forwarder)
+
+            if event_def.action is not None:
+                # Producer -> Action
+                self._producer.subscribe(event_def.name, event_def.action)
+
+                # Action -> Forwarder
+                event_def.action.subscribe(self._forwarder)
 
             if self._recursive:
+                # Producer -> Decider
                 self._producer.subscribe(event_def.name, self._decider)
 
-            # Action subscriptions
-            event_def.action.subscribe(self._forwarder)
+                # Action -> Decider
+                if event_def.action is not None:
+                    event_def.action.subscribe(self._decider)
 
-        # Distributed subscriptions
         if self._distributed:
             for handler in self._decider.get_handlers():
+                # Handler -> Manager
                 handler.subscribe(self._manager.outgoing)
 
     def _config_extra_subscriptions(self):

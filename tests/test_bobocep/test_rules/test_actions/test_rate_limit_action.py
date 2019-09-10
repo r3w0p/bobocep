@@ -51,8 +51,8 @@ class TestRateLimitAction(unittest.TestCase):
 
         action = RateLimitAction()
 
-        self.assertTrue(action.execute(event_a)[0])
-        self.assertTrue(action.execute(event_b)[0])
+        self.assertTrue(action.execute(event_a).success)
+        self.assertTrue(action.execute(event_b).success)
 
     def test_two_events_same_name_before_rate_elapse(self):
         event_a1 = generate_composite_event(NAME_A)
@@ -60,8 +60,8 @@ class TestRateLimitAction(unittest.TestCase):
 
         action = RateLimitAction(limit_dict=LIMIT_A)
 
-        self.assertTrue(action.execute(event_a1)[0])
-        self.assertFalse(action.execute(event_a2)[0])
+        self.assertTrue(action.execute(event_a1).success)
+        self.assertFalse(action.execute(event_a2).success)
 
     def test_two_events_same_name_after_rate_elapse(self):
         rate = 1
@@ -71,8 +71,8 @@ class TestRateLimitAction(unittest.TestCase):
 
         action = RateLimitAction(limit_dict={NAME_A: rate})
 
-        self.assertTrue(action.execute(event_a1)[0])
-        self.assertTrue(action.execute(event_a2)[0])
+        self.assertTrue(action.execute(event_a1).success)
+        self.assertTrue(action.execute(event_a2).success)
 
     def test_three_events_different_names_two_limited(self):
         event_a = generate_composite_event(NAME_A)
@@ -81,6 +81,6 @@ class TestRateLimitAction(unittest.TestCase):
 
         action = RateLimitAction(limit_dict=LIMIT_AB)
 
-        self.assertTrue(action.execute(event_a)[0])
-        self.assertTrue(action.execute(event_b)[0])
-        self.assertTrue(action.execute(event_c)[0])
+        self.assertTrue(action.execute(event_a).success)
+        self.assertTrue(action.execute(event_b).success)
+        self.assertTrue(action.execute(event_c).success)

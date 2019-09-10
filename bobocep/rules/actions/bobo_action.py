@@ -1,34 +1,40 @@
 from abc import abstractmethod
 from threading import RLock
-from typing import Tuple, Optional
 
 from bobocep.producer.producer_subscriber import IProducerSubscriber
+from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
 from bobocep.rules.actions.abstract_action import AbstractAction
 from bobocep.rules.actions.action_subscriber import IActionSubscriber
+from bobocep.rules.events.action_event import ActionEvent
+from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.composite_event import CompositeEvent
 
 
 class BoboAction(AbstractAction,
                  IProducerSubscriber):
-    """A :code:`bobocep` action that can execute some given task."""
+    """A :code:`bobocep` action that can execute some given task.
 
-    def __init__(self) -> None:
+    :param name: The action name, defaults to an empty string.
+    :type name: str, optional
+    """
+
+    def __init__(self, name: str = None) -> None:
         super().__init__()
 
+        self.name = name if name is not None else ""
         self._subs = []
         self._lock = RLock()
 
     @abstractmethod
-    def _perform_action(self, event: CompositeEvent) -> bool:
+    def _perform_action(self, event: BoboEvent) -> bool:
         """"""
 
-    def execute(self,
-                event: CompositeEvent) -> Tuple[bool, Optional[Exception]]:
+    def execute(self, event: BoboEvent) -> ActionEvent:
         """
         Executes the action.
 
-        :param event: A composite event to use as part of the action process.
-        :type event: CompositeEvent
+        :param event: An event to use as part of the action process.
+        :type event: BoboEvent
 
         :return: A Tuple containing the success of the action execution, and
                  any exception that was raised on failure, or None if an
@@ -38,18 +44,25 @@ class BoboAction(AbstractAction,
         with self._lock:
             success = False
             exception = None
+            description = None
 
             try:
                 success = self._perform_action(event=event)
             except Exception as e:
-                exception = e
+                exception = type(e).__name__
+                description = str(e)
 
-            if success:
-                self._notify_success(event=event)
-            else:
-                self._notify_failure(event=event, exception=exception)
+            action_event = ActionEvent(
+                timestamp=EpochNSClock.generate_timestamp(),
+                name=self.name,
+                success=success,
+                for_event=event,
+                exception=exception if exception is not None else None,
+                description=description if description is not None else None
+            )
 
-            return success, exception
+            self._notify_action_attempt(event=action_event)
+            return action_event
 
     def on_accepted_producer_event(self, event: CompositeEvent) -> None:
         self.execute(event=event)
@@ -77,12 +90,6 @@ class BoboAction(AbstractAction,
             if unsubscriber in self._subs:
                 self._subs.remove(unsubscriber)
 
-    def _notify_success(self, event: CompositeEvent):
+    def _notify_action_attempt(self, event: ActionEvent):
         for sub in self._subs:
-            sub.on_action_success(event=event)
-
-    def _notify_failure(self,
-                        event: CompositeEvent,
-                        exception: Exception = None):
-        for sub in self._subs:
-            sub.on_action_failure(event=event, exception=exception)
+            sub.on_action_attempt(event=event)

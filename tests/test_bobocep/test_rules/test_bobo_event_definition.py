@@ -32,4 +32,4 @@ class TestBoboEventDefinition(unittest.TestCase):
 
         self.assertEqual(name, evdef.name)
         self.assertEqual(pattern, evdef.pattern)
-        self.assertIsInstance(evdef.action, NoAction)
+        self.assertIsNone(evdef.action)

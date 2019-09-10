@@ -12,6 +12,9 @@ class RateLimitAction(BoboAction):
     If multiple instances are created within the rate, the subsequence
     ones are dropped i.e. the action returns :code:`False`.
 
+    :param name: The action name, defaults to an empty string.
+    :type name: str, optional
+
     :param limit_dict: Key-value pairs, where the key is the CompositeEvent
                        name and the value is the desired rate, in seconds.
                        Defaults to an empty dict.
@@ -23,9 +26,10 @@ class RateLimitAction(BoboAction):
     """
 
     def __init__(self,
+                 name: str = None,
                  limit_dict: Dict[str, int] = None,
                  rate_other: int = 0) -> None:
-        super().__init__()
+        super().__init__(name=name)
 
         self._limit_dict = limit_dict if limit_dict is not None else {}
         self._names = list(self._limit_dict.keys())

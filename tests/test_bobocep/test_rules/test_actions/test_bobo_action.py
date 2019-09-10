@@ -33,5 +33,5 @@ class TestBoboAction(unittest.TestCase):
 
         stubaction = StubBoboAction()
 
-        self.assertTrue(stubaction.execute(c_event)[0])
+        self.assertTrue(stubaction.execute(c_event).success)
         self.assertListEqual([c_event], stubaction.events)

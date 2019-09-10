@@ -12,6 +12,9 @@ class SequentialAction(MultiAction):
     :param actions: The actions to execute, in list order.
     :type actions: List[BoboAction]
 
+    :param name: The action name, defaults to an empty string.
+    :type name: str, optional
+
     :param all_success: All actions must be successful to be a successful
                         execution; otherwise, the success of *at least one*
                         action would result in an overall success,
@@ -27,9 +30,10 @@ class SequentialAction(MultiAction):
 
     def __init__(self,
                  actions: List[BoboAction],
+                 name: str = None,
                  all_success: bool = True,
                  early_stop: bool = True) -> None:
-        super().__init__()
+        super().__init__(name=name)
 
         self._actions = actions
         self._all_success = all_success
@@ -39,7 +43,7 @@ class SequentialAction(MultiAction):
         results = []
 
         for action in self._actions:
-            if action.execute(event)[0]:
+            if action.execute(event).success:
                 results.append(True)
             elif self._early_stop:
                 return False

@@ -29,7 +29,7 @@ class TestSequentialAction(unittest.TestCase):
             all_success=False,
             early_stop=False)
 
-        self.assertTrue(seq.execute(generate_composite_event())[0])
+        self.assertTrue(seq.execute(generate_composite_event()).success)
 
     def test_any_success_some_pass(self):
         seq = SequentialAction(
@@ -40,7 +40,7 @@ class TestSequentialAction(unittest.TestCase):
             all_success=False,
             early_stop=False)
 
-        self.assertTrue(seq.execute(generate_composite_event())[0])
+        self.assertTrue(seq.execute(generate_composite_event()).success)
 
     def test_any_success_none_pass(self):
         seq = SequentialAction(
@@ -51,7 +51,7 @@ class TestSequentialAction(unittest.TestCase):
             all_success=False,
             early_stop=False)
 
-        self.assertFalse(seq.execute(generate_composite_event())[0])
+        self.assertFalse(seq.execute(generate_composite_event()).success)
 
     def test_any_success_early_stop(self):
         seq = SequentialAction(
@@ -62,7 +62,7 @@ class TestSequentialAction(unittest.TestCase):
             all_success=False,
             early_stop=True)
 
-        self.assertFalse(seq.execute(generate_composite_event())[0])
+        self.assertFalse(seq.execute(generate_composite_event()).success)
 
     def test_all_success_all_pass(self):
         seq = SequentialAction(
@@ -73,7 +73,7 @@ class TestSequentialAction(unittest.TestCase):
             all_success=True,
             early_stop=False)
 
-        self.assertTrue(seq.execute(generate_composite_event())[0])
+        self.assertTrue(seq.execute(generate_composite_event()).success)
 
     def test_all_success_some_pass(self):
         seq = SequentialAction(
@@ -84,7 +84,7 @@ class TestSequentialAction(unittest.TestCase):
             all_success=True,
             early_stop=False)
 
-        self.assertFalse(seq.execute(generate_composite_event())[0])
+        self.assertFalse(seq.execute(generate_composite_event()).success)
 
     def test_all_success_none_pass(self):
         seq = SequentialAction(
@@ -95,7 +95,7 @@ class TestSequentialAction(unittest.TestCase):
             all_success=True,
             early_stop=False)
 
-        self.assertFalse(seq.execute(generate_composite_event())[0])
+        self.assertFalse(seq.execute(generate_composite_event()).success)
 
     def test_all_success_early_stop(self):
         seq = SequentialAction(
@@ -106,4 +106,4 @@ class TestSequentialAction(unittest.TestCase):
             all_success=True,
             early_stop=True)
 
-        self.assertFalse(seq.execute(generate_composite_event())[0])
+        self.assertFalse(seq.execute(generate_composite_event()).success)

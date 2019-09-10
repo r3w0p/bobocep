@@ -31,13 +31,13 @@ class BoboProducer(AbstractProducer,
             event = self._event_queue.get_nowait()
 
             if event is not None:
-                if self._handle_composite_event(event):
+                if self._handle_producer_event(event):
                     self._notify_accepted(event)
                 else:
                     self._notify_rejected(event)
 
     @abstractmethod
-    def _handle_composite_event(self, event: CompositeEvent) -> bool:
+    def _handle_producer_event(self, event: CompositeEvent) -> bool:
         """
         Enables the producer to perform some action with the CompositeEvent
         instance before it is sent to the subscribers of the producer.

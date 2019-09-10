@@ -46,29 +46,33 @@ class TestActionForwarder(unittest.TestCase):
         self.assertListEqual([], forward._subs)
 
     def test_forward_successful(self):
-        event_a = generate_composite_event(NAME_A)
+        comp_event = generate_composite_event(NAME_A)
+        action_event = NoAction().execute(comp_event)
+
         # True = Success
         forward = ActionForwarder(NoAction(bool_return=True))
 
         sub = StubForwarderSubscriber()
         forward.subscribe(sub)
 
-        forward.on_action_success(event_a)
+        forward.on_action_attempt(action_event)
         forward.setup()
         forward.loop()
 
-        self.assertListEqual([event_a], sub.success)
+        self.assertListEqual([action_event], sub.success)
 
     def test_forward_failure(self):
-        event_a = generate_composite_event(NAME_A)
+        comp_event = generate_composite_event(NAME_A)
+        action_event = NoAction().execute(comp_event)
+
         # False = Failure
         forward = ActionForwarder(NoAction(bool_return=False))
 
         sub = StubForwarderSubscriber()
         forward.subscribe(sub)
 
-        forward.on_action_success(event_a)
+        forward.on_action_attempt(action_event)
         forward.setup()
         forward.loop()
 
-        self.assertListEqual([event_a], sub.failure)
+        self.assertListEqual([action_event], sub.failure)

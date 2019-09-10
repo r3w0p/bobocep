@@ -239,11 +239,23 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
                 name=self.nfa.name,
                 history=history)
 
-            self._add_recent(event)
+            self.add_recent(event)
             self.remove_run(run_id)
 
             if notify:
                 self._notify_final(run_id, event)
+
+    def add_recent(self, event: BoboEvent) -> None:
+        with self._lock:
+            # add new event to the start of the list
+            self._recent.insert(0, event)
+
+            # ensure first event has the largest timestamp i.e. is most recent
+            self._recent.sort(key=lambda e: e.timestamp, reverse=True)
+
+            # delete oldest event if list length exceeds the maximum
+            if len(self._recent) > self._max_recent:
+                self._recent.pop()
 
     def on_run_halt(self,
                     run_id: str,
@@ -414,17 +426,6 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
         with self._lock:
             if unsubscriber in self._subs:
                 self._subs.remove(unsubscriber)
-
-    def _add_recent(self, event: CompositeEvent) -> None:
-        # add new event to the start of the list
-        self._recent.insert(0, event)
-
-        # ensure first event has the largest timestamp i.e. is most recent
-        self._recent.sort(key=lambda e: e.timestamp, reverse=True)
-
-        # delete oldest event if list length exceeds the maximum
-        if len(self._recent) > self._max_recent:
-            self._recent.pop()
 
     def to_dict(self) -> dict:
         """

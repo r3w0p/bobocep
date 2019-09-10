@@ -3,13 +3,17 @@ from queue import Queue
 
 from bobocep.forwarder.abstract_forwarder import AbstractForwarder
 from bobocep.forwarder.forwarder_subscriber import IForwarderSubscriber
+from bobocep.producer.producer_subscriber import IProducerSubscriber
 from bobocep.rules.actions.action_subscriber import IActionSubscriber
+from bobocep.rules.events.action_event import ActionEvent
+from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.setup.task.bobo_task import BoboTask
 
 
 class BoboForwarder(AbstractForwarder,
                     BoboTask,
+                    IProducerSubscriber,
                     IActionSubscriber,
                     ABC):
     """A :code:`bobocep` event forwarder that forwards CompositeEvent
@@ -27,15 +31,15 @@ class BoboForwarder(AbstractForwarder,
         self._subs = []
 
     @abstractmethod
-    def _handle_composite_event(self, event: CompositeEvent) -> bool:
+    def _handle_forwarder_event(self, event: BoboEvent) -> bool:
         """
-        Enables the forwarder to perform some action with the CompositeEvent
+        Enables the forwarder to perform some action with the BoboEvent
         instance before it is sent to the subscribers of the forwarder.
-        If the method returns True, the CompositeEvent instance will be
+        If the method returns True, the BoboEvent instance will be
         forwarded to subscribers.
 
         :param event: The event.
-        :type event: CompositeEvent
+        :type event: BoboEvent
 
         :return: True if event was successfully handled, False otherwise.
         """
@@ -45,18 +49,16 @@ class BoboForwarder(AbstractForwarder,
             event = self._event_queue.get_nowait()
 
             if event is not None:
-                if self._handle_composite_event(event):
+                if self._handle_forwarder_event(event):
                     self._notify_success(event)
                 else:
                     self._notify_failure(event)
 
-    def on_action_success(self, event: CompositeEvent) -> None:
+    def on_accepted_producer_event(self, event: CompositeEvent):
         if not self._cancelled:
             self._event_queue.put_nowait(event)
 
-    def on_action_failure(self,
-                          event: CompositeEvent,
-                          exception: Exception = None) -> None:
+    def on_action_attempt(self, event: ActionEvent) -> None:
         if not self._cancelled:
             self._event_queue.put_nowait(event)
 
@@ -88,6 +90,9 @@ class BoboForwarder(AbstractForwarder,
     def _notify_failure(self, event: CompositeEvent):
         for subscriber in self._subs:
             subscriber.on_forwarder_failure_event(event)
+
+    def on_rejected_producer_event(self, event: CompositeEvent):
+        """"""
 
     def _setup(self) -> None:
         """"""

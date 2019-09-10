@@ -8,6 +8,8 @@ from bobocep.decider.handlers.nfa_handler_subscriber import \
     INFAHandlerSubscriber
 from bobocep.producer.producer_subscriber import IProducerSubscriber
 from bobocep.receiver.receiver_subscriber import IReceiverSubscriber
+from bobocep.rules.actions.action_subscriber import IActionSubscriber
+from bobocep.rules.events.action_event import ActionEvent
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.setup.task.bobo_task import BoboTask
@@ -17,6 +19,7 @@ class BoboDecider(AbstractDecider,
                   BoboTask,
                   IReceiverSubscriber,
                   INFAHandlerSubscriber,
+                  IActionSubscriber,
                   IProducerSubscriber):
     """A :code:`bobocep` data decider.
 
@@ -71,6 +74,11 @@ class BoboDecider(AbstractDecider,
     def on_accepted_producer_event(self, event: CompositeEvent) -> None:
         if not self._cancelled:
             self._event_queue.put(event)
+
+    def on_action_attempt(self, event: ActionEvent):
+        if not self._cancelled and isinstance(event.for_event, CompositeEvent):
+            if event.for_event.name in self._nfa_handlers:
+                self._nfa_handlers[event.for_event.name].add_recent(event)
 
     def on_handler_final(self,
                          nfa_name: str,

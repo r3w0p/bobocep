@@ -1,5 +1,4 @@
 from bobocep.rules.actions.bobo_action import BoboAction
-from bobocep.rules.actions.no_action import NoAction
 from bobocep.rules.nfas.patterns.bobo_pattern import BoboPattern
 
 
@@ -14,8 +13,7 @@ class BoboComplexEvent:
     :param pattern: The complex event pattern.
     :type pattern: BoboPattern
 
-    :param action: The action to perform, defaults to a NoAction instance
-                   that always returns :code:`True`.
+    :param action: The action to perform, defaults to no action.
     :type action: BoboAction, optional
     """
 
@@ -27,4 +25,4 @@ class BoboComplexEvent:
 
         self.name = name
         self.pattern = pattern
-        self.action = action if action is not None else NoAction()
+        self.action = action
