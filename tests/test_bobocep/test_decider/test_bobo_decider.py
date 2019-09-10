@@ -51,10 +51,8 @@ class NFAHandlerSubscriber(IDeciderSubscriber):
         self.final = []
         self.final_history = []
 
-    def on_decider_complex_event(self,
-                                 nfa_name: str,
-                                 event: CompositeEvent) -> None:
-        self.final.append(nfa_name)
+    def on_decider_complex_event(self, event: CompositeEvent) -> None:
+        self.final.append(event.name)
         self.final_history.append(event.history)
 
 
@@ -112,7 +110,7 @@ class TestBoboDecider(unittest.TestCase):
         decider.loop()
 
         # A new run should have been created in the handler
-        self.assertEqual(1, len(handler._runs.values()))
+        self.assertEqual(1, len(handler.runs.values()))
 
     def test_subscribe_unsubscribe(self):
         decider = BoboDecider()
@@ -138,22 +136,3 @@ class TestBoboDecider(unittest.TestCase):
         self.assertDictEqual(decider._subs, {
             stub_nfa.name: []
         })
-
-    def test_to_dict(self):
-        decider = BoboDecider()
-
-        # before handler
-        self.assertDictEqual({
-            BoboDecider.HANDLERS: []
-        }, decider.to_dict())
-
-        # add handler
-        handler = BoboNFAHandler(
-            nfa=stub_nfa,
-            buffer=SharedVersionedMatchBuffer())
-        decider.add_nfa_handler(handler)
-
-        # after handler
-        self.assertDictEqual({
-            BoboDecider.HANDLERS: [handler.to_dict()]
-        }, decider.to_dict())

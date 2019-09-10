@@ -3,7 +3,6 @@ from typing import List
 
 from bobocep.rules.bobo_rule_builder import BoboRuleBuilder
 from bobocep.rules.events.bobo_event import BoboEvent
-from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.nfas.patterns.bobo_pattern import BoboPattern
 from bobocep.rules.predicates.bobo_predicate_callable import \
@@ -24,25 +23,25 @@ NFA_NAME_A = "NFA_NAME_A"
 
 def predicate_key_a_value_a(event: BoboEvent,
                             history: BoboHistory,
-                            recent: List[CompositeEvent]):
+                            recent: List[BoboEvent]):
     return event.data == 1
 
 
 def predicate_key_a_value_b(event: BoboEvent,
                             history: BoboHistory,
-                            recent: List[CompositeEvent]):
+                            recent: List[BoboEvent]):
     return event.data == 2
 
 
 def predicate_key_a_value_c(event: BoboEvent,
                             history: BoboHistory,
-                            recent: List[CompositeEvent]):
+                            recent: List[BoboEvent]):
     return event.data == 3
 
 
 def predicate_key_a_value_d(event: BoboEvent,
                             history: BoboHistory,
-                            recent: List[CompositeEvent]):
+                            recent: List[BoboEvent]):
     return event.data == 4
 
 

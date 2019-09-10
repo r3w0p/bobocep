@@ -138,7 +138,7 @@ class BoboRuleBuilder(ABC):
         if for_event_dict is None:
             raise RuntimeError("For Event dict not found in dict.")
 
-        for_event = BoboRuleBuilder.event(for_event_dict)
+        for_event = BoboRuleBuilder.composite(for_event_dict)
         exception = d.get(ActionEvent.EXCEPTION)
         description = d.get(ActionEvent.DESCRIPTION)
         data = d.get(ActionEvent.DATA)

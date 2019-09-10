@@ -1,7 +1,6 @@
 from typing import List
 
 from bobocep.rules.events.bobo_event import BoboEvent
-from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.predicates.windows.bobo_predicate_window import \
     BoboPredicateWindow
@@ -34,5 +33,5 @@ class WindowFixed(BoboPredicateWindow):
     def evaluate(self,
                  event: BoboEvent,
                  history: BoboHistory,
-                 recent: List[CompositeEvent]) -> bool:
+                 recent: List[BoboEvent]) -> bool:
         return self._lower_ns <= event.timestamp <= self._upper_ns

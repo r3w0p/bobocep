@@ -1,37 +1,39 @@
 from queue import Queue
 from typing import List
 
-from bobocep.decider.abstract_decider import AbstractDecider
 from bobocep.decider.decider_subscriber import IDeciderSubscriber
 from bobocep.decider.handlers.bobo_nfa_handler import BoboNFAHandler
 from bobocep.decider.handlers.nfa_handler_subscriber import \
     INFAHandlerSubscriber
 from bobocep.producer.producer_subscriber import IProducerSubscriber
 from bobocep.receiver.receiver_subscriber import IReceiverSubscriber
-from bobocep.rules.actions.action_subscriber import IActionSubscriber
 from bobocep.rules.events.action_event import ActionEvent
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.composite_event import CompositeEvent
+from bobocep.rules.events.histories.bobo_history import BoboHistory
+from bobocep.setup.distributed.incoming.dist_incoming_subscriber import \
+    IDistIncomingSubscriber
 from bobocep.setup.task.bobo_task import BoboTask
 
 
-class BoboDecider(AbstractDecider,
-                  BoboTask,
+class BoboDecider(BoboTask,
                   IReceiverSubscriber,
+                  IProducerSubscriber,
                   INFAHandlerSubscriber,
-                  IActionSubscriber,
-                  IProducerSubscriber):
+                  IDistIncomingSubscriber):
     """A :code:`bobocep` data decider.
 
     :param max_queue_size: The maximum data queue size,
                            defaults to 0 (infinite).
     :type max_queue_size: int, optional
+
+    :param active: Whether task should start in an active state,
+                   defaults to True.
+    :type active: bool, optional
     """
 
-    HANDLERS = "handlers"
-
-    def __init__(self, max_queue_size: int = 0) -> None:
-        super().__init__()
+    def __init__(self, max_queue_size: int = 0, active: bool = True) -> None:
+        super().__init__(active=active)
 
         self._event_queue = Queue(maxsize=max_queue_size)
         self._nfa_handlers = {}
@@ -44,6 +46,52 @@ class BoboDecider(AbstractDecider,
             if event is not None:
                 for nfa_handler in self._nfa_handlers.values():
                     nfa_handler.process(event)
+
+    def get_all_handlers(self) -> List[BoboNFAHandler]:
+        """
+        :return: A list of all handlers.
+        """
+
+        with self._lock:
+            return list(self._nfa_handlers.values())
+
+    def get_handler(self, name: str) -> BoboNFAHandler:
+        """
+        :param name: The handler name.
+        :type name: str
+
+        :return: The handler, or None if not found.
+        """
+
+        with self._lock:
+            return self._nfa_handlers.get(name)
+
+    def on_receiver_event(self, event: BoboEvent) -> None:
+        if not self._cancelled:
+            self._event_queue.put(event)
+
+    def on_accepted_producer_event(self, event: CompositeEvent) -> None:
+        if not self._cancelled:
+            if event.name in self._nfa_handlers:
+                self._nfa_handlers[event.name].add_recent(event)
+
+            self._event_queue.put(event)
+
+    def on_producer_action(self, event: ActionEvent):
+        # producer actions are added to the handler's recent events
+        if not self._cancelled:
+            if event.for_event.name in self._nfa_handlers:
+                self._nfa_handlers[event.for_event.name].add_recent(event)
+
+    def on_handler_final(self,
+                         nfa_name: str,
+                         run_id: str,
+                         event: CompositeEvent):
+        # notify producer on a new complex event being identified
+        with self._lock:
+            if nfa_name in self._subs:
+                for sub in self._subs[nfa_name]:
+                    sub.on_decider_complex_event(event=event)
 
     def add_nfa_handler(self, nfa_handler: BoboNFAHandler) -> None:
         """
@@ -63,39 +111,6 @@ class BoboDecider(AbstractDecider,
                 else:
                     raise RuntimeError("NFA handler name {} already in use."
                                        .format(nfa_handler.nfa.name))
-
-    def get_handlers(self) -> List[BoboNFAHandler]:
-        return list(self._nfa_handlers.values())
-
-    def on_receiver_event(self, event: BoboEvent) -> None:
-        if not self._cancelled:
-            self._event_queue.put(event)
-
-    def on_accepted_producer_event(self, event: CompositeEvent) -> None:
-        if not self._cancelled:
-            self._event_queue.put(event)
-
-    def on_action_attempt(self, event: ActionEvent):
-        if not self._cancelled and isinstance(event.for_event, CompositeEvent):
-            if event.for_event.name in self._nfa_handlers:
-                self._nfa_handlers[event.for_event.name].add_recent(event)
-
-    def on_handler_final(self,
-                         nfa_name: str,
-                         run_id: str,
-                         event: CompositeEvent) -> None:
-        with self._lock:
-            if not self._cancelled:
-                self._notify_new_complex_event(
-                    nfa_name=nfa_name,
-                    event=event)
-
-    def _notify_new_complex_event(self,
-                                  nfa_name: str,
-                                  event: CompositeEvent):
-        if nfa_name in self._subs:
-            for sub in self._subs[nfa_name]:
-                sub.on_decider_complex_event(nfa_name=nfa_name, event=event)
 
     def subscribe(self,
                   nfa_name: str,
@@ -134,25 +149,91 @@ class BoboDecider(AbstractDecider,
         """
 
         with self._lock:
-            if nfa_name in self._subs:
+            if not self._cancelled:
                 if unsubscriber in self._subs[nfa_name]:
                     self._subs[nfa_name].remove(unsubscriber)
 
-    def to_dict(self) -> dict:
-        """
-        :return: A dict representation of the object.
-        """
-
+    def on_dist_run_transition(self,
+                               nfa_name: str,
+                               run_id: str,
+                               state_name_from: str,
+                               state_name_to: str,
+                               event: BoboEvent):
         with self._lock:
-            return {
-                self.HANDLERS: [handler.to_dict() for handler in
-                                self._nfa_handlers.values()]
-            }
+            handler = self._nfa_handlers.get(nfa_name)
 
-    def on_invalid_data(self, data) -> None:
+            if handler is None:
+                raise RuntimeError(
+                    "Handler not found for NFA {}.".format(nfa_name))
+
+            handler.force_run_transition(
+                run_id,
+                state_name_from,
+                state_name_to,
+                event)
+
+    def on_dist_run_clone(self,
+                          nfa_name: str,
+                          run_id: str,
+                          next_state_name: str,
+                          next_event: BoboEvent):
+        with self._lock:
+            handler = self._nfa_handlers.get(nfa_name)
+
+            if handler is None:
+                raise RuntimeError(
+                    "Handler not found for NFA {}.".format(nfa_name))
+
+            handler.force_run_clone(
+                run_id,
+                next_state_name,
+                next_event)
+
+    def on_dist_run_halt(self,
+                         nfa_name: str,
+                         run_id: str):
+        with self._lock:
+            handler = self._nfa_handlers.get(nfa_name)
+
+            if handler is None:
+                raise RuntimeError(
+                    "Handler not found for NFA {}.".format(nfa_name))
+
+            handler.force_run_halt(run_id)
+
+    def on_dist_run_final(self,
+                          nfa_name: str,
+                          run_id: str,
+                          history: BoboHistory) -> None:
+        with self._lock:
+            handler = self._nfa_handlers.get(nfa_name)
+
+            if handler is None:
+                raise RuntimeError(
+                    "Handler not found for NFA {}.".format(nfa_name))
+
+            handler.force_run_final(run_id=run_id, history=history)
+
+    def on_dist_action(self, event: ActionEvent) -> None:
+        with self._lock:
+            handler = self._nfa_handlers.get(event.for_event.name)
+
+            if handler is None:
+                raise RuntimeError("Handler not found for NFA {}.".format(
+                    event.for_event.name))
+
+            handler.add_recent(event)
+
+    def _setup(self) -> None:
         """"""
 
-    def on_rejected_producer_event(self, event: CompositeEvent) -> None:
+    def _cancel(self) -> None:
+        """"""
+
+    def on_invalid_data(self, data):
+        """"""
+
+    def on_rejected_producer_event(self, event: CompositeEvent):
         """"""
 
     def on_handler_transition(self,
@@ -160,23 +241,17 @@ class BoboDecider(AbstractDecider,
                               run_id: str,
                               state_name_from: str,
                               state_name_to: str,
-                              event: BoboEvent) -> None:
+                              event: BoboEvent):
         """"""
 
     def on_handler_clone(self,
                          nfa_name: str,
                          run_id: str,
                          state_name: str,
-                         event: BoboEvent) -> None:
+                         event: BoboEvent):
         """"""
 
     def on_handler_halt(self,
                         nfa_name: str,
-                        run_id: str) -> None:
-        """"""
-
-    def _setup(self) -> None:
-        """"""
-
-    def _cancel(self) -> None:
+                        run_id: str):
         """"""

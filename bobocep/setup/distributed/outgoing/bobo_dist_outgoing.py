@@ -6,13 +6,15 @@ from uuid import uuid4
 import pika
 
 import bobocep.setup.distributed.bobo_dist_constants as bdc
-from bobocep.decider.dist_decider import DistDecider
+from bobocep.decider.bobo_decider import BoboDecider
+from bobocep.decider.bobo_decider_builder import BoboDeciderBuilder
+from bobocep.decider.handlers.bobo_nfa_handler import BoboNFAHandler
 from bobocep.decider.handlers.nfa_handler_subscriber import \
     INFAHandlerSubscriber
+from bobocep.producer.producer_subscriber import IProducerSubscriber
+from bobocep.rules.events.action_event import ActionEvent
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.composite_event import CompositeEvent
-from bobocep.setup.distributed.incoming.dist_incoming_subscriber import \
-    IDistIncomingSubscriber
 from bobocep.setup.distributed.outgoing.dist_outgoing_subscriber import \
     IDistOutgoingSubscriber
 from bobocep.setup.task.bobo_task import BoboTask
@@ -20,18 +22,19 @@ from bobocep.setup.task.bobo_task import BoboTask
 
 class BoboDistOutgoing(BoboTask,
                        INFAHandlerSubscriber,
-                       IDistIncomingSubscriber):
+                       IProducerSubscriber):
     """Handles outgoing synchronisation data for other :code:`bobocep`
     instances.
 
     :param decider: The decider to which synchronisation will occur.
-    :type decider: DistDecider
+    :type decider: BoboDecider
 
     :param exchange_name: The exchange name to connect to on the external
                           message queue system.
     :type exchange_name: str
 
-    :param user_id: The user ID to use on the external message queue system.
+    :param user_id: The user ID to use on the external message queue
+                    system.
     :type user_id: str
 
     :param host_name: The host name of the external message queue system.
@@ -39,11 +42,11 @@ class BoboDistOutgoing(BoboTask,
     """
 
     def __init__(self,
-                 decider: DistDecider,
+                 decider: BoboDecider,
                  exchange_name: str,
                  user_id: str,
                  host_name: str,
-                 max_sync_attempts: int = 3) -> None:
+                 max_sync_attempts: int) -> None:
         super().__init__()
 
         connection = pika.BlockingConnection(
@@ -61,11 +64,13 @@ class BoboDistOutgoing(BoboTask,
         self._queue_clone = Queue()
         self._queue_halt = Queue()
         self._queue_final = Queue()
+        self._queue_action = Queue()
 
         self._subs = []
         self._connection = connection
         self._channel = channel
         self._is_synced = False
+
         self._sync_response = None
 
     def _setup(self) -> None:
@@ -77,6 +82,7 @@ class BoboDistOutgoing(BoboTask,
             self._send_events(self._queue_clone, bdc.CLONE)
             self._send_events(self._queue_halt, bdc.HALT)
             self._send_events(self._queue_final, bdc.FINAL)
+            self._send_events(self._queue_action, bdc.ACTION)
 
     def _cancel(self):
         self._is_synced = False
@@ -144,9 +150,32 @@ class BoboDistOutgoing(BoboTask,
         if self._sync_response is None:
             return False
 
-        self.decider.put_current_state(json.loads(self._sync_response))
+        self._put_current_state(json.loads(self._sync_response))
 
         return True
+
+    def _put_current_state(self, decider_dict: dict) -> None:
+        if self._cancelled or self._synced:
+            return
+
+        for handler_dict in decider_dict[bdc.HANDLERS]:
+            # find the corresponding nfa handler
+            nfa_name = handler_dict[BoboNFAHandler.NFA_NAME]
+            handler = self.decider.get_handler(nfa_name)
+
+            # create buffer
+            buffer = BoboDeciderBuilder.shared_versioned_match_buffer(
+                handler_dict[BoboNFAHandler.BUFFER])
+            handler.buffer = buffer
+
+            # overwrite existing runs
+            handler.clear_runs(halt=False, notify=False)
+
+            for run_dict in handler_dict[BoboNFAHandler.RUNS]:
+                run = BoboDeciderBuilder.run(run_dict, buffer, handler.nfa)
+                handler.add_run(run)
+
+        self._synced = True
 
     def _send_events(self, queue: Queue, routing_key: str):
         if not queue.empty():
@@ -210,28 +239,14 @@ class BoboDistOutgoing(BoboTask,
                 bdc.EVENT: event.to_dict()
             })
 
-    def on_dist_run_transition(self,
-                               nfa_name: str,
-                               run_id: str,
-                               state_name_from: str,
-                               state_name_to: str,
-                               event: BoboEvent):
+    def on_producer_action(self, event: ActionEvent):
+        if not self._cancelled:
+            self._queue_action.put_nowait({
+                bdc.EVENT: event.to_dict()
+            })
+
+    def on_accepted_producer_event(self, event: CompositeEvent):
         """"""
 
-    def on_dist_run_clone(self,
-                          nfa_name: str,
-                          run_id: str,
-                          next_state_name: str,
-                          next_event: BoboEvent):
-        """"""
-
-    def on_dist_run_halt(self,
-                         nfa_name: str,
-                         run_id: str):
-        """"""
-
-    def on_dist_run_final(self,
-                          nfa_name: str,
-                          run_id: str,
-                          event: BoboEvent) -> None:
+    def on_rejected_producer_event(self, event: CompositeEvent):
         """"""

@@ -6,7 +6,6 @@ from bobocep.decider.bobo_decider import BoboDecider
 from bobocep.decider.buffers.shared_versioned_match_buffer import \
     SharedVersionedMatchBuffer
 from bobocep.decider.decider_subscriber import IDeciderSubscriber
-from bobocep.decider.dist_decider import DistDecider
 from bobocep.decider.handlers.bobo_nfa_handler import BoboNFAHandler
 from bobocep.forwarder.action_forwarder import ActionForwarder
 from bobocep.forwarder.bobo_forwarder import BoboForwarder
@@ -29,10 +28,12 @@ from bobocep.rules.bobo_rule_builder import BoboRuleBuilder
 from bobocep.setup.bobo_complex_event import \
     BoboComplexEvent
 from bobocep.setup.distributed.bobo_dist_manager import BoboDistManager
+from bobocep.setup.distributed.outgoing.dist_outgoing_subscriber import \
+    IDistOutgoingSubscriber
 from bobocep.setup.task.bobo_task_thread import BoboTaskThread
 
 
-class BoboSetup:
+class BoboSetup(IDistOutgoingSubscriber):
     """A class to set up a working :code:`bobocep` process.
 
     :param delay: The delay, in seconds, for internal threads to wait before
@@ -85,6 +86,7 @@ class BoboSetup:
         self._user_name = None
         self._host_name = None
         self._user_id = None
+        self._synced = False
 
         self._receiver = None
         self._decider = None
@@ -109,8 +111,8 @@ class BoboSetup:
 
         with self._lock:
             if self.is_active():
-                if isinstance(self._decider, DistDecider):
-                    return self._decider.is_synced
+                if self._distributed:
+                    return self._synced
                 else:
                     return True
 
@@ -293,6 +295,12 @@ class BoboSetup:
                 self._null_data_delay = max(0.1, delay_sec)
                 self._null_data_obj = null_data
 
+    def on_sync(self) -> None:
+        with self._lock:
+            if self._distributed:
+                self._activate_tasks()
+            self._synced = True
+
     def start(self) -> None:
         """Start the setup.
 
@@ -304,7 +312,13 @@ class BoboSetup:
             if self.is_inactive():
                 self._config()
                 self._start_threads()
+
                 self._running = True
+
+                # tasks are active by default if not distributed,
+                # sync immediately
+                if not self._distributed:
+                    self._synced = True
             else:
                 raise RuntimeError("Setup is already active.")
 
@@ -316,6 +330,7 @@ class BoboSetup:
                 self._cancelled = True
                 if self._running:
                     self._running = False
+                    self._deactivate_tasks()
                     self._stop_threads()
 
     def subscribe_receiver(self, subscriber: IReceiverSubscriber) -> None:
@@ -373,7 +388,8 @@ class BoboSetup:
         self._receiver = BoboReceiver(
             validator=self._validator,
             formatter=PrimitiveEventFormatter(),
-            max_queue_size=self._max_queue_size)
+            max_queue_size=self._max_queue_size,
+            active=(not self._distributed))
 
         self._receiver_thread = BoboTaskThread(
             task=self._receiver,
@@ -382,7 +398,8 @@ class BoboSetup:
         if self._req_null_data:
             self._null_data_generator = BoboNullDataGenerator(
                 receiver=self._receiver,
-                null_data=self._null_data_obj)
+                null_data=self._null_data_obj,
+                active=(not self._distributed))
 
             self._null_event_thread = BoboTaskThread(
                 task=self._null_data_generator,
@@ -390,18 +407,16 @@ class BoboSetup:
             )
 
     def _config_decider(self) -> None:
-        if self._distributed:
-            self._decider = DistDecider(
-                max_queue_size=self._max_queue_size)
-        else:
-            self._decider = BoboDecider(
-                max_queue_size=self._max_queue_size)
-
-        self._receiver.subscribe(self._decider)
+        self._decider = BoboDecider(
+            max_queue_size=self._max_queue_size,
+            active=(not self._distributed))
 
         self._decider_thread = BoboTaskThread(
             task=self._decider,
             delay=self._delay)
+
+        # Receiver -> Decider
+        self._receiver.subscribe(self._decider)
 
     def _config_producer(self) -> None:
         if self._action_producer is None:
@@ -409,7 +424,8 @@ class BoboSetup:
 
         self._producer = ActionProducer(
             action=self._action_producer,
-            max_queue_size=self._max_queue_size)
+            max_queue_size=self._max_queue_size,
+            active=(not self._distributed))
 
         self._producer_thread = BoboTaskThread(
             task=self._producer,
@@ -421,7 +437,8 @@ class BoboSetup:
 
         self._forwarder = ActionForwarder(
             action=self._action_forwarder,
-            max_queue_size=self._max_queue_size)
+            max_queue_size=self._max_queue_size,
+            active=(not self._distributed))
 
         self._forwarder_thread = BoboTaskThread(
             task=self._forwarder,
@@ -441,45 +458,41 @@ class BoboSetup:
                 host_name=self._host_name,
                 delay=self._delay)
 
-            self._manager.incoming.subscribe(self._decider)
-            self._manager.outgoing.subscribe(self._decider)
+            # setup will activate tasks on sync
+            self._manager.outgoing.subscribe(self)
 
     def _config_definitions(self) -> None:
         for event_def in self._event_defs:
-            self._decider.add_nfa_handler(
-                BoboNFAHandler(
-                    nfa=BoboRuleBuilder.nfa(
-                        name_nfa=event_def.name,
-                        pattern=event_def.pattern),
-                    buffer=SharedVersionedMatchBuffer(),
-                    max_recent=self._max_recent)
-            )
+            handler = BoboNFAHandler(
+                nfa=BoboRuleBuilder.nfa(
+                    name_nfa=event_def.name,
+                    pattern=event_def.pattern),
+                buffer=SharedVersionedMatchBuffer(),
+                max_recent=self._max_recent)
 
-            # Decider -> Producer
-            self._decider.subscribe(event_def.name, self._producer)
-
-            # Producer -> Forwarder
-            self._producer.subscribe(event_def.name, self._forwarder)
+            self._decider.add_nfa_handler(handler)
 
             if event_def.action is not None:
-                # Producer -> Action
-                self._producer.subscribe(event_def.name, event_def.action)
+                # Action -> Decider
+                event_def.action.subscribe(self._decider)
 
                 # Action -> Forwarder
                 event_def.action.subscribe(self._forwarder)
 
-            if self._recursive:
-                # Producer -> Decider
-                self._producer.subscribe(event_def.name, self._decider)
+                if self._recursive:
+                    # Producer -> Decider
+                    self._producer.subscribe(event_def, self._decider)
 
-                # Action -> Decider
-                if event_def.action is not None:
-                    event_def.action.subscribe(self._decider)
-
-        if self._distributed:
-            for handler in self._decider.get_handlers():
-                # Handler -> Manager
+            if self._distributed:
+                # Handler -> Outgoing
                 handler.subscribe(self._manager.outgoing)
+
+                # Incoming -> Handler
+                self._manager.incoming.subscribe(handler)
+
+                if event_def.action is not None:
+                    # Action -> Outgoing
+                    event_def.action.subscribe(self._manager.outgoing)
 
     def _config_extra_subscriptions(self):
         # receiver
@@ -523,3 +536,21 @@ class BoboSetup:
 
         if self._manager is not None:
             self._manager.cancel()
+
+    def _activate_tasks(self) -> None:
+        self._forwarder.activate()
+        self._producer.activate()
+        self._decider.activate()
+        self._receiver.activate()
+
+        if self._null_data_generator is not None:
+            self._null_data_generator.activate()
+
+    def _deactivate_tasks(self) -> None:
+        if self._null_data_generator is not None:
+            self._null_data_generator.deactivate()
+
+        self._receiver.deactivate()
+        self._decider.deactivate()
+        self._producer.deactivate()
+        self._forwarder.deactivate()

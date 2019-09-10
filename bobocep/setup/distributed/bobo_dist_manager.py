@@ -1,4 +1,4 @@
-from bobocep.decider.dist_decider import DistDecider
+from bobocep.decider.bobo_decider import BoboDecider
 from bobocep.setup.distributed.incoming.bobo_dist_incoming import \
     BoboDistIncoming
 from bobocep.setup.distributed.outgoing.bobo_dist_outgoing import \
@@ -13,7 +13,7 @@ class BoboDistManager:
     external message queue system.
 
     :param decider: The decider to which synchronisation will occur.
-    :type decider: DistDecider
+    :type decider: BoboDecider
 
     :param exchange_name: The exchange name to connect to on the external
                           message queue system.
@@ -30,25 +30,29 @@ class BoboDistManager:
     """
 
     def __init__(self,
-                 decider: DistDecider,
+                 decider: BoboDecider,
                  exchange_name: str,
                  user_id: str,
                  host_name: str,
-                 delay: float) -> None:
+                 delay: float,
+                 max_sync_attempts: int = 3) -> None:
         super().__init__()
 
-        self.incoming = BoboDistIncoming(decider=decider,
-                                         exchange_name=exchange_name,
-                                         user_id=user_id,
-                                         host_name=host_name)
+        self.outgoing = BoboDistOutgoing(
+            decider=decider,
+            exchange_name=exchange_name,
+            user_id=user_id,
+            host_name=host_name,
+            max_sync_attempts=max_sync_attempts
+        )
 
-        self.outgoing = BoboDistOutgoing(decider=decider,
-                                         exchange_name=exchange_name,
-                                         user_id=user_id,
-                                         host_name=host_name)
-
-        self.incoming.subscribe(self.outgoing)
-        self.outgoing.subscribe(self.incoming)
+        self.incoming = BoboDistIncoming(
+            outgoing=self.outgoing,
+            decider=decider,
+            exchange_name=exchange_name,
+            user_id=user_id,
+            host_name=host_name
+        )
 
         self._incoming_thread = BoboTaskThread(self.incoming, delay)
         self._outgoing_thread = BoboTaskThread(self.outgoing, delay)

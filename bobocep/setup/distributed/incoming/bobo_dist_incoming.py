@@ -3,22 +3,21 @@ import json
 import pika
 
 import bobocep.setup.distributed.bobo_dist_constants as bdc
-from bobocep.decider.dist_decider import DistDecider
+from bobocep.decider.bobo_decider import BoboDecider
 from bobocep.rules.bobo_rule_builder import BoboRuleBuilder
 from bobocep.setup.distributed.incoming.dist_incoming_subscriber import \
     IDistIncomingSubscriber
-from bobocep.setup.distributed.outgoing.dist_outgoing_subscriber import \
-    IDistOutgoingSubscriber
+from bobocep.setup.distributed.outgoing.bobo_dist_outgoing import \
+    BoboDistOutgoing
 from bobocep.setup.task.bobo_task import BoboTask
 
 
-class BoboDistIncoming(BoboTask,
-                       IDistOutgoingSubscriber):
+class BoboDistIncoming(BoboTask):
     """Handles incoming synchronisation data from other :code:`bobocep`
     instances.
 
     :param decider: The decider to which synchronisation will occur.
-    :type decider: DistDecider
+    :type decider: BoboDecider
 
     :param exchange_name: The exchange name to connect to on the external
                           message queue system.
@@ -32,7 +31,8 @@ class BoboDistIncoming(BoboTask,
     """
 
     def __init__(self,
-                 decider: DistDecider,
+                 outgoing: BoboDistOutgoing,
+                 decider: BoboDecider,
                  exchange_name: str,
                  user_id: str,
                  host_name: str) -> None:
@@ -58,6 +58,8 @@ class BoboDistIncoming(BoboTask,
         channel.queue_bind(exchange=exchange_name, queue=queue_name,
                            routing_key=bdc.FINAL)
         channel.queue_bind(exchange=exchange_name, queue=queue_name,
+                           routing_key=bdc.ACTION)
+        channel.queue_bind(exchange=exchange_name, queue=queue_name,
                            routing_key=bdc.SYNC_REQ)
         channel.queue_bind(exchange=exchange_name, queue=queue_name,
                            routing_key=bdc.SYNC_RES)
@@ -66,6 +68,7 @@ class BoboDistIncoming(BoboTask,
                               on_message_callback=self._callback,
                               auto_ack=True)
 
+        self.outgoing = outgoing
         self.decider = decider
         self.exchange_name = exchange_name
         self.user_id = user_id
@@ -74,6 +77,7 @@ class BoboDistIncoming(BoboTask,
         self._subs = []
         self._connection = connection
         self._channel = channel
+
         self._is_synced = False
 
     def _loop(self) -> None:
@@ -121,6 +125,9 @@ class BoboDistIncoming(BoboTask,
 
         elif method.routing_key == bdc.FINAL:
             self._handle_final(body)
+
+        elif method.routing_key == bdc.ACTION:
+            self._handle_action(body)
 
         elif method.routing_key == bdc.SYNC_REQ:
             self._handle_sync_request(ch, method, properties, body)
@@ -184,11 +191,22 @@ class BoboDistIncoming(BoboTask,
                 history=history
             )
 
+    def _handle_action(self, data: str) -> None:
+        json_data = json.loads(data)
+        event = BoboRuleBuilder.action(json_data[bdc.EVENT])
+
+        for subscriber in self._subs:
+            subscriber.on_dist_action(event=event)
+
     def _handle_sync_request(self, ch, method, properties, body):
         if properties.message_id == self.user_id:
             return
 
-        json_data = json.dumps(self.decider.get_current_state())
+        handlers = self.decider.get_all_handlers()
+
+        json_data = json.dumps({
+            bdc.HANDLERS: [handler.to_dict() for handler in handlers]
+        })
 
         ch.basic_publish(exchange=self.exchange_name,
                          routing_key=properties.reply_to,
@@ -201,8 +219,9 @@ class BoboDistIncoming(BoboTask,
         if properties.message_id == self.user_id:
             return
 
-        for subscriber in self._subs:
-            subscriber.on_sync_response(properties.correlation_id, body)
+        self.outgoing.on_sync_response(
+            sync_id=properties.correlation_id,
+            body=body)
 
     def _setup(self) -> None:
         """"""

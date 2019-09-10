@@ -2,7 +2,6 @@ from inspect import isfunction, signature, ismethod
 from typing import Callable, List
 
 from bobocep.rules.events.bobo_event import BoboEvent
-from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.predicates.bobo_predicate import BoboPredicate
 
@@ -38,5 +37,5 @@ class BoboPredicateCallable(BoboPredicate):
     def evaluate(self,
                  event: BoboEvent,
                  history: BoboHistory,
-                 recent: List[CompositeEvent]) -> bool:
+                 recent: List[BoboEvent]) -> bool:
         return self._call(event, history, recent)

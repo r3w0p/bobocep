@@ -13,12 +13,17 @@ class BoboNullDataGenerator(BoboTask):
 
     :param null_data: The null data to send.
     :type null_data: BoboNullData
+
+    :param active: Whether task should start in an active state,
+                   defaults to True.
+    :type active: bool, optional
     """
 
     def __init__(self,
                  receiver: BoboReceiver,
-                 null_data: BoboNullData) -> None:
-        super().__init__()
+                 null_data: BoboNullData,
+                 active: bool = True) -> None:
+        super().__init__(active=active)
 
         self.receiver = receiver
         self.null_data = null_data

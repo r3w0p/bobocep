@@ -1,6 +1,5 @@
 from queue import Queue
 
-from bobocep.receiver.abstract_receiver import AbstractReceiver
 from bobocep.receiver.formatters.primitive_event_formatter import \
     PrimitiveEventFormatter
 from bobocep.receiver.receiver_subscriber import IReceiverSubscriber
@@ -10,8 +9,7 @@ from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.setup.task.bobo_task import BoboTask
 
 
-class BoboReceiver(AbstractReceiver,
-                   BoboTask):
+class BoboReceiver(BoboTask):
     """A :code:`bobocep` data receiver.
 
     :param validator: The data validator.
@@ -23,13 +21,18 @@ class BoboReceiver(AbstractReceiver,
     :param max_queue_size: The maximum data queue size,
                            defaults to 0 (infinite).
     :type max_queue_size: int, optional
+
+    :param active: Whether task should start in an active state,
+                   defaults to True.
+    :type active: bool, optional
     """
 
     def __init__(self,
                  validator: AbstractValidator,
                  formatter: PrimitiveEventFormatter,
-                 max_queue_size: int = 0) -> None:
-        super().__init__()
+                 max_queue_size: int = 0,
+                 active: bool = True) -> None:
+        super().__init__(active=active)
 
         self._data_queue = Queue(maxsize=max_queue_size)
         self._validator = validator

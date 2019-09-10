@@ -1,20 +1,16 @@
 from abc import ABC, abstractmethod
 from queue import Queue
 
-from bobocep.forwarder.abstract_forwarder import AbstractForwarder
 from bobocep.forwarder.forwarder_subscriber import IForwarderSubscriber
 from bobocep.producer.producer_subscriber import IProducerSubscriber
-from bobocep.rules.actions.action_subscriber import IActionSubscriber
 from bobocep.rules.events.action_event import ActionEvent
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.setup.task.bobo_task import BoboTask
 
 
-class BoboForwarder(AbstractForwarder,
-                    BoboTask,
+class BoboForwarder(BoboTask,
                     IProducerSubscriber,
-                    IActionSubscriber,
                     ABC):
     """A :code:`bobocep` event forwarder that forwards CompositeEvent
     instances.
@@ -22,10 +18,14 @@ class BoboForwarder(AbstractForwarder,
     :param max_queue_size: The maximum data queue size,
                            defaults to 0 (infinite).
     :type max_queue_size: int, optional
+
+    :param active: Whether task should start in an active state,
+                   defaults to True.
+    :type active: bool, optional
     """
 
-    def __init__(self, max_queue_size: int = 0) -> None:
-        super().__init__()
+    def __init__(self, max_queue_size: int = 0, active: bool = True) -> None:
+        super().__init__(active=active)
 
         self._event_queue = Queue(maxsize=max_queue_size)
         self._subs = []
@@ -58,7 +58,7 @@ class BoboForwarder(AbstractForwarder,
         if not self._cancelled:
             self._event_queue.put_nowait(event)
 
-    def on_action_attempt(self, event: ActionEvent) -> None:
+    def on_producer_action(self, event: ActionEvent) -> None:
         if not self._cancelled:
             self._event_queue.put_nowait(event)
 

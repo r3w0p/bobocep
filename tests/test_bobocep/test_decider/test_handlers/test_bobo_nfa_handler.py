@@ -44,25 +44,25 @@ VALUE_E = "value_e"
 
 def predicate_key_a_value_a(event: BoboEvent,
                             history: BoboHistory,
-                            recent: List[CompositeEvent]):
+                            recent: List[BoboEvent]):
     return event.data[KEY_A] == VALUE_A
 
 
 def predicate_key_a_value_b(event: BoboEvent,
                             history: BoboHistory,
-                            recent: List[CompositeEvent]):
+                            recent: List[BoboEvent]):
     return event.data[KEY_A] == VALUE_B
 
 
 def predicate_key_a_value_c(event: BoboEvent,
                             history: BoboHistory,
-                            recent: List[CompositeEvent]):
+                            recent: List[BoboEvent]):
     return event.data[KEY_A] == VALUE_C
 
 
 def predicate_key_a_value_d(event: BoboEvent,
                             history: BoboHistory,
-                            recent: List[CompositeEvent]):
+                            recent: List[BoboEvent]):
     return event.data[KEY_A] == VALUE_D
 
 
@@ -188,14 +188,14 @@ class TestBoboNFAHandler(unittest.TestCase):
 
         # add run
         handler.add_run(run_a)
-        self.assertDictEqual(handler._runs, {
+        self.assertDictEqual(handler.runs, {
             run_a.id: run_a
         })
 
         # remove run
         handler.remove_run(run_a.id, halt=False, notify=False)
 
-        self.assertDictEqual(handler._runs, {})
+        self.assertDictEqual(handler.runs, {})
         self.assertFalse(run_a.is_halted())
         self.assertListEqual([], handlersub.halt)
 
@@ -208,14 +208,14 @@ class TestBoboNFAHandler(unittest.TestCase):
 
         # add run
         handler.add_run(run_a)
-        self.assertDictEqual(handler._runs, {
+        self.assertDictEqual(handler.runs, {
             run_a.id: run_a
         })
 
         # remove run
         handler.remove_run(run_a.id, halt=True, notify=True)
 
-        self.assertDictEqual(handler._runs, {})
+        self.assertDictEqual(handler.runs, {})
         self.assertTrue(run_a.is_halted())
         self.assertListEqual([run_a.id], handlersub.halt)
 
@@ -233,7 +233,7 @@ class TestBoboNFAHandler(unittest.TestCase):
         handler.add_run(run_b)
         handler.add_run(run_c)
 
-        self.assertDictEqual(handler._runs, {
+        self.assertDictEqual(handler.runs, {
             run_a.id: run_a,
             run_b.id: run_b,
             run_c.id: run_c
@@ -242,7 +242,7 @@ class TestBoboNFAHandler(unittest.TestCase):
         # clear runs
         handler.clear_runs(halt=False, notify=False)
 
-        self.assertDictEqual(handler._runs, {})
+        self.assertDictEqual(handler.runs, {})
         self.assertFalse(run_a.is_halted())
         self.assertFalse(run_b.is_halted())
         self.assertFalse(run_c.is_halted())
@@ -262,7 +262,7 @@ class TestBoboNFAHandler(unittest.TestCase):
         handler.add_run(run_b)
         handler.add_run(run_c)
 
-        self.assertDictEqual(handler._runs, {
+        self.assertDictEqual(handler.runs, {
             run_a.id: run_a,
             run_b.id: run_b,
             run_c.id: run_c
@@ -271,7 +271,7 @@ class TestBoboNFAHandler(unittest.TestCase):
         # clear runs
         handler.clear_runs(halt=True, notify=True)
 
-        self.assertDictEqual(handler._runs, {})
+        self.assertDictEqual(handler.runs, {})
         self.assertTrue(run_a.is_halted())
         self.assertTrue(run_b.is_halted())
         self.assertTrue(run_c.is_halted())
@@ -443,7 +443,7 @@ class TestBoboNFAHandler(unittest.TestCase):
         handler.process(event_a)
         handler.process(event_e)  # event not in pattern
 
-        self.assertEqual(len(handler._runs.keys()), 0)
+        self.assertEqual(len(handler.runs.keys()), 0)
 
     def test_deterministic_strict_negated_success(self):
         pattern_strict_negated = BoboPattern() \
@@ -595,31 +595,31 @@ class TestBoboNFAHandlerNondeterminism(unittest.TestCase):
         # first run cloned
         handler.process(event_a)
         handler.process(event_b)
-        self.assertEqual(1, len(handler._runs.values()))
-        run = list(handler._runs.values())[0]
+        self.assertEqual(1, len(handler.runs.values()))
+        run = list(handler.runs.values())[0]
 
         # first run loops
         handler.process(event_b1)
-        self.assertEqual(1, len(handler._runs.values()))
+        self.assertEqual(1, len(handler.runs.values()))
 
         # second run cloned
         handler.process(event_c1)
-        self.assertEqual(2, len(handler._runs.values()))
+        self.assertEqual(2, len(handler.runs.values()))
 
         # first run increments
         handler.process(event_b2)
-        self.assertEqual(2, len(handler._runs.values()))
+        self.assertEqual(2, len(handler.runs.values()))
 
         # third run cloned
         handler.process(event_c2)
-        self.assertEqual(3, len(handler._runs.values()))
+        self.assertEqual(3, len(handler.runs.values()))
 
         # second and third run reach final state
         handler.process(event_d)
-        self.assertEqual(1, len(handler._runs.values()))
+        self.assertEqual(1, len(handler.runs.values()))
 
         # first run is the only run left
-        self.assertEqual(run, list(handler._runs.values())[0])
+        self.assertEqual(run, list(handler.runs.values())[0])
 
 
 class TestBoboNFAHandlerTransition(unittest.TestCase):
@@ -636,7 +636,7 @@ class TestBoboNFAHandlerTransition(unittest.TestCase):
         handler.process(event_a)
 
         # only one run has been created
-        runs = list(handler._runs.values())
+        runs = list(handler.runs.values())
         self.assertEqual(1, len(runs))
 
         run = runs[0]
@@ -662,7 +662,7 @@ class TestBoboNFAHandlerTransition(unittest.TestCase):
         run_state_b = state_from_layer(nfa=nfa, label=LABEL_LAYER_B)
 
         handler.process(event_a)
-        run = list(handler._runs.values())[0]
+        run = list(handler.runs.values())[0]
 
         # state that is in the NFA
         with self.assertRaises(RuntimeError):
@@ -681,7 +681,7 @@ class TestBoboNFAHandlerTransition(unittest.TestCase):
         run_state_c = state_from_layer(nfa=nfa, label=LABEL_LAYER_C)
 
         handler.process(event_a)
-        run = list(handler._runs.values())[0]
+        run = list(handler.runs.values())[0]
 
         # from is NOT the current state
         with self.assertRaises(RuntimeError):
@@ -708,7 +708,7 @@ class TestBoboNFAHandlerTransition(unittest.TestCase):
         run_state_c = state_from_layer(nfa=nfa, label=LABEL_LAYER_C)
 
         handler.process(event_a)
-        run = list(handler._runs.values())[0]
+        run = list(handler.runs.values())[0]
 
         # state that is not a transition state
         with self.assertRaises(RuntimeError):
@@ -738,7 +738,7 @@ class TestBoboNFAHandlerTransition(unittest.TestCase):
         handler.process(event_b)
         handler.process(event_c)
 
-        run = list(handler._runs.values())[0]
+        run = list(handler.runs.values())[0]
 
         handler.force_run_transition(
             run_id=run.id,
@@ -762,7 +762,7 @@ class TestBoboNFAHandlerClone(unittest.TestCase):
         handler.process(event_a)
 
         # only one run has been created
-        runs = list(handler._runs.values())
+        runs = list(handler.runs.values())
         self.assertEqual(1, len(runs))
 
         run = runs[0]
@@ -773,9 +773,9 @@ class TestBoboNFAHandlerClone(unittest.TestCase):
                                 state_name=run_state_b.name,
                                 event=event_b)
 
-        self.assertEqual(2, len(handler._runs.values()))
+        self.assertEqual(2, len(handler.runs.values()))
 
-        bothruns = list(handler._runs.values())
+        bothruns = list(handler.runs.values())
         bothruns.remove(run)
         clone_run = bothruns[0]
 
@@ -789,7 +789,7 @@ class TestBoboNFAHandlerClone(unittest.TestCase):
             pattern=pattern_relaxed)
 
         handler.process(event_a)
-        run = list(handler._runs.values())[0]
+        run = list(handler.runs.values())[0]
 
         with self.assertRaises(RuntimeError):
             handler.on_run_clone(
@@ -805,7 +805,7 @@ class TestBoboNFAHandlerClone(unittest.TestCase):
             pattern=pattern_relaxed)
 
         handler.process(event_a)
-        run = list(handler._runs.values())[0]
+        run = list(handler.runs.values())[0]
 
         with self.assertRaises(RuntimeError):
             handler.on_run_clone(
@@ -829,7 +829,7 @@ class TestBoboNFAHandlerHalt(unittest.TestCase):
         handler.process(event_a)
 
         # only one run has been created
-        runs = list(handler._runs.values())
+        runs = list(handler.runs.values())
         self.assertEqual(1, len(runs))
 
         run = runs[0]
@@ -860,7 +860,7 @@ class TestBoboNFAHandlerHalt(unittest.TestCase):
             pattern=pattern_relaxed)
 
         handler.process(event_a)
-        run = list(handler._runs.values())[0]
+        run = list(handler.runs.values())[0]
 
         # no notification keeps run in handler while halted
         run.set_halt(notify=False)
@@ -881,7 +881,7 @@ class TestBoboNFAHandlerFinal(unittest.TestCase):
         handler.process(event_a)
 
         # only one run has been created
-        runs = list(handler._runs.values())
+        runs = list(handler.runs.values())
         self.assertEqual(1, len(runs))
 
         run = runs[0]

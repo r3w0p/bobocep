@@ -40,25 +40,25 @@ VAL_4 = "4"
 
 def predicate_key_a_value_a(event: BoboEvent,
                             history: BoboHistory,
-                            recent: List[CompositeEvent]):
+                            recent: List[BoboEvent]):
     return event.data[KEY] == VAL_1
 
 
 def predicate_key_a_value_b(event: BoboEvent,
                             history: BoboHistory,
-                            recent: List[CompositeEvent]):
+                            recent: List[BoboEvent]):
     return event.data[KEY] == VAL_2
 
 
 def predicate_key_a_value_c(event: BoboEvent,
                             history: BoboHistory,
-                            recent: List[CompositeEvent]):
+                            recent: List[BoboEvent]):
     return event.data[KEY] == VAL_3
 
 
 def predicate_key_a_value_d(event: BoboEvent,
                             history: BoboHistory,
-                            recent: List[CompositeEvent]):
+                            recent: List[BoboEvent]):
     return event.data[KEY] == VAL_4
 
 

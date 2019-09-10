@@ -2,15 +2,16 @@ from abc import ABC, abstractmethod
 from queue import Queue
 
 from bobocep.decider.decider_subscriber import IDeciderSubscriber
-from bobocep.producer.abstract_producer import AbstractProducer
 from bobocep.producer.producer_subscriber import IProducerSubscriber
+from bobocep.rules.actions.action_subscriber import IActionSubscriber
+from bobocep.rules.events.action_event import ActionEvent
 from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.setup.task.bobo_task import BoboTask
 
 
-class BoboProducer(AbstractProducer,
-                   BoboTask,
+class BoboProducer(BoboTask,
                    IDeciderSubscriber,
+                   IActionSubscriber,
                    ABC):
     """A :code:`bobocep` event producer that creates CompositeEvent instances
     when a run reaches its final state.
@@ -18,10 +19,14 @@ class BoboProducer(AbstractProducer,
     :param max_queue_size: The maximum data queue size,
                            defaults to 0 (infinite).
     :type max_queue_size: int, optional
+
+    :param active: Whether task should start in an active state,
+                   defaults to True.
+    :type active: bool, optional
     """
 
-    def __init__(self, max_queue_size: int = 0) -> None:
-        super().__init__()
+    def __init__(self, max_queue_size: int = 0, active: bool = True) -> None:
+        super().__init__(active=active)
 
         self._event_queue = Queue(maxsize=max_queue_size)
         self._subs = {}
@@ -32,9 +37,11 @@ class BoboProducer(AbstractProducer,
 
             if event is not None:
                 if self._handle_producer_event(event):
-                    self._notify_accepted(event)
+                    for subscriber in self._subs[event.name]:
+                        subscriber.on_accepted_producer_event(event)
                 else:
-                    self._notify_rejected(event)
+                    for subscriber in self._subs[event.name]:
+                        subscriber.on_rejected_producer_event(event)
 
     @abstractmethod
     def _handle_producer_event(self, event: CompositeEvent) -> bool:
@@ -50,9 +57,14 @@ class BoboProducer(AbstractProducer,
         :return: True if event was successfully handled, False otherwise.
         """
 
-    def on_decider_complex_event(self, nfa_name: str, event: CompositeEvent):
+    def on_decider_complex_event(self, event: CompositeEvent):
         if not self._cancelled:
             self._event_queue.put_nowait(event)
+
+    def on_action_attempt(self, event: ActionEvent):
+        if not self._cancelled:
+            for subscriber in self._subs[event.name]:
+                subscriber.on_producer_action(event)
 
     def subscribe(self,
                   event_name: str,
@@ -90,14 +102,6 @@ class BoboProducer(AbstractProducer,
             if event_name in self._subs:
                 if unsubscriber in self._subs[event_name]:
                     self._subs[event_name].remove(unsubscriber)
-
-    def _notify_accepted(self, event: CompositeEvent):
-        for subscriber in self._subs[event.name]:
-            subscriber.on_accepted_producer_event(event)
-
-    def _notify_rejected(self, event: CompositeEvent):
-        for subscriber in self._subs[event.name]:
-            subscriber.on_rejected_producer_event(event)
 
     def _setup(self) -> None:
         """"""

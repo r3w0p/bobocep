@@ -53,9 +53,8 @@ A regular `function <https://docs.python.org/3/tutorial/controlflow.html?#defini
     from typing import List
     from bobocep.rules.events.bobo_event import BoboEvent
     from bobocep.rules.events.histories.bobo_history import BoboHistory
-    from bobocep.rules.events.composite_event import CompositeEvent
 
-    def my_function(event: BoboEvent, history: BoboHistory, recent: List[CompositeEvent]) -> bool:
+    def my_function(event: BoboEvent, history: BoboHistory, recent: List[BoboEvent]) -> bool:
         # return [...]
 
     predicate = my_function
@@ -74,7 +73,7 @@ Or, an object's `method <https://docs.python.org/3/tutorial/classes.html#a-first
 
     class MyClass:
 
-        def my_method(self, event: BoboEvent, history: BoboHistory, recent: List[CompositeEvent]) -> bool:
+        def my_method(self, event: BoboEvent, history: BoboHistory, recent: List[BoboEvent]) -> bool:
             # return [...]
 
     obj = MyClass()

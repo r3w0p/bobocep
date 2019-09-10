@@ -1,8 +1,10 @@
 import unittest
 
-from bobocep.decider.dist_decider import DistDecider
+from bobocep.decider.bobo_decider import BoboDecider
+from bobocep.rules.events.action_event import ActionEvent
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
+from bobocep.setup.distributed.bobo_dist_manager import BoboDistManager
 from bobocep.setup.distributed.incoming.bobo_dist_incoming import \
     BoboDistIncoming
 from bobocep.setup.distributed.incoming.dist_incoming_subscriber import \
@@ -11,14 +13,17 @@ from bobocep.setup.distributed.incoming.dist_incoming_subscriber import \
 EXCHANGE_NAME = "test_exchange_name"
 USER_ID = "test_user_id"
 HOST_NAME = "127.0.0.1"
+DELAY = 0.5
 
 
 def setup_incoming() -> BoboDistIncoming:
-    return BoboDistIncoming(
-        decider=DistDecider(),
+    return BoboDistManager(
+        decider=BoboDecider(),
         exchange_name=EXCHANGE_NAME,
         user_id=USER_ID,
-        host_name=HOST_NAME)
+        host_name=HOST_NAME,
+        delay=DELAY
+    ).incoming
 
 
 class StubDistIncomingSubscriber(IDistIncomingSubscriber):
@@ -26,36 +31,24 @@ class StubDistIncomingSubscriber(IDistIncomingSubscriber):
     def __init__(self) -> None:
         super().__init__()
 
-    def on_dist_run_transition(self,
-                               nfa_name: str,
-                               run_id: str,
-                               state_name_from: str,
-                               state_name_to: str,
+    def on_dist_run_transition(self, nfa_name: str, run_id: str,
+                               state_name_from: str, state_name_to: str,
                                event: BoboEvent) -> None:
-        pass
+        """"""
 
-    def on_dist_run_clone(self,
-                          nfa_name: str,
-                          run_id: str,
-                          next_state_name: str,
-                          next_event: BoboEvent) -> None:
-        pass
+    def on_dist_run_clone(self, nfa_name: str, run_id: str,
+                          next_state_name: str, next_event: BoboEvent) -> None:
+        """"""
 
-    def on_dist_run_halt(self,
-                         nfa_name: str,
-                         run_id: str) -> None:
-        pass
+    def on_dist_run_halt(self, nfa_name: str, run_id: str) -> None:
+        """"""
 
-    def on_dist_run_final(self,
-                          nfa_name: str,
-                          run_id: str,
+    def on_dist_run_final(self, nfa_name: str, run_id: str,
                           history: BoboHistory) -> None:
-        pass
+        """"""
 
-    def on_sync_response(self,
-                         sync_id: str,
-                         body: str) -> None:
-        pass
+    def on_dist_action(self, event: ActionEvent) -> None:
+        """"""
 
 
 class TestBoboDistIncoming(unittest.TestCase):

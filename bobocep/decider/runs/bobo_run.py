@@ -8,7 +8,6 @@ from bobocep.decider.runs.abstract_run import AbstractRun
 from bobocep.decider.runs.run_subscriber import IRunSubscriber
 from bobocep.decider.versions.run_version import RunVersion
 from bobocep.rules.events.bobo_event import BoboEvent
-from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.nfas.bobo_nfa import BoboNFA
 from bobocep.rules.states.bobo_state import BoboState
@@ -163,7 +162,7 @@ class BoboRun(AbstractRun):
 
         return "{}-{}".format(nfa_name, start_event_id)
 
-    def process(self, event: BoboEvent, recent: List[CompositeEvent]) -> None:
+    def process(self, event: BoboEvent, recent: List[BoboEvent]) -> None:
         """
         Process an event.
 
@@ -172,7 +171,7 @@ class BoboRun(AbstractRun):
 
         :param recent: Recently accepted complex events of the corresponding
                         automaton.
-        :type recent: List[CompositeEvent]
+        :type recent: List[BoboEvent]
 
         :raises RuntimeError: Run has already halted.
         """
@@ -293,7 +292,7 @@ class BoboRun(AbstractRun):
                       state: BoboState,
                       event: BoboEvent,
                       history: BoboHistory,
-                      recent: List[CompositeEvent]) -> None:
+                      recent: List[BoboEvent]) -> None:
         transition = self.nfa.transitions.get(state.name)
 
         if transition is None:
@@ -403,7 +402,7 @@ class BoboRun(AbstractRun):
     def _any_preconditions_failed(self,
                                   event: BoboEvent,
                                   history: BoboHistory,
-                                  recent: List[CompositeEvent]) -> bool:
+                                  recent: List[BoboEvent]) -> bool:
         """If any preconditions are False, return True."""
 
         return any(not p.evaluate(event, history, recent)
@@ -412,7 +411,7 @@ class BoboRun(AbstractRun):
     def _any_haltconditions_passed(self,
                                    event: BoboEvent,
                                    history: BoboHistory,
-                                   recent: List[CompositeEvent]) -> bool:
+                                   recent: List[BoboEvent]) -> bool:
         """If any haltconditions are True, return True."""
 
         return any(p.evaluate(event, history, recent)

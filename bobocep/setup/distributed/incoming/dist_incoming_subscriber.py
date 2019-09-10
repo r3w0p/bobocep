@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from bobocep.rules.events.action_event import ActionEvent
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 
@@ -75,7 +76,7 @@ class IDistIncomingSubscriber(ABC):
                           run_id: str,
                           history: BoboHistory) -> None:
         """
-        When a run has reached its final state on on another :code:`bobocep`
+        When a run has reached its final state on another :code:`bobocep`
         instance.
 
         :param nfa_name: The NFA name.
@@ -89,16 +90,11 @@ class IDistIncomingSubscriber(ABC):
         """
 
     @abstractmethod
-    def on_sync_response(self,
-                         sync_id: str,
-                         body: str) -> None:
+    def on_dist_action(self, event: ActionEvent) -> None:
         """
-        The response from another :code:`bobocep` instance when attempting to
-        synchronise decider state across instances.
+        When an action is executed on another :code:`bobocep`
+        instance.
 
-        :param sync_id: The ID of the synchronise request.
-        :type sync_id: str
-
-        :param body: The body of the response containing synchronise data.
-        :type body: str
+        :param event: The action event.
+        :type event: ActionEvent
         """

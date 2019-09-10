@@ -4,6 +4,7 @@ from bobocep.producer.action_producer import ActionProducer
 from bobocep.producer.producer_subscriber import IProducerSubscriber
 from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
 from bobocep.rules.actions.no_action import NoAction
+from bobocep.rules.events.action_event import ActionEvent
 from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 
@@ -25,12 +26,16 @@ class StubProducerSubscriber(IProducerSubscriber):
 
         self.accept = []
         self.reject = []
+        self.action = []
 
     def on_accepted_producer_event(self, event: CompositeEvent) -> None:
         self.accept.append(event)
 
     def on_rejected_producer_event(self, event: CompositeEvent) -> None:
         self.reject.append(event)
+
+    def on_producer_action(self, event: ActionEvent):
+        self.action.append(event)
 
 
 class TestActionProducer(unittest.TestCase):
@@ -58,7 +63,7 @@ class TestActionProducer(unittest.TestCase):
         sub = StubProducerSubscriber()
         prod.subscribe(NAME_A, sub)
 
-        prod.on_decider_complex_event(NAME_A, event_a)
+        prod.on_decider_complex_event(event_a)
         prod.setup()
         prod.loop()
 
@@ -71,7 +76,7 @@ class TestActionProducer(unittest.TestCase):
         sub = StubProducerSubscriber()
         prod.subscribe(NAME_A, sub)
 
-        prod.on_decider_complex_event(NAME_A, event_a)
+        prod.on_decider_complex_event(event_a)
         prod.setup()
         prod.loop()
 

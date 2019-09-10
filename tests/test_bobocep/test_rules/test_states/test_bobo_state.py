@@ -3,7 +3,6 @@ from typing import List
 
 from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
 from bobocep.rules.events.bobo_event import BoboEvent
-from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.rules.predicates.bobo_predicate_callable import \
@@ -20,13 +19,13 @@ KEY_VALUE = {KEY: VALUE}
 
 def predicate_key_value(event: BoboEvent,
                         history: BoboHistory,
-                        recent: List[CompositeEvent]):
+                        recent: List[BoboEvent]):
     return event.data == KEY_VALUE
 
 
 def predicate_first_history_key_value(event: BoboEvent,
                                       history: BoboHistory,
-                                      recent: List[CompositeEvent]):
+                                      recent: List[BoboEvent]):
     return False if history.first is None else history.first.data == KEY_VALUE
 
 

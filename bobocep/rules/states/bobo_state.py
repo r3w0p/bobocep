@@ -1,7 +1,6 @@
 from typing import List
 
 from bobocep.rules.events.bobo_event import BoboEvent
-from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.predicates.bobo_predicate import BoboPredicate
 from bobocep.rules.states.abstract_state import AbstractState
@@ -49,7 +48,7 @@ class BoboState(AbstractState):
     def process(self,
                 event: BoboEvent,
                 history: BoboHistory,
-                recent: List[CompositeEvent]) -> bool:
+                recent: List[BoboEvent]) -> bool:
         """Evaluates the state predicate.
 
         :param event: The event used in the evaluation.
@@ -61,7 +60,7 @@ class BoboState(AbstractState):
 
         :param recent: Recently accepted complex events of the corresponding
                         automaton.
-        :type recent: List[CompositeEvent]
+        :type recent: List[BoboEvent]
 
         :return: True if the state's predicate evaluates to True,
                  False otherwise.

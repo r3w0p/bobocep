@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from bobocep.rules.events.action_event import ActionEvent
 from bobocep.rules.events.composite_event import CompositeEvent
 
 
@@ -22,4 +23,14 @@ class IProducerSubscriber(ABC):
 
         :param event: A rejected event.
         :type event: CompositeEvent
+        """
+
+    @abstractmethod
+    def on_producer_action(self, event: ActionEvent):
+        """
+        When an action has been attempted by a BoboAction instance subscribed
+        to a Producer.
+
+        :param event: The action event.
+        :type event: ActionEvent
         """

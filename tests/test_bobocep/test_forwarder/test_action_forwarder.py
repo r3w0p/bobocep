@@ -55,7 +55,7 @@ class TestActionForwarder(unittest.TestCase):
         sub = StubForwarderSubscriber()
         forward.subscribe(sub)
 
-        forward.on_action_attempt(action_event)
+        forward.on_producer_action(action_event)
         forward.setup()
         forward.loop()
 
@@ -71,7 +71,7 @@ class TestActionForwarder(unittest.TestCase):
         sub = StubForwarderSubscriber()
         forward.subscribe(sub)
 
-        forward.on_action_attempt(action_event)
+        forward.on_producer_action(action_event)
         forward.setup()
         forward.loop()
 

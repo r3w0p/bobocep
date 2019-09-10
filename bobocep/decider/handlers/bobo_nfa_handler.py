@@ -15,7 +15,8 @@ from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.nfas.bobo_nfa import BoboNFA
 
 
-class BoboNFAHandler(AbstractHandler, IRunSubscriber):
+class BoboNFAHandler(AbstractHandler,
+                     IRunSubscriber):
     """A :code:`bobocep` automaton handler.
 
     :param nfa: The automaton with which the handler is associated.
@@ -43,10 +44,11 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
         self.nfa = nfa
         self.buffer = buffer
 
-        self._runs = {}
+        self.runs = {}
         self._recent = []
         self._max_recent = max(1, max_recent)
         self._subs = []
+        self._synced = False
         self._lock = RLock()
 
     def process(self, event: BoboEvent) -> None:
@@ -75,8 +77,8 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
 
     def _check_event_against_runs(self,
                                   event: BoboEvent,
-                                  recent: List[CompositeEvent]) -> None:
-        for run in tuple(self._runs.values()):
+                                  recent: List[BoboEvent]) -> None:
+        for run in tuple(self.runs.values()):
             run.process(event, recent)
 
     def add_run(self, run: BoboRun) -> None:
@@ -88,12 +90,12 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
         """
 
         with self._lock:
-            if run.id in self._runs:
+            if run.id in self.runs:
                 raise RuntimeError(
                     "Run ID {} already exists in handler for NFA {}.".format(
                         run.id, self.nfa.name))
 
-            self._runs[run.id] = run
+            self.runs[run.id] = run
             run.subscribe(self)
 
     def remove_run(self,
@@ -115,7 +117,7 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
         """
 
         with self._lock:
-            run = self._runs.get(run_id)
+            run = self.runs.get(run_id)
 
             if run is not None:
                 if halt:
@@ -128,7 +130,7 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
                     version=run.version.get_version_as_str())
 
                 # remove run from handler
-                self._runs.pop(run.id, None)
+                self.runs.pop(run.id, None)
 
     def clear_runs(self,
                    halt: bool = True,
@@ -145,7 +147,7 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
         """
 
         with self._lock:
-            for run in tuple(self._runs.values()):
+            for run in tuple(self.runs.values()):
                 self.remove_run(run_id=run.id,
                                 halt=halt,
                                 notify=notify)
@@ -182,7 +184,7 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
             if parent_run_id is None:
                 parent_run = None
             else:
-                parent_run = self._runs.get(parent_run_id)
+                parent_run = self.runs.get(parent_run_id)
 
             if parent_run is None and \
                     (parent_run_id is not None or force_parent):
@@ -224,7 +226,7 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
         """
 
         with self._lock:
-            run = self._runs.get(run_id)
+            run = self.runs.get(run_id)
 
             if run is None:
                 raise RuntimeError(
@@ -239,7 +241,6 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
                 name=self.nfa.name,
                 history=history)
 
-            self.add_recent(event)
             self.remove_run(run_id)
 
             if notify:
@@ -264,6 +265,27 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
             if notify:
                 self._notify_halt(run_id)
             self.remove_run(run_id)
+
+    def subscribe(self, subscriber: INFAHandlerSubscriber) -> None:
+        """
+        :param subscriber: Subscribes to state transitions within handler.
+        :type subscriber: INFAHandlerSubscriber
+        """
+
+        with self._lock:
+            if subscriber not in self._subs:
+                self._subs.append(subscriber)
+
+    def unsubscribe(self, unsubscriber: INFAHandlerSubscriber) -> None:
+        """
+        :param unsubscriber: Unsubscribes from state transitions within
+                             handler.
+        :type unsubscriber: INFAHandlerSubscriber
+        """
+
+        with self._lock:
+            if unsubscriber in self._subs:
+                self._subs.remove(unsubscriber)
 
     def force_run_transition(self,
                              run_id: str,
@@ -293,7 +315,7 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
         """
 
         with self._lock:
-            run = self._runs.get(run_id)
+            run = self.runs.get(run_id)
 
             if run is None:
                 raise RuntimeError(
@@ -357,7 +379,7 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
                 force_parent=False,
                 notify=False)
 
-            run = self._runs.get(parent_run_id)
+            run = self.runs.get(parent_run_id)
 
             if run is not None:
                 run._last_proceed_had_clone = True
@@ -374,7 +396,7 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
         """
 
         with self._lock:
-            run = self._runs.get(run_id)
+            run = self.runs.get(run_id)
 
             if run is None:
                 raise RuntimeError(
@@ -406,27 +428,6 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
                               halt=True,
                               notify=False)
 
-    def subscribe(self, subscriber: INFAHandlerSubscriber) -> None:
-        """
-        :param subscriber: Subscribes to state transitions within handler.
-        :type subscriber: INFAHandlerSubscriber
-        """
-
-        with self._lock:
-            if subscriber not in self._subs:
-                self._subs.append(subscriber)
-
-    def unsubscribe(self, unsubscriber: INFAHandlerSubscriber) -> None:
-        """
-        :param unsubscriber: Unsubscribes from state transitions within
-                             handler.
-        :type unsubscriber: INFAHandlerSubscriber
-        """
-
-        with self._lock:
-            if unsubscriber in self._subs:
-                self._subs.remove(unsubscriber)
-
     def to_dict(self) -> dict:
         """
         :return: A dict representation of the object.
@@ -436,7 +437,7 @@ class BoboNFAHandler(AbstractHandler, IRunSubscriber):
             return {
                 self.NFA_NAME: self.nfa.name,
                 self.BUFFER: self.buffer.to_dict(),
-                self.RUNS: [run.to_dict() for run in self._runs.values()
+                self.RUNS: [run.to_dict() for run in self.runs.values()
                             if not run.is_halted()]
             }
 
