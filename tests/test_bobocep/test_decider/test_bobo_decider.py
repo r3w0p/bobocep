@@ -435,4 +435,27 @@ class TestBoboDeciderDistInterfaces(unittest.TestCase):
             )
 
     def test_dist_action(self):
-        pass  # TODO
+        decider, handler, run = generate_handler_with_run()
+
+        c_event = CompositeEvent(
+            timestamp=EpochNSClock.generate_timestamp(),
+            name=handler.nfa.name,
+            history=BoboHistory())
+
+        a_event = NoAction(bool_return=True).execute(c_event)
+        decider.on_dist_action(a_event)
+
+        self.assertListEqual([a_event], handler._recent)
+
+    def test_dist_action_invalid_nfa_name(self):
+        decider, handler, run = generate_handler_with_run()
+
+        c_event = CompositeEvent(
+            timestamp=EpochNSClock.generate_timestamp(),
+            name=NFA_NAME_B,
+            history=BoboHistory())
+
+        a_event = NoAction(bool_return=True).execute(c_event)
+
+        with self.assertRaises(RuntimeError):
+            decider.on_dist_action(a_event)
