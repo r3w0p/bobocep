@@ -202,21 +202,17 @@ class BoboSetup(IDistOutgoingSubscriber):
 
     def get_null_data_generator(self) -> BoboNullDataGenerator:
         """
+        :raises RuntimeError: Attempting access before configuration.
 
         :return: The null data generator, or None if one was not configured
-                 during setup.
+         during setup.
         """
 
         with self._lock:
-            if self.is_active():
-                return self._null_data_generator
-            else:
-                raise RuntimeError(
-                    "Null data generator can only be accessed when setup is "
-                    "running and not cancelled. "
-                    "Setup is currently {} and {}.".format(
-                        "running" if self._running else "not running",
-                        "cancelled" if self._cancelled else "not cancelled"))
+            if not self._configured:
+                raise RuntimeError("Setup must be configured first.")
+
+            return self._null_data_generator
 
     def add_complex_event(self, event_def: BoboComplexEvent) -> None:
         """
@@ -345,6 +341,9 @@ class BoboSetup(IDistOutgoingSubscriber):
 
     def configure(self) -> None:
         with self._lock:
+            if self._cancelled:
+                raise RuntimeError("Setup has been cancelled.")
+
             if self.is_active():
                 raise RuntimeError("Setup is already active.")
 
@@ -373,6 +372,7 @@ class BoboSetup(IDistOutgoingSubscriber):
         with self._lock:
             if not self._cancelled:
                 self._cancelled = True
+                self._configured = False
                 if self._running:
                     self._running = False
                     self._deactivate_tasks()
