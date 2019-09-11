@@ -63,7 +63,7 @@ class BoboProducer(BoboTask,
 
     def on_action_attempt(self, event: ActionEvent):
         if not self._cancelled:
-            for subscriber in self._subs[event.name]:
+            for subscriber in self._subs[event.for_event.name]:
                 subscriber.on_producer_action(event)
 
     def subscribe(self,

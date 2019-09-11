@@ -3,10 +3,9 @@ from typing import List
 
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
-from bobocep.rules.predicates.abstract_predicate import AbstractPredicate
 
 
-class BoboPredicate(AbstractPredicate):
+class BoboPredicate:
     """A :code:`bobocep` predicate."""
 
     def __init__(self) -> None:

@@ -1,10 +1,8 @@
 from abc import ABC
 from time import time_ns
 
-from bobocep.receiver.clocks.abstract_clock import AbstractClock
 
-
-class EpochNSClock(AbstractClock, ABC):
+class EpochNSClock(ABC):
     """A clock that returns the number of nanoseconds since the epoch."""
 
     @staticmethod

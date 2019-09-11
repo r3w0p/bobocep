@@ -1,10 +1,8 @@
 from copy import copy
 from typing import List
 
-from bobocep.rules.transitions.abstract_transition import AbstractTransition
 
-
-class BoboTransition(AbstractTransition):
+class BoboTransition:
     """A :code:`bobocep` state transition.
 
     :param state_names: The names of states to which a transition can be made,

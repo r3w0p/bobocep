@@ -1,8 +1,8 @@
-from bobocep.receiver.validators.abstract_validator import \
-    AbstractValidator
+from bobocep.receiver.validators.bobo_validator import \
+    BoboValidator
 
 
-class AnyValidator(AbstractValidator):
+class AnyValidator(BoboValidator):
     """A validator that accepts any data."""
 
     def __init__(self) -> None:

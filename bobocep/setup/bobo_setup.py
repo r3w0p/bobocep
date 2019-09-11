@@ -15,13 +15,13 @@ from bobocep.producer.producer_subscriber import IProducerSubscriber
 from bobocep.receiver.bobo_receiver import BoboReceiver
 from bobocep.receiver.formatters.primitive_event_formatter import \
     PrimitiveEventFormatter
-from bobocep.receiver.generators.data.bobo_null_data import BoboNullData
 from bobocep.receiver.generators.bobo_null_data_generator import \
     BoboNullDataGenerator
+from bobocep.receiver.generators.data.bobo_null_data import BoboNullData
 from bobocep.receiver.receiver_subscriber import IReceiverSubscriber
-from bobocep.receiver.validators.abstract_validator import \
-    AbstractValidator
 from bobocep.receiver.validators.any_validator import AnyValidator
+from bobocep.receiver.validators.bobo_validator import \
+    BoboValidator
 from bobocep.rules.actions.bobo_action import BoboAction
 from bobocep.rules.actions.no_action import NoAction
 from bobocep.rules.bobo_rule_builder import BoboRuleBuilder
@@ -208,12 +208,12 @@ class BoboSetup(IDistOutgoingSubscriber):
             if self.is_inactive():
                 self._event_defs.append(event_def)
 
-    def config_receiver(self, validator: AbstractValidator) -> None:
+    def config_receiver(self, validator: BoboValidator) -> None:
         """
         Configure the Receiver.
 
         :param validator: The validator to use in the Receiver.
-        :type validator: AbstractValidator
+        :type validator: BoboValidator
         """
 
         with self._lock:

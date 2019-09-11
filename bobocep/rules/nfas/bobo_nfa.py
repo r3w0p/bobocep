@@ -1,12 +1,11 @@
 from typing import Dict, List
 
-from bobocep.rules.nfas.abstract_nfa import AbstractNFA
 from bobocep.rules.predicates.bobo_predicate import BoboPredicate
 from bobocep.rules.states.bobo_state import BoboState
 from bobocep.rules.transitions.bobo_transition import BoboTransition
 
 
-class BoboNFA(AbstractNFA):
+class BoboNFA:
     """A :code:`bobocep` nondeterministic finite automaton.
 
     :param name: The automaton name.

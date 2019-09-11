@@ -81,3 +81,43 @@ class TestActionProducer(unittest.TestCase):
         prod.loop()
 
         self.assertListEqual([event_a], sub.reject)
+
+    def test_action_event_from_subscribed_action(self):
+        event_a = generate_composite_event(NAME_A)
+        prod = ActionProducer(NoAction(bool_return=True))
+
+        # sub subscribes to prod
+        sub = StubProducerSubscriber()
+        prod.subscribe(NAME_A, sub)
+
+        # action subscribes to prod
+        action = NoAction(bool_return=True)
+        action.subscribe(prod)
+        action.execute(event_a)
+
+        self.assertEqual(1, len(sub.action))
+        self.assertIsInstance(sub.action[0], ActionEvent)
+        self.assertEqual(event_a, sub.action[0].for_event)
+
+    def test_composite_event_triggers_action_execution(self):
+        event_a = generate_composite_event(NAME_A)
+        prod = ActionProducer(NoAction(bool_return=True))
+        action = NoAction(bool_return=True)
+
+        # sub subscribes to prod
+        sub = StubProducerSubscriber()
+        prod.subscribe(NAME_A, sub)
+
+        # prod subscribes to action
+        prod.subscribe(event_a.name, action)
+
+        # action subscribes to prod
+        action.subscribe(prod)
+
+        prod.setup()
+        prod.on_decider_complex_event(event_a)
+        prod.loop()
+
+        self.assertEqual(1, len(sub.action))
+        self.assertIsInstance(sub.action[0], ActionEvent)
+        self.assertEqual(event_a, sub.action[0].for_event)

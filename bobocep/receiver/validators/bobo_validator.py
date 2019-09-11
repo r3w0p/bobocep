@@ -1,8 +1,8 @@
 from abc import abstractmethod
 
 
-class AbstractValidator:
-    """An abstract validator."""
+class BoboValidator:
+    """A :code:`bobocep` data validator."""
 
     def __init__(self) -> None:
         super().__init__()

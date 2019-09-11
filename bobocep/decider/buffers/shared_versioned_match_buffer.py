@@ -1,11 +1,10 @@
-from bobocep.decider.buffers.abstract_buffer import AbstractBuffer
 from bobocep.decider.buffers.match_event import MatchEvent
 from bobocep.decider.versions.run_version import RunVersion
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 
 
-class SharedVersionedMatchBuffer(AbstractBuffer):
+class SharedVersionedMatchBuffer:
     """
     An event buffer based on the Shared Versioned Match Buffer proposed by
     Agrawal et al. (2008) in their paper "Efficient Pattern Matching over

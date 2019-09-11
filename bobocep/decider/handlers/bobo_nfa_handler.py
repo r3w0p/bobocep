@@ -3,7 +3,6 @@ from typing import List
 
 from bobocep.decider.buffers.shared_versioned_match_buffer import \
     SharedVersionedMatchBuffer
-from bobocep.decider.handlers.abstract_handler import AbstractHandler
 from bobocep.decider.handlers.nfa_handler_subscriber import \
     INFAHandlerSubscriber
 from bobocep.decider.runs.bobo_run import BoboRun
@@ -15,8 +14,7 @@ from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.nfas.bobo_nfa import BoboNFA
 
 
-class BoboNFAHandler(AbstractHandler,
-                     IRunSubscriber):
+class BoboNFAHandler(IRunSubscriber):
     """A :code:`bobocep` automaton handler.
 
     :param nfa: The automaton with which the handler is associated.

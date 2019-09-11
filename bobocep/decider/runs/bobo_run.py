@@ -4,7 +4,6 @@ from typing import List
 
 from bobocep.decider.buffers.shared_versioned_match_buffer import \
     SharedVersionedMatchBuffer
-from bobocep.decider.runs.abstract_run import AbstractRun
 from bobocep.decider.runs.run_subscriber import IRunSubscriber
 from bobocep.decider.versions.run_version import RunVersion
 from bobocep.rules.events.bobo_event import BoboEvent
@@ -13,7 +12,7 @@ from bobocep.rules.nfas.bobo_nfa import BoboNFA
 from bobocep.rules.states.bobo_state import BoboState
 
 
-class BoboRun(AbstractRun):
+class BoboRun:
     """A :code:`bobocep` antomaton run.
 
     :param buffer: The buffer in which run data will be stored..

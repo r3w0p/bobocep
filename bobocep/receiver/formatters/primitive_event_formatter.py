@@ -1,9 +1,8 @@
 from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
-from bobocep.receiver.formatters.abstract_formatter import AbstractFormatter
 from bobocep.rules.events.primitive_event import PrimitiveEvent
 
 
-class PrimitiveEventFormatter(AbstractFormatter):
+class PrimitiveEventFormatter:
     """An PrimitiveEvent formatter."""
 
     def __init__(self) -> None:

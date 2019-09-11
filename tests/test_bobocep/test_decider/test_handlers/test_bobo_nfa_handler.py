@@ -1,4 +1,5 @@
 import unittest
+from time import sleep
 from typing import List
 
 from bobocep.decider.buffers.shared_versioned_match_buffer import \
@@ -9,6 +10,7 @@ from bobocep.decider.handlers.nfa_handler_subscriber import \
 from bobocep.decider.runs.bobo_run import BoboRun
 from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
 from bobocep.rules.bobo_rule_builder import BoboRuleBuilder
+from bobocep.rules.events.action_event import ActionEvent
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
@@ -16,6 +18,9 @@ from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.rules.nfas.patterns.bobo_pattern import BoboPattern
 from bobocep.rules.predicates.bobo_predicate_callable import \
     BoboPredicateCallable
+
+EVENT_NAME_A = "event_name_a"
+EVENT_NAME_B = "event_name_b"
 
 NFA_NAME_A = "NFA_NAME_A"
 NFA_NAME_INVALID = "NFA_NAME_INVALID"
@@ -97,13 +102,15 @@ pattern_relaxed = BoboPattern() \
                  BoboPredicateCallable(predicate_key_a_value_d))
 
 
-def handler_setup(nfa_name, pattern):
+def handler_setup(nfa_name, pattern, max_recent: int = 1):
     buffer = SharedVersionedMatchBuffer()
     nfa = BoboRuleBuilder.nfa(
         name_nfa=nfa_name,
         pattern=pattern)
-
-    handler = BoboNFAHandler(nfa, buffer)
+    handler = BoboNFAHandler(
+        nfa=nfa,
+        buffer=buffer,
+        max_recent=max_recent)
     handlersub = NFAHandlerSubscriber()
     handler.subscribe(handlersub)
 
@@ -178,6 +185,61 @@ class TestBoboNFAHandler(unittest.TestCase):
         handler.process(event_d)
 
         self.assertEqual(len(handlersub.final), 1)
+
+    def test_add_recent(self):
+        nfa, buffer, handler, handlersub = handler_setup(
+            nfa_name=NFA_NAME_A,
+            pattern=pattern_relaxed,
+            max_recent=2)
+
+        p_event = PrimitiveEvent(
+            timestamp=EpochNSClock.generate_timestamp(),
+            data={}
+        )
+        sleep(0.1)
+        c_event = CompositeEvent(
+            timestamp=EpochNSClock.generate_timestamp(),
+            name=EVENT_NAME_A,
+            history=BoboHistory(),
+            data={}
+        )
+        sleep(0.1)
+        a_event = ActionEvent(
+            timestamp=EpochNSClock.generate_timestamp(),
+            name=EVENT_NAME_B,
+            success=True,
+            for_event=c_event
+        )
+
+        handler.add_recent(p_event)
+        handler.add_recent(c_event)
+
+        self.assertTrue(p_event in handler._recent)
+        self.assertTrue(c_event in handler._recent)
+
+        handler.add_recent(a_event)
+
+        self.assertFalse(p_event in handler._recent)
+        self.assertTrue(c_event in handler._recent)
+        self.assertTrue(a_event in handler._recent)
+
+    def test_to_dict(self):
+        nfa, buffer, handler, handlersub = handler_setup(
+            nfa_name=NFA_NAME_A,
+            pattern=pattern_relaxed,
+            max_recent=2)
+
+        run_a = BoboRun(buffer=buffer, nfa=nfa, event=event_a)
+        handler.add_run(run_a)
+
+        run_a_dict = run_a.to_dict()
+        buffer_dict = buffer.to_dict()
+
+        self.assertDictEqual(handler.to_dict(), {
+            BoboNFAHandler.NFA_NAME: nfa.name,
+            BoboNFAHandler.BUFFER: buffer_dict,
+            BoboNFAHandler.RUNS: [run_a_dict]
+        })
 
     def test_add_then_remove_run_no_halt_no_notify(self):
         nfa, buffer, handler, handlersub = handler_setup(

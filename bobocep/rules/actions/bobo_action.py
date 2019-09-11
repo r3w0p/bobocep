@@ -3,14 +3,12 @@ from threading import RLock
 
 from bobocep.producer.producer_subscriber import IProducerSubscriber
 from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
-from bobocep.rules.actions.abstract_action import AbstractAction
 from bobocep.rules.actions.action_subscriber import IActionSubscriber
 from bobocep.rules.events.action_event import ActionEvent
 from bobocep.rules.events.composite_event import CompositeEvent
 
 
-class BoboAction(AbstractAction,
-                 IProducerSubscriber):
+class BoboAction(IProducerSubscriber):
     """A :code:`bobocep` action that can execute some given task.
 
     :param name: The action name, defaults to an empty string.

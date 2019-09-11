@@ -2,10 +2,8 @@ from abc import abstractmethod
 from typing import Dict
 from uuid import uuid4
 
-from bobocep.rules.events.abstract_event import AbstractEvent
 
-
-class BoboEvent(AbstractEvent):
+class BoboEvent:
     """A :code:`bobocep` event.
 
     :param timestamp: The event timestamp indicating when it was first

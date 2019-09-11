@@ -270,7 +270,8 @@ class TestSharedVersionedMatchBuffer(unittest.TestCase):
         buffer.remove_version(nfa_name=NFA_NAME_A, version=version_b_str)
 
         with self.assertRaises(KeyError):
-            match_event = buffer._eve[NFA_NAME_A][LABEL_LAYER_B][event_a.event_id]
+            match_event = buffer._eve[NFA_NAME_A][LABEL_LAYER_B][
+                event_a.event_id]
         self.assertFalse(version_b_str in match_event.next_ids)
 
     def test_to_dict_1_nfa_1_version_3_events_3_labels(self):

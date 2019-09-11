@@ -50,9 +50,11 @@ class BoboForwarder(BoboTask,
 
             if event is not None:
                 if self._handle_forwarder_event(event):
-                    self._notify_success(event)
+                    for subscriber in self._subs:
+                        subscriber.on_forwarder_success_event(event)
                 else:
-                    self._notify_failure(event)
+                    for subscriber in self._subs:
+                        subscriber.on_forwarder_failure_event(event)
 
     def on_accepted_producer_event(self, event: CompositeEvent):
         if not self._cancelled:
@@ -82,14 +84,6 @@ class BoboForwarder(BoboTask,
         with self._lock:
             if unsubscriber in self._subs:
                 self._subs.remove(unsubscriber)
-
-    def _notify_success(self, event: CompositeEvent):
-        for subscriber in self._subs:
-            subscriber.on_forwarder_success_event(event)
-
-    def _notify_failure(self, event: CompositeEvent):
-        for subscriber in self._subs:
-            subscriber.on_forwarder_failure_event(event)
 
     def on_rejected_producer_event(self, event: CompositeEvent):
         """"""

@@ -1,11 +1,10 @@
 from typing import List
 
-from bobocep.rules.nfas.patterns.abstract_pattern import AbstractPattern
 from bobocep.rules.nfas.patterns.bobo_pattern_layer import BoboPatternLayer
 from bobocep.rules.predicates.bobo_predicate import BoboPredicate
 
 
-class BoboPattern(AbstractPattern):
+class BoboPattern:
     """A pattern that describes the structure of a nondeterministic finite
     automata, where each layer consists of a group of states under a common
     name."""

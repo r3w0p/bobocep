@@ -36,7 +36,7 @@ class StubForwarderSubscriber(IForwarderSubscriber):
 class TestActionForwarder(unittest.TestCase):
 
     def test_subscribe_unsubscribe(self):
-        forward = ActionForwarder(NoAction())
+        forward = ActionForwarder(NoAction(bool_return=True))
         sub = StubForwarderSubscriber()
 
         forward.subscribe(sub)
@@ -49,7 +49,6 @@ class TestActionForwarder(unittest.TestCase):
         comp_event = generate_composite_event(NAME_A)
         action_event = NoAction().execute(comp_event)
 
-        # True = Success
         forward = ActionForwarder(NoAction(bool_return=True))
 
         sub = StubForwarderSubscriber()
@@ -65,7 +64,6 @@ class TestActionForwarder(unittest.TestCase):
         comp_event = generate_composite_event(NAME_A)
         action_event = NoAction().execute(comp_event)
 
-        # False = Failure
         forward = ActionForwarder(NoAction(bool_return=False))
 
         sub = StubForwarderSubscriber()
@@ -76,3 +74,30 @@ class TestActionForwarder(unittest.TestCase):
         forward.loop()
 
         self.assertListEqual([action_event], sub.failure)
+
+    def test_producer_composite_event_triggers_forward(self):
+        forward = ActionForwarder(NoAction(bool_return=True))
+        sub = StubForwarderSubscriber()
+        forward.subscribe(sub)
+
+        c_event = generate_composite_event(NAME_A)
+
+        forward.on_accepted_producer_event(c_event)
+        forward.setup()
+        forward.loop()
+
+        self.assertListEqual([c_event], sub.success)
+
+    def test_producer_action_event_triggers_forward(self):
+        forward = ActionForwarder(NoAction(bool_return=True))
+        sub = StubForwarderSubscriber()
+        forward.subscribe(sub)
+
+        c_event = generate_composite_event(NAME_A)
+        a_event = NoAction(bool_return=True).execute(c_event)
+
+        forward.on_producer_action(a_event)
+        forward.setup()
+        forward.loop()
+
+        self.assertListEqual([a_event], sub.success)

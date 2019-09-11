@@ -3,8 +3,8 @@ from queue import Queue
 from bobocep.receiver.formatters.primitive_event_formatter import \
     PrimitiveEventFormatter
 from bobocep.receiver.receiver_subscriber import IReceiverSubscriber
-from bobocep.receiver.validators.abstract_validator import \
-    AbstractValidator
+from bobocep.receiver.validators.bobo_validator import \
+    BoboValidator
 from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.setup.task.bobo_task import BoboTask
 
@@ -13,7 +13,7 @@ class BoboReceiver(BoboTask):
     """A :code:`bobocep` data receiver.
 
     :param validator: The data validator.
-    :type validator: AbstractValidator
+    :type validator: BoboValidator
 
     :param formatter: The event formatter.
     :type formatter: PrimitiveEventFormatter
@@ -28,7 +28,7 @@ class BoboReceiver(BoboTask):
     """
 
     def __init__(self,
-                 validator: AbstractValidator,
+                 validator: BoboValidator,
                  formatter: PrimitiveEventFormatter,
                  max_queue_size: int = 0,
                  active: bool = True) -> None:

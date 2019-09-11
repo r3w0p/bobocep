@@ -1,13 +1,12 @@
 import unittest
 
 from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
+from bobocep.rules.actions.action_subscriber import IActionSubscriber
 from bobocep.rules.actions.bobo_action import BoboAction
+from bobocep.rules.actions.no_action import NoAction
 from bobocep.rules.events.action_event import ActionEvent
 from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
-from bobocep.rules.actions.action_subscriber import IActionSubscriber
-from bobocep.rules.actions.no_action import NoAction
-
 
 KEY_A = "key_a"
 VALUE_A = "value_a"

@@ -138,6 +138,9 @@ class TestBoboRun(unittest.TestCase):
         self.assertTrue(run.is_halted())
         self.assertEqual(1, len(runsub.halt))
 
+        with self.assertRaises(RuntimeError):
+            run.process(event=event_a, recent=[])
+
     def test_handle_state_not_in_nfa(self):
         run, runsub = run_setup(
             nfa_name=NFA_NAME_A,

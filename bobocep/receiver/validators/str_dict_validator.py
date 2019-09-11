@@ -1,8 +1,8 @@
-from bobocep.receiver.validators.abstract_validator import \
-    AbstractValidator
+from bobocep.receiver.validators.bobo_validator import \
+    BoboValidator
 
 
-class StrDictValidator(AbstractValidator):
+class StrDictValidator(BoboValidator):
     """A validator that checks whether data is a dict, where both the keys and
     values are of type str.
 

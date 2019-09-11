@@ -3,11 +3,10 @@ from typing import List
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.predicates.bobo_predicate import BoboPredicate
-from bobocep.rules.states.abstract_state import AbstractState
 
 
-class BoboState(AbstractState):
-    """A :code:`bobocep` state for use in automata.
+class BoboState:
+    """A :code:`bobocep` state.
 
     :param name: The state name.
     :type name: str

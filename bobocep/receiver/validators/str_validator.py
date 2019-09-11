@@ -1,8 +1,8 @@
-from bobocep.receiver.validators.abstract_validator import \
-    AbstractValidator
+from bobocep.receiver.validators.bobo_validator import \
+    BoboValidator
 
 
-class StrValidator(AbstractValidator):
+class StrValidator(BoboValidator):
     """A validator that checks whether data is of type str.
 
     :param min_length: The minimum length for strings, defaults to 0.
