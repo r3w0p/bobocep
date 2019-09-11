@@ -419,6 +419,19 @@ class TestBoboDeciderDistInterfaces(unittest.TestCase):
         self.assertTrue(run.is_final())
         self.assertEqual(0, len(handler.runs))
 
+    def test_dist_final_invalid_nfa_name(self):
+        decider, handler, run = generate_handler_with_run()
+
+        sub = DeciderSubscriber()
+        decider.subscribe(handler.nfa.name, sub)
+
+        with self.assertRaises(RuntimeError):
+            decider.on_dist_run_final(
+                nfa_name=NFA_NAME_B,
+                run_id=run.id,
+                history=BoboHistory()
+            )
+
     def test_dist_final_invalid_run_id(self):
         decider, handler, run = generate_handler_with_run()
 

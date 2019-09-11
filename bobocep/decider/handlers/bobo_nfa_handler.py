@@ -41,8 +41,8 @@ class BoboNFAHandler(IRunSubscriber):
 
         self.nfa = nfa
         self.buffer = buffer
-
         self.runs = {}
+
         self._recent = []
         self._max_recent = max(1, max_recent)
         self._subs = []

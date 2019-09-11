@@ -8,7 +8,6 @@ from bobocep.decider.buffers.shared_versioned_match_buffer import \
 from bobocep.decider.decider_subscriber import IDeciderSubscriber
 from bobocep.decider.handlers.bobo_nfa_handler import BoboNFAHandler
 from bobocep.forwarder.action_forwarder import ActionForwarder
-from bobocep.forwarder.bobo_forwarder import BoboForwarder
 from bobocep.forwarder.forwarder_subscriber import IForwarderSubscriber
 from bobocep.producer.action_producer import ActionProducer
 from bobocep.producer.producer_subscriber import IProducerSubscriber
@@ -69,6 +68,7 @@ class BoboSetup(IDistOutgoingSubscriber):
         self._lock = RLock()
         self._running = False
         self._cancelled = False
+        self._configured = False
 
         self._validator = None
         self._event_defs = []
@@ -140,43 +140,65 @@ class BoboSetup(IDistOutgoingSubscriber):
         with self._lock:
             return self._cancelled
 
+    def is_configured(self) -> bool:
+        """
+        :return: True if configured, False otherwise.
+        """
+
+        with self._lock:
+            return self._configured
+
     def get_receiver(self) -> BoboReceiver:
         """
-        :raises RuntimeError: Attempting to get the Receiver when setup is not
-                              active.
+        :raises RuntimeError: Attempting access before configuration.
 
         :return: The Receiver.
         """
 
         with self._lock:
-            if self.is_active():
-                return self._receiver
-            else:
-                raise RuntimeError(
-                    "Receiver can only be accessed when setup is "
-                    "running and not cancelled. "
-                    "Setup is currently {} and {}.".format(
-                        "running" if self._running else "not running",
-                        "cancelled" if self._cancelled else "not cancelled"))
+            if not self._configured:
+                raise RuntimeError("Setup must be configured first.")
 
-    def get_forwarder(self) -> BoboForwarder:
+            return self._receiver
+
+    def get_decider(self) -> BoboDecider:
         """
-        :raises RuntimeError: Attempting to get the Forwarder when setup is not
-                              active.
+        :raises RuntimeError: Attempting access before configuration.
+
+        :return: The Receiver.
+        """
+
+        with self._lock:
+            if not self._configured:
+                raise RuntimeError("Setup must be configured first.")
+
+            return self._decider
+
+    def get_producer(self) -> ActionProducer:
+        """
+        :raises RuntimeError: Attempting access before configuration.
+
+        :return: The Receiver.
+        """
+
+        with self._lock:
+            if not self._configured:
+                raise RuntimeError("Setup must be configured first.")
+
+            return self._producer
+
+    def get_forwarder(self) -> ActionForwarder:
+        """
+        :raises RuntimeError: Attempting access before configuration.
 
         :return: The Forwarder.
         """
 
         with self._lock:
-            if self.is_active():
-                return self._forwarder
-            else:
-                raise RuntimeError(
-                    "Forwarder can only be accessed when setup is "
-                    "running and not cancelled. "
-                    "Setup is currently {} and {}.".format(
-                        "running" if self._running else "not running",
-                        "cancelled" if self._cancelled else "not cancelled"))
+            if not self._configured:
+                raise RuntimeError("Setup must be configured first.")
+
+            return self._forwarder
 
     def get_null_data_generator(self) -> BoboNullDataGenerator:
         """
@@ -309,18 +331,41 @@ class BoboSetup(IDistOutgoingSubscriber):
         """
 
         with self._lock:
-            if self.is_inactive():
-                self._config()
-                self._start_threads()
-
-                self._running = True
-
-                # tasks are active by default if not distributed,
-                # sync immediately
-                if not self._distributed:
-                    self._synced = True
-            else:
+            if self.is_active():
                 raise RuntimeError("Setup is already active.")
+
+            if not self._configured:
+                self.configure()
+            self._start_threads()
+            self._running = True
+
+            # tasks active by default if not distributed, sync immediately
+            if not self._distributed:
+                self._synced = True
+
+    def configure(self) -> None:
+        with self._lock:
+            if self.is_active():
+                raise RuntimeError("Setup is already active.")
+
+            if self._configured:
+                raise RuntimeError("Setup is already configured.")
+
+            if len(self._event_defs) == 0:
+                raise RuntimeError(
+                    "No complex event definitions found. "
+                    "At least one must be provided.")
+
+            self._config_receiver()
+            self._config_decider()
+            self._config_producer()
+            self._config_forwarder()
+
+            self._config_distributed()
+            self._config_definitions()
+            self._config_extra_subscriptions()
+
+            self._configured = True
 
     def cancel(self) -> None:
         """Cancel the setup."""
@@ -365,21 +410,6 @@ class BoboSetup(IDistOutgoingSubscriber):
         with self._lock:
             if self.is_inactive() and subscriber not in self._subs_forwarder:
                 self._subs_forwarder.append(subscriber)
-
-    def _config(self) -> None:
-        if len(self._event_defs) == 0:
-            raise RuntimeError(
-                "No complex event definitions found. "
-                "At least one must be provided.")
-
-        self._config_receiver()
-        self._config_decider()
-        self._config_producer()
-        self._config_forwarder()
-
-        self._config_distributed()
-        self._config_definitions()
-        self._config_extra_subscriptions()
 
     def _config_receiver(self) -> None:
         if self._validator is None:
