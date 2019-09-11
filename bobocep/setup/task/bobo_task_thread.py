@@ -40,12 +40,12 @@ class BoboTaskThread(Thread):
                         self._task.loop()
                     else:
                         break
-        except:
+        except Exception:
             pass
         finally:
             try:
                 self._task.cancel()
-            except:
+            except Exception:
                 pass
             self._cancel_event.set()
 
