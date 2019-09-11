@@ -89,7 +89,7 @@ class BoboDistOutgoing(BoboTask,
         self._connection.close()
 
     def on_sync_response(self, sync_id, body: str):
-        if not self._cancelled:
+        if not self._is_cancelled:
             if self.sync_id == sync_id:
                 self._sync_response = body
 
@@ -108,7 +108,7 @@ class BoboDistOutgoing(BoboTask,
         :type unsubscriber: IDistOutgoingSubscriber
         """
 
-        if not self._cancelled:
+        if not self._is_cancelled:
             if unsubscriber in self._subs:
                 self._subs.remove(unsubscriber)
 
@@ -155,7 +155,7 @@ class BoboDistOutgoing(BoboTask,
         return True
 
     def _put_current_state(self, decider_dict: dict) -> None:
-        if self._cancelled or self._synced:
+        if self._is_cancelled or self._synced:
             return
 
         for handler_dict in decider_dict[bdc.HANDLERS]:
@@ -197,7 +197,7 @@ class BoboDistOutgoing(BoboTask,
                               state_name_from: str,
                               state_name_to: str,
                               event: BoboEvent):
-        if not self._cancelled:
+        if not self._is_cancelled:
             self._queue_transition.put_nowait({
                 bdc.NFA_NAME: nfa_name,
                 bdc.RUN_ID: run_id,
@@ -211,7 +211,7 @@ class BoboDistOutgoing(BoboTask,
                          run_id: str,
                          state_name: str,
                          event: BoboEvent):
-        if not self._cancelled:
+        if not self._is_cancelled:
             self._queue_clone.put_nowait({
                 bdc.NFA_NAME: nfa_name,
                 bdc.RUN_ID: run_id,
@@ -222,7 +222,7 @@ class BoboDistOutgoing(BoboTask,
     def on_handler_halt(self,
                         nfa_name: str,
                         run_id: str):
-        if not self._cancelled:
+        if not self._is_cancelled:
             self._queue_halt.put_nowait({
                 bdc.NFA_NAME: nfa_name,
                 bdc.RUN_ID: run_id
@@ -232,7 +232,7 @@ class BoboDistOutgoing(BoboTask,
                          nfa_name: str,
                          run_id: str,
                          event: CompositeEvent):
-        if not self._cancelled:
+        if not self._is_cancelled:
             self._queue_final.put_nowait({
                 bdc.NFA_NAME: nfa_name,
                 bdc.RUN_ID: run_id,
@@ -240,7 +240,7 @@ class BoboDistOutgoing(BoboTask,
             })
 
     def on_producer_action(self, event: ActionEvent):
-        if not self._cancelled:
+        if not self._is_cancelled:
             self._queue_action.put_nowait({
                 bdc.EVENT: event.to_dict()
             })

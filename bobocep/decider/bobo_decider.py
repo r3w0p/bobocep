@@ -58,7 +58,7 @@ class BoboDecider(BoboTask,
         """
 
         with self._lock:
-            if not self._cancelled:
+            if not self._is_cancelled:
                 if nfa_handler.nfa.name not in self._nfa_handlers:
                     self._nfa_handlers[nfa_handler.nfa.name] = nfa_handler
                     nfa_handler.subscribe(self)
@@ -86,11 +86,11 @@ class BoboDecider(BoboTask,
             return self._nfa_handlers.get(name)
 
     def on_receiver_event(self, event: BoboEvent) -> None:
-        if not self._cancelled:
+        if not self._is_cancelled:
             self._event_queue.put(event)
 
     def on_accepted_producer_event(self, event: CompositeEvent) -> None:
-        if not self._cancelled:
+        if not self._is_cancelled:
             if event.name in self._nfa_handlers:
                 self._nfa_handlers[event.name].add_recent(event)
 
@@ -98,7 +98,7 @@ class BoboDecider(BoboTask,
 
     def on_producer_action(self, event: ActionEvent):
         # producer actions are added to the handler's recent events
-        if not self._cancelled:
+        if not self._is_cancelled:
             if event.for_event.name in self._nfa_handlers:
                 self._nfa_handlers[event.for_event.name].add_recent(event)
 
@@ -126,7 +126,7 @@ class BoboDecider(BoboTask,
         """
 
         with self._lock:
-            if not self._cancelled:
+            if not self._is_cancelled:
                 if nfa_name not in self._nfa_handlers:
                     raise RuntimeError("NFA name {} not found in handlers."
                                        .format(nfa_name))
@@ -149,7 +149,7 @@ class BoboDecider(BoboTask,
         """
 
         with self._lock:
-            if not self._cancelled:
+            if not self._is_cancelled:
                 if unsubscriber in self._subs[nfa_name]:
                     self._subs[nfa_name].remove(unsubscriber)
 

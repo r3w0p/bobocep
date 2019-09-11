@@ -57,11 +57,11 @@ class BoboForwarder(BoboTask,
                         subscriber.on_forwarder_failure_event(event)
 
     def on_accepted_producer_event(self, event: CompositeEvent):
-        if not self._cancelled:
+        if not self._is_cancelled:
             self._event_queue.put_nowait(event)
 
     def on_producer_action(self, event: ActionEvent) -> None:
-        if not self._cancelled:
+        if not self._is_cancelled:
             self._event_queue.put_nowait(event)
 
     def subscribe(self, subscriber: IForwarderSubscriber) -> None:
@@ -71,7 +71,7 @@ class BoboForwarder(BoboTask,
         """
 
         with self._lock:
-            if not self._cancelled:
+            if not self._is_cancelled:
                 if subscriber not in self._subs:
                     self._subs.append(subscriber)
 

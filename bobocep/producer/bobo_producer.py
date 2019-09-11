@@ -58,11 +58,11 @@ class BoboProducer(BoboTask,
         """
 
     def on_decider_complex_event(self, event: CompositeEvent):
-        if not self._cancelled:
+        if not self._is_cancelled:
             self._event_queue.put_nowait(event)
 
     def on_action_attempt(self, event: ActionEvent):
-        if not self._cancelled:
+        if not self._is_cancelled:
             for subscriber in self._subs[event.for_event.name]:
                 subscriber.on_producer_action(event)
 
@@ -79,7 +79,7 @@ class BoboProducer(BoboTask,
         """
 
         with self._lock:
-            if not self._cancelled:
+            if not self._is_cancelled:
                 if event_name not in self._subs:
                     self._subs[event_name] = []
 

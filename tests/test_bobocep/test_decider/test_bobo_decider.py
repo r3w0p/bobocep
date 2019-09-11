@@ -203,7 +203,7 @@ class TestBoboDecider(unittest.TestCase):
         self.assertEqual(c_event_2, decider._event_queue.get_nowait())
         self.assertEqual([c_event_2, c_event_1], handler._recent)
 
-    def tes_producer_action(self):
+    def test_producer_action(self):
         decider = BoboDecider()
 
         handler = BoboNFAHandler(

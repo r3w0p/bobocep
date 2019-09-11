@@ -57,7 +57,7 @@ class BoboReceiver(BoboTask):
         :type data: any
         """
 
-        if not self._cancelled:
+        if not self._is_cancelled:
             self._data_queue.put_nowait(data)
 
     def subscribe(self, subscriber: IReceiverSubscriber) -> None:
@@ -67,7 +67,7 @@ class BoboReceiver(BoboTask):
         """
 
         with self._lock:
-            if not self._cancelled and subscriber not in self._subs:
+            if not self._is_cancelled and subscriber not in self._subs:
                 self._subs.append(subscriber)
 
     def unsubscribe(self, unsubscriber: IReceiverSubscriber) -> None:

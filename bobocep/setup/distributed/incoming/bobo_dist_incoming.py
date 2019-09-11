@@ -89,7 +89,7 @@ class BoboDistIncoming(BoboTask):
         self._connection.close()
 
     def on_sync(self) -> None:
-        if not self._cancelled:
+        if not self._is_cancelled:
             self._is_synced = True
 
     def subscribe(self, subscriber: IDistIncomingSubscriber) -> None:
@@ -97,7 +97,7 @@ class BoboDistIncoming(BoboTask):
         :param subscriber: Subscribes to incoming data.
         :type subscriber: IDistIncomingSubscriber
         """
-        if not self._cancelled:
+        if not self._is_cancelled:
             if subscriber not in self._subs:
                 self._subs.append(subscriber)
 

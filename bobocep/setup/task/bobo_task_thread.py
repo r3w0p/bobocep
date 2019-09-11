@@ -23,28 +23,40 @@ class BoboTaskThread(Thread):
 
         self._task = task
         self._delay = delay
-        self._cancel = Event()
+        self._cancel_event = Event()
 
     def run(self):
-        """Runs the task.
-
-        :raises RuntimeError: Exception raised during task execution.
-        """
+        """Runs the thread."""
 
         try:
-            if not self._cancel.is_set():
+            if (not self._cancel_event.is_set()) and \
+                    (not self._task.is_cancelled()):
                 self._task.setup()
 
-                # THREAD has been cancelled if False
-                while not self._cancel.wait(self._delay):
-                    self._task.loop()
-
+                # thread has been cancelled if True
+                while not self._cancel_event.wait(self._delay):
+                    # task has been cancelled if True
+                    if not self._task.is_cancelled():
+                        self._task.loop()
+                    else:
+                        break
+        except:
+            pass
+        finally:
+            try:
                 self._task.cancel()
-        except Exception as e:
-            raise RuntimeError("Exception raised during task execution: {}."
-                               .format(e))
+            except:
+                pass
+            self._cancel_event.set()
+
+    def is_cancelled(self) -> bool:
+        """
+        :return: True if thread is cancelled, False otherwise.
+        """
+
+        return self._cancel_event.is_set()
 
     def cancel(self):
-        """Cancels the task."""
+        """Cancels the thread."""
 
-        self._cancel.set()
+        self._cancel_event.set()

@@ -41,7 +41,7 @@ class TestBoboNullEventGenerator(unittest.TestCase):
         self.assertEqual(1, receiver._data_queue.qsize())
 
         nullgen.cancel()
-        self.assertTrue(nullgen._cancelled)
+        self.assertTrue(nullgen._is_cancelled)
 
         with self.assertRaises(RuntimeError):
             nullgen.loop()

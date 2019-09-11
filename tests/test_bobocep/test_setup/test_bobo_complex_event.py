@@ -6,9 +6,9 @@ from bobocep.setup.bobo_complex_event import \
     BoboComplexEvent
 
 
-class TestBoboEventDefinition(unittest.TestCase):
+class TestBoboComplexEvent(unittest.TestCase):
 
-    def test_constructor_one_action(self):
+    def test_constructor(self):
         name = "evdef_name"
         pattern = BoboPattern()
         action = NoAction()

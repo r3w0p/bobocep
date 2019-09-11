@@ -199,6 +199,11 @@ class BoboRun:
 
         return self._last_process_cloned
 
+    def set_cloned(self) -> None:
+        """Set the run as having been cloned."""
+
+        self._last_process_cloned = True
+
     def is_halted(self) -> bool:
         """
         :return: True if the run has halted, False otherwise.
