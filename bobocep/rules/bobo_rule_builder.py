@@ -48,15 +48,15 @@ class BoboRuleBuilder(ABC):
         :return: A PrimitiveEvent instance.
         """
 
-        timestamp = d.get(BoboEvent.TIMESTAMP)
+        timestamp = d.get(PrimitiveEvent.TIMESTAMP)
         if timestamp is None:
             raise RuntimeError("Timestamp not found in dict.")
 
-        data = d.get(BoboEvent.DATA)
+        data = d.get(PrimitiveEvent.DATA)
         if data is None:
             raise RuntimeError("Data not found in dict.")
 
-        event_id = d.get(BoboEvent.EVENT_ID)
+        event_id = d.get(PrimitiveEvent.EVENT_ID)
         if event_id is None:
             raise RuntimeError("Event ID not found in dict.")
 
@@ -80,7 +80,7 @@ class BoboRuleBuilder(ABC):
         :return: A CompositeEvent instance.
         """
 
-        timestamp = d.get(BoboEvent.TIMESTAMP)
+        timestamp = d.get(CompositeEvent.TIMESTAMP)
         if timestamp is None:
             raise RuntimeError("Timestamp not found in dict.")
 
@@ -95,7 +95,7 @@ class BoboRuleBuilder(ABC):
         history = BoboRuleBuilder.history(history_dict)
         data = d.get(BoboEvent.DATA)
 
-        event_id = d.get(BoboEvent.EVENT_ID)
+        event_id = d.get(CompositeEvent.EVENT_ID)
         if event_id is None:
             raise RuntimeError("Event ID not found in dict.")
 
@@ -122,7 +122,7 @@ class BoboRuleBuilder(ABC):
         :return: An ActionEvent instance.
         """
 
-        timestamp = d.get(BoboEvent.TIMESTAMP)
+        timestamp = d.get(ActionEvent.TIMESTAMP)
         if timestamp is None:
             raise RuntimeError("Timestamp not found in dict.")
 

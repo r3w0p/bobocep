@@ -15,7 +15,7 @@ from bobocep.producer.producer_subscriber import IProducerSubscriber
 from bobocep.receiver.bobo_receiver import BoboReceiver
 from bobocep.receiver.formatters.primitive_event_formatter import \
     PrimitiveEventFormatter
-from bobocep.receiver.generators.bobo_null_data import BoboNullData
+from bobocep.receiver.generators.data.bobo_null_data import BoboNullData
 from bobocep.receiver.generators.bobo_null_data_generator import \
     BoboNullDataGenerator
 from bobocep.receiver.receiver_subscriber import IReceiverSubscriber

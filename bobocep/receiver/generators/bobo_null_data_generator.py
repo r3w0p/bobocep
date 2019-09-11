@@ -1,5 +1,5 @@
 from bobocep.receiver.bobo_receiver import BoboReceiver
-from bobocep.receiver.generators.bobo_null_data import BoboNullData
+from bobocep.receiver.generators.data.bobo_null_data import BoboNullData
 from bobocep.setup.task.bobo_task import BoboTask
 
 
@@ -27,27 +27,9 @@ class BoboNullDataGenerator(BoboTask):
 
         self.receiver = receiver
         self.null_data = null_data
-        self._active = False
 
     def _loop(self) -> None:
-        if self._active:
-            self.receiver.add_data(self.null_data.get_null_data())
-
-    def activate(self) -> None:
-        """
-        Activates the null data generator.
-        """
-
-        with self._lock:
-            self._active = True
-
-    def deactivate(self) -> None:
-        """
-        Deactivates the null data generator.
-        """
-
-        with self._lock:
-            self._active = False
+        self.receiver.add_data(self.null_data.get_null_data())
 
     def _setup(self) -> None:
         """"""

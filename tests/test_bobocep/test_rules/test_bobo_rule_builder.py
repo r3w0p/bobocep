@@ -271,6 +271,18 @@ class TestBoboRuleBuilder(unittest.TestCase):
                 ActionEvent.EVENT_ID: a_event_id
             })
 
+        with self.assertRaises(RuntimeError):
+            BoboRuleBuilder.action({
+                ActionEvent.TIMESTAMP: a_timestamp,
+                ActionEvent.NAME: a_name,
+                ActionEvent.SUCCESS: a_success,
+                ActionEvent.FOR_EVENT: a_for_event.to_dict(),
+                ActionEvent.EXCEPTION: a_exception,
+                ActionEvent.DESCRIPTION: a_description,
+                ActionEvent.DATA: a_data,
+                ActionEvent.EVENT_ID: None
+            })
+
     def test_history(self):
         p1_hist = "p1_hist"
         p2_hist = "p2_hist"

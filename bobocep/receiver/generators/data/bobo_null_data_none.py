@@ -1,4 +1,4 @@
-from bobocep.receiver.generators.bobo_null_data import BoboNullData
+from bobocep.receiver.generators.data.bobo_null_data import BoboNullData
 
 
 class BoboNullDataNone(BoboNullData):
