@@ -18,5 +18,5 @@ class TestPrimitiveEvent(unittest.TestCase):
         self.assertDictEqual(p_event.to_dict(), {
             PrimitiveEvent.TIMESTAMP: p_timestamp,
             PrimitiveEvent.DATA: p_data,
-            PrimitiveEvent.ID: p_event.id
+            PrimitiveEvent.EVENT_ID: p_event.event_id
         })

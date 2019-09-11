@@ -67,7 +67,7 @@ class MatchEvent:
                               itself.
         """
 
-        if label == self.label and event_id == self.event.id:
+        if label == self.label and event_id == self.event.event_id:
             raise RuntimeError("Cannot point match event to itself.")
 
         self.next_ids[version] = (label, event_id)
@@ -93,7 +93,7 @@ class MatchEvent:
                               itself.
         """
 
-        if label == self.label and event_id == self.event.id:
+        if label == self.label and event_id == self.event.event_id:
             raise RuntimeError("Cannot point match event to itself.")
 
         self.previous_ids[version] = (label, event_id)

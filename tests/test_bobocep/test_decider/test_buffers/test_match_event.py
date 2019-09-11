@@ -35,20 +35,20 @@ class TestMatchEvent(unittest.TestCase):
         version = RunVersion()
         version.add_level(BoboRun._generate_id(
             nfa_name=NFA_NAME_A,
-            start_event_id=event_a.id))
+            start_event_id=event_a.event_id))
         version_str = version.get_version_as_str()
 
         with self.assertRaises(RuntimeError):
             match_a.add_pointer_next(
                 version=version_str,
                 label=LABEL_LAYER_A,
-                event_id=event_a.id)
+                event_id=event_a.event_id)
 
         with self.assertRaises(RuntimeError):
             match_a.add_pointer_previous(
                 version=version_str,
                 label=LABEL_LAYER_A,
-                event_id=event_a.id)
+                event_id=event_a.event_id)
 
     def test_remove_all_pointers_two_match_events(self):
         event_a = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
@@ -64,7 +64,7 @@ class TestMatchEvent(unittest.TestCase):
         version = RunVersion()
         version.add_level(BoboRun._generate_id(
             nfa_name=NFA_NAME_A,
-            start_event_id=event_a.id))
+            start_event_id=event_a.event_id))
         version_str = version.get_version_as_str()
 
         # match events should start with no pointers
@@ -73,11 +73,11 @@ class TestMatchEvent(unittest.TestCase):
 
         # match a --next--> match b
         match_a.add_pointer_next(version=version_str,
-                                 event_id=match_b.event.id)
+                                 event_id=match_b.event.event_id)
 
         # match a <--previous-- match b
         match_b.add_pointer_previous(version=version_str,
-                                     event_id=match_a.event.id)
+                                     event_id=match_a.event.event_id)
 
         # match events both have pointers
         self.assertTrue(match_a.has_pointers())
@@ -109,13 +109,13 @@ class TestMatchEvent(unittest.TestCase):
         version = RunVersion()
         version.add_level(BoboRun._generate_id(
             nfa_name=NFA_NAME_A,
-            start_event_id=event_a.id))
+            start_event_id=event_a.event_id))
         version_str = version.get_version_as_str()
 
         # match a --next--> match b
         match_a.add_pointer_next(version=version_str,
                                  label=match_b.label,
-                                 event_id=match_b.event.id)
+                                 event_id=match_b.event.event_id)
 
         # match a dict
         self.assertDictEqual(match_a.to_dict(), {
@@ -123,7 +123,7 @@ class TestMatchEvent(unittest.TestCase):
             MatchEvent.LABEL: LABEL_LAYER_A,
             MatchEvent.EVENT: event_a.to_dict(),
             MatchEvent.NEXT_IDS: {
-                version_str: (match_b.label, match_b.event.id)
+                version_str: (match_b.label, match_b.event.event_id)
             },
             MatchEvent.PREVIOUS_IDS: {}
         })
@@ -131,7 +131,7 @@ class TestMatchEvent(unittest.TestCase):
         # match a <--previous-- match b
         match_b.add_pointer_previous(version=version_str,
                                      label=match_a.label,
-                                     event_id=match_a.event.id)
+                                     event_id=match_a.event.event_id)
 
         # match b dict
         self.assertDictEqual(match_b.to_dict(), {
@@ -140,6 +140,6 @@ class TestMatchEvent(unittest.TestCase):
             MatchEvent.EVENT: event_b.to_dict(),
             MatchEvent.NEXT_IDS: {},
             MatchEvent.PREVIOUS_IDS: {
-                version_str: (match_a.label, match_a.event.id)
+                version_str: (match_a.label, match_a.event.event_id)
             }
         })

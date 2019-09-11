@@ -21,7 +21,7 @@ class BoboEvent(AbstractEvent):
 
     TIMESTAMP = "timestamp"
     DATA = "data"
-    ID = "id"
+    EVENT_ID = "event_id"
 
     def __init__(self,
                  timestamp: int,
@@ -31,7 +31,7 @@ class BoboEvent(AbstractEvent):
 
         self.timestamp = timestamp
         self.data = {} if data is None else data
-        self.id = '{}-{}'.format(uuid4(), timestamp) \
+        self.event_id = '{}-{}'.format(uuid4(), timestamp) \
             if event_id is None else event_id
 
     @abstractmethod

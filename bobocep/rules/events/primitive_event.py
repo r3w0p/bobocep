@@ -33,5 +33,5 @@ class PrimitiveEvent(BoboEvent):
         return {
             self.TIMESTAMP: self.timestamp,
             self.DATA: self.data,
-            self.ID: self.id
+            self.EVENT_ID: self.event_id
         }

@@ -75,7 +75,7 @@ class TestBoboDeciderBuilder(unittest.TestCase):
         # ensure event is found in original buffer
         event_orig = original.get_event(nfa_name=NFA_NAME_A,
                                         state_label=LABEL_LAYER_A,
-                                        event_id=event_a.id,
+                                        event_id=event_a.event_id,
                                         default=None)
         self.assertIsNotNone(event_orig)
         self.assertEqual(event_orig, event_a)
@@ -87,7 +87,7 @@ class TestBoboDeciderBuilder(unittest.TestCase):
         # ensure event is found in generated buffer
         event_gen = generated.get_event(nfa_name=NFA_NAME_A,
                                         state_label=LABEL_LAYER_A,
-                                        event_id=event_a.id,
+                                        event_id=event_a.event_id,
                                         default=None)
         self.assertIsNotNone(event_gen)
 

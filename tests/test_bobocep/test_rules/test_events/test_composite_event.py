@@ -25,5 +25,5 @@ class TestCompositeEvent(unittest.TestCase):
             CompositeEvent.NAME: c_name,
             CompositeEvent.HISTORY: c_history.to_dict(),
             CompositeEvent.DATA: c_data,
-            CompositeEvent.ID: c_event.id
+            CompositeEvent.EVENT_ID: c_event.event_id
         })

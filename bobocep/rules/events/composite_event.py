@@ -51,5 +51,5 @@ class CompositeEvent(BoboEvent):
             self.NAME: self.name,
             self.HISTORY: self.history.to_dict(),
             self.DATA: self.data,
-            self.ID: self.id
+            self.EVENT_ID: self.event_id
         }

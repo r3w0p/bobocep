@@ -132,13 +132,13 @@ class SharedVersionedMatchBuffer(AbstractBuffer):
 
         # look for bobo event in buffer, or add a new match event for it
         # if a match event isn't found
-        if event.id not in nfa_events:
-            nfa_events[event.id] = MatchEvent(
+        if event.event_id not in nfa_events:
+            nfa_events[event.event_id] = MatchEvent(
                 nfa_name=nfa_name,
                 label=state_label,
                 event=event)
 
-        new_match_event = nfa_events[event.id]
+        new_match_event = nfa_events[event.event_id]
 
         # get last event under the original run ID and version
         # before (maybe) updating run ID and version
@@ -164,13 +164,13 @@ class SharedVersionedMatchBuffer(AbstractBuffer):
             new_match_event.add_pointer_next(
                 version=version,
                 label=last_match_event.label,
-                event_id=last_match_event.event.id)
+                event_id=last_match_event.event.event_id)
 
             # points backwards to the new match event
             last_match_event.add_pointer_previous(
                 version=version,
                 label=new_match_event.label,
-                event_id=new_match_event.event.id)
+                event_id=new_match_event.event.event_id)
         else:
             # adds pointer to nothing, so run is still linked to event
             new_match_event.add_pointer_next(version=version)
@@ -210,7 +210,7 @@ class SharedVersionedMatchBuffer(AbstractBuffer):
                         self._eve \
                             .get(nfa_name) \
                             .get(match_event.label) \
-                            .pop(match_event.event.id, None)
+                            .pop(match_event.event.event_id, None)
 
     def get_last_event(self,
                        nfa_name: str,
@@ -363,7 +363,7 @@ class SharedVersionedMatchBuffer(AbstractBuffer):
                         self.LABEL: match_event.label,
                         self.RUN_ID: run_id,
                         self.VERSION: version,
-                        self.EVENT_ID: match_event.event.id
+                        self.EVENT_ID: match_event.event.event_id
                     })
 
         return {

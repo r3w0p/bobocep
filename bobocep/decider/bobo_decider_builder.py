@@ -50,7 +50,7 @@ class BoboDeciderBuilder(ABC):
                 buffer._eve, nfa_name)
             nfa_events = SharedVersionedMatchBuffer._get_or_create_subdict(
                 nfa_labels, match_event.label)
-            nfa_events[match_event.event.id] = match_event
+            nfa_events[match_event.event.event_id] = match_event
 
         for ver_dict in d[SharedVersionedMatchBuffer.LAST]:
             nfa_name = ver_dict[SharedVersionedMatchBuffer.NFA_NAME]

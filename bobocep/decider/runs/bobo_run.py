@@ -101,7 +101,7 @@ class BoboRun(AbstractRun):
             else self.start_state
         self.id = BoboRun._generate_id(
             nfa_name=self.nfa.name,
-            start_event_id=self.event.id) \
+            start_event_id=self.event.event_id) \
             if run_id is None else run_id
         self.version = version
         self._last_process_cloned = last_process_cloned
@@ -357,7 +357,7 @@ class BoboRun(AbstractRun):
         if increment:
             new_increment = BoboRun._generate_id(
                 nfa_name=self.nfa.name,
-                start_event_id=event.id)
+                start_event_id=event.event_id)
             new_version = self.version.list_to_version_str(
                 self.version.get_version_as_list()[:-1] + [new_increment])
         else:

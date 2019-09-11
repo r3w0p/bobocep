@@ -74,5 +74,5 @@ class ActionEvent(BoboEvent):
             self.EXCEPTION: self.exception,
             self.DESCRIPTION: self.description,
             self.DATA: self.data,
-            self.ID: self.id
+            self.EVENT_ID: self.event_id
         }

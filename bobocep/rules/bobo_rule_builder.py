@@ -56,7 +56,7 @@ class BoboRuleBuilder(ABC):
         if data is None:
             raise RuntimeError("Data not found in dict.")
 
-        event_id = d.get(BoboEvent.ID)
+        event_id = d.get(BoboEvent.EVENT_ID)
         if event_id is None:
             raise RuntimeError("Event ID not found in dict.")
 
@@ -95,7 +95,7 @@ class BoboRuleBuilder(ABC):
         history = BoboRuleBuilder.history(history_dict)
         data = d.get(BoboEvent.DATA)
 
-        event_id = d.get(BoboEvent.ID)
+        event_id = d.get(BoboEvent.EVENT_ID)
         if event_id is None:
             raise RuntimeError("Event ID not found in dict.")
 
@@ -143,7 +143,7 @@ class BoboRuleBuilder(ABC):
         description = d.get(ActionEvent.DESCRIPTION)
         data = d.get(ActionEvent.DATA)
 
-        event_id = d.get(BoboEvent.ID)
+        event_id = d.get(BoboEvent.EVENT_ID)
         if event_id is None:
             raise RuntimeError("Event ID not found in dict.")
 
