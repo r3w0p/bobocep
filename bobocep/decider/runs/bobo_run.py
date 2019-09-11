@@ -143,7 +143,7 @@ class BoboRun:
 
         # immediately final if start state is final state
         if self.nfa.start_is_final:
-            self._set_final(history=None, notify=False)
+            self.set_final(history=None, notify=False)
 
     @staticmethod
     def _generate_id(nfa_name: str, start_event_id: str) -> str:
@@ -231,6 +231,35 @@ class BoboRun:
                 if notify:
                     self._notify_halt()
 
+    def set_final(self,
+                  history: BoboHistory = None,
+                  notify: bool = True) -> None:
+        """
+        Put run into final state.
+
+        :param history: The history of the run.
+        :type history: BoboHistory
+
+        :param notify: Whether to notify subscribers of the transition to
+                       its final state, defaults to True.
+        :type notify: bool, optional
+        """
+
+        with self._lock:
+            if not self._final:
+                if notify:
+                    self._notify_final(
+                        history if history is not None else
+                        self.buffer.get_all_events(
+                            nfa_name=self.nfa.name,
+                            run_id=self.id,
+                            version=self.version))
+
+                # do not notify halt if final
+                self.set_halt(notify=False)
+
+                self._final = True
+
     def subscribe(self, subscriber: IRunSubscriber) -> None:
         """
         :param subscriber: Subscribes to the run.
@@ -270,22 +299,6 @@ class BoboRun:
                 self.HALTED: self._halted,
                 self.LAST_PROCESS_CLONED: self._last_process_cloned
             }
-
-    def _set_final(self,
-                   history: BoboHistory = None,
-                   notify: bool = True) -> None:
-        if notify:
-            self._notify_final(
-                history if history is not None else
-                self.buffer.get_all_events(
-                    self.nfa.name,
-                    self.id,
-                    self.version))
-
-        # do not notify halt if final
-        self.set_halt(notify=False)
-
-        self._final = True
 
     def _handle_state(self,
                       state: BoboState,
@@ -384,7 +397,7 @@ class BoboRun:
 
         # halt if final, else transition
         if self.nfa.final_state.name == trans_state.name:
-            self._set_final(new_history, notify=notify)
+            self.set_final(new_history, notify=notify)
 
         elif notify:
             self._notify_transition(
@@ -445,7 +458,6 @@ class BoboRun:
             subscriber.on_run_final(
                 run_id=self.id,
                 history=history,
-                halt=False,
                 notify=True)
 
     def _notify_halt(self) -> None:

@@ -62,7 +62,6 @@ class IRunSubscriber(ABC):
     def on_run_final(self,
                      run_id: str,
                      history: BoboHistory,
-                     halt: bool,
                      notify: bool):
         """Triggers a response when a run reaches its final state.
 
@@ -71,9 +70,6 @@ class IRunSubscriber(ABC):
 
         :param history: The history of events that led to run completion.
         :type history: BoboHistory
-
-        :param halt: Whether to also halt the run.
-        :type halt: bool
 
         :param notify: Whether to notify handler subscribers of the run
                        reaching its final state.

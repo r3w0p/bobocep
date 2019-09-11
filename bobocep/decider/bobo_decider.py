@@ -47,6 +47,25 @@ class BoboDecider(BoboTask,
                 for nfa_handler in self._nfa_handlers.values():
                     nfa_handler.process(event)
 
+    def add_nfa_handler(self, nfa_handler: BoboNFAHandler) -> None:
+        """
+        Adds a new NFA handler to the decider.
+
+        :param nfa_handler: The NFA handler to add.
+        :type nfa_handler: BoboNFAHandler
+
+        :raises RuntimeError: NFA handler name already in use.
+        """
+
+        with self._lock:
+            if not self._cancelled:
+                if nfa_handler.nfa.name not in self._nfa_handlers:
+                    self._nfa_handlers[nfa_handler.nfa.name] = nfa_handler
+                    nfa_handler.subscribe(self)
+                else:
+                    raise RuntimeError("NFA handler name {} already in use."
+                                       .format(nfa_handler.nfa.name))
+
     def get_all_handlers(self) -> List[BoboNFAHandler]:
         """
         :return: A list of all handlers.
@@ -92,25 +111,6 @@ class BoboDecider(BoboTask,
             if nfa_name in self._subs:
                 for sub in self._subs[nfa_name]:
                     sub.on_decider_complex_event(event=event)
-
-    def add_nfa_handler(self, nfa_handler: BoboNFAHandler) -> None:
-        """
-        Adds a new NFA handler to the decider.
-
-        :param nfa_handler: The NFA handler to add.
-        :type nfa_handler: BoboNFAHandler
-
-        :raises RuntimeError: NFA handler name already in use.
-        """
-
-        with self._lock:
-            if not self._cancelled:
-                if nfa_handler.nfa.name not in self._nfa_handlers:
-                    self._nfa_handlers[nfa_handler.nfa.name] = nfa_handler
-                    nfa_handler.subscribe(self)
-                else:
-                    raise RuntimeError("NFA handler name {} already in use."
-                                       .format(nfa_handler.nfa.name))
 
     def subscribe(self,
                   nfa_name: str,
@@ -167,10 +167,10 @@ class BoboDecider(BoboTask,
                     "Handler not found for NFA {}.".format(nfa_name))
 
             handler.force_run_transition(
-                run_id,
-                state_name_from,
-                state_name_to,
-                event)
+                run_id=run_id,
+                state_name_from=state_name_from,
+                state_name_to=state_name_to,
+                event=event)
 
     def on_dist_run_clone(self,
                           nfa_name: str,
@@ -185,9 +185,10 @@ class BoboDecider(BoboTask,
                     "Handler not found for NFA {}.".format(nfa_name))
 
             handler.force_run_clone(
-                run_id,
-                next_state_name,
-                next_event)
+                state_name=next_state_name,
+                event=next_event,
+                parent_run_id=run_id
+            )
 
     def on_dist_run_halt(self,
                          nfa_name: str,
@@ -199,7 +200,8 @@ class BoboDecider(BoboTask,
                 raise RuntimeError(
                     "Handler not found for NFA {}.".format(nfa_name))
 
-            handler.force_run_halt(run_id)
+            handler.force_run_halt(
+                run_id=run_id)
 
     def on_dist_run_final(self,
                           nfa_name: str,
@@ -212,7 +214,9 @@ class BoboDecider(BoboTask,
                 raise RuntimeError(
                     "Handler not found for NFA {}.".format(nfa_name))
 
-            handler.force_run_final(run_id=run_id, history=history)
+            handler.force_run_final(
+                run_id=run_id,
+                history=history)
 
     def on_dist_action(self, event: ActionEvent) -> None:
         with self._lock:

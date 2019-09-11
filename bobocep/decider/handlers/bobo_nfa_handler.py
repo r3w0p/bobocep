@@ -69,7 +69,6 @@ class BoboNFAHandler(IRunSubscriber):
                         history=BoboHistory({
                             clone_run.current_state.label: [clone_run.event]
                         }),
-                        halt=True,
                         notify=True
                     )
 
@@ -217,7 +216,6 @@ class BoboNFAHandler(IRunSubscriber):
     def on_run_final(self,
                      run_id: str,
                      history: BoboHistory,
-                     halt: bool = False,
                      notify: bool = True) -> None:
         """
         :raises RuntimeError: Run ID not found.
@@ -231,8 +229,7 @@ class BoboNFAHandler(IRunSubscriber):
                     "Run {} not found in handler for NFA {}.".format(
                         run_id, self.nfa.name))
 
-            if halt:
-                run.set_halt(notify=False)
+            run.set_final(history=history, notify=False)
 
             event = CompositeEvent(
                 timestamp=EpochNSClock.generate_timestamp(),
@@ -355,7 +352,7 @@ class BoboNFAHandler(IRunSubscriber):
     def force_run_clone(self,
                         state_name: str,
                         event: BoboEvent,
-                        parent_run_id: str) -> None:
+                        parent_run_id: str = None) -> None:
         """
         Forces a run clone without notification.
 
@@ -365,8 +362,11 @@ class BoboNFAHandler(IRunSubscriber):
         :param event: The event that caused the clone.
         :type event: BoboEvent
 
-        :param parent_run_id: The parent run ID.
-        :type parent_run_id: str
+        :param parent_run_id: The parent run ID, defaults to None.
+        :type parent_run_id: str, optional
+
+        :raises RuntimeError: Parent run ID is provided but its corresponding
+                              run is not found.
         """
 
         with self._lock:
@@ -377,10 +377,15 @@ class BoboNFAHandler(IRunSubscriber):
                 force_parent=False,
                 notify=False)
 
-            run = self.runs.get(parent_run_id)
+            if parent_run_id is not None:
+                parent_run = self.runs.get(parent_run_id)
 
-            if run is not None:
-                run._last_proceed_had_clone = True
+                if parent_run is None:
+                    raise RuntimeError(
+                        "Parent run {} not found in handler {}.".format(
+                            parent_run_id, self.nfa.name))
+
+                parent_run._last_proceed_had_clone = True
 
     def force_run_halt(self, run_id: str) -> None:
         """
@@ -423,7 +428,6 @@ class BoboNFAHandler(IRunSubscriber):
         with self._lock:
             self.on_run_final(run_id=run_id,
                               history=history,
-                              halt=True,
                               notify=False)
 
     def to_dict(self) -> dict:
