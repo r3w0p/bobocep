@@ -6,6 +6,7 @@ from bobocep.receiver.generators.data.bobo_null_data_static import \
     BoboNullDataStatic
 from bobocep.receiver.validators.str_dict_validator import StrDictValidator
 from bobocep.rules.actions.no_action import NoAction
+from bobocep.rules.actions.rate_limit_action import RateLimitAction
 from bobocep.rules.events.composite_event import CompositeEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.rules.events.primitive_event import PrimitiveEvent
@@ -15,7 +16,10 @@ from bobocep.rules.predicates.bobo_predicate_callable import \
 from bobocep.setup.bobo_complex_event import BoboComplexEvent
 from bobocep.setup.bobo_setup import BoboSetup
 
-NAME_DEF_A = "name_def_a"
+EXCHANGE_NAME = "test_exchange_name"
+USER_NAME = "test_user_name"
+HOST_NAME = "127.0.0.1"
+
 NAME_NFA_A = "name_nfa_a"
 
 LABEL_A = "label_a"
@@ -65,7 +69,7 @@ class TestBoboSetup(unittest.TestCase):
 
         setup.add_complex_event(
             event_def=BoboComplexEvent(
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 pattern=stub_pattern_1
             ))
 
@@ -84,7 +88,7 @@ class TestBoboSetup(unittest.TestCase):
 
         setup.add_complex_event(
             event_def=BoboComplexEvent(
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 pattern=stub_pattern_1
             ))
 
@@ -111,7 +115,7 @@ class TestBoboSetup(unittest.TestCase):
 
         setup.add_complex_event(
             event_def=BoboComplexEvent(
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 pattern=stub_pattern_1
             ))
 
@@ -141,7 +145,7 @@ class TestBoboSetup(unittest.TestCase):
 
         setup.add_complex_event(
             event_def=BoboComplexEvent(
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 pattern=stub_pattern_1
             ))
 
@@ -166,6 +170,52 @@ class TestBoboSetup(unittest.TestCase):
         self.assertFalse(setup.get_forwarder().is_active())
         self.assertFalse(setup.get_null_data_generator().is_active())
 
+    def test_config_arguments(self):
+        setup = BoboSetup()
+
+        event_def = BoboComplexEvent(
+            NAME_NFA_A,
+            stub_pattern_1)
+        validator = StrDictValidator()
+        action_producer = RateLimitAction()
+        action_forwarder = NoAction()
+        null_data = BoboNullDataStatic(DATA_DICT_A)
+
+        setup.add_complex_event(event_def)
+        setup.config_receiver(validator)
+        setup.config_producer(action_producer)
+        setup.config_forwarder(action_forwarder)
+        setup.config_null_data(NULL_DATA_DELAY, null_data)
+        setup.config_distributed(EXCHANGE_NAME,
+                                 USER_NAME,
+                                 HOST_NAME)
+        setup.configure()
+
+        receiver = setup.get_receiver()
+        decider = setup.get_decider()
+        producer = setup.get_producer()
+        forwarder = setup.get_forwarder()
+        nullgen = setup.get_null_data_generator()
+        manager = setup.get_distributed()
+
+        self.assertEqual(validator, receiver.get_validator())
+        self.assertEqual(NAME_NFA_A, decider.get_all_handlers()[0].nfa.name)
+        self.assertEqual(action_producer, producer._action)
+        self.assertEqual(action_forwarder, forwarder._action)
+
+        self.assertEqual(null_data, nullgen.null_data)
+        self.assertEqual(receiver, nullgen.receiver)
+
+        self.assertEqual(manager.outgoing.decider, decider)
+        self.assertEqual(manager.outgoing.exchange_name, EXCHANGE_NAME)
+        self.assertTrue(manager.outgoing.user_id.find(USER_NAME) != -1)
+        self.assertEqual(manager.outgoing.host_name, HOST_NAME)
+
+        self.assertEqual(manager.incoming.decider, decider)
+        self.assertEqual(manager.incoming.exchange_name, EXCHANGE_NAME)
+        self.assertTrue(manager.incoming.user_id.find(USER_NAME) != -1)
+        self.assertEqual(manager.incoming.host_name, HOST_NAME)
+
     def test_access_before_configuration(self):
         setup = BoboSetup()
 
@@ -189,7 +239,7 @@ class TestBoboSetup(unittest.TestCase):
 
         setup.add_complex_event(
             event_def=BoboComplexEvent(
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 pattern=stub_pattern_1
             ))
         setup.cancel()
@@ -204,7 +254,7 @@ class TestBoboSetup(unittest.TestCase):
 
         setup.add_complex_event(
             event_def=BoboComplexEvent(
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 pattern=stub_pattern_1
             ))
 
@@ -221,7 +271,7 @@ class TestBoboSetup(unittest.TestCase):
 
         setup.add_complex_event(
             event_def=BoboComplexEvent(
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 pattern=stub_pattern_1
             ))
         setup.configure()
@@ -245,7 +295,7 @@ class TestBoboSetupScenarios(unittest.TestCase):
 
         setup.add_complex_event(
             event_def=BoboComplexEvent(
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 pattern=stub_pattern_4
             ))
         setup.config_receiver(StrDictValidator())
@@ -262,14 +312,14 @@ class TestBoboSetupScenarios(unittest.TestCase):
         decider.loop()
 
         handlers = decider.get_all_handlers()
-        self.assertEqual(NAME_DEF_A, handlers[0].nfa.name)
+        self.assertEqual(NAME_NFA_A, handlers[0].nfa.name)
 
     def test_composite_from_decider_to_producer_recursive(self):
         setup = BoboSetup(recursive=True)
 
         setup.add_complex_event(
             event_def=BoboComplexEvent(
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 pattern=stub_pattern_4
             ))
         setup.config_receiver(StrDictValidator())
@@ -296,7 +346,7 @@ class TestBoboSetupScenarios(unittest.TestCase):
 
         setup.add_complex_event(
             event_def=BoboComplexEvent(
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 pattern=stub_pattern_4
             ))
         setup.config_receiver(StrDictValidator())
@@ -323,7 +373,7 @@ class TestBoboSetupScenarios(unittest.TestCase):
 
         setup.add_complex_event(
             event_def=BoboComplexEvent(
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 pattern=stub_pattern_4
             ))
         setup.config_receiver(StrDictValidator())
@@ -338,7 +388,7 @@ class TestBoboSetupScenarios(unittest.TestCase):
         a_event = NoAction().execute(
             CompositeEvent(
                 timestamp=EpochNSClock.generate_timestamp(),
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 history=BoboHistory(),
                 data={}))
 
@@ -353,7 +403,7 @@ class TestBoboSetupScenarios(unittest.TestCase):
 
         setup.add_complex_event(
             event_def=BoboComplexEvent(
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 pattern=stub_pattern_4
             ))
         setup.config_receiver(StrDictValidator())
@@ -368,7 +418,7 @@ class TestBoboSetupScenarios(unittest.TestCase):
         a_event = NoAction().execute(
             CompositeEvent(
                 timestamp=EpochNSClock.generate_timestamp(),
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 history=BoboHistory(),
                 data={}))
 
@@ -383,7 +433,7 @@ class TestBoboSetupScenarios(unittest.TestCase):
 
         setup.add_complex_event(
             event_def=BoboComplexEvent(
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 pattern=stub_pattern_4
             ))
         setup.config_receiver(StrDictValidator())
@@ -397,7 +447,7 @@ class TestBoboSetupScenarios(unittest.TestCase):
 
         c_event = CompositeEvent(
             timestamp=EpochNSClock.generate_timestamp(),
-            name=NAME_DEF_A,
+            name=NAME_NFA_A,
             history=BoboHistory(),
             data={})
 
@@ -411,7 +461,7 @@ class TestBoboSetupScenarios(unittest.TestCase):
 
         setup.add_complex_event(
             event_def=BoboComplexEvent(
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 pattern=stub_pattern_4
             ))
         setup.config_receiver(StrDictValidator())
@@ -426,7 +476,7 @@ class TestBoboSetupScenarios(unittest.TestCase):
         a_event = NoAction().execute(
             CompositeEvent(
                 timestamp=EpochNSClock.generate_timestamp(),
-                name=NAME_DEF_A,
+                name=NAME_NFA_A,
                 history=BoboHistory(),
                 data={}))
 

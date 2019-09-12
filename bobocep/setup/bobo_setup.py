@@ -200,6 +200,22 @@ class BoboSetup(IDistOutgoingSubscriber):
 
             return self._forwarder
 
+    def get_distributed(self) -> BoboDistManager:
+        """
+        :raises RuntimeError: Attempting access before configuration.
+        :raises RuntimeError: Distributed was not configured.
+
+        :return: The distrubted manager.
+        """
+
+        with self._lock:
+            if not self._configured:
+                raise RuntimeError("Setup must be configured first.")
+            elif not self._distributed:
+                raise RuntimeError("Distributed was not configured.")
+
+            return self._manager
+
     def get_null_data_generator(self) -> BoboNullDataGenerator:
         """
         :raises RuntimeError: Attempting access before configuration.

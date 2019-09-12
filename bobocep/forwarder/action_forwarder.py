@@ -1,7 +1,7 @@
 from bobocep.forwarder.bobo_forwarder import \
     BoboForwarder
 from bobocep.rules.actions.bobo_action import BoboAction
-from bobocep.rules.events.bobo_event import BoboEvent
+from bobocep.rules.events.composite_event import CompositeEvent
 
 
 class ActionForwarder(BoboForwarder):
@@ -28,5 +28,5 @@ class ActionForwarder(BoboForwarder):
 
         self._action = action
 
-    def _handle_forwarder_event(self, event: BoboEvent) -> bool:
+    def _handle_forwarder_event(self, event: CompositeEvent) -> bool:
         return self._action.execute(event).success

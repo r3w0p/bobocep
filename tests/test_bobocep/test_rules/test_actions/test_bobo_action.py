@@ -47,7 +47,7 @@ class StubBoboActionRuntimeException(BoboAction):
         self.description = description
         self.events = []
 
-    def _perform_action(self, event: CompositeEvent) -> bool:
+    def _perform_action(self, event: CompositeEvent):
         self.events.append(event)
         raise RuntimeError(self.description)
 

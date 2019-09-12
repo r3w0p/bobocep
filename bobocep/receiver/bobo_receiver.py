@@ -49,6 +49,13 @@ class BoboReceiver(BoboTask):
             else:
                 self._notify_invalid_data(data)
 
+    def get_validator(self) -> BoboValidator:
+        """
+        :return: The validator used by the Receiver.
+        """
+
+        return self._validator
+
     def add_data(self, data) -> None:
         """
         Add data to the receiver.
