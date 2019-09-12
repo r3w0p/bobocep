@@ -1,10 +1,9 @@
 from typing import Dict, List
 
 from bobocep.rules.events.bobo_event import BoboEvent
-from bobocep.rules.events.histories.abstract_history import AbstractHistory
 
 
-class BoboHistory(AbstractHistory):
+class BoboHistory:
     """A :code:`bobocep` event history.
 
     :param events: The current history of events, where each key is a label

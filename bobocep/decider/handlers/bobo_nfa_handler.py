@@ -256,6 +256,10 @@ class BoboNFAHandler(IRunSubscriber):
             if len(self._recent) > self._max_recent:
                 self._recent.pop()
 
+    def get_all_recent(self) -> List[BoboEvent]:
+        with self._lock:
+            return self._recent[:]
+
     def on_run_halt(self,
                     run_id: str,
                     notify: bool = True) -> None:

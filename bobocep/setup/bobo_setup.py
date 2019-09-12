@@ -372,7 +372,6 @@ class BoboSetup(IDistOutgoingSubscriber):
         with self._lock:
             if not self._cancelled:
                 self._cancelled = True
-                self._configured = False
                 if self._running:
                     self._running = False
                     self._deactivate_tasks()
@@ -502,27 +501,33 @@ class BoboSetup(IDistOutgoingSubscriber):
 
             self._decider.add_nfa_handler(handler)
 
+            # Decider -> Producer
+            self._decider.subscribe(event_def.name, self._producer)
+
+            if self._recursive:
+                # Producer -> Decider
+                self._producer.subscribe(event_def.name, self._decider)
+
+            # Producer -> Forwarder
+            self._producer.subscribe(event_def.name, self._forwarder)
+
             if event_def.action is not None:
-                # Action -> Decider
-                event_def.action.subscribe(self._decider)
+                # Producer -> Action
+                self._producer.subscribe(event_def.name, event_def.action)
 
-                # Action -> Forwarder
-                event_def.action.subscribe(self._forwarder)
-
-                if self._recursive:
-                    # Producer -> Decider
-                    self._producer.subscribe(event_def, self._decider)
+                # Action -> Producer
+                event_def.action.subscribe(self._producer)
 
             if self._distributed:
                 # Handler -> Outgoing
                 handler.subscribe(self._manager.outgoing)
 
-                # Incoming -> Handler
-                self._manager.incoming.subscribe(handler)
-
                 if event_def.action is not None:
                     # Action -> Outgoing
                     event_def.action.subscribe(self._manager.outgoing)
+
+                # Incoming -> Handler
+                self._manager.incoming.subscribe(handler)
 
     def _config_extra_subscriptions(self):
         # receiver
