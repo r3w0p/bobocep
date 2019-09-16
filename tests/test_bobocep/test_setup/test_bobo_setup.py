@@ -805,8 +805,10 @@ class TestBoboSetupScenarios(unittest.TestCase):
         producer.setup()
 
         decider.on_receiver_event(event_a)
-        decider.loop()
-        producer.loop()
+
+        for _ in range(len(nfa_names)):
+            decider.loop()
+            producer.loop()
 
         for handler in handlers:
             self.assertEqual(2, len(handler.get_all_recent()))
