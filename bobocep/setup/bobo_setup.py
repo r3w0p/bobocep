@@ -463,6 +463,7 @@ class BoboSetup(IDistOutgoingSubscriber):
 
     def _config_decider(self) -> None:
         self._decider = BoboDecider(
+            recursive=self._recursive,
             max_queue_size=self._max_queue_size,
             active=(not self._distributed))
 

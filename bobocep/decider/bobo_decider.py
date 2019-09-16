@@ -32,9 +32,13 @@ class BoboDecider(BoboTask,
     :type active: bool, optional
     """
 
-    def __init__(self, max_queue_size: int = 0, active: bool = True) -> None:
+    def __init__(self,
+                 recursive: bool = True,
+                 max_queue_size: int = 0,
+                 active: bool = True) -> None:
         super().__init__(active=active)
 
+        self._recursive = recursive
         self._event_queue = Queue(maxsize=max_queue_size)
         self._nfa_handlers = {}
         self._subs = {}
@@ -85,20 +89,16 @@ class BoboDecider(BoboTask,
         with self._lock:
             return self._nfa_handlers.get(name)
 
+    def is_recursive(self) -> bool:
+        return self._recursive
+
     def on_receiver_event(self, event: BoboEvent) -> None:
         if not self._is_cancelled:
             self._event_queue.put(event)
 
-    def on_accepted_producer_event(self, event: CompositeEvent) -> None:
-        if not self._is_cancelled:
-            if event.name in self._nfa_handlers:
-                self._nfa_handlers[event.name].add_recent(event)
-
-            self._event_queue.put(event)
-
     def on_producer_action(self, event: ActionEvent):
         # producer actions are added to the handler's recent events
-        if not self._is_cancelled:
+        if (not self._is_cancelled) and self._recursive:
             if event.for_event.name in self._nfa_handlers:
                 self._nfa_handlers[event.for_event.name].add_recent(event)
 
@@ -108,9 +108,13 @@ class BoboDecider(BoboTask,
                          event: CompositeEvent):
         # notify producer on a new complex event being identified
         with self._lock:
-            if nfa_name in self._subs:
-                for sub in self._subs[nfa_name]:
-                    sub.on_decider_complex_event(event=event)
+            if nfa_name in self._nfa_handlers:
+                if self._recursive:
+                    self._nfa_handlers[nfa_name].add_recent(event)
+
+                if nfa_name in self._subs:
+                    for sub in self._subs[nfa_name]:
+                        sub.on_decider_complex_event(event=event)
 
     def subscribe(self,
                   nfa_name: str,
@@ -235,6 +239,9 @@ class BoboDecider(BoboTask,
         """"""
 
     def on_invalid_data(self, data):
+        """"""
+
+    def on_accepted_producer_event(self, event: CompositeEvent) -> None:
         """"""
 
     def on_rejected_producer_event(self, event: CompositeEvent):

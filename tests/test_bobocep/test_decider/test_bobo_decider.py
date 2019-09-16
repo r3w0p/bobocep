@@ -175,34 +175,6 @@ class TestBoboDecider(unittest.TestCase):
         decider.on_receiver_event(a_event)
         self.assertEqual(a_event, decider._event_queue.get_nowait())
 
-    def test_producer_composite_event(self):
-        decider = BoboDecider()
-
-        handler = BoboNFAHandler(
-            nfa=stub_nfa_a,
-            buffer=SharedVersionedMatchBuffer(),
-            max_recent=2)
-
-        decider.add_nfa_handler(handler)
-
-        c_event_1 = CompositeEvent(
-            timestamp=EpochNSClock.generate_timestamp(),
-            name=handler.nfa.name,
-            history=BoboHistory())
-        sleep(0.1)
-        c_event_2 = CompositeEvent(
-            timestamp=EpochNSClock.generate_timestamp(),
-            name=handler.nfa.name,
-            history=BoboHistory())
-
-        decider.on_accepted_producer_event(c_event_1)
-        self.assertEqual(c_event_1, decider._event_queue.get_nowait())
-        self.assertEqual([c_event_1], handler._recent)
-
-        decider.on_accepted_producer_event(c_event_2)
-        self.assertEqual(c_event_2, decider._event_queue.get_nowait())
-        self.assertEqual([c_event_2, c_event_1], handler._recent)
-
     def test_producer_action(self):
         decider = BoboDecider()
 
