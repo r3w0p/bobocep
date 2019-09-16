@@ -45,7 +45,7 @@ class BoboForwarder(BoboTask,
         """
 
     def _loop(self) -> None:
-        while not self._event_queue.empty():
+        if not self._event_queue.empty():
             event = self._event_queue.get_nowait()
 
             if event is not None:

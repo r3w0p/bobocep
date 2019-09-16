@@ -40,7 +40,7 @@ class BoboReceiver(BoboTask):
         self._subs = []
 
     def _loop(self) -> None:
-        while not self._data_queue.empty():
+        if not self._data_queue.empty():
             data = self._data_queue.get_nowait()
 
             if self._validator.validate(data):

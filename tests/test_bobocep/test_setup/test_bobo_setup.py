@@ -27,6 +27,8 @@ USER_NAME = "test_user_name"
 HOST_NAME = "127.0.0.1"
 
 NAME_NFA_A = "name_nfa_a"
+NAME_NFA_B = "name_nfa_b"
+NAME_NFA_C = "name_nfa_c"
 RUN_ID_A = "run_id_a"
 
 LABEL_A = "label_a"
@@ -778,6 +780,36 @@ class TestBoboSetupScenarios(unittest.TestCase):
         producer.loop()
         handler = decider.get_all_handlers()[0]
         self.assertEqual(0, len(handler.get_all_recent()))
+
+    def test_multi_composite_from_decider_to_producer_recursive(self):
+        setup = BoboSetup(recursive=True, max_recent=2)
+
+        nfa_names = [NAME_NFA_A, NAME_NFA_B, NAME_NFA_C]
+
+        for nfa_name in nfa_names:
+            setup.add_complex_event(
+                event_def=BoboComplexEvent(
+                    name=nfa_name,
+                    pattern=stub_pattern_1,
+                    action=NoAction()
+                ))
+        setup.config_receiver(StrDictValidator())
+        setup.configure()
+
+        decider = setup.get_decider()
+        decider.setup()
+        handlers = decider.get_all_handlers()
+        self.assertEqual(3, len(handlers))
+
+        producer = setup.get_producer()
+        producer.setup()
+
+        decider.on_receiver_event(event_a)
+        decider.loop()
+        producer.loop()
+
+        for handler in handlers:
+            self.assertEqual(2, len(handler.get_all_recent()))
 
     def test_action_from_producer_to_decider_recursive(self):
         setup = BoboSetup(recursive=True)

@@ -1,5 +1,6 @@
 from threading import RLock
 from time import time_ns
+from typing import List
 from uuid import uuid4
 
 from bobocep.decider.bobo_decider import BoboDecider
@@ -229,6 +230,15 @@ class BoboSetup(IDistOutgoingSubscriber):
                 raise RuntimeError("Setup must be configured first.")
 
             return self._null_data_generator
+
+    def get_complex_events(self) -> List[BoboComplexEvent]:
+        """
+        :return: A list of complex event definitions currently in setup.
+        """
+
+        with self._lock:
+            if self.is_inactive():
+                return self._event_defs[:]
 
     def add_complex_event(self, event_def: BoboComplexEvent) -> None:
         """
