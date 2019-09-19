@@ -62,19 +62,19 @@ class RateLimitAction(BoboAction):
 
     def _perform_action(self, event: CompositeEvent) -> bool:
         with self._lock:
-            name = event.name
-            rate = self._limit_dict[name] if name in self._names \
-                else self._rate_other
+            if isinstance(event, CompositeEvent):
+                name = event.name
+                rate = self._limit_dict[name] if name in self._names \
+                    else self._rate_other
 
-            if rate > 0:
-                if name not in self._last:
-                    self._last[name] = 0
+                if rate > 0:
+                    if name not in self._last:
+                        self._last[name] = 0
 
-                accept = (event.timestamp - self._last[name]) / 1e9 >= rate
+                    accept = (event.timestamp - self._last[name]) / 1e9 >= rate
 
-                if accept:
-                    self._last[name] = event.timestamp
+                    if accept:
+                        self._last[name] = event.timestamp
 
-                return accept
-
+                    return accept
             return True

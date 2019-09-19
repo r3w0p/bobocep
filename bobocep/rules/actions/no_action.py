@@ -1,5 +1,5 @@
 from bobocep.rules.actions.bobo_action import BoboAction
-from bobocep.rules.events.composite_event import CompositeEvent
+from bobocep.rules.events.bobo_event import BoboEvent
 
 
 class NoAction(BoboAction):
@@ -19,5 +19,5 @@ class NoAction(BoboAction):
 
         self._bool_return = bool_return
 
-    def _perform_action(self, event: CompositeEvent) -> bool:
+    def _perform_action(self, event: BoboEvent) -> bool:
         return self._bool_return

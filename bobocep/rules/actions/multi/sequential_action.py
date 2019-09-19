@@ -2,7 +2,7 @@ from typing import List
 
 from bobocep.rules.actions.bobo_action import BoboAction
 from bobocep.rules.actions.multi.multi_action import MultiAction
-from bobocep.rules.events.composite_event import CompositeEvent
+from bobocep.rules.events.bobo_event import BoboEvent
 
 
 class SequentialAction(MultiAction):
@@ -39,7 +39,7 @@ class SequentialAction(MultiAction):
         self._all_success = all_success
         self._early_stop = early_stop
 
-    def _perform_action(self, event: CompositeEvent) -> bool:
+    def _perform_action(self, event: BoboEvent) -> bool:
         results = []
 
         for action in self._actions:

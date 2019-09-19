@@ -1,7 +1,6 @@
 from typing import Dict
 
 from bobocep.rules.events.bobo_event import BoboEvent
-from bobocep.rules.events.composite_event import CompositeEvent
 
 
 class ActionEvent(BoboEvent):
@@ -19,7 +18,7 @@ class ActionEvent(BoboEvent):
     :type success: bool
 
     :param for_event: The event for which the action was triggered.
-    :type for_event: CompositeEvent
+    :type for_event: BoboEvent
 
     :param exception: The name of an exception, if one was raised during
                       action execution. Defaults to an empty string.
@@ -46,7 +45,7 @@ class ActionEvent(BoboEvent):
                  timestamp: int,
                  name: str,
                  success: bool,
-                 for_event: CompositeEvent,
+                 for_event: BoboEvent,
                  exception: str = None,
                  description: str = None,
                  data: Dict[str, str] = None,

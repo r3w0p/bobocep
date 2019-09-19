@@ -98,7 +98,9 @@ class BoboDecider(BoboTask,
 
     def on_producer_action(self, event: ActionEvent):
         # producer actions are added to the handler's recent events
-        if (not self._is_cancelled) and self._recursive:
+        if (not self._is_cancelled) and \
+                self._recursive and \
+                isinstance(event.for_event, CompositeEvent):
             if event.for_event.name in self._nfa_handlers:
                 self._nfa_handlers[event.for_event.name].add_recent(event)
 
@@ -224,13 +226,14 @@ class BoboDecider(BoboTask,
 
     def on_dist_action(self, event: ActionEvent) -> None:
         with self._lock:
-            handler = self._nfa_handlers.get(event.for_event.name)
+            if isinstance(event.for_event, CompositeEvent):
+                handler = self._nfa_handlers.get(event.for_event.name)
 
-            if handler is None:
-                raise RuntimeError("Handler not found for NFA {}.".format(
-                    event.for_event.name))
+                if handler is None:
+                    raise RuntimeError("Handler not found for NFA {}.".format(
+                        event.for_event.name))
 
-            handler.add_recent(event)
+                handler.add_recent(event)
 
     def _setup(self) -> None:
         """"""

@@ -5,6 +5,7 @@ from bobocep.producer.producer_subscriber import IProducerSubscriber
 from bobocep.receiver.clocks.epoch_ns_clock import EpochNSClock
 from bobocep.rules.actions.action_subscriber import IActionSubscriber
 from bobocep.rules.events.action_event import ActionEvent
+from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.composite_event import CompositeEvent
 
 
@@ -23,15 +24,15 @@ class BoboAction(IProducerSubscriber):
         self._lock = RLock()
 
     @abstractmethod
-    def _perform_action(self, event: CompositeEvent) -> bool:
+    def _perform_action(self, event: BoboEvent) -> bool:
         """"""
 
-    def execute(self, event: CompositeEvent) -> ActionEvent:
+    def execute(self, event: BoboEvent) -> ActionEvent:
         """
         Executes the action.
 
         :param event: An event to use as part of the action process.
-        :type event: CompositeEvent
+        :type event: BoboEvent
 
         :return: A Tuple containing the success of the action execution, and
                  any exception that was raised on failure, or None if an
