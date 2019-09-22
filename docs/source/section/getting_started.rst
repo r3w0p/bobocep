@@ -20,10 +20,11 @@ Here, we define:
 - **Actions** to take when the composite event is generated: starting the fire alarms.
 
 The :code:`BoboComplexEvent` class is used to define complex events.
-It requires a :code:`name`, a :code:`BoboPattern` instance for the pattern to detect, and a list of :code:`BoboAction`
-instances to execute on composite event generation, in list order.
-Data entering the system is encapsulated within :code:`PrimitiveEvent` instances, and :code:`CompositeEvent` instances
-are generated on complex event detection, both of which are subclasses of the :code:`BoboEvent` type.
+It requires a :code:`name`, a :code:`BoboPattern` instance for the pattern to detect, and a :code:`BoboAction`
+instance to execute on composite event generation.
+Data entering the system is encapsulated within :code:`PrimitiveEvent` instances, :code:`CompositeEvent` instances
+are generated on complex event detection, and :code:`ActionEvent` instances for when the complex event's action has
+been completed, all of which are subclasses of the :code:`BoboEvent` type.
 
 
 Architecture
@@ -71,12 +72,15 @@ The four core subsystems of the architecture are as follows:
           Therefore, the Producer might pass :code:`CompositeEvent` instances back to Decider *before* the any
           subscribed actions have finished executing.
 
-These subsystems are inspired by the *information flow processing* (IFP) architecture proposed by Cugola et al.
-[Cugola2012]_.
-This architecture is extended by enabling Decider's functionality to be synchronised across multiple instances
+These subsystems are inspired by the *information flow processing* (IFP) architecture proposed by
+Cugola et al. [Cugola2012]_.
+This architecture is extended by enabling state updates to be synchronised across multiple instances
 of :code:`bobocep`.
+Namely, Decider's internal data buffers, which are inspired by the designs of Agrawal et al. [Agrawal2008]_,
+and the actions executed by Producer.
 This is accomplished using an external message broker to exchange updates in the state of partially-completed
 complex events.
+
 
 
 Quick Setup
@@ -112,7 +116,7 @@ We will define a simple pattern below, as follows.
 
 This pattern states that we need three events, where the data for the three events are :code:`'a'`, :code:`'b'`,
 and :code:`'c'`, in that order.
-All of these events must occur within 10 seconds.
+All of these events *must* occur within 10 seconds.
 
 Now, we add this pattern to our :code:`BoboSetup` instance with the name :code:`'abc'`, and no action to be taken if
 it occurs.
@@ -134,10 +138,10 @@ Optional
 Receiver
 ++++++++
 
-Firstly, we want to configure the Receiver by stating how incoming data should be **validated**. This ensures that
-the data for :code:`PrimitiveEvents` have all been validated.
+We might want to configure the Receiver by stating how incoming data should be **validated**.
+This ensures consistency with :code:`PrimitiveEvent` data.
 For example, we might want to ensure that all data are of type :code:`str` and are at least 5
-characters in length.
+characters in length, as follows.
 
 .. code:: python
 
@@ -151,10 +155,10 @@ By default, all data will be accepted.
 Producer
 ++++++++
 
-An action can be performed on the Producer before the specific actions of any complex events are executed.
-This action acts as a firewall.
+We might want to perform an action on Producer that has the ability to block a complex event from
+having its actions executed and being passed to Forwarder.
 That is, if the Producer's action returns :code:`False`, the :code:`CompositeEvent` in question will be
-*dropped* and not passed to Forwarder.
+*dropped*.
 
 For example, it might be desirable to *rate limit* :code:`CompositeEvent` instances.
 If a :code:`CompositeEvent` with name "A" is being generated every 3 seconds, but you only want *at most*
@@ -172,14 +176,16 @@ By default, no action is performed and all :code:`CompositeEvent` instances are 
 Forwarder
 +++++++++
 
-Similarly with Producer, the Forwarder is where you will send your :code:`CompositeEvent` instances beyond
-:code:`bobocep`.
-For this task, you will need to create your own `BoboAction` instance that will perform the tasks you require.
+The Forwarder is where you will send your :code:`CompositeEvent` instances beyond :code:`bobocep`.
+You will need to create your own `BoboAction` instance that will perform the tasks you require.
 For example, a `BoboAction` that writes the events to file, or sends them to an external system.
 
 .. code:: python
 
-    setup.config_forwarder(my_action)
+    setup.config_forwarder(write_to_file_action)
+
+
+By default, Forwarder does nothing except send its events to its subscribers.
 
 
 Distributed
@@ -196,6 +202,9 @@ exchange name, host name, and user name associated with the message broker, as f
         host_name="192.168.1.123")
 
 
+By default, :code:`bobocep` is not distributed.
+
+
 Null Data
 +++++++++
 
@@ -206,6 +215,9 @@ we do the following.
 .. code:: python
 
     setup.config_null_data(delay_sec=3, null_data="")
+
+
+By default, null data is not generated.
 
 
 Run
@@ -225,8 +237,8 @@ Next Steps
 
 Now that we have set up a simple example, the next steps are to:
 
-- Learn how to create your own `patterns <patterns.html>`_ for your own complex event definitions.
-- Create some `actions <actions.html>`_ that you want to be executed on complex event generation.
+- Learn how to create your own `patterns <patterns.html>`_ for your own complex events.
+- Create some `actions <actions.html>`_ that you want for your own implementation.
 - Add them to your :code:`BoboSetup` instance.
 
 
@@ -243,6 +255,14 @@ Therefore, I felt the name was very fitting.
 
 References
 ==========
+
+
+.. [Agrawal2008]
+    Agrawal, J., Diao, Y., Gyllstrom, D., & Immerman, N. (2008).
+    `Efficient pattern matching over event streams
+    <https://doi.org/10.1145/1376616.1376634>`_.
+    *ACM SIGMOD international conference on Management of data*, pp. 147-160.
+
 
 .. [Cugola2012]
     Cugola, G., & Margara, A. (2012).

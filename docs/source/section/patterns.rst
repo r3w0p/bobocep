@@ -42,8 +42,8 @@ The predicate is a function that takes three arguments:
 - The event that is attempting to fulfil the criteria.
 - A :code:`BoboHistory` instance that contains all of the previous events that have currently been accepted by the
   run of the automaton.
-- Recently accepted complex events, represented as a list of :code:`CompositeEvent` instances in descending order,
-  with the most recent event at the start of the list.
+- Recent :code:`CompositeEvent` and :code:`ActionEvent` instances, represented as a list of events in descending order
+  i.e. the most recent event first.
 
 In Python, we can define a predicate in three ways.
 A regular `function <https://docs.python.org/3/tutorial/controlflow.html?#defining-functions>`_.
@@ -81,7 +81,7 @@ Or, an object's `method <https://docs.python.org/3/tutorial/classes.html#a-first
 
 
 Where :code:`e` is the :code:`BoboEvent` instance, :code:`h` is the :code:`BoboHistory` instance, and :code:`r` is the
-list of recently accepted complex events.
+list of recent events.
 When the predicate is defined, it needs to be placed into a :code:`BoboPredicateCallable` instance, as follows.
 
 .. code:: python
@@ -98,7 +98,7 @@ transition, discussed next.
 Contiguity
 ----------
 
-The policy of states with regard to how they react to events that do not cause a state transition.
+The contiguity is the policy of states with regard to how they react to events that do not cause a state transition.
 :code:`bobocep` supports three types.
 
 Strict
@@ -118,8 +118,7 @@ The :code:`next` interface is used for strict contiguity.
 Relaxed
 +++++++
 
-All non-matching events are ignored.
-The run simply waits for a matching event.
+All non-matching events are ignored; the run simply waits for a matching event.
 The :code:`followed_by` interface is used for relaxed contiguity.
 
 .. code:: python
@@ -156,15 +155,15 @@ Before an event is passed to any state in a run, it is first passed to a set of 
 Preconditions
 -------------
 
-Preconditions are predicates where, if *any* of them evaluate to :code:`False`, the run is halted.
+Preconditions are predicates where, if *any* of them evaluate to :code:`False`, the run halts.
 One of the most important preconditions is a *time window*, where runs require completion within some given
 time limit.
 This is important for *state clearance* i.e. ensuring runs are always eventually halted and removed from memory,
-to prevent an endless build-up of incomplete runs with no means of halting.
+to prevent a build-up of incomplete runs with no means of halting.
 
-For example, if we want to ensure that all events occur within 1 minute of each other, we can use
-:code:`WindowSlidingFirst` to specify the time interval, in seconds, that can exist between
-the first event accepted by a run and the current event being checked.
+For example, if we want to ensure that all events occur within 1 minute of the first accepted event, we can use
+:code:`WindowSlidingFirst` to specify the time interval, in seconds, that can exist between the first accepted event
+and the current event being checked.
 
 .. code:: python
 
@@ -172,24 +171,22 @@ the first event accepted by a run and the current event being checked.
 
     pattern.precondition(WindowSlidingFirst(interval_sec=60))
 
-Each successive call of :code:`precondition` will add another predicate to the list.
+Each call of the :code:`precondition` interface will add another predicate to the list.
 
 
 Haltconditions
 --------------
 
-Haltconditions are predicates where, if *any* of them evaluate to :code:`True`, the run is halted.
+Haltconditions are predicates where, if *any* of them evaluate to :code:`True`, then the run halts.
 This is useful if you want a run to halt if something happens within the lifetime of the run.
-
-For example, we can halt a run if a :code:`CompositeEvent` with name :code:`'B'` has just been
-generated.
+For example, to halt if a :code:`CompositeEvent` with name :code:`'B'` has recently been generated.
 
 .. code:: python
 
     pattern.haltcondition(
         BoboPredicateCallable(lambda e, h, r: isinstance(e, CompositeEvent) and e.name == 'B')
 
-Each successive call of :code:`haltcondition` will add another predicate to the list.
+Each call of the :code:`haltcondition` interface will add another predicate to the list.
 
 
 Chaining Patterns

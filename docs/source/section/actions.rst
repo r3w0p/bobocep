@@ -10,15 +10,15 @@ To create your own action, you need to create a class that extends from the :cod
 .. code:: python
 
     from bobocep.rules.actions.bobo_action import BoboAction
-    from bobocep.rules.events.composite_event import CompositeEvent
+    from bobocep.rules.events.bobo_event import BoboEvent
 
     class MyAction(BoboAction):
 
-        def _perform_action(self, event: CompositeEvent) -> bool:
+        def _perform_action(self, event: BoboEvent) -> bool:
             // ...
 
 Then, implement the :code:`_perform_action` method and put whatever action you want to execute in there.
-Make the method return :code:`True` if your action is successful, and :code:`False` if unsuccessful.
+Make the method return :code:`True` if your action was successfully executed, and :code:`False` otherwise.
 
 Then, you can execute the action in the future using the :code:`execute` interface, as follows.
 
@@ -27,7 +27,8 @@ Then, you can execute the action in the future using the :code:`execute` interfa
     my_action = MyAction()
     success, exception = my_action.execute(my_event)
 
-
+This will return the success of the action execution, as well as any exception that was raised if unsuccessful, or
+:code:`None` if no exception was raised.
 
 
 Multi Actions

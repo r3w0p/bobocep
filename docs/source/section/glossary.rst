@@ -2,6 +2,39 @@ Glossary
 ********
 
 
+
+
+Bobo Events
+===========
+
+Data types used in :code:`bobocep` to represent different system events.
+
+PrimitiveEvent
+--------------
+
+Represents data that has entered the :code:`bobocep` system.
+
+CompositeEvent
+--------------
+
+Represents the inference of a complex event.
+
+ActionEvent
+-----------
+
+Represents the execution of an action by the system.
+
+
+
+
+Complex Event
+=============
+
+An event that represents the inference of some phenomenon that was identified by a pattern in a data stream.
+
+
+
+
 Contiguity
 ==========
 
@@ -22,36 +55,17 @@ Any non-matching events are ignored.
 Non-Deterministic Relaxed
 -------------------------
 
-Also relaxed, but allows multiple matches from a state when its transition is non-deterministic.
+The same as relaxed, but allows multiple matches from a state when its transition is non-deterministic.
 
 
-Complex Event
-=============
-
-Finish me.
-
-
-Event
-=====
-
-Finish me.
 
 
 History
 =======
 
-Finish me.
+The events that were accepted by a pattern as being indicative of the existence of a complex event.
 
 
-Primitive
----------
-
-Finish me.
-
-Composite
----------
-
-Finish me.
 
 
 Null Data
@@ -60,37 +74,51 @@ Null Data
 Arbitrary static data that is periodically inserted into the CEP system.
 It has several purposes:
 
-- Provides state clearance, so that windowed automata have an event to trigger window checks.
-- As a workaround to design automata that can reach the accepting state if *nothing* happens within some time interval
-  (i.e. check if a null event is received after the time interval).
+- Provides state clearance, so that runs always have a periodic event with which to trigger time window checks.
+- So runs can reach the accepting state if *nothing* happens i.e. check if a null event occurs instead.
 
 
-Recents
+
+
+Pattern
 =======
 
-Finish me.
+A sequence of data correlations that, when fulfilled with data from a data stream, infer the existence of a complex
+event.
+
+
 
 
 Run
 ===
 
-Finish me.
+An instance of a pattern.
 
 
-State
-=====
 
-Finish me.
+
+States
+======
+
+Start State
+-----------
+
+The first state of an automaton that triggers the generation of a new run when reached.
+
 
 Accepting State
 ---------------
 
-The final state of an automaton that triggers the generation of some complex event.
+The final state of an automaton that triggers the generation of a complex event when reached.
+
+
 
 
 State Clearance
 ===============
 
-Finish me.
-
+Ensuring that runs are always eventually halted and removed from memory, to prevent a build-up of
+incomplete runs with no means of halting.
+This is typically achieved by adding a time window to patterns that will cause an eventual halt
+if a run is not fulfilled within a given time frame.
 

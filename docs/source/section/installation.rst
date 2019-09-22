@@ -14,7 +14,7 @@ The :code:`bobocep` software requires the following.
   partially-completed complex events.
   You can connect to any message broker that is compatible with the `AMQP 0-9-1 <https://www.amqp.org/>`_ protocol,
   such as `RabbitMQ <https://www.rabbitmq.com/>`_.
-  This is only required if you want to distribute :code:`bobocep` across multiple devices.
+  This is *optional*, and only required if you want to distribute :code:`bobocep` across multiple devices.
 
 You can install the latest version via :code:`pip` using the following command:
 
@@ -82,8 +82,8 @@ We will now start the server.
 
     service rabbitmq-server start
 
-If you would like access to the `Management Plugin <https://www.rabbitmq.com/management.html>`_, you can install it
-and configure a user account for it with administrator privileges, as follows.
+If you would like access to the RabbitMQ `Management Plugin <https://www.rabbitmq.com/management.html>`_,
+you can install it and configure a user account for it with administrator privileges, as follows.
 
 .. code:: console
 
