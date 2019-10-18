@@ -94,15 +94,23 @@ class BoboDecider(BoboTask,
 
     def on_receiver_event(self, event: BoboEvent) -> None:
         if not self._is_cancelled:
-            self._event_queue.put(event)
+            self._event_queue.put_nowait(event)
+
+    def on_accepted_producer_event(self, event: CompositeEvent) -> None:
+        if (not self._is_cancelled) and self._recursive:
+            self._event_queue.put_nowait(event)
 
     def on_producer_action(self, event: ActionEvent):
-        # producer actions are added to the handler's recent events
         if (not self._is_cancelled) and \
                 self._recursive and \
                 isinstance(event.for_event, CompositeEvent):
+
+            # event added to handler's recent events
             if event.for_event.name in self._nfa_handlers:
                 self._nfa_handlers[event.for_event.name].add_recent(event)
+
+            # event added to decider queue
+            self._event_queue.put_nowait(event)
 
     def on_handler_final(self,
                          nfa_name: str,
@@ -242,9 +250,6 @@ class BoboDecider(BoboTask,
         """"""
 
     def on_invalid_data(self, data):
-        """"""
-
-    def on_accepted_producer_event(self, event: CompositeEvent) -> None:
         """"""
 
     def on_rejected_producer_event(self, event: CompositeEvent):

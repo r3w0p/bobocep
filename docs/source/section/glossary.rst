@@ -97,6 +97,17 @@ An instance of a pattern.
 
 
 
+State Clearance
+===============
+
+Ensuring that runs are always eventually halted and removed from memory, to prevent a build-up of
+incomplete runs with no means of halting.
+This is typically achieved by adding a time window to patterns that will cause an eventual halt
+if a run is not fulfilled within a given time frame.
+
+
+
+
 States
 ======
 
@@ -110,15 +121,4 @@ Accepting State
 ---------------
 
 The final state of an automaton that triggers the generation of a complex event when reached.
-
-
-
-
-State Clearance
-===============
-
-Ensuring that runs are always eventually halted and removed from memory, to prevent a build-up of
-incomplete runs with no means of halting.
-This is typically achieved by adding a time window to patterns that will cause an eventual halt
-if a run is not fulfilled within a given time frame.
 
