@@ -1,4 +1,5 @@
 from inspect import isfunction, signature, ismethod
+from types import MethodType
 from typing import Callable, List
 
 from bobocep.rules.events.bobo_event import BoboEvent
@@ -33,6 +34,7 @@ class BoboPredicateCallable(BoboPredicate):
                                "in its signature.".format(self.PARAMETERS))
 
         self._call = call
+        self._obj = call.__self__ if isinstance(call, MethodType) else None
 
     def evaluate(self,
                  event: BoboEvent,

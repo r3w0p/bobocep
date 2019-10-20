@@ -122,6 +122,30 @@ def state_from_layer(nfa, label):
         lambda x: x.startswith(label), nfa.states.keys()))[0]]
 
 
+class StubPredicateClass:
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def predicate_true_1(self,
+                         event: BoboEvent,
+                         history: BoboHistory,
+                         recents: List[BoboEvent]):
+        return True
+
+    def predicate_true_2(self,
+                         event: BoboEvent,
+                         history: BoboHistory,
+                         recents: List[BoboEvent]):
+        return True
+
+    def predicate_true_3(self,
+                         event: BoboEvent,
+                         history: BoboHistory,
+                         recents: List[BoboEvent]):
+        return True
+
+
 class NFAHandlerSubscriber(INFAHandlerSubscriber):
 
     def __init__(self) -> None:
@@ -967,3 +991,27 @@ class TestBoboNFAHandlerFinal(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             handler.force_run_final(run_id=RUN_ID_INVALID,
                                     history=BoboHistory())
+
+
+class TestPredicateCallable(unittest.TestCase):
+
+    def test_all_callables_method_same_object(self):
+        obj = StubPredicateClass()
+
+        pattern = BoboPattern() \
+            .followed_by(LABEL_LAYER_A,
+                         BoboPredicateCallable(obj.predicate_true_1)) \
+            .followed_by(LABEL_LAYER_B,
+                         BoboPredicateCallable(obj.predicate_true_2)) \
+            .followed_by(LABEL_LAYER_C,
+                         BoboPredicateCallable(obj.predicate_true_3))
+
+        nfa, buffer, handler, handlersub = handler_setup(
+            nfa_name=NFA_NAME_A,
+            pattern=pattern)
+
+        handler.process(event_a)
+        handler.process(event_b)
+        handler.process(event_c)
+
+        self.assertEqual(1, len(handlersub.final))
