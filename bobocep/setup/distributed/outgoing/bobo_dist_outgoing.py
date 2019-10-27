@@ -3,7 +3,7 @@ from queue import Queue
 from time import time
 from uuid import uuid4
 
-import pika
+from pika import ConnectionParameters, BlockingConnection, BasicProperties
 
 import bobocep.setup.distributed.bobo_dist_constants as bdc
 from bobocep.decider.bobo_decider import BoboDecider
@@ -33,31 +33,33 @@ class BoboDistOutgoing(BoboTask,
                           message queue system.
     :type exchange_name: str
 
-    :param user_id: The user ID to use on the external message queue
-                    system.
+    :param user_id: The user ID to use on the external message queue system.
     :type user_id: str
 
-    :param host_name: The host name of the external message queue system.
-    :type host_name: str
+    :param parameters: Parameters to connect to a message broker.
+    :type parameters: ConnectionParameters
+
+    :param max_sync_attempts: Maximum attempts to sync with other
+                              :code:`bobocep` instances before giving up.
+    :type max_sync_attempts: int
     """
 
     def __init__(self,
                  decider: BoboDecider,
                  exchange_name: str,
                  user_id: str,
-                 host_name: str,
+                 parameters: ConnectionParameters,
                  max_sync_attempts: int) -> None:
         super().__init__()
 
-        connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host=host_name))
+        connection = BlockingConnection(parameters=parameters)
         channel = connection.channel()
 
         self.decider = decider
         self.exchange_name = exchange_name
         self.user_id = user_id
+        self.parameters = parameters
         self.sync_id = None
-        self.host_name = host_name
         self.max_sync_attempts = max_sync_attempts
 
         self._queue_transition = Queue()
@@ -133,7 +135,7 @@ class BoboDistOutgoing(BoboTask,
         self._channel.basic_publish(
             exchange=self.exchange_name,
             routing_key=bdc.SYNC_REQ,
-            properties=pika.BasicProperties(
+            properties=BasicProperties(
                 reply_to=bdc.SYNC_RES,
                 message_id=self.user_id,
                 correlation_id=self.sync_id,
@@ -185,7 +187,7 @@ class BoboDistOutgoing(BoboTask,
                 data_json = json.dumps(data)
                 self._channel.basic_publish(
                     exchange=self.exchange_name,
-                    properties=pika.spec.BasicProperties(
+                    properties=BasicProperties(
                         message_id=self.user_id),
                     routing_key=routing_key,
                     body=data_json

@@ -1,6 +1,6 @@
 import json
 
-import pika
+from pika import ConnectionParameters, BlockingConnection, BasicProperties
 
 import bobocep.setup.distributed.bobo_dist_constants as bdc
 from bobocep.decider.bobo_decider import BoboDecider
@@ -26,8 +26,8 @@ class BoboDistIncoming(BoboTask):
     :param user_id: The user ID to use on the external message queue system.
     :type user_id: str
 
-    :param host_name: The host name of the external message queue system.
-    :type host_name: str
+    :param parameters: Parameters to connect to a message broker.
+    :type parameters: ConnectionParameters
     """
 
     def __init__(self,
@@ -35,12 +35,11 @@ class BoboDistIncoming(BoboTask):
                  decider: BoboDecider,
                  exchange_name: str,
                  user_id: str,
-                 host_name: str) -> None:
+                 parameters: ConnectionParameters) -> None:
 
         super().__init__()
 
-        connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host=host_name))
+        connection = BlockingConnection(parameters=parameters)
         channel = connection.channel()
 
         channel.exchange_declare(exchange=exchange_name,
@@ -72,7 +71,7 @@ class BoboDistIncoming(BoboTask):
         self.decider = decider
         self.exchange_name = exchange_name
         self.user_id = user_id
-        self.host_name = host_name
+        self.parameters = parameters
 
         self._subs = []
         self._connection = connection
@@ -210,7 +209,7 @@ class BoboDistIncoming(BoboTask):
 
         ch.basic_publish(exchange=self.exchange_name,
                          routing_key=properties.reply_to,
-                         properties=pika.BasicProperties(
+                         properties=BasicProperties(
                              message_id=self.user_id,
                              correlation_id=properties.correlation_id),
                          body=json_data)

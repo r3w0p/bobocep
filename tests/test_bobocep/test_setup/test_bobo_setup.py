@@ -22,9 +22,10 @@ from bobocep.rules.predicates.bobo_predicate_callable import \
 from bobocep.setup.bobo_complex_event import BoboComplexEvent
 from bobocep.setup.bobo_setup import BoboSetup
 
+from pika import ConnectionParameters, PlainCredentials
+
 EXCHANGE_NAME = "test_exchange_name"
 USER_NAME = "test_user_name"
-HOST_NAME = "127.0.0.1"
 
 NAME_NFA_A = "name_nfa_a"
 NAME_NFA_B = "name_nfa_b"
@@ -69,6 +70,9 @@ event_a = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 event_b = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 event_c = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
 event_d = PrimitiveEvent(timestamp=EpochNSClock.generate_timestamp())
+
+credentials = PlainCredentials('guest', 'guest')
+parameters = ConnectionParameters("127.0.0.1", 5672, '/', credentials)
 
 
 class StubSubscriberSetup(IReceiverSubscriber,
@@ -243,7 +247,7 @@ class TestBoboSetup(unittest.TestCase):
         setup.config_null_data(NULL_DATA_DELAY, null_data)
         setup.config_distributed(EXCHANGE_NAME,
                                  USER_NAME,
-                                 HOST_NAME)
+                                 parameters)
         setup.configure()
 
         receiver = setup.get_receiver()
@@ -264,12 +268,12 @@ class TestBoboSetup(unittest.TestCase):
         self.assertEqual(manager.outgoing.decider, decider)
         self.assertEqual(manager.outgoing.exchange_name, EXCHANGE_NAME)
         self.assertTrue(manager.outgoing.user_id.find(USER_NAME) != -1)
-        self.assertEqual(manager.outgoing.host_name, HOST_NAME)
+        self.assertEqual(manager.outgoing.parameters, parameters)
 
         self.assertEqual(manager.incoming.decider, decider)
         self.assertEqual(manager.incoming.exchange_name, EXCHANGE_NAME)
         self.assertTrue(manager.incoming.user_id.find(USER_NAME) != -1)
-        self.assertEqual(manager.incoming.host_name, HOST_NAME)
+        self.assertEqual(manager.incoming.parameters, parameters)
 
     def test_access_before_configuration(self):
         setup = BoboSetup()
@@ -684,7 +688,7 @@ class TestBoboSetupDistributed(unittest.TestCase):
         setup.config_distributed(
             exchange_name=EXCHANGE_NAME,
             user_name=USER_NAME,
-            host_name=HOST_NAME)
+            parameters=parameters)
 
         setup.configure()
         self.assertFalse(setup.get_receiver().is_active())

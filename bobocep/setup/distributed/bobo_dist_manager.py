@@ -5,6 +5,7 @@ from bobocep.setup.distributed.outgoing.bobo_dist_outgoing import \
     BoboDistOutgoing
 from bobocep.setup.task.bobo_task_thread import \
     BoboTaskThread
+from pika import ConnectionParameters
 
 
 class BoboDistManager:
@@ -22,27 +23,34 @@ class BoboDistManager:
     :param user_id: The user ID to use on the external message queue system.
     :type user_id: str
 
-    :param host_name: The host name of the external message queue system.
-    :type host_name: str
+    :param parameters: Parameters to connect to a message broker.
+    :type parameters: ConnectionParameters
 
     :param delay: The delay for internal BoboTask threads, in seconds.
     :type delay: float
+
+    :param max_sync_attempts: Maximum attempts to sync with other
+                              :code:`bobocep` instances before giving up,
+                              defaults to 3.
+    :type max_sync_attempts: int, optional
     """
 
     def __init__(self,
                  decider: BoboDecider,
                  exchange_name: str,
                  user_id: str,
-                 host_name: str,
+                 parameters: ConnectionParameters,
                  delay: float,
                  max_sync_attempts: int = 3) -> None:
         super().__init__()
+
+        self.parameters = parameters
 
         self.outgoing = BoboDistOutgoing(
             decider=decider,
             exchange_name=exchange_name,
             user_id=user_id,
-            host_name=host_name,
+            parameters=parameters,
             max_sync_attempts=max_sync_attempts
         )
 
@@ -51,7 +59,7 @@ class BoboDistManager:
             decider=decider,
             exchange_name=exchange_name,
             user_id=user_id,
-            host_name=host_name
+            parameters=parameters
         )
 
         self._incoming_thread = BoboTaskThread(self.incoming, delay)

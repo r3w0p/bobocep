@@ -2,7 +2,7 @@ from threading import RLock
 from time import time_ns
 from typing import List
 from uuid import uuid4
-
+from pika import ConnectionParameters
 from bobocep.decider.bobo_decider import BoboDecider
 from bobocep.decider.buffers.shared_versioned_match_buffer import \
     SharedVersionedMatchBuffer
@@ -85,7 +85,7 @@ class BoboSetup(IDistOutgoingSubscriber):
         self._manager = None
         self._exchange_name = None
         self._user_name = None
-        self._host_name = None
+        self._parameters = None
         self._user_id = None
         self._synced = False
 
@@ -296,7 +296,7 @@ class BoboSetup(IDistOutgoingSubscriber):
     def config_distributed(self,
                            exchange_name: str,
                            user_name: str,
-                           host_name: str) -> None:
+                           parameters: ConnectionParameters) -> None:
         """
         Configure the connection to the external message broker.
 
@@ -306,8 +306,8 @@ class BoboSetup(IDistOutgoingSubscriber):
         :param user_name: The user name.
         :type user_name: str
 
-        :param host_name: The host name.
-        :type host_name: str
+        :param parameters: Parameters to connect to a message broker.
+        :type parameters: ConnectionParameters
         """
 
         with self._lock:
@@ -315,7 +315,7 @@ class BoboSetup(IDistOutgoingSubscriber):
                 self._distributed = True
                 self._exchange_name = exchange_name
                 self._user_name = user_name
-                self._host_name = host_name
+                self._parameters = parameters
 
     def config_null_data(self,
                          delay_sec: float,
@@ -511,7 +511,7 @@ class BoboSetup(IDistOutgoingSubscriber):
                 decider=self._decider,
                 exchange_name=self._exchange_name,
                 user_id=self._user_id,
-                host_name=self._host_name,
+                parameters=self._parameters,
                 delay=self._delay)
 
             # setup will activate tasks on sync
