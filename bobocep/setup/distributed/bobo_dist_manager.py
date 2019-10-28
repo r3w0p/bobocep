@@ -1,3 +1,5 @@
+from pika import ConnectionParameters
+
 from bobocep.decider.bobo_decider import BoboDecider
 from bobocep.setup.distributed.incoming.bobo_dist_incoming import \
     BoboDistIncoming
@@ -5,7 +7,6 @@ from bobocep.setup.distributed.outgoing.bobo_dist_outgoing import \
     BoboDistOutgoing
 from bobocep.setup.task.bobo_task_thread import \
     BoboTaskThread
-from pika import ConnectionParameters
 
 
 class BoboDistManager:

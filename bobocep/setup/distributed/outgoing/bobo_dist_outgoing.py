@@ -117,7 +117,7 @@ class BoboDistOutgoing(BoboTask,
     def _sync(self) -> None:
         sync_attempt = 0
 
-        while not self._is_synced and sync_attempt < self.max_sync_attempts:
+        while (not self._is_synced) and sync_attempt < self.max_sync_attempts:
             sync_attempt += 1
             self._is_synced = self._sync_request()
 
@@ -157,7 +157,7 @@ class BoboDistOutgoing(BoboTask,
         return True
 
     def _put_current_state(self, decider_dict: dict) -> None:
-        if self._is_cancelled or self._synced:
+        if self._is_cancelled or self._is_synced:
             return
 
         for handler_dict in decider_dict[bdc.HANDLERS]:
@@ -177,7 +177,7 @@ class BoboDistOutgoing(BoboTask,
                 run = BoboDeciderBuilder.run(run_dict, buffer, handler.nfa)
                 handler.add_run(run)
 
-        self._synced = True
+        self._is_synced = True
 
     def _send_events(self, queue: Queue, routing_key: str):
         if not queue.empty():

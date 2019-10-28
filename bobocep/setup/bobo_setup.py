@@ -2,7 +2,9 @@ from threading import RLock
 from time import time_ns
 from typing import List
 from uuid import uuid4
+
 from pika import ConnectionParameters
+
 from bobocep.decider.bobo_decider import BoboDecider
 from bobocep.decider.buffers.shared_versioned_match_buffer import \
     SharedVersionedMatchBuffer
@@ -87,7 +89,7 @@ class BoboSetup(IDistOutgoingSubscriber):
         self._user_name = None
         self._parameters = None
         self._user_id = None
-        self._synced = False
+        self._is_synced = False
 
         self._receiver = None
         self._decider = None
@@ -113,7 +115,7 @@ class BoboSetup(IDistOutgoingSubscriber):
         with self._lock:
             if self.is_active():
                 if self._distributed:
-                    return self._synced
+                    return self._is_synced
                 else:
                     return True
 
@@ -343,7 +345,7 @@ class BoboSetup(IDistOutgoingSubscriber):
         with self._lock:
             if self._distributed:
                 self._activate_tasks()
-            self._synced = True
+            self._is_synced = True
 
     def start(self) -> None:
         """Start the setup.
@@ -363,7 +365,7 @@ class BoboSetup(IDistOutgoingSubscriber):
 
             # tasks active by default if not distributed, sync immediately
             if not self._distributed:
-                self._synced = True
+                self._is_synced = True
 
     def configure(self) -> None:
         with self._lock:

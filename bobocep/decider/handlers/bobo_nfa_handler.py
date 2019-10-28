@@ -46,7 +46,7 @@ class BoboNFAHandler(IRunSubscriber):
         self._recent = []
         self._max_recent = max(1, max_recent)
         self._subs = []
-        self._synced = False
+        self._is_synced = False
         self._lock = RLock()
 
     def process(self, event: BoboEvent) -> None:

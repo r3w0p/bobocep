@@ -131,7 +131,7 @@ class BoboDistIncoming(BoboTask):
         elif method.routing_key == bdc.SYNC_REQ:
             self._handle_sync_request(ch, method, properties, body)
 
-        elif not self._is_synced and method.routing_key == bdc.SYNC_RES:
+        elif (not self._is_synced) and method.routing_key == bdc.SYNC_RES:
             self._handle_sync_response(ch, method, properties, body)
 
     def _handle_transition(self, data: str) -> None:
