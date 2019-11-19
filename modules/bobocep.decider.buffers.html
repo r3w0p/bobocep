@@ -1,0 +1,500 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>bobocep.decider.buffers package &mdash; bobocep 0.35.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/bobo.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> bobocep
+          
+
+          
+            
+            <img src="../_static/bobo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.35.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../section/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/patterns.html">Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/actions.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/glossary.html">Glossary</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">bobocep</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>bobocep.decider.buffers package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/bobocep.decider.buffers.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="bobocep-decider-buffers-package">
+<h1>bobocep.decider.buffers package<a class="headerlink" href="#bobocep-decider-buffers-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-bobocep.decider.buffers.match_event">
+<span id="bobocep-decider-buffers-match-event-module"></span><h2>bobocep.decider.buffers.match_event module<a class="headerlink" href="#module-bobocep.decider.buffers.match_event" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bobocep.decider.buffers.match_event.MatchEvent">
+<em class="property">class </em><code class="sig-prename descclassname">bobocep.decider.buffers.match_event.</code><code class="sig-name descname">MatchEvent</code><span class="sig-paren">(</span><em class="sig-param">nfa_name: str</em>, <em class="sig-param">label: str</em>, <em class="sig-param">event: bobocep.rules.events.bobo_event.BoboEvent</em>, <em class="sig-param">next_ids: Dict[str</em>, <em class="sig-param">Tuple[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">previous_ids: Dict[str</em>, <em class="sig-param">Tuple[str</em>, <em class="sig-param">str]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#bobocep.decider.buffers.match_event.MatchEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A BoboEvent instance that has been selected as a match for some state
+criteria by one or more runs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nfa_name</strong> (<em>str</em>) – The name of the BoboNFA instance.</p></li>
+<li><p><strong>label</strong> (<em>str</em>) – The state label with which the event is associated.</p></li>
+<li><p><strong>event</strong> (<a class="reference internal" href="bobocep.rules.events.html#bobocep.rules.events.bobo_event.BoboEvent" title="bobocep.rules.events.bobo_event.BoboEvent"><em>BoboEvent</em></a>) – The event selected as being a match for some state.</p></li>
+<li><p><strong>next_ids</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Matches from older states, to which this event links,
+defaults to an empty dict.</p></li>
+<li><p><strong>previous_ids</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Matches from newer states, to which this event
+links, default to an empty dict.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="bobocep.decider.buffers.match_event.MatchEvent.EVENT">
+<code class="sig-name descname">EVENT</code><em class="property"> = 'event'</em><a class="headerlink" href="#bobocep.decider.buffers.match_event.MatchEvent.EVENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bobocep.decider.buffers.match_event.MatchEvent.LABEL">
+<code class="sig-name descname">LABEL</code><em class="property"> = 'label'</em><a class="headerlink" href="#bobocep.decider.buffers.match_event.MatchEvent.LABEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bobocep.decider.buffers.match_event.MatchEvent.NEXT_IDS">
+<code class="sig-name descname">NEXT_IDS</code><em class="property"> = 'next_ids'</em><a class="headerlink" href="#bobocep.decider.buffers.match_event.MatchEvent.NEXT_IDS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bobocep.decider.buffers.match_event.MatchEvent.NFA_NAME">
+<code class="sig-name descname">NFA_NAME</code><em class="property"> = 'nfa_name'</em><a class="headerlink" href="#bobocep.decider.buffers.match_event.MatchEvent.NFA_NAME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bobocep.decider.buffers.match_event.MatchEvent.PREVIOUS_IDS">
+<code class="sig-name descname">PREVIOUS_IDS</code><em class="property"> = 'previous_ids'</em><a class="headerlink" href="#bobocep.decider.buffers.match_event.MatchEvent.PREVIOUS_IDS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.buffers.match_event.MatchEvent.add_pointer_next">
+<code class="sig-name descname">add_pointer_next</code><span class="sig-paren">(</span><em class="sig-param">version: str</em>, <em class="sig-param">label: str = ''</em>, <em class="sig-param">event_id: str = ''</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#bobocep.decider.buffers.match_event.MatchEvent.add_pointer_next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Points match event to the next match event ID using a run version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>version</strong> (<em>str</em>) – The run version.</p></li>
+<li><p><strong>label</strong> (<em>str</em><em>, </em><em>optional</em>) – The state label, defaults to an empty string.</p></li>
+<li><p><strong>event_id</strong> (<em>str</em><em>, </em><em>optional</em>) – The event ID to point to, defaults to an empty string.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – Label and event ID are the same as those in the
+match event i.e. attempt to point match event to
+itself.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.buffers.match_event.MatchEvent.add_pointer_previous">
+<code class="sig-name descname">add_pointer_previous</code><span class="sig-paren">(</span><em class="sig-param">version: str</em>, <em class="sig-param">label: str = ''</em>, <em class="sig-param">event_id: str = ''</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#bobocep.decider.buffers.match_event.MatchEvent.add_pointer_previous" title="Permalink to this definition">¶</a></dt>
+<dd><p>Points match event to the previous match event ID using a run version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>version</strong> (<em>str</em>) – The run version.</p></li>
+<li><p><strong>label</strong> (<em>str</em><em>, </em><em>optional</em>) – The state label, defaults to an empty string.</p></li>
+<li><p><strong>event_id</strong> (<em>str</em><em>, </em><em>optional</em>) – The event ID to point to, defaults to an empty string.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – Label and event ID are the same as those in the
+match event i.e. attempt to point match event to
+itself.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.buffers.match_event.MatchEvent.has_pointers">
+<code class="sig-name descname">has_pointers</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#bobocep.decider.buffers.match_event.MatchEvent.has_pointers" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the match event points to any other match events,
+False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.buffers.match_event.MatchEvent.remove_all_pointers">
+<code class="sig-name descname">remove_all_pointers</code><span class="sig-paren">(</span><em class="sig-param">version: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#bobocep.decider.buffers.match_event.MatchEvent.remove_all_pointers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes all pointers to a match event with a given run version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>version</strong> (<em>str</em>) – The run version.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.buffers.match_event.MatchEvent.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#bobocep.decider.buffers.match_event.MatchEvent.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dict representation of the object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-bobocep.decider.buffers.shared_versioned_match_buffer">
+<span id="bobocep-decider-buffers-shared-versioned-match-buffer-module"></span><h2>bobocep.decider.buffers.shared_versioned_match_buffer module<a class="headerlink" href="#module-bobocep.decider.buffers.shared_versioned_match_buffer" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer">
+<em class="property">class </em><code class="sig-prename descclassname">bobocep.decider.buffers.shared_versioned_match_buffer.</code><code class="sig-name descname">SharedVersionedMatchBuffer</code><a class="headerlink" href="#bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>An event buffer based on the Shared Versioned Match Buffer proposed by
+Agrawal et al. (2008) in their paper “Efficient Pattern Matching over
+Event Streams”.</p>
+<p>The buffer stores events for partially completed runs.
+A BoboEvent instance is stored within a MatchEvent instance that provides
+a means of linking BoboEvents that can be used by one or more runs.
+The next event in a MatchEvent link points to an earlier event accepted by
+a run.
+Traversing the next links will identify all events for a given run.</p>
+<dl class="attribute">
+<dt id="bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.EVENTS">
+<code class="sig-name descname">EVENTS</code><em class="property"> = 'events'</em><a class="headerlink" href="#bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.EVENTS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.EVENT_ID">
+<code class="sig-name descname">EVENT_ID</code><em class="property"> = 'event_id'</em><a class="headerlink" href="#bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.EVENT_ID" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.LABEL">
+<code class="sig-name descname">LABEL</code><em class="property"> = 'label'</em><a class="headerlink" href="#bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.LABEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.LAST">
+<code class="sig-name descname">LAST</code><em class="property"> = 'last'</em><a class="headerlink" href="#bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.LAST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.MATCH_EVENT">
+<code class="sig-name descname">MATCH_EVENT</code><em class="property"> = 'match_event'</em><a class="headerlink" href="#bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.MATCH_EVENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.NFA_NAME">
+<code class="sig-name descname">NFA_NAME</code><em class="property"> = 'nfa_name'</em><a class="headerlink" href="#bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.NFA_NAME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.RUN_ID">
+<code class="sig-name descname">RUN_ID</code><em class="property"> = 'run_id'</em><a class="headerlink" href="#bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.RUN_ID" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.VERSION">
+<code class="sig-name descname">VERSION</code><em class="property"> = 'version'</em><a class="headerlink" href="#bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.VERSION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.get_all_events">
+<code class="sig-name descname">get_all_events</code><span class="sig-paren">(</span><em class="sig-param">nfa_name: str</em>, <em class="sig-param">run_id: str</em>, <em class="sig-param">version: bobocep.decider.versions.run_version.RunVersion</em><span class="sig-paren">)</span> &#x2192; bobocep.rules.events.histories.bobo_history.BoboHistory<a class="headerlink" href="#bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.get_all_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets all events associated with a run and compiles them into a
+BoboHistory instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nfa_name</strong> (<em>str</em>) – The BoboNFA instance name.</p></li>
+<li><p><strong>run_id</strong> (<em>str</em>) – The run ID.</p></li>
+<li><p><strong>version</strong> (<a class="reference internal" href="bobocep.decider.versions.html#bobocep.decider.versions.run_version.RunVersion" title="bobocep.decider.versions.run_version.RunVersion"><em>RunVersion</em></a>) – The run version.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A BoboHistory instance with all of the events in it.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.get_event">
+<code class="sig-name descname">get_event</code><span class="sig-paren">(</span><em class="sig-param">nfa_name: str</em>, <em class="sig-param">state_label: str</em>, <em class="sig-param">event_id: str</em>, <em class="sig-param">default=None</em><span class="sig-paren">)</span> &#x2192; bobocep.rules.events.bobo_event.BoboEvent<a class="headerlink" href="#bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.get_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a BoboEvent instance from the buffer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nfa_name</strong> (<em>str</em>) – The NFA name,</p></li>
+<li><p><strong>state_label</strong> (<em>str</em>) – The state label.</p></li>
+<li><p><strong>event_id</strong> (<em>str</em>) – The event ID.</p></li>
+<li><p><strong>default</strong> (<em>any</em><em>, </em><em>optional</em>) – The default value, defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The BoboEvent instance,
+or default value if an event is not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.get_last_event">
+<code class="sig-name descname">get_last_event</code><span class="sig-paren">(</span><em class="sig-param">nfa_name: str</em>, <em class="sig-param">run_id: str</em>, <em class="sig-param">version: str</em>, <em class="sig-param">default=None</em><span class="sig-paren">)</span> &#x2192; bobocep.decider.buffers.match_event.MatchEvent<a class="headerlink" href="#bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.get_last_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the last match event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nfa_name</strong> (<em>str</em>) – The BoboNFA instance name.</p></li>
+<li><p><strong>run_id</strong> (<em>str</em>) – The run ID.</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The run version.</p></li>
+<li><p><strong>default</strong> (<em>any</em><em>, </em><em>optional</em>) – A value to return if no match event is found,
+defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The last match event,
+or a default value if one does not exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.put_event">
+<code class="sig-name descname">put_event</code><span class="sig-paren">(</span><em class="sig-param">nfa_name: str</em>, <em class="sig-param">run_id: str</em>, <em class="sig-param">version: str</em>, <em class="sig-param">state_label: str</em>, <em class="sig-param">event: bobocep.rules.events.bobo_event.BoboEvent</em>, <em class="sig-param">new_run_id: str = None</em>, <em class="sig-param">new_version: str = None</em><span class="sig-paren">)</span> &#x2192; bobocep.decider.buffers.match_event.MatchEvent<a class="headerlink" href="#bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.put_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puts a BoboEvent instance into the buffer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nfa_name</strong> (<em>str</em>) – The BoboNFA instance name.</p></li>
+<li><p><strong>run_id</strong> (<em>str</em>) – The run ID with which to associate the event.</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The run version of the run with which to associate the
+event.</p></li>
+<li><p><strong>state_label</strong> (<em>str</em>) – The label of the state .</p></li>
+<li><p><strong>event</strong> (<a class="reference internal" href="bobocep.rules.events.html#bobocep.rules.events.bobo_event.BoboEvent" title="bobocep.rules.events.bobo_event.BoboEvent"><em>BoboEvent</em></a>) – The event to add to the buffer.</p></li>
+<li><p><strong>new_run_id</strong> (<em>str</em><em>, </em><em>optional</em>) – The new run ID with which to associate the event,
+so that the other run ID will point to this one,
+defaults to None.</p></li>
+<li><p><strong>new_version</strong> (<em>str</em><em>, </em><em>optional</em>) – The new run version with which to associate the
+event, so that the other version will point to this
+one, defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A MatchEvent instance containing the BoboEvent instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.remove_version">
+<code class="sig-name descname">remove_version</code><span class="sig-paren">(</span><em class="sig-param">nfa_name: str</em>, <em class="sig-param">version: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.remove_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a run version from all of the match events in the buffer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nfa_name</strong> (<em>str</em>) – The name of the BoboNFA instance.</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The run version.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#bobocep.decider.buffers.shared_versioned_match_buffer.SharedVersionedMatchBuffer.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dict representation of the object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-bobocep.decider.buffers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-bobocep.decider.buffers" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, r3w0p
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

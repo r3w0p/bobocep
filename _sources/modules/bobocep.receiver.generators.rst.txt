@@ -1,0 +1,29 @@
+bobocep.receiver.generators package
+===================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   bobocep.receiver.generators.data
+
+Submodules
+----------
+
+bobocep.receiver.generators.bobo\_null\_data\_generator module
+--------------------------------------------------------------
+
+.. automodule:: bobocep.receiver.generators.bobo_null_data_generator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.receiver.generators
+   :members:
+   :undoc-members:
+   :show-inheritance:

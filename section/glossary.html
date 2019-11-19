@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Glossary &mdash; bobocep 0.35.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/bobo.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Actions" href="actions.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> bobocep
+          
+
+          
+            
+            <img src="../_static/bobo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.35.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="patterns.html">Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="actions.html">Actions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Glossary</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bobo-events">Bobo Events</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#primitiveevent">PrimitiveEvent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compositeevent">CompositeEvent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#actionevent">ActionEvent</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#complex-event">Complex Event</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contiguity">Contiguity</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#strict">Strict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#relaxed">Relaxed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#non-deterministic-relaxed">Non-Deterministic Relaxed</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#history">History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#null-data">Null Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pattern">Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run">Run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#state-clearance">State Clearance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#states">States</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#start-state">Start State</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#accepting-state">Accepting State</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">bobocep</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Glossary</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/section/glossary.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="glossary">
+<h1>Glossary<a class="headerlink" href="#glossary" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="bobo-events">
+<h2>Bobo Events<a class="headerlink" href="#bobo-events" title="Permalink to this headline">¶</a></h2>
+<p>Data types used in <code class="code docutils literal notranslate"><span class="pre">bobocep</span></code> to represent different system events.</p>
+<div class="section" id="primitiveevent">
+<h3>PrimitiveEvent<a class="headerlink" href="#primitiveevent" title="Permalink to this headline">¶</a></h3>
+<p>Represents data that has entered the <code class="code docutils literal notranslate"><span class="pre">bobocep</span></code> system.</p>
+</div>
+<div class="section" id="compositeevent">
+<h3>CompositeEvent<a class="headerlink" href="#compositeevent" title="Permalink to this headline">¶</a></h3>
+<p>Represents the inference of a complex event.</p>
+</div>
+<div class="section" id="actionevent">
+<h3>ActionEvent<a class="headerlink" href="#actionevent" title="Permalink to this headline">¶</a></h3>
+<p>Represents the execution of an action by the system.</p>
+</div>
+</div>
+<div class="section" id="complex-event">
+<h2>Complex Event<a class="headerlink" href="#complex-event" title="Permalink to this headline">¶</a></h2>
+<p>An event that represents the inference of some phenomenon that was identified by a pattern in a data stream.</p>
+</div>
+<div class="section" id="contiguity">
+<h2>Contiguity<a class="headerlink" href="#contiguity" title="Permalink to this headline">¶</a></h2>
+<p>The policy of states with regard to how they react to events that do not cause a state transition.
+<code class="code docutils literal notranslate"><span class="pre">bobocep</span></code> supports the following three types of contiguity.</p>
+<div class="section" id="strict">
+<h3>Strict<a class="headerlink" href="#strict" title="Permalink to this headline">¶</a></h3>
+<p>All matching events are <em>strictly</em> one after the other, without any non-matching events in-between.
+If an event does not match, the run halts.</p>
+</div>
+<div class="section" id="relaxed">
+<h3>Relaxed<a class="headerlink" href="#relaxed" title="Permalink to this headline">¶</a></h3>
+<p>Any non-matching events are ignored.</p>
+</div>
+<div class="section" id="non-deterministic-relaxed">
+<h3>Non-Deterministic Relaxed<a class="headerlink" href="#non-deterministic-relaxed" title="Permalink to this headline">¶</a></h3>
+<p>The same as relaxed, but allows multiple matches from a state when its transition is non-deterministic.</p>
+</div>
+</div>
+<div class="section" id="history">
+<h2>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
+<p>The events that were accepted by a pattern as being indicative of the existence of a complex event.</p>
+</div>
+<div class="section" id="null-data">
+<h2>Null Data<a class="headerlink" href="#null-data" title="Permalink to this headline">¶</a></h2>
+<p>Arbitrary static data that is periodically inserted into the CEP system.
+It has several purposes:</p>
+<ul class="simple">
+<li><p>Provides state clearance, so that runs always have a periodic event with which to trigger time window checks.</p></li>
+<li><p>So runs can reach the accepting state if <em>nothing</em> happens i.e. check if a null event occurs instead.</p></li>
+</ul>
+</div>
+<div class="section" id="pattern">
+<h2>Pattern<a class="headerlink" href="#pattern" title="Permalink to this headline">¶</a></h2>
+<p>A sequence of data correlations that, when fulfilled with data from a data stream, infer the existence of a complex
+event.</p>
+</div>
+<div class="section" id="run">
+<h2>Run<a class="headerlink" href="#run" title="Permalink to this headline">¶</a></h2>
+<p>An instance of a pattern.</p>
+</div>
+<div class="section" id="state-clearance">
+<h2>State Clearance<a class="headerlink" href="#state-clearance" title="Permalink to this headline">¶</a></h2>
+<p>Ensuring that runs are always eventually halted and removed from memory, to prevent a build-up of
+incomplete runs with no means of halting.
+This is typically achieved by adding a time window to patterns that will cause an eventual halt
+if a run is not fulfilled within a given time frame.</p>
+</div>
+<div class="section" id="states">
+<h2>States<a class="headerlink" href="#states" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="start-state">
+<h3>Start State<a class="headerlink" href="#start-state" title="Permalink to this headline">¶</a></h3>
+<p>The first state of an automaton that triggers the generation of a new run when reached.</p>
+</div>
+<div class="section" id="accepting-state">
+<h3>Accepting State<a class="headerlink" href="#accepting-state" title="Permalink to this headline">¶</a></h3>
+<p>The final state of an automaton that triggers the generation of a complex event when reached.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="actions.html" class="btn btn-neutral float-left" title="Actions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, r3w0p
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

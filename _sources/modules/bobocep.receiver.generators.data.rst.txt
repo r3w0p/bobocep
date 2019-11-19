@@ -1,0 +1,38 @@
+bobocep.receiver.generators.data package
+========================================
+
+Submodules
+----------
+
+bobocep.receiver.generators.data.bobo\_null\_data module
+--------------------------------------------------------
+
+.. automodule:: bobocep.receiver.generators.data.bobo_null_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.receiver.generators.data.bobo\_null\_data\_none module
+--------------------------------------------------------------
+
+.. automodule:: bobocep.receiver.generators.data.bobo_null_data_none
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.receiver.generators.data.bobo\_null\_data\_static module
+----------------------------------------------------------------
+
+.. automodule:: bobocep.receiver.generators.data.bobo_null_data_static
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.receiver.generators.data
+   :members:
+   :undoc-members:
+   :show-inheritance:

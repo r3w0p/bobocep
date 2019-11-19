@@ -1,0 +1,22 @@
+bobocep.decider.versions package
+================================
+
+Submodules
+----------
+
+bobocep.decider.versions.run\_version module
+--------------------------------------------
+
+.. automodule:: bobocep.decider.versions.run_version
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.decider.versions
+   :members:
+   :undoc-members:
+   :show-inheritance:

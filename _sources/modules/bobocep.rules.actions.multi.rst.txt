@@ -1,0 +1,30 @@
+bobocep.rules.actions.multi package
+===================================
+
+Submodules
+----------
+
+bobocep.rules.actions.multi.multi\_action module
+------------------------------------------------
+
+.. automodule:: bobocep.rules.actions.multi.multi_action
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.rules.actions.multi.sequential\_action module
+-----------------------------------------------------
+
+.. automodule:: bobocep.rules.actions.multi.sequential_action
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.rules.actions.multi
+   :members:
+   :undoc-members:
+   :show-inheritance:

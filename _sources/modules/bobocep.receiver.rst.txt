@@ -1,0 +1,40 @@
+bobocep.receiver package
+========================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   bobocep.receiver.clocks
+   bobocep.receiver.formatters
+   bobocep.receiver.generators
+   bobocep.receiver.validators
+
+Submodules
+----------
+
+bobocep.receiver.bobo\_receiver module
+--------------------------------------
+
+.. automodule:: bobocep.receiver.bobo_receiver
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.receiver.receiver\_subscriber module
+--------------------------------------------
+
+.. automodule:: bobocep.receiver.receiver_subscriber
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.receiver
+   :members:
+   :undoc-members:
+   :show-inheritance:

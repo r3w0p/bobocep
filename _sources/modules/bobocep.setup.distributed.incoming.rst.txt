@@ -1,0 +1,30 @@
+bobocep.setup.distributed.incoming package
+==========================================
+
+Submodules
+----------
+
+bobocep.setup.distributed.incoming.bobo\_dist\_incoming module
+--------------------------------------------------------------
+
+.. automodule:: bobocep.setup.distributed.incoming.bobo_dist_incoming
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.setup.distributed.incoming.dist\_incoming\_subscriber module
+--------------------------------------------------------------------
+
+.. automodule:: bobocep.setup.distributed.incoming.dist_incoming_subscriber
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.setup.distributed.incoming
+   :members:
+   :undoc-members:
+   :show-inheritance:

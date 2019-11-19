@@ -1,0 +1,37 @@
+bobocep.rules.predicates package
+================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   bobocep.rules.predicates.windows
+
+Submodules
+----------
+
+bobocep.rules.predicates.bobo\_predicate module
+-----------------------------------------------
+
+.. automodule:: bobocep.rules.predicates.bobo_predicate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.rules.predicates.bobo\_predicate\_callable module
+---------------------------------------------------------
+
+.. automodule:: bobocep.rules.predicates.bobo_predicate_callable
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.rules.predicates
+   :members:
+   :undoc-members:
+   :show-inheritance:

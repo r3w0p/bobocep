@@ -1,0 +1,30 @@
+bobocep.rules.nfas.patterns package
+===================================
+
+Submodules
+----------
+
+bobocep.rules.nfas.patterns.bobo\_pattern module
+------------------------------------------------
+
+.. automodule:: bobocep.rules.nfas.patterns.bobo_pattern
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.rules.nfas.patterns.bobo\_pattern\_layer module
+-------------------------------------------------------
+
+.. automodule:: bobocep.rules.nfas.patterns.bobo_pattern_layer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.rules.nfas.patterns
+   :members:
+   :undoc-members:
+   :show-inheritance:

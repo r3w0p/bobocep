@@ -1,0 +1,38 @@
+bobocep.setup.distributed package
+=================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   bobocep.setup.distributed.incoming
+   bobocep.setup.distributed.outgoing
+
+Submodules
+----------
+
+bobocep.setup.distributed.bobo\_dist\_constants module
+------------------------------------------------------
+
+.. automodule:: bobocep.setup.distributed.bobo_dist_constants
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.setup.distributed.bobo\_dist\_manager module
+----------------------------------------------------
+
+.. automodule:: bobocep.setup.distributed.bobo_dist_manager
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.setup.distributed
+   :members:
+   :undoc-members:
+   :show-inheritance:

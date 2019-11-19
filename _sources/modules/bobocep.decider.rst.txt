@@ -1,0 +1,48 @@
+bobocep.decider package
+=======================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   bobocep.decider.buffers
+   bobocep.decider.handlers
+   bobocep.decider.runs
+   bobocep.decider.versions
+
+Submodules
+----------
+
+bobocep.decider.bobo\_decider module
+------------------------------------
+
+.. automodule:: bobocep.decider.bobo_decider
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.decider.bobo\_decider\_builder module
+---------------------------------------------
+
+.. automodule:: bobocep.decider.bobo_decider_builder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.decider.decider\_subscriber module
+------------------------------------------
+
+.. automodule:: bobocep.decider.decider_subscriber
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.decider
+   :members:
+   :undoc-members:
+   :show-inheritance:

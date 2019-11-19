@@ -1,0 +1,53 @@
+bobocep.rules.events package
+============================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   bobocep.rules.events.histories
+
+Submodules
+----------
+
+bobocep.rules.events.action\_event module
+-----------------------------------------
+
+.. automodule:: bobocep.rules.events.action_event
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.rules.events.bobo\_event module
+---------------------------------------
+
+.. automodule:: bobocep.rules.events.bobo_event
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.rules.events.composite\_event module
+--------------------------------------------
+
+.. automodule:: bobocep.rules.events.composite_event
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.rules.events.primitive\_event module
+--------------------------------------------
+
+.. automodule:: bobocep.rules.events.primitive_event
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.rules.events
+   :members:
+   :undoc-members:
+   :show-inheritance:

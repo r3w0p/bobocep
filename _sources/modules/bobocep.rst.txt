@@ -1,0 +1,22 @@
+bobocep package
+===============
+
+Subpackages
+-----------
+
+.. toctree::
+
+   bobocep.decider
+   bobocep.forwarder
+   bobocep.producer
+   bobocep.receiver
+   bobocep.rules
+   bobocep.setup
+
+Module contents
+---------------
+
+.. automodule:: bobocep
+   :members:
+   :undoc-members:
+   :show-inheritance:

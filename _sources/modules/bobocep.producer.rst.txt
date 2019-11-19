@@ -1,0 +1,38 @@
+bobocep.producer package
+========================
+
+Submodules
+----------
+
+bobocep.producer.action\_producer module
+----------------------------------------
+
+.. automodule:: bobocep.producer.action_producer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.producer.bobo\_producer module
+--------------------------------------
+
+.. automodule:: bobocep.producer.bobo_producer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.producer.producer\_subscriber module
+--------------------------------------------
+
+.. automodule:: bobocep.producer.producer_subscriber
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.producer
+   :members:
+   :undoc-members:
+   :show-inheritance:

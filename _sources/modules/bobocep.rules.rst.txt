@@ -1,0 +1,34 @@
+bobocep.rules package
+=====================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   bobocep.rules.actions
+   bobocep.rules.events
+   bobocep.rules.nfas
+   bobocep.rules.predicates
+   bobocep.rules.states
+   bobocep.rules.transitions
+
+Submodules
+----------
+
+bobocep.rules.bobo\_rule\_builder module
+----------------------------------------
+
+.. automodule:: bobocep.rules.bobo_rule_builder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.rules
+   :members:
+   :undoc-members:
+   :show-inheritance:

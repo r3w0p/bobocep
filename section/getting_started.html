@@ -1,0 +1,460 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Getting Started &mdash; bobocep 0.35.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/bobo.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Patterns" href="patterns.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> bobocep
+          
+
+          
+            
+            <img src="../_static/bobo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.35.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#complex-events">Complex Events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#architecture">Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quick-setup">Quick Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mandatory">Mandatory</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#complex-event-definitions">Complex Event Definitions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#optional">Optional</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#receiver">Receiver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#producer">Producer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#forwarder">Forwarder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#distributed">Distributed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#null-data">Null Data</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#run">Run</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#why-bobo">Why “Bobo”?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="patterns.html">Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="actions.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">bobocep</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Getting Started</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/section/getting_started.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="complex-events">
+<h2>Complex Events<a class="headerlink" href="#complex-events" title="Permalink to this headline">¶</a></h2>
+<p>The primary goal of <code class="code docutils literal notranslate"><span class="pre">bobocep</span></code> is to be able to infer the occurrence of <em>complex events</em> via patterns in data.
+A simple example might be: a sharp rise in temperature sensor readings, followed by smoke detection, within 1 minute
+of each other, could infer the occurrence of a <strong>fire</strong> in a physical environment.
+When this happens, we notify an external system to start the fire alarms in the building.
+Here, we define:</p>
+<ul class="simple">
+<li><p>A <strong>pattern</strong> that uses data and time correlations to infer the existence of a fire.
+The data can be considered <strong>primitive</strong> events that, when correlated using the pattern, form a <strong>composite</strong> event.
+A composite event can then be returned into the system for use in the pattern of another future composite event.</p></li>
+<li><p>A <strong>name</strong> for the composite event: “<em>fire</em>”.</p></li>
+<li><p><strong>Actions</strong> to take when the composite event is generated: starting the fire alarms.</p></li>
+</ul>
+<p>The <code class="code docutils literal notranslate"><span class="pre">BoboComplexEvent</span></code> class is used to define complex events.
+It requires a <code class="code docutils literal notranslate"><span class="pre">name</span></code>, a <code class="code docutils literal notranslate"><span class="pre">BoboPattern</span></code> instance for the pattern to detect, and a <code class="code docutils literal notranslate"><span class="pre">BoboAction</span></code>
+instance to execute on composite event generation.
+Data entering the system is encapsulated within <code class="code docutils literal notranslate"><span class="pre">PrimitiveEvent</span></code> instances, <code class="code docutils literal notranslate"><span class="pre">CompositeEvent</span></code> instances
+are generated on complex event detection, and <code class="code docutils literal notranslate"><span class="pre">ActionEvent</span></code> instances for when the complex event’s action has
+been completed, all of which are subclasses of the <code class="code docutils literal notranslate"><span class="pre">BoboEvent</span></code> type.</p>
+</div>
+<div class="section" id="architecture">
+<h2>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-default" id="id3">
+<img alt="Architecture" src="../_images/architecture.png" />
+<p class="caption"><span class="caption-text">The <code class="code docutils literal notranslate"><span class="pre">bobocep</span></code> architecture.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+<p>The four core subsystems of the architecture are as follows:</p>
+<ul class="simple">
+<li><p><strong>Receiver</strong>.
+The entry point for data into the system. Its purpose is to validate incoming data and then format it into a
+<em>primitive event</em> using the <code class="code docutils literal notranslate"><span class="pre">PrimitiveEvent</span></code> class type.
+An instance of this type contains the incoming data, a unique identifier for the event, and a timestamp of when
+the event was created.</p>
+<ul>
+<li><p><strong>Clock</strong>. An internal clock generates timestamps for incoming events, which is the epoch time with nanosecond
+precision.</p></li>
+</ul>
+</li>
+<li><p><strong>Decider</strong>.
+Generates a <em>handler</em> for each complex event.
+<code class="code docutils literal notranslate"><span class="pre">BoboEvent</span></code> instances are consumed by this system and used to infer the existence of complex events.
+If a complex event has been detected, it will notify Producer.</p>
+<ul>
+<li><p><strong>Rules</strong>.
+Complex event definitions are passed to Decider, which are translated into
+<a class="reference external" href="https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton">nondeterministic finite automata</a> (NFA).
+Instances of these automata, called <em>runs</em>, are created at runtime to reason on events and identify complex events.</p></li>
+</ul>
+</li>
+<li><p><strong>Producer</strong>.
+Receives notifications from Decider on the generation of new complex events, which are represented by
+<code class="code docutils literal notranslate"><span class="pre">CompositeEvent</span></code> instances.
+It executes <code class="code docutils literal notranslate"><span class="pre">BoboAction</span></code> instances, or <strong>Actions</strong>, subscribed to complex events and can recursively sent
+back to Decider to be used to detect other complex events.
+The Producer is able to block complex events, which will prevent their subscribed <code class="code docutils literal notranslate"><span class="pre">BoboAction</span></code> instances
+from being executed, and will prevent them from being passed to Forwarder.</p></li>
+<li><p><strong>Forwarder</strong>.
+Forwards <code class="code docutils literal notranslate"><span class="pre">CompositeEvent</span></code> instances to subscribers of Forwarder.
+This enables external systems to consume complex events generated by <code class="code docutils literal notranslate"><span class="pre">bobocep</span></code>.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="code docutils literal notranslate"><span class="pre">CompositeEvent</span></code> instances are independent of the <code class="code docutils literal notranslate"><span class="pre">BoboAction</span></code> instances subscribed to them.
+Therefore, the Producer might pass <code class="code docutils literal notranslate"><span class="pre">CompositeEvent</span></code> instances back to Decider <em>before</em> the any
+subscribed actions have finished executing.</p>
+</div>
+<p>These subsystems are inspired by the <em>information flow processing</em> (IFP) architecture proposed by
+Cugola et al. <a class="reference internal" href="#cugola2012" id="id1"><span>[Cugola2012]</span></a>.
+This architecture is extended by enabling state updates to be synchronised across multiple instances
+of <code class="code docutils literal notranslate"><span class="pre">bobocep</span></code>.
+Namely, Decider’s internal data buffers, which are inspired by the designs of Agrawal et al. <a class="reference internal" href="#agrawal2008" id="id2"><span>[Agrawal2008]</span></a>,
+and the actions executed by Producer.
+This is accomplished using an external message broker to exchange updates in the state of partially-completed
+complex events.</p>
+</div>
+<div class="section" id="quick-setup">
+<h2>Quick Setup<a class="headerlink" href="#quick-setup" title="Permalink to this headline">¶</a></h2>
+<p>For a quick setup, we will create a <code class="code docutils literal notranslate"><span class="pre">BoboSetup</span></code> instance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bobocep.setup.bobo_setup</span> <span class="kn">import</span> <span class="n">BoboSetup</span>
+
+<span class="n">setup</span> <span class="o">=</span> <span class="n">BoboSetup</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="mandatory">
+<h3>Mandatory<a class="headerlink" href="#mandatory" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="complex-event-definitions">
+<h4>Complex Event Definitions<a class="headerlink" href="#complex-event-definitions" title="Permalink to this headline">¶</a></h4>
+<p>It is essential that the <code class="code docutils literal notranslate"><span class="pre">BoboSetup</span></code> contains <em>at least</em> one complex event definition.
+We will define a simple pattern below, as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bobocep.rules.nfas.patterns.bobo_pattern</span> <span class="kn">import</span> <span class="n">BoboPattern</span>
+<span class="kn">from</span> <span class="nn">bobocep.rules.predicates.windows.sliding.window_sliding_first</span> <span class="kn">import</span> <span class="n">WindowSlidingFirst</span>
+
+<span class="n">pattern_abc</span> <span class="o">=</span> <span class="n">BoboPattern</span><span class="p">()</span> \
+    <span class="o">.</span><span class="n">followed_by</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;data_a&quot;</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">followed_by</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;data_b&quot;</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;b&#39;</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">followed_by</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;data_c&quot;</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">precondition</span><span class="p">(</span><span class="n">WindowSlidingFirst</span><span class="p">(</span><span class="n">interval_sec</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>This pattern states that we need three events, where the data for the three events are <code class="code docutils literal notranslate"><span class="pre">'a'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'b'</span></code>,
+and <code class="code docutils literal notranslate"><span class="pre">'c'</span></code>, in that order.
+All of these events <em>must</em> occur within 10 seconds.</p>
+<p>Now, we add this pattern to our <code class="code docutils literal notranslate"><span class="pre">BoboSetup</span></code> instance with the name <code class="code docutils literal notranslate"><span class="pre">'abc'</span></code>, and no action to be taken if
+it occurs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bobocep.setup.bobo_complex_event</span> <span class="kn">import</span> <span class="n">BoboComplexEvent</span>
+<span class="kn">from</span> <span class="nn">bobocep.rules.actions.no_action</span> <span class="kn">import</span> <span class="n">NoAction</span>
+
+<span class="n">setup</span><span class="o">.</span><span class="n">add_complex_event</span><span class="p">(</span><span class="n">event_def</span><span class="o">=</span><span class="n">BoboComplexEvent</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span>
+    <span class="n">pattern</span><span class="o">=</span><span class="n">pattern_abc</span><span class="p">,</span>
+    <span class="n">action</span><span class="o">=</span><span class="n">NoAction</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="optional">
+<h3>Optional<a class="headerlink" href="#optional" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="receiver">
+<h4>Receiver<a class="headerlink" href="#receiver" title="Permalink to this headline">¶</a></h4>
+<p>We might want to configure the Receiver by stating how incoming data should be <strong>validated</strong>.
+This ensures consistency with <code class="code docutils literal notranslate"><span class="pre">PrimitiveEvent</span></code> data.
+For example, we might want to ensure that all data are of type <code class="code docutils literal notranslate"><span class="pre">str</span></code> and are at least 5
+characters in length, as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bobocep.receiver.validators.str_validator</span> <span class="kn">import</span> <span class="n">StrValidator</span>
+
+<span class="n">setup</span><span class="o">.</span><span class="n">config_receiver</span><span class="p">(</span><span class="n">StrValidator</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>By default, all data will be accepted.</p>
+</div>
+<div class="section" id="producer">
+<h4>Producer<a class="headerlink" href="#producer" title="Permalink to this headline">¶</a></h4>
+<p>We might want to perform an action on Producer that has the ability to block a complex event from
+having its actions executed and being passed to Forwarder.
+That is, if the Producer’s action returns <code class="code docutils literal notranslate"><span class="pre">False</span></code>, the <code class="code docutils literal notranslate"><span class="pre">CompositeEvent</span></code> in question will be
+<em>dropped</em>.</p>
+<p>For example, it might be desirable to <em>rate limit</em> <code class="code docutils literal notranslate"><span class="pre">CompositeEvent</span></code> instances.
+If a <code class="code docutils literal notranslate"><span class="pre">CompositeEvent</span></code> with name “A” is being generated every 3 seconds, but you only want <em>at most</em>
+1 of these events every 1 minute, we can do the following.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bobocep.rules.actions.rate_limit_action</span> <span class="kn">import</span> <span class="n">RateLimitAction</span>
+
+<span class="n">setup</span><span class="o">.</span><span class="n">config_producer</span><span class="p">(</span><span class="n">RateLimitAction</span><span class="p">({</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mi">60</span><span class="p">}))</span>
+</pre></div>
+</div>
+<p>By default, no action is performed and all <code class="code docutils literal notranslate"><span class="pre">CompositeEvent</span></code> instances are accepted.</p>
+</div>
+<div class="section" id="forwarder">
+<h4>Forwarder<a class="headerlink" href="#forwarder" title="Permalink to this headline">¶</a></h4>
+<p>The Forwarder is where you will send your <code class="code docutils literal notranslate"><span class="pre">CompositeEvent</span></code> instances beyond <code class="code docutils literal notranslate"><span class="pre">bobocep</span></code>.
+You will need to create your own <cite>BoboAction</cite> instance that will perform the tasks you require.
+For example, a <cite>BoboAction</cite> that writes the events to file, or sends them to an external system.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">setup</span><span class="o">.</span><span class="n">config_forwarder</span><span class="p">(</span><span class="n">write_to_file_action</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By default, Forwarder does nothing except send its events to its subscribers.</p>
+</div>
+<div class="section" id="distributed">
+<h4>Distributed<a class="headerlink" href="#distributed" title="Permalink to this headline">¶</a></h4>
+<p>To connect to an external message broker and enable distributed complex event processing, you need to provide the
+exchange name, host name, and user name associated with the message broker, as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">setup</span><span class="o">.</span><span class="n">config_distributed</span><span class="p">(</span>
+    <span class="n">exchange_name</span><span class="o">=</span><span class="s2">&quot;my_exchange&quot;</span><span class="p">,</span>
+    <span class="n">user_name</span><span class="o">=</span><span class="s2">&quot;my_user&quot;</span><span class="p">,</span>
+    <span class="n">host_name</span><span class="o">=</span><span class="s2">&quot;192.168.1.123&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By default, <code class="code docutils literal notranslate"><span class="pre">bobocep</span></code> is not distributed.</p>
+</div>
+<div class="section" id="null-data">
+<h4>Null Data<a class="headerlink" href="#null-data" title="Permalink to this headline">¶</a></h4>
+<p>It might be desirable to inject periodic data into the Receiver to ensure a continuous stream of events.
+For example, if we want to inject an empty string <code class="code docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> into the system every 3 seconds,
+we do the following.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">setup</span><span class="o">.</span><span class="n">config_null_data</span><span class="p">(</span><span class="n">delay_sec</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">null_data</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By default, null data is not generated.</p>
+</div>
+</div>
+<div class="section" id="run">
+<h3>Run<a class="headerlink" href="#run" title="Permalink to this headline">¶</a></h3>
+<p>Once we are happy with our configuration, we run the <code class="code docutils literal notranslate"><span class="pre">BoboSetup</span></code> as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">setup</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>A <code class="code docutils literal notranslate"><span class="pre">RuntimeError</span></code> exception will be raised if there are any problems with the configuration.</p>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
+<p>Now that we have set up a simple example, the next steps are to:</p>
+<ul class="simple">
+<li><p>Learn how to create your own <a class="reference external" href="patterns.html">patterns</a> for your own complex events.</p></li>
+<li><p>Create some <a class="reference external" href="actions.html">actions</a> that you want for your own implementation.</p></li>
+<li><p>Add them to your <code class="code docutils literal notranslate"><span class="pre">BoboSetup</span></code> instance.</p></li>
+</ul>
+</div>
+<div class="section" id="why-bobo">
+<h2>Why “Bobo”?<a class="headerlink" href="#why-bobo" title="Permalink to this headline">¶</a></h2>
+<p>Bobo is the name of Mr Burns’ childhood teddy bear that features in the episode
+“<a class="reference external" href="https://en.wikipedia.org/wiki/Rosebud_(The_Simpsons)">Rosebud</a>” of The Simpsons.
+In the episode, Bobo goes on a long, perilous journey and, against all odds, manages to survive the adversity it faced.
+<code class="code docutils literal notranslate"><span class="pre">bobocep</span></code> is designed to be distributed across the network edge and, thus, be resilient to adverse hardware and
+software failures that affect its ability to provide service.
+Therefore, I felt the name was very fitting.</p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<dl class="citation">
+<dt class="label" id="agrawal2008"><span class="brackets"><a class="fn-backref" href="#id2">Agrawal2008</a></span></dt>
+<dd><p>Agrawal, J., Diao, Y., Gyllstrom, D., &amp; Immerman, N. (2008).
+<a class="reference external" href="https://doi.org/10.1145/1376616.1376634">Efficient pattern matching over event streams</a>.
+<em>ACM SIGMOD international conference on Management of data</em>, pp. 147-160.</p>
+</dd>
+<dt class="label" id="cugola2012"><span class="brackets"><a class="fn-backref" href="#id1">Cugola2012</a></span></dt>
+<dd><p>Cugola, G., &amp; Margara, A. (2012).
+<a class="reference external" href="https://doi.org/10.1145/2187671.2187677">Processing flows of information: From data stream to complex event processing</a>.
+<em>ACM Computing Surveys (CSUR)</em>, <em>44</em>(3), 15.</p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="patterns.html" class="btn btn-neutral float-right" title="Patterns" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, r3w0p
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

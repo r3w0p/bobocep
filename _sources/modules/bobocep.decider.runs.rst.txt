@@ -1,0 +1,30 @@
+bobocep.decider.runs package
+============================
+
+Submodules
+----------
+
+bobocep.decider.runs.bobo\_run module
+-------------------------------------
+
+.. automodule:: bobocep.decider.runs.bobo_run
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.decider.runs.run\_subscriber module
+-------------------------------------------
+
+.. automodule:: bobocep.decider.runs.run_subscriber
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.decider.runs
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,30 @@
+bobocep.decider.buffers package
+===============================
+
+Submodules
+----------
+
+bobocep.decider.buffers.match\_event module
+-------------------------------------------
+
+.. automodule:: bobocep.decider.buffers.match_event
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.decider.buffers.shared\_versioned\_match\_buffer module
+---------------------------------------------------------------
+
+.. automodule:: bobocep.decider.buffers.shared_versioned_match_buffer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.decider.buffers
+   :members:
+   :undoc-members:
+   :show-inheritance:

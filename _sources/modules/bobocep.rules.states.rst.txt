@@ -1,0 +1,22 @@
+bobocep.rules.states package
+============================
+
+Submodules
+----------
+
+bobocep.rules.states.bobo\_state module
+---------------------------------------
+
+.. automodule:: bobocep.rules.states.bobo_state
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.rules.states
+   :members:
+   :undoc-members:
+   :show-inheritance:

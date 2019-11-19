@@ -1,0 +1,30 @@
+bobocep.setup.distributed.outgoing package
+==========================================
+
+Submodules
+----------
+
+bobocep.setup.distributed.outgoing.bobo\_dist\_outgoing module
+--------------------------------------------------------------
+
+.. automodule:: bobocep.setup.distributed.outgoing.bobo_dist_outgoing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.setup.distributed.outgoing.dist\_outgoing\_subscriber module
+--------------------------------------------------------------------
+
+.. automodule:: bobocep.setup.distributed.outgoing.dist_outgoing_subscriber
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.setup.distributed.outgoing
+   :members:
+   :undoc-members:
+   :show-inheritance:

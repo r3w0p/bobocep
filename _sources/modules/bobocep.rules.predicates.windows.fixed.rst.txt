@@ -1,0 +1,22 @@
+bobocep.rules.predicates.windows.fixed package
+==============================================
+
+Submodules
+----------
+
+bobocep.rules.predicates.windows.fixed.window\_fixed module
+-----------------------------------------------------------
+
+.. automodule:: bobocep.rules.predicates.windows.fixed.window_fixed
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.rules.predicates.windows.fixed
+   :members:
+   :undoc-members:
+   :show-inheritance:

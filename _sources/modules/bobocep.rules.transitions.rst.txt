@@ -1,0 +1,22 @@
+bobocep.rules.transitions package
+=================================
+
+Submodules
+----------
+
+bobocep.rules.transitions.bobo\_transition module
+-------------------------------------------------
+
+.. automodule:: bobocep.rules.transitions.bobo_transition
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.rules.transitions
+   :members:
+   :undoc-members:
+   :show-inheritance:

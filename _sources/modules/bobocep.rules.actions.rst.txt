@@ -1,0 +1,53 @@
+bobocep.rules.actions package
+=============================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   bobocep.rules.actions.multi
+
+Submodules
+----------
+
+bobocep.rules.actions.action\_subscriber module
+-----------------------------------------------
+
+.. automodule:: bobocep.rules.actions.action_subscriber
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.rules.actions.bobo\_action module
+-----------------------------------------
+
+.. automodule:: bobocep.rules.actions.bobo_action
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.rules.actions.no\_action module
+---------------------------------------
+
+.. automodule:: bobocep.rules.actions.no_action
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.rules.actions.rate\_limit\_action module
+------------------------------------------------
+
+.. automodule:: bobocep.rules.actions.rate_limit_action
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.rules.actions
+   :members:
+   :undoc-members:
+   :show-inheritance:

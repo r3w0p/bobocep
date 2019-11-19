@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation &mdash; bobocep 0.35.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/bobo.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Getting Started" href="getting_started.html" />
+    <link rel="prev" title="Contents" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> bobocep
+          
+
+          
+            
+            <img src="../_static/bobo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.35.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#walkthrough">Walkthrough</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#raspberry-pi">Raspberry Pi</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#python-3-7">Python 3.7</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">RabbitMQ</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bobocep">bobocep</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="patterns.html">Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="actions.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">bobocep</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Installation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/section/installation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="code docutils literal notranslate"><span class="pre">bobocep</span></code> software requires the following.</p>
+<ul class="simple">
+<li><p><strong>Python 3.7</strong>.
+This is the only version of Python that <code class="code docutils literal notranslate"><span class="pre">bobocep</span></code> has currently been tested on.</p></li>
+<li><p><strong>Message Broker</strong>.
+This is needed to network multiple software instances together in order to provide the active replication of
+partially-completed complex events.
+You can connect to any message broker that is compatible with the <a class="reference external" href="https://www.amqp.org/">AMQP 0-9-1</a> protocol,
+such as <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a>.
+This is <em>optional</em>, and only required if you want to distribute <code class="code docutils literal notranslate"><span class="pre">bobocep</span></code> across multiple devices.</p></li>
+</ul>
+<p>You can install the latest version via <code class="code docutils literal notranslate"><span class="pre">pip</span></code> using the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install bobocep</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="walkthrough">
+<h2>Walkthrough<a class="headerlink" href="#walkthrough" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="raspberry-pi">
+<h3>Raspberry Pi<a class="headerlink" href="#raspberry-pi" title="Permalink to this headline">¶</a></h3>
+<p>This section will guide you into setting up <code class="code docutils literal notranslate"><span class="pre">bobocep</span></code> on a Raspberry Pi.
+It assumes you are using <a class="reference external" href="https://www.raspberrypi.org/downloads/">Raspbian OS</a> and that you will use RabbitMQ for
+the message broker.</p>
+<div class="section" id="dependencies">
+<h4>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h4>
+<p>To begin, we will update Raspbian and install all of the necessary dependencies.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">sudo apt-get update -y</span>
+<span class="go">sudo apt install build-essential wget erlang logrotate rabbitmq-server tk-dev libncurses5-dev \</span>
+<span class="go">    libncursesw5-dev libreadline6-dev libdb5.3-dev libgdbm-dev libsqlite3-dev libssl-dev libbz2-dev \</span>
+<span class="go">    libexpat1-dev liblzma-dev zlib1g-dev libffi-dev -y</span>
+<span class="go">sudo apt-get -f install -y</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="python-3-7">
+<h4>Python 3.7<a class="headerlink" href="#python-3-7" title="Permalink to this headline">¶</a></h4>
+<p>We will download Python 3.7.4, unpack it, then enter the newly created directory containing its files.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">wget https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tar.xz</span>
+<span class="go">tar -xf Python-3.7.4.tar.xz</span>
+<span class="go">cd Python-3.7.4</span>
+</pre></div>
+</div>
+<p>Next, we will configure and install Python.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./configure</span>
+<span class="go">make -j 4</span>
+<span class="go">sudo make altinstall</span>
+</pre></div>
+</div>
+<p>Finally, we will update pip to the latest version.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python3.7 -m pip install --upgrade pip</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id1">
+<h4>RabbitMQ<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>RabbitMQ and its dependencies have already been installed in previous steps.
+We will now start the server.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">service rabbitmq-server start</span>
+</pre></div>
+</div>
+<p>If you would like access to the RabbitMQ <a class="reference external" href="https://www.rabbitmq.com/management.html">Management Plugin</a>,
+you can install it and configure a user account for it with administrator privileges, as follows.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">rabbitmq-plugins enable rabbitmq_management</span>
+<span class="go">rabbitmqctl add_user USERNAME PASSWORD</span>
+<span class="go">rabbitmqctl set_user_tags USERNAME administrator</span>
+<span class="go">rabbitmqctl set_permissions -p / USERNAME &quot;.*&quot; &quot;.*&quot; &quot;.*&quot;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These instructions will probably give you an older version of RabbitMQ.
+If you require a later version, consider reading the RabbitMQ guides
+<a class="reference external" href="https://www.rabbitmq.com/download.html">here</a>.</p>
+</div>
+</div>
+<div class="section" id="bobocep">
+<h4>bobocep<a class="headerlink" href="#bobocep" title="Permalink to this headline">¶</a></h4>
+<p>Finally, we will download <code class="code docutils literal notranslate"><span class="pre">bobocep</span></code> with the command shown above.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install bobocep</span>
+</pre></div>
+</div>
+<p>Once this is done, you can begin importing <code class="code docutils literal notranslate"><span class="pre">bobocep</span></code> into your own project.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="getting_started.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral float-left" title="Contents" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, r3w0p
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

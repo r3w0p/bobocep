@@ -1,0 +1,29 @@
+bobocep.rules.nfas package
+==========================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   bobocep.rules.nfas.patterns
+
+Submodules
+----------
+
+bobocep.rules.nfas.bobo\_nfa module
+-----------------------------------
+
+.. automodule:: bobocep.rules.nfas.bobo_nfa
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.rules.nfas
+   :members:
+   :undoc-members:
+   :show-inheritance:

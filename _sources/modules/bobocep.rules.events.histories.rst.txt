@@ -1,0 +1,22 @@
+bobocep.rules.events.histories package
+======================================
+
+Submodules
+----------
+
+bobocep.rules.events.histories.bobo\_history module
+---------------------------------------------------
+
+.. automodule:: bobocep.rules.events.histories.bobo_history
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.rules.events.histories
+   :members:
+   :undoc-members:
+   :show-inheritance:

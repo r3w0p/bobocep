@@ -1,0 +1,30 @@
+bobocep.setup.task package
+==========================
+
+Submodules
+----------
+
+bobocep.setup.task.bobo\_task module
+------------------------------------
+
+.. automodule:: bobocep.setup.task.bobo_task
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.setup.task.bobo\_task\_thread module
+--------------------------------------------
+
+.. automodule:: bobocep.setup.task.bobo_task_thread
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.setup.task
+   :members:
+   :undoc-members:
+   :show-inheritance:

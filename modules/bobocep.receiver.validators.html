@@ -1,0 +1,313 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>bobocep.receiver.validators package &mdash; bobocep 0.35.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/bobo.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> bobocep
+          
+
+          
+            
+            <img src="../_static/bobo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.35.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../section/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/patterns.html">Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/actions.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/glossary.html">Glossary</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">bobocep</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>bobocep.receiver.validators package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/bobocep.receiver.validators.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="bobocep-receiver-validators-package">
+<h1>bobocep.receiver.validators package<a class="headerlink" href="#bobocep-receiver-validators-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-bobocep.receiver.validators.any_validator">
+<span id="bobocep-receiver-validators-any-validator-module"></span><h2>bobocep.receiver.validators.any_validator module<a class="headerlink" href="#module-bobocep.receiver.validators.any_validator" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bobocep.receiver.validators.any_validator.AnyValidator">
+<em class="property">class </em><code class="sig-prename descclassname">bobocep.receiver.validators.any_validator.</code><code class="sig-name descname">AnyValidator</code><a class="headerlink" href="#bobocep.receiver.validators.any_validator.AnyValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bobocep.receiver.validators.bobo_validator.BoboValidator" title="bobocep.receiver.validators.bobo_validator.BoboValidator"><code class="xref py py-class docutils literal notranslate"><span class="pre">bobocep.receiver.validators.bobo_validator.BoboValidator</span></code></a></p>
+<p>A validator that accepts any data.</p>
+<dl class="method">
+<dt id="bobocep.receiver.validators.any_validator.AnyValidator.validate">
+<code class="sig-name descname">validate</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#bobocep.receiver.validators.any_validator.AnyValidator.validate" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – The data to validate.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the data is valid, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-bobocep.receiver.validators.bobo_validator">
+<span id="bobocep-receiver-validators-bobo-validator-module"></span><h2>bobocep.receiver.validators.bobo_validator module<a class="headerlink" href="#module-bobocep.receiver.validators.bobo_validator" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bobocep.receiver.validators.bobo_validator.BoboValidator">
+<em class="property">class </em><code class="sig-prename descclassname">bobocep.receiver.validators.bobo_validator.</code><code class="sig-name descname">BoboValidator</code><a class="headerlink" href="#bobocep.receiver.validators.bobo_validator.BoboValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A <code class="code docutils literal notranslate"><span class="pre">bobocep</span></code> data validator.</p>
+<dl class="method">
+<dt id="bobocep.receiver.validators.bobo_validator.BoboValidator.validate">
+<em class="property">abstract </em><code class="sig-name descname">validate</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#bobocep.receiver.validators.bobo_validator.BoboValidator.validate" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – The data to validate.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the data is valid, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-bobocep.receiver.validators.str_dict_validator">
+<span id="bobocep-receiver-validators-str-dict-validator-module"></span><h2>bobocep.receiver.validators.str_dict_validator module<a class="headerlink" href="#module-bobocep.receiver.validators.str_dict_validator" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bobocep.receiver.validators.str_dict_validator.StrDictValidator">
+<em class="property">class </em><code class="sig-prename descclassname">bobocep.receiver.validators.str_dict_validator.</code><code class="sig-name descname">StrDictValidator</code><span class="sig-paren">(</span><em class="sig-param">min_length: int = 0</em><span class="sig-paren">)</span><a class="headerlink" href="#bobocep.receiver.validators.str_dict_validator.StrDictValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bobocep.receiver.validators.bobo_validator.BoboValidator" title="bobocep.receiver.validators.bobo_validator.BoboValidator"><code class="xref py py-class docutils literal notranslate"><span class="pre">bobocep.receiver.validators.bobo_validator.BoboValidator</span></code></a></p>
+<p>A validator that checks whether data is a dict, where both the keys and
+values are of type str.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>min_length</strong> (<em>int</em><em>, </em><em>optional</em>) – The minimum length for strings, defaults to 0.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="bobocep.receiver.validators.str_dict_validator.StrDictValidator.validate">
+<code class="sig-name descname">validate</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#bobocep.receiver.validators.str_dict_validator.StrDictValidator.validate" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – The data to validate.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the data is valid, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-bobocep.receiver.validators.str_validator">
+<span id="bobocep-receiver-validators-str-validator-module"></span><h2>bobocep.receiver.validators.str_validator module<a class="headerlink" href="#module-bobocep.receiver.validators.str_validator" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bobocep.receiver.validators.str_validator.StrValidator">
+<em class="property">class </em><code class="sig-prename descclassname">bobocep.receiver.validators.str_validator.</code><code class="sig-name descname">StrValidator</code><span class="sig-paren">(</span><em class="sig-param">min_length: int = 0</em><span class="sig-paren">)</span><a class="headerlink" href="#bobocep.receiver.validators.str_validator.StrValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bobocep.receiver.validators.bobo_validator.BoboValidator" title="bobocep.receiver.validators.bobo_validator.BoboValidator"><code class="xref py py-class docutils literal notranslate"><span class="pre">bobocep.receiver.validators.bobo_validator.BoboValidator</span></code></a></p>
+<p>A validator that checks whether data is of type str.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>min_length</strong> (<em>int</em><em>, </em><em>optional</em>) – The minimum length for strings, defaults to 0.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="bobocep.receiver.validators.str_validator.StrValidator.validate">
+<code class="sig-name descname">validate</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#bobocep.receiver.validators.str_validator.StrValidator.validate" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – The data to validate.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the data is valid, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-bobocep.receiver.validators">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-bobocep.receiver.validators" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, r3w0p
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

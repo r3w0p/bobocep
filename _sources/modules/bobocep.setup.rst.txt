@@ -1,0 +1,38 @@
+bobocep.setup package
+=====================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   bobocep.setup.distributed
+   bobocep.setup.task
+
+Submodules
+----------
+
+bobocep.setup.bobo\_complex\_event module
+-----------------------------------------
+
+.. automodule:: bobocep.setup.bobo_complex_event
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.setup.bobo\_setup module
+--------------------------------
+
+.. automodule:: bobocep.setup.bobo_setup
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.setup
+   :members:
+   :undoc-members:
+   :show-inheritance:

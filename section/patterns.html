@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Patterns &mdash; bobocep 0.35.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/bobo.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Actions" href="actions.html" />
+    <link rel="prev" title="Getting Started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> bobocep
+          
+
+          
+            
+            <img src="../_static/bobo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.35.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Patterns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transitions">Transitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#contiguity">Contiguity</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#strict">Strict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#relaxed">Relaxed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#non-deterministic-relaxed">Non-Deterministic Relaxed</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#conditions">Conditions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#preconditions">Preconditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#haltconditions">Haltconditions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#chaining-patterns">Chaining Patterns</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="actions.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">bobocep</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Patterns</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/section/patterns.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="patterns">
+<h1>Patterns<a class="headerlink" href="#patterns" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Defining a complex event requires a pattern that, when fulfilled with relevant events from the input stream,
+will trigger the generation of a complex event.
+The <code class="code docutils literal notranslate"><span class="pre">BoboPattern</span></code> API is provided to define patterns.</p>
+<p>When we define a pattern, we are defining <strong>layers</strong> of an automaton, where each layer has one or more states.
+This is demonstrated in the figure below.</p>
+<div class="figure align-default" id="id1">
+<img alt="Automaton" src="../_images/automaton.png" />
+<p class="caption"><span class="caption-text">The relationship between automaton states and their labels.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<p>State 2 is a <em>looping</em> state, making it <em>nondeterministic</em> because it can transition to either state 3 or back to
+state 2 again.
+Every event that causes a loop back to state 2 will be associated with label B.
+State 3 can transition to both state 4 and state 5, making it nondeterministic also.
+Events for both state 4 and state 5 will be associated with label D.</p>
+<p>We define a new <code class="code docutils literal notranslate"><span class="pre">BoboPattern</span></code> instance as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bobocep.rules.nfas.patterns.bobo_pattern</span> <span class="kn">import</span> <span class="n">BoboPattern</span>
+
+<span class="n">pattern</span> <span class="o">=</span> <span class="n">BoboPattern</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="transitions">
+<h2>Transitions<a class="headerlink" href="#transitions" title="Permalink to this headline">¶</a></h2>
+<p>Building a pattern requires building a sequence of <strong>transitions</strong> between layers of states.
+To cause a state transition, an event is required to fulfil the criteria of the state’s <strong>predicate</strong>.
+The predicate is a function that takes three arguments:</p>
+<ul class="simple">
+<li><p>The event that is attempting to fulfil the criteria.</p></li>
+<li><p>A <code class="code docutils literal notranslate"><span class="pre">BoboHistory</span></code> instance that contains all of the previous events that have currently been accepted by the
+run of the automaton.</p></li>
+<li><p>Recent <code class="code docutils literal notranslate"><span class="pre">CompositeEvent</span></code> and <code class="code docutils literal notranslate"><span class="pre">ActionEvent</span></code> instances, represented as a list of events in descending order
+i.e. the most recent event first.</p></li>
+</ul>
+<p>In Python, we can define a predicate in three ways.
+A regular <a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html?#defining-functions">function</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">bobocep.rules.events.bobo_event</span> <span class="kn">import</span> <span class="n">BoboEvent</span>
+<span class="kn">from</span> <span class="nn">bobocep.rules.events.histories.bobo_history</span> <span class="kn">import</span> <span class="n">BoboHistory</span>
+
+<span class="k">def</span> <span class="nf">my_function</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">BoboEvent</span><span class="p">,</span> <span class="n">history</span><span class="p">:</span> <span class="n">BoboHistory</span><span class="p">,</span> <span class="n">recent</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BoboEvent</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="c1"># return [...]</span>
+
+<span class="n">predicate</span> <span class="o">=</span> <span class="n">my_function</span>
+</pre></div>
+</div>
+<p>A <a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html?#lambda-expressions">lambda</a> expression
+i.e. <em>anonymous function</em>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">predicate</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="c1"># [...]</span>
+</pre></div>
+</div>
+<p>Or, an object’s <a class="reference external" href="https://docs.python.org/3/tutorial/classes.html#a-first-look-at-classes">method</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">my_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">BoboEvent</span><span class="p">,</span> <span class="n">history</span><span class="p">:</span> <span class="n">BoboHistory</span><span class="p">,</span> <span class="n">recent</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BoboEvent</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># return [...]</span>
+
+<span class="n">obj</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
+<span class="n">predicate</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">my_method</span>
+</pre></div>
+</div>
+<p>Where <code class="code docutils literal notranslate"><span class="pre">e</span></code> is the <code class="code docutils literal notranslate"><span class="pre">BoboEvent</span></code> instance, <code class="code docutils literal notranslate"><span class="pre">h</span></code> is the <code class="code docutils literal notranslate"><span class="pre">BoboHistory</span></code> instance, and <code class="code docutils literal notranslate"><span class="pre">r</span></code> is the
+list of recent events.
+When the predicate is defined, it needs to be placed into a <code class="code docutils literal notranslate"><span class="pre">BoboPredicateCallable</span></code> instance, as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bobocep.rules.predicates.bobo_predicate_callable</span> <span class="kn">import</span> <span class="n">BoboPredicateCallable</span>
+
+<span class="n">pred_call</span> <span class="o">=</span> <span class="n">BoboPredicateCallable</span><span class="p">(</span><span class="n">predicate</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If the predicate returns <code class="code docutils literal notranslate"><span class="pre">True</span></code>, the state associated with the predicate becomes the next state of the run.
+If <code class="code docutils literal notranslate"><span class="pre">False</span></code>, the run will take some other action, depending on the <strong>contiguity</strong> policy associated with the
+transition, discussed next.</p>
+<div class="section" id="contiguity">
+<h3>Contiguity<a class="headerlink" href="#contiguity" title="Permalink to this headline">¶</a></h3>
+<p>The contiguity is the policy of states with regard to how they react to events that do not cause a state transition.
+<code class="code docutils literal notranslate"><span class="pre">bobocep</span></code> supports three types.</p>
+<div class="section" id="strict">
+<h4>Strict<a class="headerlink" href="#strict" title="Permalink to this headline">¶</a></h4>
+<p>All matching events are <em>strictly</em> one after the other, without any non-matching events in-between.
+If an event does not match, the run halts.
+The <code class="code docutils literal notranslate"><span class="pre">next</span></code> interface is used for strict contiguity.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pattern</span><span class="o">.</span><span class="n">next</span><span class="p">(</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;label_strict&quot;</span><span class="p">,</span>
+    <span class="n">predicate</span><span class="o">=</span><span class="n">pred_call</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="relaxed">
+<h4>Relaxed<a class="headerlink" href="#relaxed" title="Permalink to this headline">¶</a></h4>
+<p>All non-matching events are ignored; the run simply waits for a matching event.
+The <code class="code docutils literal notranslate"><span class="pre">followed_by</span></code> interface is used for relaxed contiguity.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pattern</span><span class="o">.</span><span class="n">followed_by</span><span class="p">(</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;label_relaxed&quot;</span><span class="p">,</span>
+    <span class="n">predicate</span><span class="o">=</span><span class="n">pred_call</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="non-deterministic-relaxed">
+<h4>Non-Deterministic Relaxed<a class="headerlink" href="#non-deterministic-relaxed" title="Permalink to this headline">¶</a></h4>
+<p>The same as relaxed contiguity, but allows multiple matches from a state when its transition is non-deterministic.
+The <code class="code docutils literal notranslate"><span class="pre">followed_by_any</span></code> interface is used for non-deterministic relaxed contiguity.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pattern</span><span class="o">.</span><span class="n">followed_by_any</span><span class="p">(</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;label_nondet&quot;</span><span class="p">,</span>
+    <span class="n">predicates</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">pred_call_1</span><span class="p">,</span>
+        <span class="n">pred_call_2</span><span class="p">,</span>
+        <span class="n">pred_call_n</span>
+    <span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="conditions">
+<h2>Conditions<a class="headerlink" href="#conditions" title="Permalink to this headline">¶</a></h2>
+<p>Before an event is passed to any state in a run, it is first passed to a set of <strong>preconditions</strong>, followed by a set of
+<strong>haltconditions</strong>.</p>
+<div class="section" id="preconditions">
+<h3>Preconditions<a class="headerlink" href="#preconditions" title="Permalink to this headline">¶</a></h3>
+<p>Preconditions are predicates where, if <em>any</em> of them evaluate to <code class="code docutils literal notranslate"><span class="pre">False</span></code>, the run halts.
+One of the most important preconditions is a <em>time window</em>, where runs require completion within some given
+time limit.
+This is important for <em>state clearance</em> i.e. ensuring runs are always eventually halted and removed from memory,
+to prevent a build-up of incomplete runs with no means of halting.</p>
+<p>For example, if we want to ensure that all events occur within 1 minute of the first accepted event, we can use
+<code class="code docutils literal notranslate"><span class="pre">WindowSlidingFirst</span></code> to specify the time interval, in seconds, that can exist between the first accepted event
+and the current event being checked.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bobocep.rules.predicates.windows.sliding.window_sliding_first</span> <span class="kn">import</span> <span class="n">WindowSlidingFirst</span>
+
+<span class="n">pattern</span><span class="o">.</span><span class="n">precondition</span><span class="p">(</span><span class="n">WindowSlidingFirst</span><span class="p">(</span><span class="n">interval_sec</span><span class="o">=</span><span class="mi">60</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Each call of the <code class="code docutils literal notranslate"><span class="pre">precondition</span></code> interface will add another predicate to the list.</p>
+</div>
+<div class="section" id="haltconditions">
+<h3>Haltconditions<a class="headerlink" href="#haltconditions" title="Permalink to this headline">¶</a></h3>
+<p>Haltconditions are predicates where, if <em>any</em> of them evaluate to <code class="code docutils literal notranslate"><span class="pre">True</span></code>, then the run halts.
+This is useful if you want a run to halt if something happens within the lifetime of the run.
+For example, to halt if a <code class="code docutils literal notranslate"><span class="pre">CompositeEvent</span></code> with name <code class="code docutils literal notranslate"><span class="pre">'B'</span></code> has recently been generated.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pattern</span><span class="o">.</span><span class="n">haltcondition</span><span class="p">(</span>
+    <span class="n">BoboPredicateCallable</span><span class="p">(</span><span class="k">lambda</span> <span class="n">e</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">CompositeEvent</span><span class="p">)</span> <span class="ow">and</span> <span class="n">e</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Each call of the <code class="code docutils literal notranslate"><span class="pre">haltcondition</span></code> interface will add another predicate to the list.</p>
+</div>
+</div>
+<div class="section" id="chaining-patterns">
+<h2>Chaining Patterns<a class="headerlink" href="#chaining-patterns" title="Permalink to this headline">¶</a></h2>
+<p>Multiple <code class="code docutils literal notranslate"><span class="pre">BoboPattern</span></code> instances can be chained together.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pattern_a</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
+    <span class="n">pattern_b</span><span class="p">,</span>
+    <span class="n">pattern_c</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<p>In the example above, <code class="code docutils literal notranslate"><span class="pre">pattern_a</span></code> contains the transitions, preconditions, and haltconditions of <code class="code docutils literal notranslate"><span class="pre">pattern_b</span></code>
+<em>directly after</em> those already in <code class="code docutils literal notranslate"><span class="pre">pattern_a</span></code>, and <code class="code docutils literal notranslate"><span class="pre">pattern_c</span></code> information directly after that.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="actions.html" class="btn btn-neutral float-right" title="Actions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, r3w0p
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>bobocep.rules.predicates.windows.sliding package &mdash; bobocep 0.35.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/bobo.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> bobocep
+          
+
+          
+            
+            <img src="../_static/bobo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.35.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../section/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/patterns.html">Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/actions.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/glossary.html">Glossary</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">bobocep</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>bobocep.rules.predicates.windows.sliding package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/bobocep.rules.predicates.windows.sliding.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="bobocep-rules-predicates-windows-sliding-package">
+<h1>bobocep.rules.predicates.windows.sliding package<a class="headerlink" href="#bobocep-rules-predicates-windows-sliding-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-bobocep.rules.predicates.windows.sliding.window_sliding">
+<span id="bobocep-rules-predicates-windows-sliding-window-sliding-module"></span><h2>bobocep.rules.predicates.windows.sliding.window_sliding module<a class="headerlink" href="#module-bobocep.rules.predicates.windows.sliding.window_sliding" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bobocep.rules.predicates.windows.sliding.window_sliding.WindowSliding">
+<em class="property">class </em><code class="sig-prename descclassname">bobocep.rules.predicates.windows.sliding.window_sliding.</code><code class="sig-name descname">WindowSliding</code><span class="sig-paren">(</span><em class="sig-param">interval_ns: int</em><span class="sig-paren">)</span><a class="headerlink" href="#bobocep.rules.predicates.windows.sliding.window_sliding.WindowSliding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="bobocep.rules.predicates.windows.html#bobocep.rules.predicates.windows.bobo_predicate_window.BoboPredicateWindow" title="bobocep.rules.predicates.windows.bobo_predicate_window.BoboPredicateWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">bobocep.rules.predicates.windows.bobo_predicate_window.BoboPredicateWindow</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>A predicate that evaluates using a sliding time window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>interval_ns</strong> (<em>int</em>) – The sliding window time interval, in nanoseconds.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="bobocep.rules.predicates.windows.sliding.window_sliding.WindowSliding.evaluate">
+<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param">event: bobocep.rules.events.bobo_event.BoboEvent, history: bobocep.rules.events.histories.bobo_history.BoboHistory, recent: List[bobocep.rules.events.bobo_event.BoboEvent]</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#bobocep.rules.predicates.windows.sliding.window_sliding.WindowSliding.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the predicate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event</strong> (<a class="reference internal" href="bobocep.rules.events.html#bobocep.rules.events.bobo_event.BoboEvent" title="bobocep.rules.events.bobo_event.BoboEvent"><em>BoboEvent</em></a>) – An event.</p></li>
+<li><p><strong>history</strong> (<a class="reference internal" href="bobocep.rules.events.histories.html#bobocep.rules.events.histories.bobo_history.BoboHistory" title="bobocep.rules.events.histories.bobo_history.BoboHistory"><em>BoboHistory</em></a>) – A history of events.</p></li>
+<li><p><strong>recent</strong> (<em>List</em><em>[</em><a class="reference internal" href="bobocep.rules.events.html#bobocep.rules.events.bobo_event.BoboEvent" title="bobocep.rules.events.bobo_event.BoboEvent"><em>BoboEvent</em></a><em>]</em>) – Recently accepted complex events of the corresponding
+automaton.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the predicate evaluates to True,
+False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.rules.predicates.windows.sliding.window_sliding.WindowSliding.get_previous_event">
+<em class="property">abstract </em><code class="sig-name descname">get_previous_event</code><span class="sig-paren">(</span><em class="sig-param">history: bobocep.rules.events.histories.bobo_history.BoboHistory</em><span class="sig-paren">)</span> &#x2192; bobocep.rules.events.bobo_event.BoboEvent<a class="headerlink" href="#bobocep.rules.predicates.windows.sliding.window_sliding.WindowSliding.get_previous_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a previous event in the event history, for use in calculating
+the time interval between two events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>history</strong> (<a class="reference internal" href="bobocep.rules.events.histories.html#bobocep.rules.events.histories.bobo_history.BoboHistory" title="bobocep.rules.events.histories.bobo_history.BoboHistory"><em>BoboHistory</em></a>) – The event history.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A historical event.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-bobocep.rules.predicates.windows.sliding.window_sliding_first">
+<span id="bobocep-rules-predicates-windows-sliding-window-sliding-first-module"></span><h2>bobocep.rules.predicates.windows.sliding.window_sliding_first module<a class="headerlink" href="#module-bobocep.rules.predicates.windows.sliding.window_sliding_first" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bobocep.rules.predicates.windows.sliding.window_sliding_first.WindowSlidingFirst">
+<em class="property">class </em><code class="sig-prename descclassname">bobocep.rules.predicates.windows.sliding.window_sliding_first.</code><code class="sig-name descname">WindowSlidingFirst</code><span class="sig-paren">(</span><em class="sig-param">interval_sec: float</em><span class="sig-paren">)</span><a class="headerlink" href="#bobocep.rules.predicates.windows.sliding.window_sliding_first.WindowSlidingFirst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bobocep.rules.predicates.windows.sliding.window_sliding.WindowSliding" title="bobocep.rules.predicates.windows.sliding.window_sliding.WindowSliding"><code class="xref py py-class docutils literal notranslate"><span class="pre">bobocep.rules.predicates.windows.sliding.window_sliding.WindowSliding</span></code></a></p>
+<p>A predicate that evaluates using a sliding time window,
+where the window ranges from the first event in history to the next event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>interval_sec</strong> (<em>float</em>) – The sliding window time interval, in seconds.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="bobocep.rules.predicates.windows.sliding.window_sliding_first.WindowSlidingFirst.get_previous_event">
+<code class="sig-name descname">get_previous_event</code><span class="sig-paren">(</span><em class="sig-param">history: bobocep.rules.events.histories.bobo_history.BoboHistory</em><span class="sig-paren">)</span> &#x2192; bobocep.rules.events.bobo_event.BoboEvent<a class="headerlink" href="#bobocep.rules.predicates.windows.sliding.window_sliding_first.WindowSlidingFirst.get_previous_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a previous event in the event history, for use in calculating
+the time interval between two events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>history</strong> (<a class="reference internal" href="bobocep.rules.events.histories.html#bobocep.rules.events.histories.bobo_history.BoboHistory" title="bobocep.rules.events.histories.bobo_history.BoboHistory"><em>BoboHistory</em></a>) – The event history.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A historical event.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-bobocep.rules.predicates.windows.sliding.window_sliding_last">
+<span id="bobocep-rules-predicates-windows-sliding-window-sliding-last-module"></span><h2>bobocep.rules.predicates.windows.sliding.window_sliding_last module<a class="headerlink" href="#module-bobocep.rules.predicates.windows.sliding.window_sliding_last" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bobocep.rules.predicates.windows.sliding.window_sliding_last.WindowSlidingLast">
+<em class="property">class </em><code class="sig-prename descclassname">bobocep.rules.predicates.windows.sliding.window_sliding_last.</code><code class="sig-name descname">WindowSlidingLast</code><span class="sig-paren">(</span><em class="sig-param">interval_sec: float</em><span class="sig-paren">)</span><a class="headerlink" href="#bobocep.rules.predicates.windows.sliding.window_sliding_last.WindowSlidingLast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bobocep.rules.predicates.windows.sliding.window_sliding.WindowSliding" title="bobocep.rules.predicates.windows.sliding.window_sliding.WindowSliding"><code class="xref py py-class docutils literal notranslate"><span class="pre">bobocep.rules.predicates.windows.sliding.window_sliding.WindowSliding</span></code></a></p>
+<p>A predicate that evaluates using a sliding time window,
+where the window ranges from the last event in history to the next event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>interval_sec</strong> (<em>float</em>) – The sliding window time interval, in seconds.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="bobocep.rules.predicates.windows.sliding.window_sliding_last.WindowSlidingLast.get_previous_event">
+<code class="sig-name descname">get_previous_event</code><span class="sig-paren">(</span><em class="sig-param">history: bobocep.rules.events.histories.bobo_history.BoboHistory</em><span class="sig-paren">)</span> &#x2192; bobocep.rules.events.bobo_event.BoboEvent<a class="headerlink" href="#bobocep.rules.predicates.windows.sliding.window_sliding_last.WindowSlidingLast.get_previous_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a previous event in the event history, for use in calculating
+the time interval between two events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>history</strong> (<a class="reference internal" href="bobocep.rules.events.histories.html#bobocep.rules.events.histories.bobo_history.BoboHistory" title="bobocep.rules.events.histories.bobo_history.BoboHistory"><em>BoboHistory</em></a>) – The event history.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A historical event.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-bobocep.rules.predicates.windows.sliding">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-bobocep.rules.predicates.windows.sliding" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, r3w0p
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

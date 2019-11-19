@@ -1,0 +1,38 @@
+bobocep.rules.predicates.windows.sliding package
+================================================
+
+Submodules
+----------
+
+bobocep.rules.predicates.windows.sliding.window\_sliding module
+---------------------------------------------------------------
+
+.. automodule:: bobocep.rules.predicates.windows.sliding.window_sliding
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.rules.predicates.windows.sliding.window\_sliding\_first module
+----------------------------------------------------------------------
+
+.. automodule:: bobocep.rules.predicates.windows.sliding.window_sliding_first
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.rules.predicates.windows.sliding.window\_sliding\_last module
+---------------------------------------------------------------------
+
+.. automodule:: bobocep.rules.predicates.windows.sliding.window_sliding_last
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.rules.predicates.windows.sliding
+   :members:
+   :undoc-members:
+   :show-inheritance:

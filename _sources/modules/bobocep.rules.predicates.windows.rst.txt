@@ -1,0 +1,30 @@
+bobocep.rules.predicates.windows package
+========================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   bobocep.rules.predicates.windows.fixed
+   bobocep.rules.predicates.windows.sliding
+
+Submodules
+----------
+
+bobocep.rules.predicates.windows.bobo\_predicate\_window module
+---------------------------------------------------------------
+
+.. automodule:: bobocep.rules.predicates.windows.bobo_predicate_window
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.rules.predicates.windows
+   :members:
+   :undoc-members:
+   :show-inheritance:

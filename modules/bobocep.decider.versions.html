@@ -1,0 +1,403 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>bobocep.decider.versions package &mdash; bobocep 0.35.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/bobo.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> bobocep
+          
+
+          
+            
+            <img src="../_static/bobo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.35.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../section/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/patterns.html">Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/actions.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section/glossary.html">Glossary</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">bobocep</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>bobocep.decider.versions package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/bobocep.decider.versions.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="bobocep-decider-versions-package">
+<h1>bobocep.decider.versions package<a class="headerlink" href="#bobocep-decider-versions-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-bobocep.decider.versions.run_version">
+<span id="bobocep-decider-versions-run-version-module"></span><h2>bobocep.decider.versions.run_version module<a class="headerlink" href="#module-bobocep.decider.versions.run_version" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bobocep.decider.versions.run_version.RunVersion">
+<em class="property">class </em><code class="sig-prename descclassname">bobocep.decider.versions.run_version.</code><code class="sig-name descname">RunVersion</code><span class="sig-paren">(</span><em class="sig-param">parent_version: Optional[bobocep.decider.versions.run_version.RunVersion] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#bobocep.decider.versions.run_version.RunVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The current version of a run, using the identification scheme of the
+Shared Versioned Match Buffer, as proposed by Agrawal et al. (2008)
+in their paper “Efficient Pattern Matching over Event Streams”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parent_version</strong> (<a class="reference internal" href="#bobocep.decider.versions.run_version.RunVersion" title="bobocep.decider.versions.run_version.RunVersion"><em>RunVersion</em></a>) – The parent version. If provided, the new version
+will copy the parent version’s levels.
+Defaults to None.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="bobocep.decider.versions.run_version.RunVersion.add_level">
+<code class="sig-name descname">add_level</code><span class="sig-paren">(</span><em class="sig-param">level: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#bobocep.decider.versions.run_version.RunVersion.add_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new level to the version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>level</strong> (<em>str</em>) – The level name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.versions.run_version.RunVersion.get_previous_version_as_list">
+<code class="sig-name descname">get_previous_version_as_list</code><span class="sig-paren">(</span><em class="sig-param">decrease_level: int</em>, <em class="sig-param">decrease_incr: int</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="headerlink" href="#bobocep.decider.versions.run_version.RunVersion.get_previous_version_as_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a previous version of the run version as a list of strings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>decrease_level</strong> (<em>int</em>) – How many levels to decrease by.
+For example, if there are 5 levels, a
+decrease_level of 2 will go back to level 3.</p></li>
+<li><p><strong>decrease_incr</strong> (<em>int</em>) – How many increments of a level to decrease by.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – Decreasing beyond the number of levels.</p></li>
+<li><p><strong>RuntimeError</strong> – Decreasing beyond the number of increments in
+the chosen level.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The previous version as a list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.versions.run_version.RunVersion.get_previous_version_as_str">
+<code class="sig-name descname">get_previous_version_as_str</code><span class="sig-paren">(</span><em class="sig-param">decrease_level: int</em>, <em class="sig-param">decrease_incr: int</em>, <em class="sig-param">default=None</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#bobocep.decider.versions.run_version.RunVersion.get_previous_version_as_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a previous version of the run version as a string, delimited by
+“.”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>decrease_level</strong> (<em>int</em>) – How many levels to decrease by.
+For example, if there are 5 levels, a
+decrease_level of 2 will go back to level 3.</p></li>
+<li><p><strong>decrease_incr</strong> (<em>int</em>) – How many increments of a level to decrease by.</p></li>
+<li><p><strong>default</strong> (<em>any</em><em>, </em><em>optional</em>) – The default value to return if a version string fails
+to be generated, defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The previous version as a string delimited by “.”.
+If there are no levels, it returns an empty string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.versions.run_version.RunVersion.get_version_as_list">
+<code class="sig-name descname">get_version_as_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[str]<a class="headerlink" href="#bobocep.decider.versions.run_version.RunVersion.get_version_as_list" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The latest version as a list of strings, where each string
+is the latest increment of the given level.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.versions.run_version.RunVersion.get_version_as_str">
+<code class="sig-name descname">get_version_as_str</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#bobocep.decider.versions.run_version.RunVersion.get_version_as_str" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The latest version as a string, where each level is the latest
+increment of the given level, separated with the delimeter
+“.”, for example, “a.b.c”.
+If there are no levels, it returns an empty string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.versions.run_version.RunVersion.increment_level">
+<code class="sig-name descname">increment_level</code><span class="sig-paren">(</span><em class="sig-param">increment: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#bobocep.decider.versions.run_version.RunVersion.increment_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increments the current level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>increment</strong> (<em>str</em>) – The increment name.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – Attempting to increment when there are no levels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.versions.run_version.RunVersion.list_to_version">
+<em class="property">static </em><code class="sig-name descname">list_to_version</code><span class="sig-paren">(</span><em class="sig-param">version_list: List[str]</em><span class="sig-paren">)</span> &#x2192; bobocep.decider.versions.run_version.RunVersion<a class="headerlink" href="#bobocep.decider.versions.run_version.RunVersion.list_to_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a list of strings into a RunVersion instance, where each
+string of the list becomes a level in the RunVersion instance, in list
+order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>version_list</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – A list of strings.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A new RunVersion instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.versions.run_version.RunVersion.list_to_version_str">
+<em class="property">static </em><code class="sig-name descname">list_to_version_str</code><span class="sig-paren">(</span><em class="sig-param">str_list: List[str]</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#bobocep.decider.versions.run_version.RunVersion.list_to_version_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a list of strings into a valid version string by joining
+each string in the list by the delimeter “.”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>str_list</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – A list of strings.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A valid version string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.versions.run_version.RunVersion.remove_all_levels">
+<code class="sig-name descname">remove_all_levels</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#bobocep.decider.versions.run_version.RunVersion.remove_all_levels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes all levels from the version.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.versions.run_version.RunVersion.size">
+<code class="sig-name descname">size</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#bobocep.decider.versions.run_version.RunVersion.size" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The number of levels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.versions.run_version.RunVersion.size_level">
+<code class="sig-name descname">size_level</code><span class="sig-paren">(</span><em class="sig-param">index: int = -1</em><span class="sig-paren">)</span><a class="headerlink" href="#bobocep.decider.versions.run_version.RunVersion.size_level" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>int</em><em>, </em><em>optional</em>) – The index of the level, defaults to the latest level.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The number of increments in at a given level.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bobocep.decider.versions.run_version.RunVersion.str_to_version">
+<em class="property">static </em><code class="sig-name descname">str_to_version</code><span class="sig-paren">(</span><em class="sig-param">version_str: str</em><span class="sig-paren">)</span> &#x2192; bobocep.decider.versions.run_version.RunVersion<a class="headerlink" href="#bobocep.decider.versions.run_version.RunVersion.str_to_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a version string into a RunVersion instance by splitting the
+string by the delimiter “.” and making each split a level in the new
+instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>version_str</strong> (<em>str</em>) – The version string.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A new RunVersion instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-bobocep.decider.versions">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-bobocep.decider.versions" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, r3w0p
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

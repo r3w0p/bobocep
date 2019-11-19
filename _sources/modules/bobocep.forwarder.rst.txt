@@ -1,0 +1,38 @@
+bobocep.forwarder package
+=========================
+
+Submodules
+----------
+
+bobocep.forwarder.action\_forwarder module
+------------------------------------------
+
+.. automodule:: bobocep.forwarder.action_forwarder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.forwarder.bobo\_forwarder module
+----------------------------------------
+
+.. automodule:: bobocep.forwarder.bobo_forwarder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bobocep.forwarder.forwarder\_subscriber module
+----------------------------------------------
+
+.. automodule:: bobocep.forwarder.forwarder_subscriber
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: bobocep.forwarder
+   :members:
+   :undoc-members:
+   :show-inheritance:
