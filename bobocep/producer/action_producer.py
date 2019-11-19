@@ -28,4 +28,7 @@ class ActionProducer(BoboProducer):
         self._action = action
 
     def _handle_producer_event(self, event: CompositeEvent) -> bool:
-        return self._action.execute(event).success
+        try:
+            return self._action.execute(event).success
+        except Exception as e:
+            return False

@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from bobocep.rules.events.action_event import ActionEvent
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.histories.bobo_history import BoboHistory
+from bobocep.rules.events.composite_event import CompositeEvent
 
 
 class IDistIncomingSubscriber(ABC):
@@ -74,7 +75,7 @@ class IDistIncomingSubscriber(ABC):
     def on_dist_run_final(self,
                           nfa_name: str,
                           run_id: str,
-                          history: BoboHistory) -> None:
+                          event: CompositeEvent) -> None:
         """
         When a run has reached its final state on another :code:`bobocep`
         instance.
@@ -85,8 +86,8 @@ class IDistIncomingSubscriber(ABC):
         :param run_id: The ID of the accepted run.
         :type run_id: str
 
-        :param history: The history of the accepted run.
-        :type history: BoboHistory
+        :param event: The event produced because of the accepted run.
+        :type event: CompositeEvent
         """
 
     @abstractmethod

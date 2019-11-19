@@ -183,8 +183,7 @@ class BoboNFAHandler(IRunSubscriber):
             else:
                 parent_run = self.runs.get(parent_run_id)
 
-            if parent_run is None and \
-                    (parent_run_id is not None or force_parent):
+            if parent_run is None and force_parent:
                 raise RuntimeError(
                     "Failed to clone run. No parent run found.")
 
@@ -227,22 +226,18 @@ class BoboNFAHandler(IRunSubscriber):
         with self._lock:
             run = self.runs.get(run_id)
 
-            if run is None:
-                raise RuntimeError(
-                    "Run {} not found in handler for NFA {}.".format(
-                        run_id, self.nfa.name))
+            if run is not None:
+                run.set_final(history=history, notify=False)
 
-            run.set_final(history=history, notify=False)
+                event = CompositeEvent(
+                    timestamp=EpochNSClock.generate_timestamp(),
+                    name=self.nfa.name,
+                    history=history)
 
-            event = CompositeEvent(
-                timestamp=EpochNSClock.generate_timestamp(),
-                name=self.nfa.name,
-                history=history)
+                self.remove_run(run_id)
 
-            self.remove_run(run_id)
-
-            if notify:
-                self._notify_final(run_id, event)
+                if notify:
+                    self._notify_final(run_id, event)
 
     def add_recent(self, event: BoboEvent) -> None:
         with self._lock:

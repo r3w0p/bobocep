@@ -80,18 +80,25 @@ class BoboDistOutgoing(BoboTask,
 
     def _loop(self) -> None:
         if self._is_synced:
-            self._send_events(self._queue_transition, bdc.TRANSITION)
-            self._send_events(self._queue_clone, bdc.CLONE)
-            self._send_events(self._queue_halt, bdc.HALT)
-            self._send_events(self._queue_final, bdc.FINAL)
-            self._send_events(self._queue_action, bdc.ACTION)
+            try:
+                self._send_events(self._queue_transition, bdc.TRANSITION)
+                self._send_events(self._queue_clone, bdc.CLONE)
+                self._send_events(self._queue_halt, bdc.HALT)
+                self._send_events(self._queue_final, bdc.FINAL)
+                self._send_events(self._queue_action, bdc.ACTION)
+
+            except Exception as e:
+                print("{}: {}".format("", str(e)))
 
     def _cancel(self):
         self._is_synced = False
         self._connection.close()
 
+    def is_synced(self) -> bool:
+        return self._is_synced
+
     def on_sync_response(self, sync_id, body: str):
-        if not self._is_cancelled:
+        if (not self._is_cancelled) and (not self._is_synced):
             if self.sync_id == sync_id:
                 self._sync_response = body
 
@@ -116,17 +123,18 @@ class BoboDistOutgoing(BoboTask,
 
     def _sync(self) -> None:
         sync_attempt = 0
+        sync = False
 
-        while (not self._is_synced) and sync_attempt < self.max_sync_attempts:
+        while (not sync) and sync_attempt < self.max_sync_attempts:
             sync_attempt += 1
-            self._is_synced = self._sync_request()
-
-        # assume nothing to sync (i.e. no other clients) if unsuccessful in
-        # all attempts
-        self._is_synced = True
+            sync = self._sync_request()
 
         for subscriber in self._subs:
             subscriber.on_sync()
+
+        # assume nothing to sync (i.e. no other clients)
+        # if unsuccessful in all attempts
+        self._is_synced = True
 
     def _sync_request(self, timeout: int = 3) -> bool:
         self._sync_response = None
@@ -153,7 +161,6 @@ class BoboDistOutgoing(BoboTask,
             return False
 
         self._put_current_state(json.loads(self._sync_response))
-
         return True
 
     def _put_current_state(self, decider_dict: dict) -> None:
@@ -177,8 +184,6 @@ class BoboDistOutgoing(BoboTask,
                 run = BoboDeciderBuilder.run(run_dict, buffer, handler.nfa)
                 handler.add_run(run)
 
-        self._is_synced = True
-
     def _send_events(self, queue: Queue, routing_key: str):
         if not queue.empty():
             data = queue.get_nowait()
@@ -192,6 +197,8 @@ class BoboDistOutgoing(BoboTask,
                     routing_key=routing_key,
                     body=data_json
                 )
+
+                print("{}: {}".format("OUTGOING", routing_key))
 
     def on_handler_transition(self,
                               nfa_name: str,

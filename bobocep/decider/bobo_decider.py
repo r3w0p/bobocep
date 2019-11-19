@@ -44,12 +44,16 @@ class BoboDecider(BoboTask,
         self._subs = {}
 
     def _loop(self) -> None:
-        if not self._event_queue.empty():
-            event = self._event_queue.get_nowait()
+        try:
+            if not self._event_queue.empty():
+                event = self._event_queue.get_nowait()
 
-            if event is not None:
-                for nfa_handler in self._nfa_handlers.values():
-                    nfa_handler.process(event)
+                if event is not None:
+                    for nfa_handler in self._nfa_handlers.values():
+                        nfa_handler.process(event)
+
+        except Exception as e:
+            print("{}: {}".format("DECIDER", str(e)))
 
     def add_nfa_handler(self, nfa_handler: BoboNFAHandler) -> None:
         """
@@ -118,6 +122,9 @@ class BoboDecider(BoboTask,
                          event: CompositeEvent):
         # notify producer on a new complex event being identified
         with self._lock:
+
+            print("{}: {}, {}".format("on_handler_final", nfa_name, run_id))
+
             if nfa_name in self._nfa_handlers:
                 if self._recursive:
                     self._nfa_handlers[nfa_name].add_recent(event)
@@ -220,8 +227,10 @@ class BoboDecider(BoboTask,
     def on_dist_run_final(self,
                           nfa_name: str,
                           run_id: str,
-                          history: BoboHistory) -> None:
+                          event: CompositeEvent) -> None:
         with self._lock:
+            print("{}: {}, {}".format("on_dist_run_final", nfa_name, run_id))
+
             handler = self._nfa_handlers.get(nfa_name)
 
             if handler is None:
@@ -230,7 +239,7 @@ class BoboDecider(BoboTask,
 
             handler.force_run_final(
                 run_id=run_id,
-                history=history)
+                history=event.history)
 
     def on_dist_action(self, event: ActionEvent) -> None:
         with self._lock:

@@ -340,21 +340,6 @@ class TestBoboDeciderDistInterfaces(unittest.TestCase):
                 next_event=event_b
             )
 
-    def test_dist_clone_invalid_parent_id(self):
-        decider, handler, run = generate_handler_with_run()
-
-        # get next state
-        transition = handler.nfa.transitions[run.current_state.name]
-        next_state = handler.nfa.states[transition.state_names[0]]
-
-        with self.assertRaises(RuntimeError):
-            decider.on_dist_run_clone(
-                nfa_name=handler.nfa.name,
-                run_id=RUN_ID_B,
-                next_state_name=next_state.name,
-                next_event=event_b
-            )
-
     def test_dist_halt(self):
         decider, handler, run = generate_handler_with_run()
 
@@ -380,12 +365,10 @@ class TestBoboDeciderDistInterfaces(unittest.TestCase):
         sub = DeciderSubscriber()
         decider.subscribe(handler.nfa.name, sub)
 
-        history = BoboHistory()
-
         decider.on_dist_run_final(
             nfa_name=handler.nfa.name,
             run_id=run.id,
-            history=history
+            event=c_event_a
         )
 
         self.assertTrue(run.is_final())
@@ -401,22 +384,7 @@ class TestBoboDeciderDistInterfaces(unittest.TestCase):
             decider.on_dist_run_final(
                 nfa_name=NFA_NAME_B,
                 run_id=run.id,
-                history=BoboHistory()
-            )
-
-    def test_dist_final_invalid_run_id(self):
-        decider, handler, run = generate_handler_with_run()
-
-        sub = DeciderSubscriber()
-        decider.subscribe(handler.nfa.name, sub)
-
-        history = BoboHistory()
-
-        with self.assertRaises(RuntimeError):
-            decider.on_dist_run_final(
-                nfa_name=handler.nfa.name,
-                run_id=RUN_ID_B,
-                history=history
+                event=c_event_a
             )
 
     def test_dist_action(self):

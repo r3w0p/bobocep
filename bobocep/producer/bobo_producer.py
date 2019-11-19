@@ -32,16 +32,20 @@ class BoboProducer(BoboTask,
         self._subs = {}
 
     def _loop(self) -> None:
-        if not self._event_queue.empty():
-            event = self._event_queue.get_nowait()
+        try:
+            if not self._event_queue.empty():
+                event = self._event_queue.get_nowait()
 
-            if event is not None:
-                if self._handle_producer_event(event):
-                    for subscriber in self._subs[event.name]:
-                        subscriber.on_accepted_producer_event(event)
-                else:
-                    for subscriber in self._subs[event.name]:
-                        subscriber.on_rejected_producer_event(event)
+                if event is not None:
+                    if self._handle_producer_event(event):
+                        for subscriber in self._subs[event.name]:
+                            subscriber.on_accepted_producer_event(event)
+                    else:
+                        for subscriber in self._subs[event.name]:
+                            subscriber.on_rejected_producer_event(event)
+
+        except Exception as e:
+            print("{}: {}".format("PRODUCER", str(e)))
 
     @abstractmethod
     def _handle_producer_event(self, event: CompositeEvent) -> bool:

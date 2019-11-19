@@ -981,17 +981,6 @@ class TestBoboNFAHandlerFinal(unittest.TestCase):
 
         self.assertTrue(run.is_halted())
 
-    def test_force_run_final_invalid_run(self):
-        nfa, buffer, handler, handlersub = handler_setup(
-            nfa_name=NFA_NAME_A,
-            pattern=pattern_relaxed)
-
-        handler.process(event_a)
-
-        with self.assertRaises(RuntimeError):
-            handler.force_run_final(run_id=RUN_ID_INVALID,
-                                    history=BoboHistory())
-
 
 class TestPredicateCallable(unittest.TestCase):
 

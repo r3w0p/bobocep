@@ -551,12 +551,9 @@ class BoboSetup(IDistOutgoingSubscriber):
                 # Handler -> Outgoing
                 handler.subscribe(self._manager.outgoing)
 
-                if event_def.action is not None:
-                    # Action -> Outgoing
-                    event_def.action.subscribe(self._manager.outgoing)
-
-                # Incoming -> Handler
-                self._manager.incoming.subscribe(handler)
+                # Producer -> Outgoing
+                self._producer.subscribe(event_def.name,
+                                         self._manager.outgoing)
 
     def _config_extra_subscriptions(self):
         # receiver

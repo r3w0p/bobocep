@@ -1,5 +1,5 @@
 import json
-
+from threading import Thread
 from pika import ConnectionParameters, BlockingConnection, BasicProperties
 
 import bobocep.setup.distributed.bobo_dist_constants as bdc
@@ -77,19 +77,14 @@ class BoboDistIncoming(BoboTask):
         self._connection = connection
         self._channel = channel
 
-        self._is_synced = False
+        self.subscribe(self.decider)
 
     def _loop(self) -> None:
         self._channel.start_consuming()
 
     def _cancel(self) -> None:
-        self._is_synced = False
         self._channel.stop_consuming()
         self._connection.close()
-
-    def on_sync(self) -> None:
-        if not self._is_cancelled:
-            self._is_synced = True
 
     def subscribe(self, subscriber: IDistIncomingSubscriber) -> None:
         """
@@ -97,8 +92,9 @@ class BoboDistIncoming(BoboTask):
         :type subscriber: IDistIncomingSubscriber
         """
         if not self._is_cancelled:
-            if subscriber not in self._subs:
-                self._subs.append(subscriber)
+            with self._lock:
+                if subscriber not in self._subs:
+                    self._subs.append(subscriber)
 
     def unsubscribe(self, unsubscriber: IDistIncomingSubscriber) -> None:
         """
@@ -106,36 +102,56 @@ class BoboDistIncoming(BoboTask):
         :type unsubscriber: IDistIncomingSubscriber
         """
 
-        if unsubscriber in self._subs:
-            self._subs.remove(unsubscriber)
+        with self._lock:
+            if unsubscriber in self._subs:
+                self._subs.remove(unsubscriber)
+
+    def _callback_handle(self, ch, method, properties, body):
+        try:
+            if method.routing_key == bdc.TRANSITION:
+                self._handle_transition(body)
+
+            elif method.routing_key == bdc.CLONE:
+                self._handle_clone(body)
+
+            elif method.routing_key == bdc.HALT:
+                self._handle_halt(body)
+
+            elif method.routing_key == bdc.FINAL:
+                self._handle_final(body)
+
+            elif method.routing_key == bdc.ACTION:
+                self._handle_action(body)
+
+        except Exception as e:
+            print("{}: {}".format("_callback_handle", str(e)))
 
     def _callback(self, ch, method, properties, body):
         if properties.message_id == self.user_id:
             return
 
-        if method.routing_key == bdc.TRANSITION:
-            self._handle_transition(body)
+        print("{}: {} ({})".format("INCOMING", method.routing_key,
+                                   self.outgoing.is_synced()))
 
-        elif method.routing_key == bdc.CLONE:
-            self._handle_clone(body)
+        try:
+            if self.outgoing.is_synced():
+                if method.routing_key == bdc.SYNC_REQ:
+                    self._handle_sync_request(ch, method, properties, body)
 
-        elif method.routing_key == bdc.HALT:
-            self._handle_halt(body)
+                elif method.routing_key != bdc.SYNC_RES:
+                    t = Thread(target=self._callback_handle,
+                               args=(ch, method, properties, body))
+                    t.start()
+            else:
+                if method.routing_key == bdc.SYNC_RES:
+                    self._handle_sync_response(ch, method, properties, body)
 
-        elif method.routing_key == bdc.FINAL:
-            self._handle_final(body)
-
-        elif method.routing_key == bdc.ACTION:
-            self._handle_action(body)
-
-        elif method.routing_key == bdc.SYNC_REQ:
-            self._handle_sync_request(ch, method, properties, body)
-
-        elif (not self._is_synced) and method.routing_key == bdc.SYNC_RES:
-            self._handle_sync_response(ch, method, properties, body)
+        except Exception as e:
+            print("{}: {}".format("_callback", str(e)))
 
     def _handle_transition(self, data: str) -> None:
         json_data = json.loads(data)
+
         nfa_name = json_data[bdc.NFA_NAME]
         run_id = json_data[bdc.RUN_ID]
         state_from = json_data[bdc.STATE_FROM]
@@ -153,6 +169,7 @@ class BoboDistIncoming(BoboTask):
 
     def _handle_clone(self, data: str) -> None:
         json_data = json.loads(data)
+
         nfa_name = json_data[bdc.NFA_NAME]
         run_id = json_data[bdc.RUN_ID]
         state_to = json_data[bdc.STATE_TO]
@@ -181,13 +198,13 @@ class BoboDistIncoming(BoboTask):
         json_data = json.loads(data)
         nfa_name = json_data[bdc.NFA_NAME]
         run_id = json_data[bdc.RUN_ID]
-        history = BoboRuleBuilder.history(json_data[bdc.HISTORY])
+        event = BoboRuleBuilder.composite(json_data[bdc.EVENT])
 
         for subscriber in self._subs:
             subscriber.on_dist_run_final(
                 nfa_name=nfa_name,
                 run_id=run_id,
-                history=history
+                event=event
             )
 
     def _handle_action(self, data: str) -> None:
