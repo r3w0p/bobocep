@@ -10,7 +10,6 @@ from bobocep.receiver.receiver_subscriber import IReceiverSubscriber
 from bobocep.rules.events.action_event import ActionEvent
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.composite_event import CompositeEvent
-from bobocep.rules.events.histories.bobo_history import BoboHistory
 from bobocep.setup.distributed.incoming.dist_incoming_subscriber import \
     IDistIncomingSubscriber
 from bobocep.setup.task.bobo_task import BoboTask
@@ -52,8 +51,8 @@ class BoboDecider(BoboTask,
                     for nfa_handler in self._nfa_handlers.values():
                         nfa_handler.process(event)
 
-        except Exception as e:
-            print("{}: {}".format("DECIDER", str(e)))
+        except Exception:
+            pass
 
     def add_nfa_handler(self, nfa_handler: BoboNFAHandler) -> None:
         """
@@ -122,9 +121,6 @@ class BoboDecider(BoboTask,
                          event: CompositeEvent):
         # notify producer on a new complex event being identified
         with self._lock:
-
-            print("{}: {}, {}".format("on_handler_final", nfa_name, run_id))
-
             if nfa_name in self._nfa_handlers:
                 if self._recursive:
                     self._nfa_handlers[nfa_name].add_recent(event)
@@ -229,8 +225,6 @@ class BoboDecider(BoboTask,
                           run_id: str,
                           event: CompositeEvent) -> None:
         with self._lock:
-            print("{}: {}, {}".format("on_dist_run_final", nfa_name, run_id))
-
             handler = self._nfa_handlers.get(nfa_name)
 
             if handler is None:

@@ -87,8 +87,8 @@ class BoboDistOutgoing(BoboTask,
                 self._send_events(self._queue_final, bdc.FINAL)
                 self._send_events(self._queue_action, bdc.ACTION)
 
-            except Exception as e:
-                print("{}: {}".format("", str(e)))
+            except Exception:
+                pass
 
     def _cancel(self):
         self._is_synced = False
@@ -197,8 +197,6 @@ class BoboDistOutgoing(BoboTask,
                     routing_key=routing_key,
                     body=data_json
                 )
-
-                print("{}: {}".format("OUTGOING", routing_key))
 
     def on_handler_transition(self,
                               nfa_name: str,

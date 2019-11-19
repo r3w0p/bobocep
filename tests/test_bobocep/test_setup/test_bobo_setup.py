@@ -1,6 +1,8 @@
 import unittest
 from time import sleep
 
+from pika import ConnectionParameters, PlainCredentials
+
 from bobocep.decider.decider_subscriber import IDeciderSubscriber
 from bobocep.forwarder.forwarder_subscriber import IForwarderSubscriber
 from bobocep.producer.producer_subscriber import IProducerSubscriber
@@ -21,8 +23,6 @@ from bobocep.rules.predicates.bobo_predicate_callable import \
     BoboPredicateCallable
 from bobocep.setup.bobo_complex_event import BoboComplexEvent
 from bobocep.setup.bobo_setup import BoboSetup
-
-from pika import ConnectionParameters, PlainCredentials
 
 EXCHANGE_NAME = "test_exchange_name"
 USER_NAME = "test_user_name"

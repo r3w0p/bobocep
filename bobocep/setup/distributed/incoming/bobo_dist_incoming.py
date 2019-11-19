@@ -1,5 +1,6 @@
 import json
 from threading import Thread
+
 from pika import ConnectionParameters, BlockingConnection, BasicProperties
 
 import bobocep.setup.distributed.bobo_dist_constants as bdc
@@ -123,15 +124,12 @@ class BoboDistIncoming(BoboTask):
             elif method.routing_key == bdc.ACTION:
                 self._handle_action(body)
 
-        except Exception as e:
-            print("{}: {}".format("_callback_handle", str(e)))
+        except Exception:
+            pass
 
     def _callback(self, ch, method, properties, body):
         if properties.message_id == self.user_id:
             return
-
-        print("{}: {} ({})".format("INCOMING", method.routing_key,
-                                   self.outgoing.is_synced()))
 
         try:
             if self.outgoing.is_synced():
@@ -146,8 +144,8 @@ class BoboDistIncoming(BoboTask):
                 if method.routing_key == bdc.SYNC_RES:
                     self._handle_sync_response(ch, method, properties, body)
 
-        except Exception as e:
-            print("{}: {}".format("_callback", str(e)))
+        except Exception:
+            pass
 
     def _handle_transition(self, data: str) -> None:
         json_data = json.loads(data)

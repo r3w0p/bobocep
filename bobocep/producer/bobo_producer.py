@@ -44,8 +44,8 @@ class BoboProducer(BoboTask,
                         for subscriber in self._subs[event.name]:
                             subscriber.on_rejected_producer_event(event)
 
-        except Exception as e:
-            print("{}: {}".format("PRODUCER", str(e)))
+        except Exception:
+            pass
 
     @abstractmethod
     def _handle_producer_event(self, event: CompositeEvent) -> bool:
