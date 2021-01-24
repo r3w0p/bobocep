@@ -1,2 +1,4 @@
-bumpversion==0.5.3
-pika==1.1.0
+pytest==6.2.1
+bumpversion==0.6.0
+dpcontracts==0.6.0
+overrides==3.1.0

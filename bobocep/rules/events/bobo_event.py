@@ -1,39 +1,41 @@
-from abc import abstractmethod
+from bobocep.rules.bobo_rule import BoboRule
+from abc import ABC
 from typing import Dict
-from uuid import uuid4
+from dpcontracts import require
 
 
-class BoboEvent:
+class BoboEvent(BoboRule, ABC):
     """A :code:`bobocep` event.
 
-    :param timestamp: The event timestamp indicating when it was first
-                      generated.
+    :param event_id: The event ID.
+    :type event_id: str
+
+    :param timestamp: The timestamp indicating when the event was recorded.
     :type timestamp: int
 
-    :param data: The event data, defaults to an empty dict.
-    :type data: Dict[str, str], optional
-
-    :param event_id: The event ID, defaults to a randomly generated ID.
-    :type event_id: str, optional
+    :param data: The event data.
+    :type data: Dict[str, str]
     """
 
+    EVENT_ID = "event_id"
     TIMESTAMP = "timestamp"
     DATA = "data"
-    EVENT_ID = "event_id"
 
+    @require("'event_id' must be a str",
+             lambda args: isinstance(args.event_id, str))
+    @require("'timestamp' must be an int",
+             lambda args: isinstance(args.timestamp, int))
+    @require("'data' must be a dict with keys and values of only type str",
+             lambda args:
+             isinstance(args.data, dict) and
+             all([isinstance(key, str) for key in args.data.keys()]) and
+             all([isinstance(val, str) for val in args.data.values()]))
     def __init__(self,
+                 event_id: str,
                  timestamp: int,
-                 data: Dict[str, str] = None,
-                 event_id: str = None) -> None:
+                 data: Dict[str, str]) -> None:
         super().__init__()
 
+        self.event_id = event_id
         self.timestamp = timestamp
-        self.data = {} if data is None else data
-        self.event_id = '{}-{}'.format(uuid4(), timestamp) \
-            if event_id is None else event_id
-
-    @abstractmethod
-    def to_dict(self) -> dict:
-        """
-        :return: A dict representation of the object.
-        """
+        self.data = data

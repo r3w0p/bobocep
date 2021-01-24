@@ -1,15 +1,13 @@
 from setuptools import setup, find_packages
 
-with open('README.rst') as readme_file:
-    long_description = readme_file.read()
+with open('README.rst') as f:
+    long_description = f.read()
 
-requirements = []
-setup_requirements = []
-test_requirements = []
+with open('requirements.txt') as f:
+    install_requires = f.read().splitlines()
 
 setup(
     author="r3w0p",
-    author_email='',
     name='bobocep',
     version='0.35.0',
     description="A fault-tolerant complex event processing engine designed "
@@ -19,18 +17,14 @@ setup(
     license="MIT",
     keywords='bobocep',
     url='https://github.com/r3w0p/bobocep',
-
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
-
-    install_requires=requirements,
-    setup_requires=setup_requirements,
-    tests_require=test_requirements,
+    install_requires=install_requires,
     packages=find_packages(include=['bobocep', 'bobocep.*']),
     test_suite='tests',
     zip_safe=False,
