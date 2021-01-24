@@ -3,7 +3,7 @@ from dpcontracts import require, ensure
 
 
 class BoboRule(ABC):
-    """A :code:`bobocep` rule."""
+    """An abstract rule."""
 
     @abstractmethod
     @ensure("result must be a dict",
@@ -17,7 +17,9 @@ class BoboRule(ABC):
     @abstractmethod
     @require("'d' must be a dict",
              lambda args: isinstance(args.d, dict))
-    def from_dict(self, d: dict) -> 'BoboRule':
+    @ensure("result must be an instance of BoboRule",
+            lambda args, result: isinstance(result, BoboRule))
+    def from_dict(d: dict) -> 'BoboRule':
         """
         :return: An object from a dict representation.
         """

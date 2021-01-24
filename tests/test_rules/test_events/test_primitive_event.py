@@ -72,3 +72,21 @@ def test_to_dict_invalid_data_value():
             timestamp=timestamp,
             data=data
         )
+
+
+def test_from_dict_valid_dict():
+    event_id = "test_event_id"
+    timestamp = 123456
+    data = {"test_key": "test_value"}
+
+    event_dict = {
+        PrimitiveEvent.EVENT_ID: event_id,
+        PrimitiveEvent.TIMESTAMP: timestamp,
+        PrimitiveEvent.DATA: data
+    }
+
+    event = PrimitiveEvent.from_dict(d=event_dict)
+
+    assert event.event_id == event_id
+    assert event.timestamp == timestamp
+    assert event.data == data

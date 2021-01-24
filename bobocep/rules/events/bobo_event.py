@@ -1,7 +1,8 @@
-from bobocep.rules.bobo_rule import BoboRule
 from abc import ABC
 from typing import Dict
 from dpcontracts import require
+
+from bobocep.rules.bobo_rule import BoboRule
 
 
 class BoboEvent(BoboRule, ABC):

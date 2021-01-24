@@ -1,6 +1,7 @@
-from bobocep.rules.events.bobo_event import BoboEvent
 from typing import Dict
 from overrides import overrides
+
+from bobocep.rules.events.bobo_event import BoboEvent
 
 
 class PrimitiveEvent(BoboEvent):
@@ -32,10 +33,11 @@ class PrimitiveEvent(BoboEvent):
             self.DATA: self.data
         }
 
+    @staticmethod
     @overrides
-    def from_dict(self, d: dict) -> 'PrimitiveEvent':
+    def from_dict(d: dict) -> 'PrimitiveEvent':
         return PrimitiveEvent(
-            event_id=d[self.EVENT_ID],
-            timestamp=d[self.TIMESTAMP],
-            data=d[self.DATA]
+            event_id=d[PrimitiveEvent.EVENT_ID],
+            timestamp=d[PrimitiveEvent.TIMESTAMP],
+            data=d[PrimitiveEvent.DATA]
         )
