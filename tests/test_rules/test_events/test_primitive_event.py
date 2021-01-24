@@ -18,7 +18,7 @@ def test_to_dict_valid_arguments():
     assert event.to_dict() == {
         PrimitiveEvent.EVENT_ID: event_id,
         PrimitiveEvent.TIMESTAMP: timestamp,
-        PrimitiveEvent.DATA: data,
+        PrimitiveEvent.DATA: data
     }
 
 

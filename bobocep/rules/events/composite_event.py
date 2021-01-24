@@ -19,37 +19,37 @@ class CompositeEvent(BoboEvent):
     :param event_name: The composite event name.
     :type event_name: str
 
-    :param nfa_key: The NFA key associated with the composite event.
-    :type nfa_key: str
+    :param nfa_id: The NFA key associated with the composite event.
+    :type nfa_id: str
 
     :param history: The history of events associated with the composite event.
     :type history: Dict[str, List[BoboEvent]]
     """
 
     EVENT_NAME = "event_name"
-    NFA_KEY = "nfa_key"
+    NFA_ID = "nfa_id"
     HISTORY = "history"
     HISTORY_EVENT = "history_event"
     HISTORY_EVENT_CLASS = "history_event_class"
 
     @require("'name' must be a str",
              lambda args: isinstance(args.event_name, str))
-    @require("'nfa_key' must be a str",
-             lambda args: isinstance(args.nfa_key, str))
-    @require("'events' must be a dict with keys of type str and values of "
+    @require("'nfa_id' must be a str",
+             lambda args: isinstance(args.nfa_id, str))
+    @require("'history' must be a dict with keys of type str and values of "
              "lists of type BoboEvent",
              lambda args:
-             isinstance(args.events, dict) and
-             all([isinstance(key, str) for key in args.events.keys()]) and
+             isinstance(args.history, dict) and
+             all([isinstance(key, str) for key in args.history.keys()]) and
              all([isinstance(val_list, list) and
                   all(isinstance(val_str, BoboEvent) for val_str in val_list)
-                  for val_list in args.events.values()]))
+                  for val_list in args.history.values()]))
     def __init__(self,
                  event_id: str,
                  timestamp: int,
                  data: Dict[str, str],
                  event_name: str,
-                 nfa_key: str,
+                 nfa_id: str,
                  history: Dict[str, List[BoboEvent]]) -> None:
 
         super().__init__(event_id=event_id,
@@ -57,7 +57,7 @@ class CompositeEvent(BoboEvent):
                          data=data)
 
         self.event_name = event_name
-        self.nfa_key = nfa_key
+        self.nfa_id = nfa_id
         self.history = history
 
         self.history_first = None
@@ -65,12 +65,13 @@ class CompositeEvent(BoboEvent):
 
         for event_list in self.history.values():
             for event in event_list:
-                if self.first is None or \
-                        event.timestamp < self.first.timestamp:
-                    self.first = event
+                if self.history_first is None or \
+                        event.timestamp < self.history_first.timestamp:
+                    self.history_first = event
 
-                if self.last is None or event.timestamp > self.last.timestamp:
-                    self.last = event
+                if self.history_last is None or \
+                        event.timestamp > self.history_last.timestamp:
+                    self.history_last = event
 
     @overrides
     def to_dict(self) -> dict:
@@ -79,16 +80,17 @@ class CompositeEvent(BoboEvent):
             self.TIMESTAMP: self.timestamp,
             self.DATA: self.data,
             self.EVENT_NAME: self.event_name,
-            self.NFA_KEY: self.nfa_key,
+            self.NFA_ID: self.nfa_id,
         }
 
         history_dict = {}
         for key in self.history.keys():
+            history_dict[key] = []
             for event in self.history[key]:
-                history_dict[key] = {
+                history_dict[key].append({
                     self.HISTORY_EVENT: event.to_dict(),
-                    self.HISTORY_EVENT_CLASS: event.__class__
-                }
+                    self.HISTORY_EVENT_CLASS: event.__class__.__name__
+                })
         d[self.HISTORY] = history_dict
 
         return d
@@ -108,6 +110,6 @@ class CompositeEvent(BoboEvent):
             timestamp=d[self.TIMESTAMP],
             data=d[self.DATA],
             event_name=d[self.EVENT_NAME],
-            nfa_key=d[self.NFA_KEY],
+            nfa_id=d[self.NFA_ID],
             history=history
         )

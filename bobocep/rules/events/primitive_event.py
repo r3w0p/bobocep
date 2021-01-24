@@ -20,9 +20,9 @@ class PrimitiveEvent(BoboEvent):
                  event_id: str,
                  timestamp: int,
                  data: Dict[str, str]) -> None:
-        super().__init__(timestamp=timestamp,
-                         data=data,
-                         event_id=event_id)
+        super().__init__(event_id=event_id,
+                         timestamp=timestamp,
+                         data=data)
 
     @overrides
     def to_dict(self) -> dict:
