@@ -20,13 +20,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Initialize CodeQL
+    - name: CodeQL initialize
       uses: github/codeql-action/init@v1
       with:
         languages: ${{ matrix.language }}
 
-    - name: Autobuild
+    - name: CodeQL autobuild
       uses: github/codeql-action/autobuild@v1
 
-    - name: Perform CodeQL Analysis
+    - name: CodeQL analysis
       uses: github/codeql-action/analyze@v1
