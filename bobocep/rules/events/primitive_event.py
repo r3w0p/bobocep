@@ -36,6 +36,9 @@ class PrimitiveEvent(BoboEvent):
     @staticmethod
     @overrides
     def from_dict(d: dict) -> 'PrimitiveEvent':
+        """
+        :rtype: PrimitiveEvent
+        """
         return PrimitiveEvent(
             event_id=d[PrimitiveEvent.EVENT_ID],
             timestamp=d[PrimitiveEvent.TIMESTAMP],

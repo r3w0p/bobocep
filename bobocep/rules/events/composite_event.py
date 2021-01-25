@@ -68,6 +68,9 @@ class CompositeEvent(BoboEvent):
     @staticmethod
     @overrides
     def from_dict(d: dict) -> 'CompositeEvent':
+        """
+        :rtype: CompositeEvent
+        """
         return CompositeEvent(
             event_id=d[CompositeEvent.EVENT_ID],
             timestamp=d[CompositeEvent.TIMESTAMP],

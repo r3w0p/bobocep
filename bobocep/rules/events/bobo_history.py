@@ -3,11 +3,12 @@ from dpcontracts import require
 from overrides import overrides
 import sys
 
+from bobocep.bobo_serializable import BoboSerializable
 from bobocep.rules.bobo_rule import BoboRule
 from bobocep.rules.events.bobo_event import BoboEvent
 
 
-class BoboHistory(BoboRule):
+class BoboHistory(BoboSerializable, BoboRule):
     """A history of events.
 
     :param events: The history of events, where each key is a label with which
@@ -61,6 +62,9 @@ class BoboHistory(BoboRule):
     @staticmethod
     @overrides
     def from_dict(d: dict) -> 'BoboHistory':
+        """
+        :rtype: BoboHistory
+        """
         events = {}
         for key in d.keys():
             events[key] = []
