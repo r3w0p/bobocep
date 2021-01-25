@@ -79,14 +79,14 @@ def test_callable_invalid_function_too_few_parameters():
 
     call = invalid_callable_function
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(PreconditionError):
         BoboPredicateCallable(call=call)
 
 
 def test_callable_invalid_lambda_too_few_parameters():
     call = lambda p: True
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(PreconditionError):
         BoboPredicateCallable(call=call)
 
 
@@ -97,7 +97,7 @@ def test_callable_invalid_method_too_few_parameters():
 
     call = TestInvalidClass().evaluate
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(PreconditionError):
         BoboPredicateCallable(call=call)
 
 
@@ -107,14 +107,14 @@ def test_callable_invalid_function_too_many_parameters():
 
     call = invalid_callable_function
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(PreconditionError):
         BoboPredicateCallable(call=call)
 
 
 def test_callable_invalid_lambda_too_many_parameters():
     call = lambda p1, p2, p3: True
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(PreconditionError):
         BoboPredicateCallable(call=call)
 
 
@@ -125,5 +125,5 @@ def test_callable_invalid_method_too_many_parameters():
 
     call = TestInvalidClass().evaluate
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(PreconditionError):
         BoboPredicateCallable(call=call)

@@ -20,23 +20,13 @@ class BoboPredicateCallable(BoboPredicate):
     :raises RuntimeError: Callable does not have the correct parameter count.
     """
 
-    @require("'call' must be an instance of Callable",
-             lambda args: isinstance(args.call, Callable))
+    @require("'call' must be an instance of Callable and have an equal number "
+             "of parameters to the 'evaluate' method in BoboPredicateCallable",
+             lambda args: isinstance(args.call, Callable) and
+                          len(signature(args.call).parameters) ==
+                          len(signature(args.self.evaluate).parameters))
     def __init__(self, call: Callable) -> None:
         super().__init__()
-
-        if not (isfunction(call) or ismethod(call)):
-            raise RuntimeError(
-                "Callable must be a function or method, found {}.".format(
-                    type(call)))
-
-        _num_call_params = len(signature(call).parameters)
-        _num_predicate_params = len(signature(self.evaluate).parameters)
-
-        if _num_call_params != _num_predicate_params:
-            raise RuntimeError(
-                "Callable must have exactly {} parameters, found {}.".format(
-                    _num_predicate_params, _num_call_params))
 
         self._call = call
         # Prevent garbage collection of object if callable is a method.

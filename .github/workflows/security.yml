@@ -5,11 +5,13 @@ on:
     branches: [ develop ]
   pull_request:
     branches: [ develop ]
+  schedule:
+    - cron: '0 6 * * 1'
 
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false

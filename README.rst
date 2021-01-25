@@ -4,5 +4,4 @@ designed for `edge computing <https://en.wikipedia.org/wiki/Edge_computing>`_ in
 to provide inferential reasoning and decision making using stream data.
 It provides `fault tolerance <https://en.wikipedia.org/wiki/Fault_tolerance>`_ (FT) via the
 `active replication <https://en.wikipedia.org/wiki/Replication_(computing)>`_ of
-partially completed complex events across multiple instances of the software using a
-`message broker <https://en.wikipedia.org/wiki/Message_broker>`_.
+partially completed complex events across other instances of :code:`bobocep` software.
