@@ -31,7 +31,7 @@ def test_transition_valid_arguments_state_names_empty():
     assert transition.strict == strict
 
 
-def test_transition_invalid_state_names():
+def test_transition_invalid_argument_state_names():
     state_names = "invalid_state_names"
     strict = True
 
@@ -42,7 +42,7 @@ def test_transition_invalid_state_names():
         )
 
 
-def test_transition_invalid_strict():
+def test_transition_invalid_argument_strict():
     name = "test_name"
     state_names = [name]
     strict = "invalid_strict"
@@ -54,7 +54,23 @@ def test_transition_invalid_strict():
         )
 
 
-def test_from_dict_valid_dict():
+def test_transition_to_dict_valid():
+    name = "test_name"
+    state_names = [name]
+    strict = True
+
+    transition = BoboTransition(
+        state_names=state_names,
+        strict=strict
+    )
+
+    assert transition.to_dict() == {
+        BoboTransition.STATE_NAMES: state_names,
+        BoboTransition.STRICT: strict
+    }
+
+
+def test_transition_from_dict_valid():
     name = "test_name"
     state_names = [name]
     strict = True
@@ -68,6 +84,5 @@ def test_from_dict_valid_dict():
 
     assert transition.state_names == state_names
     assert transition.strict == strict
-
 
 # todo from_dict invalid

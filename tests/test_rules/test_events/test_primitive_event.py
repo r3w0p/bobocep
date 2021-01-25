@@ -20,7 +20,7 @@ def test_primitive_valid_arguments():
     assert event.data == data
 
 
-def test_primitive_invalid_event_id():
+def test_primitive_invalid_argument_event_id():
     event_id = 123456
     timestamp = 123456
     data = {"test_key": "test_value"}
@@ -33,7 +33,7 @@ def test_primitive_invalid_event_id():
         )
 
 
-def test_primitive_invalid_timestamp():
+def test_primitive_invalid_argument_timestamp():
     event_id = "test_event_id"
     timestamp = "test_invalid_timestamp"
     data = {"test_key": "test_value"}
@@ -46,7 +46,7 @@ def test_primitive_invalid_timestamp():
         )
 
 
-def test_primitive_invalid_data_key():
+def test_primitive_invalid_argument_data_key():
     event_id = "test_event_id"
     timestamp = 123456
     data = {123456: "test_value"}
@@ -59,7 +59,7 @@ def test_primitive_invalid_data_key():
         )
 
 
-def test_primitive_invalid_data_value():
+def test_primitive_invalid_argument_data_value():
     event_id = "test_event_id"
     timestamp = 123456
     data = {"test_key": 123456}
@@ -90,7 +90,7 @@ def test_primitive_to_dict_valid():
     }
 
 
-def test_from_dict_valid_dict():
+def test_primitive_from_dict_valid():
     event_id = "test_event_id"
     timestamp = 123456
     data = {"test_key": "test_value"}

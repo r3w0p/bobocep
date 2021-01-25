@@ -2,6 +2,7 @@ import pytest
 
 from bobocep.rules.events.bobo_history import BoboHistory
 from bobocep.rules.events.primitive_event import PrimitiveEvent
+from dpcontracts import PreconditionError
 
 
 def test_history_valid_arguments():
@@ -18,7 +19,14 @@ def test_history_valid_arguments():
     assert history.events == events
 
 
-def test_history_first_last_one_event():
+def test_history_invalid_argument_events():
+    events = "invalid_events"
+
+    with pytest.raises(PreconditionError):
+        BoboHistory(events=events)
+
+
+def test_history_first_and_last_same_event():
     history_event = PrimitiveEvent(
         event_id="test_history_event",
         timestamp=123456,
@@ -32,7 +40,7 @@ def test_history_first_last_one_event():
     assert history.first == history.last
 
 
-def test_history_first_last_two_events_two_keys():
+def test_history_first_and_last_two_events_two_keys():
     history_event_1 = PrimitiveEvent(
         event_id="test_history_event_1",
         timestamp=123456,
@@ -57,7 +65,7 @@ def test_history_first_last_two_events_two_keys():
     assert history.last == history_event_2
 
 
-def test_history_first_last_two_events_one_key():
+def test_history_first_and_last_two_events_one_key():
     history_event_1 = PrimitiveEvent(
         event_id="test_history_event_1",
         timestamp=123456,
@@ -80,14 +88,14 @@ def test_history_first_last_two_events_one_key():
     assert history.last == history_event_2
 
 
-def test_to_dict_valid_arguments_history_empty():
+def test_history_to_dict_valid_history_empty():
     events = {}
     history = BoboHistory(events=events)
 
     assert history.to_dict() == {}
 
 
-def test_to_dict_valid_arguments_history_key_empty():
+def test_history_to_dict_valid_history_key_empty():
     event_key = "test_event_key"
     events = {event_key: []}
     history = BoboHistory(events=events)
@@ -97,7 +105,7 @@ def test_to_dict_valid_arguments_history_key_empty():
     }
 
 
-def test_to_dict_valid_arguments_history_not_empty():
+def test_history_to_dict_valid_history_not_empty():
     history_event_event_id = "test_event_history_event_id"
     history_event_timestamp = 123456
     history_event_data = {}
@@ -124,7 +132,7 @@ def test_to_dict_valid_arguments_history_not_empty():
     }
 
 
-def test_from_dict_valid_dict_one_primitive():
+def test_history_from_dict_valid_one_primitive():
     history_event_event_id = "test_event_history_event_id"
     history_event_timestamp = 123456
     history_event_data = {}

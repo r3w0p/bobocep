@@ -30,7 +30,7 @@ def test_composite_valid_arguments():
     assert event.history == history
 
 
-def test_composite_invalid_event_id():
+def test_composite_invalid_argument_event_id():
     event_id = 123456
     timestamp = 123456
     data = {"test_key": "test_value"}
@@ -49,7 +49,7 @@ def test_composite_invalid_event_id():
         )
 
 
-def test_composite_invalid_timestamp():
+def test_composite_invalid_argument_timestamp():
     event_id = "test_event_id"
     timestamp = "test_invalid_timestamp"
     data = {"test_key": "test_value"}
@@ -68,7 +68,7 @@ def test_composite_invalid_timestamp():
         )
 
 
-def test_composite_invalid_data_key():
+def test_composite_invalid_argument_data_key():
     event_id = "test_event_id"
     timestamp = 123456
     data = {123456: "test_value"}
@@ -87,7 +87,7 @@ def test_composite_invalid_data_key():
         )
 
 
-def test_composite_invalid_data_value():
+def test_composite_invalid_argument_data_value():
     event_id = "test_event_id"
     timestamp = 123456
     data = {"test_key": 123456}
@@ -106,7 +106,7 @@ def test_composite_invalid_data_value():
         )
 
 
-def test_composite_invalid_event_name():
+def test_composite_invalid_argument_event_name():
     event_id = "test_event_id"
     timestamp = 123456
     data = {"test_key": "test_value"}
@@ -125,7 +125,7 @@ def test_composite_invalid_event_name():
         )
 
 
-def test_composite_invalid_nfa_name():
+def test_composite_invalid_argument_nfa_name():
     event_id = "test_event_id"
     timestamp = 123456
     data = {"test_key": "test_value"}
@@ -144,7 +144,7 @@ def test_composite_invalid_nfa_name():
         )
 
 
-def test_composite_invalid_history():
+def test_composite_invalid_argument_history():
     event_id = "test_event_id"
     timestamp = 123456
     data = {"test_key": "test_value"}
@@ -163,7 +163,7 @@ def test_composite_invalid_history():
         )
 
 
-def test_to_dict_valid_arguments_history_empty():
+def test_composite_to_dict_valid_history_empty():
     event_id = "test_event_id"
     timestamp = 123456
     data = {"test_key": "test_value"}
@@ -190,7 +190,7 @@ def test_to_dict_valid_arguments_history_empty():
     }
 
 
-def test_to_dict_valid_arguments_history_key_empty():
+def test_composite_to_dict_valid_history_key_empty():
     event_id = "test_event_id"
     timestamp = 123456
     data = {"test_key": "test_value"}
@@ -217,7 +217,7 @@ def test_to_dict_valid_arguments_history_key_empty():
     }
 
 
-def test_to_dict_valid_arguments_history_not_empty():
+def test_composite_to_dict_valid_history_not_empty():
     event_id = "test_event_id"
     timestamp = 123456
     data = {"test_key": "test_value"}
@@ -244,7 +244,7 @@ def test_to_dict_valid_arguments_history_not_empty():
     }
 
 
-def test_to_dict_valid_arguments_data_empty():
+def test_composite_to_dict_valid_data_empty():
     event_id = "test_event_id"
     timestamp = 123456
     data = {}
@@ -271,7 +271,7 @@ def test_to_dict_valid_arguments_data_empty():
     }
 
 
-def test_from_dict_valid_dict():
+def test_composite_from_dict_valid():
     event_id = "test_event_id"
     timestamp = 123456
     data = {"test_key": "test_value"}
