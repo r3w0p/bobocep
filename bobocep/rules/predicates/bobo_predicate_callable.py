@@ -1,4 +1,4 @@
-from inspect import isfunction, signature, ismethod
+from inspect import signature
 from types import MethodType
 from typing import Callable
 from dpcontracts import require
@@ -11,7 +11,7 @@ from bobocep.rules.predicates.bobo_predicate import BoboPredicate
 class BoboPredicateCallable(BoboPredicate):
     """A predicate that evaluates using a custom function or method.
 
-    :param call: A callable function that is used to evaluate the predicate.
+    :param call: A callable that is used to evaluate the predicate.
                  It must match the BoboPredicate 'evaluate' method's parameter
                  count and return a bool.
     :type call: Callable

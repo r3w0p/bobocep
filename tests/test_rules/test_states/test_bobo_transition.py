@@ -6,7 +6,7 @@ from dpcontracts import PreconditionError
 
 def test_transition_valid_arguments_state_names_not_empty():
     name = "test_name"
-    state_names = [name]
+    state_names = {name}
     strict = True
 
     transition = BoboTransition(
@@ -19,16 +19,14 @@ def test_transition_valid_arguments_state_names_not_empty():
 
 
 def test_transition_valid_arguments_state_names_empty():
-    state_names = []
+    state_names = {}
     strict = True
 
-    transition = BoboTransition(
-        state_names=state_names,
-        strict=strict
-    )
-
-    assert transition.state_names == state_names
-    assert transition.strict == strict
+    with pytest.raises(PreconditionError):
+        BoboTransition(
+            state_names=state_names,
+            strict=strict
+        )
 
 
 def test_transition_invalid_argument_state_names():
@@ -44,7 +42,7 @@ def test_transition_invalid_argument_state_names():
 
 def test_transition_invalid_argument_strict():
     name = "test_name"
-    state_names = [name]
+    state_names = {name}
     strict = "invalid_strict"
 
     with pytest.raises(PreconditionError):
@@ -56,7 +54,7 @@ def test_transition_invalid_argument_strict():
 
 def test_transition_to_dict_valid():
     name = "test_name"
-    state_names = [name]
+    state_names = {name}
     strict = True
 
     transition = BoboTransition(
@@ -72,7 +70,7 @@ def test_transition_to_dict_valid():
 
 def test_transition_from_dict_valid():
     name = "test_name"
-    state_names = [name]
+    state_names = {name}
     strict = True
 
     transition_dict = {
