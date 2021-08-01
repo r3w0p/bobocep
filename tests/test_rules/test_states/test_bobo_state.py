@@ -11,107 +11,107 @@ from dpcontracts import PreconditionError
 
 def test_state_valid_arguments():
     name = "test_name"
-    label = "test_label"
+    group = "test_group"
     predicate = BoboPredicateCallable(call=lambda e, h: True)
-    forbidden = False
+    negated = False
     optional = False
 
     state = BoboState(
         name=name,
-        label=label,
+        group=group,
         predicate=predicate,
-        forbidden=forbidden,
+        negated=negated,
         optional=optional
     )
 
     assert state.name == name
-    assert state.label == label
+    assert state.group == group
     assert state.predicate == predicate
-    assert state.forbidden == forbidden
+    assert state.negated == negated
     assert state.optional == optional
 
 
 def test_state_invalid_name():
     name = 123456
-    label = "test_label"
+    group = "test_group"
     predicate = BoboPredicateCallable(call=lambda e, h: True)
-    forbidden = False
+    negated = False
     optional = False
 
     with pytest.raises(PreconditionError):
         BoboState(
             name=name,
-            label=label,
+            group=group,
             predicate=predicate,
-            forbidden=forbidden,
+            negated=negated,
             optional=optional
         )
 
 
-def test_state_invalid_label():
+def test_state_invalid_group():
     name = "test_name"
-    label = 123456
+    group = 123456
     predicate = BoboPredicateCallable(call=lambda e, h: True)
-    forbidden = False
+    negated = False
     optional = False
 
     with pytest.raises(PreconditionError):
         BoboState(
             name=name,
-            label=label,
+            group=group,
             predicate=predicate,
-            forbidden=forbidden,
+            negated=negated,
             optional=optional
         )
 
 
 def test_state_invalid_predicate():
     name = "test_name"
-    label = "test_label"
+    group = "test_group"
     predicate = 123456
-    forbidden = False
+    negated = False
     optional = False
 
     with pytest.raises(PreconditionError):
         BoboState(
             name=name,
-            label=label,
+            group=group,
             predicate=predicate,
-            forbidden=forbidden,
+            negated=negated,
             optional=optional
         )
 
 
-def test_state_invalid_forbidden():
+def test_state_invalid_negated():
     name = "test_name"
-    label = "test_label"
+    group = "test_group"
     predicate = BoboPredicateCallable(call=lambda e, h: True)
-    forbidden = "invalid_forbidden"
+    negated = "invalid_negated"
     optional = False
 
     with pytest.raises(PreconditionError):
         BoboState(
             name=name,
-            label=label,
+            group=group,
             predicate=predicate,
-            forbidden=forbidden,
+            negated=negated,
             optional=optional
         )
 
 
 def test_state_invalid_optional():
     name = "test_name"
-    label = "test_label"
+    group = "test_group"
     predicate = BoboPredicateCallable(call=lambda e, h: True)
-    forbidden = False
+    negated = False
     optional = "invalid_optional"
 
     with pytest.raises(PreconditionError):
         BoboState(
             name=name,
-            label=label,
+            group=group,
             predicate=predicate,
-            forbidden=forbidden,
+            negated=negated,
             optional=optional
         )
 
@@ -120,9 +120,9 @@ def test_state_predicate_process_true():
     call = lambda e, h: True
     state = BoboState(
         name="test_name",
-        label="test_label",
+        group="test_group",
         predicate=BoboPredicateCallable(call=call),
-        forbidden=False,
+        negated=False,
         optional=False
     )
 
@@ -140,9 +140,9 @@ def test_state_predicate_process_false():
     call = lambda e, h: False
     state = BoboState(
         name="test_name",
-        label="test_label",
+        group="test_group",
         predicate=BoboPredicateCallable(call=call),
-        forbidden=False,
+        negated=False,
         optional=False
     )
 
@@ -160,9 +160,9 @@ def test_state_predicate_process_invalid_event():
     call = lambda e, h: True
     state = BoboState(
         name="test_name",
-        label="test_label",
+        group="test_group",
         predicate=BoboPredicateCallable(call=call),
-        forbidden=False,
+        negated=False,
         optional=False
     )
 
@@ -177,9 +177,9 @@ def test_state_predicate_process_invalid_history():
     call = lambda e, h: True
     state = BoboState(
         name="test_name",
-        label="test_label",
+        group="test_group",
         predicate=BoboPredicateCallable(call=call),
-        forbidden=False,
+        negated=False,
         optional=False
     )
 

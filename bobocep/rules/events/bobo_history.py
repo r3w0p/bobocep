@@ -11,7 +11,7 @@ from bobocep.rules.events.bobo_event import BoboEvent
 class BoboHistory(BoboSerializable, BoboRule):
     """A history of events.
 
-    :param events: The history of events, where each key is a label with which
+    :param events: The history of events, where each key is a group with which
                    a list of events are associated.
     :type events: Dict[str, List[BoboEvent]]
     """

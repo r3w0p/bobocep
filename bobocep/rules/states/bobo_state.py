@@ -12,16 +12,16 @@ class BoboState(BoboRule):
     :param name: The state name.
     :type name: str
 
-    :param label: The state label for grouping multiple states.
-    :type label: str
+    :param group: The state group for grouping multiple states.
+    :type group: str
 
     :param predicate: The state predicate that, if True, would cause a
                       transition to this state.
     :type predicate: BoboPredicate
 
-    :param forbidden: Whether the state's predicate should *not* happen (i.e.
-                      predicate passes evaluation if False).
-    :type forbidden: bool
+    :param negated: Whether the state's predicate should not happen (i.e.
+                    predicate passes evaluation if False).
+    :type negated: bool
 
     :param optional: Whether the state is optional (i.e. will not halt the
                      corresponding automaton if predicate returns False).
@@ -30,26 +30,26 @@ class BoboState(BoboRule):
 
     @require("'name' must be a str",
              lambda args: isinstance(args.name, str))
-    @require("'label' must be a str",
-             lambda args: isinstance(args.label, str))
+    @require("'group' must be a str",
+             lambda args: isinstance(args.group, str))
     @require("'predicate' must be an instance of BoboPredicate",
              lambda args: isinstance(args.predicate, BoboPredicate))
-    @require("'forbidden' must be a bool",
-             lambda args: isinstance(args.forbidden, bool))
+    @require("'negated' must be a bool",
+             lambda args: isinstance(args.negated, bool))
     @require("'optional' must be a bool",
              lambda args: isinstance(args.optional, bool))
     def __init__(self,
                  name: str,
-                 label: str,
+                 group: str,
                  predicate: BoboPredicate,
-                 forbidden: bool,
+                 negated: bool,
                  optional: bool) -> None:
         super().__init__()
 
         self.name = name
-        self.label = label
+        self.group = group
         self.predicate = predicate
-        self.forbidden = forbidden
+        self.negated = negated
         self.optional = optional
 
     @require("'event' must be an instance of BoboEvent",
