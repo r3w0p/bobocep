@@ -83,7 +83,8 @@ def _require_valid_path_start_to_final(
                 # inconsistent state names
                 return False
 
-            if state_current.group in state_groups_reached:
+            if state_current.group in state_groups_reached \
+                    and state_current.group != group_last:
                 # group has already been reached
                 return False
 
@@ -110,12 +111,14 @@ def _require_valid_path_start_to_final(
                     return False
 
                 if states_next is None:
-                    states_next = transition.state_names.copy()
-                elif states_next != transition.state_names:
+                    states_next = state_transition_names
+                elif states_next != state_transition_names:
                     # current states have inconsistent transitions
                     return False
 
         state_names_current = states_next if states_next is not None else set()
+
+    return True
 
 
 class BoboNFA(BoboRule):
@@ -185,7 +188,13 @@ class BoboNFA(BoboRule):
              lambda args: args.start_state_name in args.transitions)
     @require("transition must not exist for final state",
              lambda args: args.final_state_name not in args.transitions)
-    # todo _require functions
+    @require("a valid path must exist between start state and final state",
+             lambda args: _require_valid_path_start_to_final(
+                 states=args.states,
+                 transitions=args.transitions,
+                 start_state_name=args.start_state_name,
+                 final_state_name=args.final_state_name
+             ))
     def __init__(self,
                  name: str,
                  states: Dict[str, BoboState],
