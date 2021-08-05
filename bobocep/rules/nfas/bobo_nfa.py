@@ -14,18 +14,11 @@ def _require_valid_start_state(
 
     if any([
         start_state_name not in states,
-        start_state_name not in transitions
-    ]):
-        return False
-
-    start_state = states[start_state_name]
-    start_transition = transitions[start_state_name]
-
-    if any([
-        start_state.negated,
-        start_state.optional,
-        start_state_name in start_transition.state_names,
-        len(start_transition.state_names) > 1
+        start_state_name not in transitions,
+        states[start_state_name].negated,
+        states[start_state_name].optional,
+        start_state_name in transitions[start_state_name].state_names,
+        len(transitions[start_state_name].state_names) != 1
     ]):
         return False
 
@@ -43,11 +36,52 @@ def _require_valid_final_state(
     final_state = states[final_state_name]
 
     if any([
+        final_state_name in transitions,
         final_state.negated,
-        final_state.optional,
-        final_state_name in transitions
+        final_state.optional
     ]):
         return False
+
+    return True
+
+
+def _require_valid_second_state(
+        states: Dict[str, BoboState],
+        transitions: Dict[str, BoboTransition],
+        start_state_name: str,
+        final_state_name: str):
+
+    second_state_name = next(iter(transitions[start_state_name].state_names))
+
+    if second_state_name != final_state_name:
+        if any([
+            second_state_name not in states,
+            second_state_name not in transitions,
+            states[second_state_name].negated,
+            states[second_state_name].optional
+        ]):
+            return False
+
+    return True
+
+
+def _require_valid_penultimate_state(
+        states: Dict[str, BoboState],
+        transitions: Dict[str, BoboTransition],
+        final_state_name: str):
+
+    for state in states.values():
+        if state not in transitions:
+            continue
+
+        transition = transitions[state.name]
+
+        if final_state_name in transition.state_names:
+            if any([
+                state.negated,
+                state.optional
+            ]):
+                return False
 
     return True
 
@@ -86,6 +120,12 @@ def _require_valid_path_start_to_final(
             if state_current.group in state_groups_reached \
                     and state_current.group != group_last:
                 # group has already been reached
+                return False
+
+            if len(state_names_current) > 1 and (state_current.negated or
+                                                 state_current.optional):
+                # nondeterministic group must not contain
+                # negated or optional states
                 return False
 
             state_names_reached.add(state_current.name)
@@ -188,6 +228,31 @@ class BoboNFA(BoboRule):
              lambda args: args.start_state_name in args.transitions)
     @require("transition must not exist for final state",
              lambda args: args.final_state_name not in args.transitions)
+    @require("_require_valid_start_state",
+             lambda args: _require_valid_start_state(
+                 states=args.states,
+                 transitions=args.transitions,
+                 start_state_name=args.start_state_name
+             ))
+    @require("_require_valid_final_state",
+             lambda args: _require_valid_final_state(
+                 states=args.states,
+                 transitions=args.transitions,
+                 final_state_name=args.final_state_name
+             ))
+    @require("_require_valid_second_state",
+             lambda args: _require_valid_second_state(
+                 states=args.states,
+                 transitions=args.transitions,
+                 start_state_name=args.start_state_name,
+                 final_state_name=args.final_state_name
+             ))
+    @require("_require_valid_penultimate_state",
+             lambda args: _require_valid_penultimate_state(
+                 states=args.states,
+                 transitions=args.transitions,
+                 final_state_name=args.final_state_name
+             ))
     @require("a valid path must exist between start state and final state",
              lambda args: _require_valid_path_start_to_final(
                  states=args.states,

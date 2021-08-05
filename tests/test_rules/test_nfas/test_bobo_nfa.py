@@ -33,7 +33,7 @@ def _simple_transition(state_name: str, strict: bool = False):
     )
 
 
-def test_nfa_valid_det_start_final_only():
+def test_nfa_valid_det_start_final():
     test_state_start = _simple_state("start")
     test_state_final = _simple_state("final")
 
@@ -69,7 +69,7 @@ def test_nfa_valid_det_start_final_only():
     assert test_nfa.haltconditions == test_haltconditions
 
 
-def test_nfa_valid_det_three_states():
+def test_nfa_valid_det_start_a_final():
     test_state_start = _simple_state("start")
     test_state_final = _simple_state("final")
     test_state_a = _simple_state("a")
@@ -95,7 +95,7 @@ def test_nfa_valid_det_three_states():
     assert test_nfa.final_state == test_state_final
 
 
-def test_nfa_valid_det_five_states():
+def test_nfa_valid_det_start_a_b_c_final():
     test_state_start = _simple_state("start")
     test_state_final = _simple_state("final")
     test_state_a = _simple_state("a")
@@ -127,7 +127,7 @@ def test_nfa_valid_det_five_states():
     assert test_nfa.final_state == test_state_final
 
 
-def test_nfa_valid_nondet_start_a_group_final():
+def test_nfa_valid_nondet_start_a_2group_final():
     test_state_start = _simple_state("start")
     test_state_final = _simple_state("final")
     test_state_a = _simple_state("a")
@@ -165,7 +165,7 @@ def test_nfa_valid_nondet_start_a_group_final():
     assert test_nfa.final_state == test_state_final
 
 
-def test_nfa_valid_nondet_start_a_group_d_group_h_final():
+def test_nfa_valid_nondet_start_a_2group_d_3group_h_final():
     test_state_start = _simple_state("start")
     test_state_final = _simple_state("final")
     test_state_a = _simple_state("a")
@@ -225,7 +225,7 @@ def test_nfa_valid_nondet_start_a_group_d_group_h_final():
     assert test_nfa.final_state == test_state_final
 
 
-def test_nfa_valid_nondet_start_a_group_group_h_final():
+def test_nfa_valid_nondet_start_a_3group_3group_h_final():
     test_state_start = _simple_state("start")
     test_state_final = _simple_state("final")
     test_state_a = _simple_state("a")
@@ -296,7 +296,7 @@ def test_nfa_valid_nondet_start_a_group_group_h_final():
     assert test_nfa.final_state == test_state_final
 
 
-def test_nfa_valid_det_self_loop_three_states():
+def test_nfa_valid_det_start_aloop_final():
     test_state_start = _simple_state("start")
     test_state_final = _simple_state("final")
     test_state_a = _simple_state("a")
@@ -328,7 +328,7 @@ def test_nfa_valid_det_self_loop_three_states():
     assert test_nfa.final_state == test_state_final
 
 
-def test_nfa_valid_det_self_loop_five_states():
+def test_nfa_valid_det_start_a_bloop_c_final():
     test_state_start = _simple_state("start")
     test_state_final = _simple_state("final")
     test_state_a = _simple_state("a")
@@ -366,7 +366,39 @@ def test_nfa_valid_det_self_loop_five_states():
     assert test_nfa.final_state == test_state_final
 
 
-def test_nfa_invalid_det_self_loop_only():
+def test_nfa_valid_det_optional_state():
+    test_state_start = _simple_state("start")
+    test_state_final = _simple_state("final")
+    test_state_a = _simple_state("a")
+    test_state_b = _simple_state("b", optional=True)
+    test_state_c = _simple_state("c")
+
+    test_nfa = BoboNFA(
+        name="test_nfa_name",
+        states={
+            test_state_start.name: test_state_start,
+            test_state_final.name: test_state_final,
+            test_state_a.name: test_state_a,
+            test_state_b.name: test_state_b,
+            test_state_c.name: test_state_c
+        },
+        transitions={
+            test_state_start.name: _simple_transition(test_state_a.name),
+            test_state_a.name: _simple_transition(test_state_b.name),
+            test_state_b.name: _simple_transition(test_state_c.name),
+            test_state_c.name: _simple_transition(test_state_final.name)
+        },
+        start_state_name=test_state_start.name,
+        final_state_name=test_state_final.name,
+        preconditions=[],
+        haltconditions=[]
+    )
+
+    assert test_nfa.start_state == test_state_start
+    assert test_nfa.final_state == test_state_final
+
+
+def test_nfa_invalid_det_self_loop_only_in_transition():
     test_state_start = _simple_state("start")
     test_state_final = _simple_state("final")
     test_state_a = _simple_state("a")
@@ -395,16 +427,16 @@ def test_nfa_invalid_det_self_loop_only():
         )
 
 
-def test_nfa_invalid_one_state():
-    test_state_one = _simple_state(state_id="one")
+def test_nfa_invalid_one_state_only():
+    test_state_start = _simple_state("start")
 
     with pytest.raises(PreconditionError):
         BoboNFA(
             name="test_nfa_name",
-            states={test_state_one.name: test_state_one},
+            states={test_state_start.name: test_state_start},
             transitions={},
-            start_state_name=test_state_one.name,
-            final_state_name=test_state_one.name,
+            start_state_name=test_state_start.name,
+            final_state_name=test_state_start.name,
             preconditions=[],
             haltconditions=[]
         )
