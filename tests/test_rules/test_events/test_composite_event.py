@@ -297,4 +297,4 @@ def test_composite_from_dict_valid():
     assert event.nfa_name == nfa_name
     assert isinstance(event.history, BoboHistory)
 
-# todo from_dict invalid
+# todo from_dict test_invalid

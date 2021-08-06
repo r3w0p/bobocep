@@ -156,4 +156,4 @@ def test_history_from_dict_valid_one_primitive():
     assert len(history.events[event_key]) == 1
     assert isinstance(history.events[event_key][0], PrimitiveEvent)
 
-# todo from_dict invalid
+# todo from_dict test_invalid

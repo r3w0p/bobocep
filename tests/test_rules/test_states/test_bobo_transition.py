@@ -83,4 +83,4 @@ def test_transition_from_dict_valid():
     assert transition.state_names == state_names
     assert transition.strict == strict
 
-# todo from_dict invalid
+# todo from_dict test_invalid

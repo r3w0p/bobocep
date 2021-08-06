@@ -54,8 +54,11 @@ def _require_valid_second_state(
     second_state_name = next(iter(transitions[start_state_name].state_names))
 
     if second_state_name != final_state_name:
+        # for reasons unknown, this needs to be separated from any()
+        if second_state_name not in states:
+            return False
+
         if any([
-            second_state_name not in states,
             second_state_name not in transitions,
             states[second_state_name].negated,
             states[second_state_name].optional
@@ -104,7 +107,7 @@ def _require_valid_path_start_to_final(
         for state_name_current in state_names_current:
 
             if state_name_current not in state_names:
-                # invalid state name
+                # test_invalid state name
                 return False
 
             if state_name_current in state_names_reached:
@@ -253,7 +256,7 @@ class BoboNFA(BoboRule):
                  transitions=args.transitions,
                  final_state_name=args.final_state_name
              ))
-    @require("a valid path must exist between start state and final state",
+    @require("valid path must exist between start state and final state",
              lambda args: _require_valid_path_start_to_final(
                  states=args.states,
                  transitions=args.transitions,

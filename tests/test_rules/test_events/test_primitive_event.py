@@ -107,4 +107,4 @@ def test_primitive_from_dict_valid():
     assert event.timestamp == timestamp
     assert event.data == data
 
-# todo from_dict invalid
+# todo from_dict test_invalid
