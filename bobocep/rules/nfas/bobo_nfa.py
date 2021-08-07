@@ -73,18 +73,21 @@ def _require_valid_penultimate_state(
         transitions: Dict[str, BoboTransition],
         final_state_name: str):
 
-    for state in states.values():
-        if state not in transitions:
-            continue
+    penultimate_states = [
+        state for state in states.values()
+        if (state.name in transitions and
+            final_state_name in transitions[state.name].state_names)
+    ]
 
-        transition = transitions[state.name]
+    if len(penultimate_states) == 0:
+        return False
 
-        if final_state_name in transition.state_names:
-            if any([
-                state.negated,
-                state.optional
-            ]):
-                return False
+    for state in penultimate_states:
+        if any([
+            state.negated,
+            state.optional
+        ]):
+            return False
 
     return True
 
