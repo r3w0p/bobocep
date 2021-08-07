@@ -178,13 +178,16 @@ def test_invalid_det_start_state_loop():
 def test_invalid_det_final_state_not_in_states():
     test_state_start = simple_state("start")
     test_state_final = simple_state("final")
+    test_state_a = simple_state("a")
 
     test_nfa_name = "test_nfa_name"
     test_nfa_states = {
-        test_state_start.name: test_state_start
+        test_state_start.name: test_state_start,
+        test_state_a.name: test_state_a
     }
     test_nfa_transitions = {
-        test_state_start.name: simple_transition(test_state_final.name)
+        test_state_start.name: simple_transition(test_state_a.name),
+        test_state_a.name: simple_transition(test_state_final.name)
     }
     test_start_state_name = test_state_start.name
     test_final_state_name = test_state_final.name
@@ -422,16 +425,22 @@ def test_invalid_det_second_state_optional():
 def test_invalid_det_penultimate_state_not_in_states():
     test_state_start = simple_state("start")
     test_state_final = simple_state("final")
+    test_state_a = simple_state("a")
+    test_state_b = simple_state("b")
     test_state_penultimate = simple_state("penultimate")
 
     test_nfa_name = "test_nfa_name"
     test_nfa_states = {
         test_state_start.name: test_state_start,
-        test_state_final.name: test_state_final
+        test_state_final.name: test_state_final,
+        test_state_a.name: test_state_a,
+        test_state_b.name: test_state_b
     }
     test_nfa_transitions = {
-        test_state_start.name: simple_transition(test_state_penultimate.name),
-        test_state_penultimate.name: simple_transition(test_state_final.name)
+        test_state_start.name: simple_transition(test_state_a.name),
+        test_state_a.name: simple_transition(test_state_b.name),
+        test_state_b.name: simple_transition(test_state_penultimate.name),
+        test_state_penultimate.name: simple_transition(test_state_final.name),
     }
     test_start_state_name = test_state_start.name
     test_final_state_name = test_state_final.name
@@ -453,16 +462,22 @@ def test_invalid_det_penultimate_state_not_in_states():
 def test_invalid_det_penultimate_state_not_in_transitions():
     test_state_start = simple_state("start")
     test_state_final = simple_state("final")
+    test_state_a = simple_state("a")
+    test_state_b = simple_state("b")
     test_state_penultimate = simple_state("penultimate")
 
     test_nfa_name = "test_nfa_name"
     test_nfa_states = {
         test_state_start.name: test_state_start,
         test_state_final.name: test_state_final,
+        test_state_a.name: test_state_a,
+        test_state_b.name: test_state_b,
         test_state_penultimate.name: test_state_penultimate
     }
     test_nfa_transitions = {
-        test_state_start.name: simple_transition(test_state_penultimate.name)
+        test_state_start.name: simple_transition(test_state_a.name),
+        test_state_a.name: simple_transition(test_state_b.name),
+        test_state_b.name: simple_transition(test_state_penultimate.name)
     }
     test_start_state_name = test_state_start.name
     test_final_state_name = test_state_final.name
@@ -484,16 +499,22 @@ def test_invalid_det_penultimate_state_not_in_transitions():
 def test_invalid_det_penultimate_state_negated():
     test_state_start = simple_state("start")
     test_state_final = simple_state("final")
+    test_state_a = simple_state("a")
+    test_state_b = simple_state("b")
     test_state_penultimate = simple_state("penultimate", negated=True)
 
     test_nfa_name = "test_nfa_name"
     test_nfa_states = {
         test_state_start.name: test_state_start,
         test_state_final.name: test_state_final,
+        test_state_a.name: test_state_a,
+        test_state_b.name: test_state_b,
         test_state_penultimate.name: test_state_penultimate
     }
     test_nfa_transitions = {
-        test_state_start.name: simple_transition(test_state_penultimate.name),
+        test_state_start.name: simple_transition(test_state_a.name),
+        test_state_a.name: simple_transition(test_state_b.name),
+        test_state_b.name: simple_transition(test_state_penultimate.name),
         test_state_penultimate.name: simple_transition(test_state_final.name)
     }
     test_start_state_name = test_state_start.name
@@ -516,16 +537,22 @@ def test_invalid_det_penultimate_state_negated():
 def test_invalid_det_penultimate_state_optional():
     test_state_start = simple_state("start")
     test_state_final = simple_state("final")
+    test_state_a = simple_state("a")
+    test_state_b = simple_state("b")
     test_state_penultimate = simple_state("penultimate", optional=True)
 
     test_nfa_name = "test_nfa_name"
     test_nfa_states = {
         test_state_start.name: test_state_start,
         test_state_final.name: test_state_final,
+        test_state_a.name: test_state_a,
+        test_state_b.name: test_state_b,
         test_state_penultimate.name: test_state_penultimate
     }
     test_nfa_transitions = {
-        test_state_start.name: simple_transition(test_state_penultimate.name),
+        test_state_start.name: simple_transition(test_state_a.name),
+        test_state_a.name: simple_transition(test_state_b.name),
+        test_state_b.name: simple_transition(test_state_penultimate.name),
         test_state_penultimate.name: simple_transition(test_state_final.name)
     }
     test_start_state_name = test_state_start.name
@@ -610,6 +637,34 @@ def test_invalid_det_self_transition_to_previous_state():
         )
 
 
+def test_invalid_det_state_does_not_exist():
+    test_state_start = simple_state("start")
+    test_state_final = simple_state("final")
+    test_state_a = simple_state("a")
+    test_state_b = simple_state("b")
+    test_state_non = simple_state("non")
+
+    with pytest.raises(PreconditionError):
+        BoboNFA(
+            name="test_nfa_name",
+            states={
+                test_state_start.name: test_state_start,
+                test_state_final.name: test_state_final,
+                test_state_a.name: test_state_a,
+                test_state_b.name: test_state_b
+            },
+            transitions={
+                test_state_start.name: simple_transition(test_state_a.name),
+                test_state_a.name: simple_transition(test_state_b.name),
+                test_state_non.name: simple_transition(test_state_final.name)
+            },
+            start_state_name=test_state_start.name,
+            final_state_name=test_state_final.name,
+            preconditions=[],
+            haltconditions=[]
+        )
+
+
 def test_invalid_det_no_transition_for_state():
     test_state_start = simple_state("start")
     test_state_final = simple_state("final")
@@ -630,6 +685,37 @@ def test_invalid_det_no_transition_for_state():
             transitions={
                 test_state_start.name: simple_transition(test_state_a.name),
                 test_state_a.name: simple_transition(test_state_b.name),
+                test_state_c.name: simple_transition(test_state_final.name)
+            },
+            start_state_name=test_state_start.name,
+            final_state_name=test_state_final.name,
+            preconditions=[],
+            haltconditions=[]
+        )
+
+
+def test_invalid_det_incorrect_state_key():
+    test_state_start = simple_state("start")
+    test_state_final = simple_state("final")
+    test_state_a = simple_state("a")
+    test_state_b = simple_state("b")
+    test_state_c = simple_state("c")
+    test_incorrect_state_key = "incorrect"
+
+    with pytest.raises(PreconditionError):
+        BoboNFA(
+            name="test_nfa_name",
+            states={
+                test_state_start.name: test_state_start,
+                test_state_final.name: test_state_final,
+                test_state_a.name: test_state_a,
+                test_incorrect_state_key: test_state_b,
+                test_state_c.name: test_state_c
+            },
+            transitions={
+                test_state_start.name: simple_transition(test_state_a.name),
+                test_state_a.name: simple_transition(test_state_b.name),
+                test_state_b.name: simple_transition(test_state_c.name),
                 test_state_c.name: simple_transition(test_state_final.name)
             },
             start_state_name=test_state_start.name,
