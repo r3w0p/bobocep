@@ -1,4 +1,4 @@
-[![bobocep](https://raw.githubusercontent.com/r3w0p/bobocep/develop/config/images/logo/400.png)](
+[![bobocep](https://raw.githubusercontent.com/r3w0p/bobocep/develop/config/images/icon/400.png)](
 https://github.com/r3w0p/bobocep)
 
 [![License](https://img.shields.io/github/license/r3w0p/bobocep.svg)](

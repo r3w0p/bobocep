@@ -50,37 +50,3 @@ def test_transition_invalid_argument_strict():
             state_names=state_names,
             strict=strict
         )
-
-
-def test_transition_to_dict_valid():
-    name = "test_name"
-    state_names = {name}
-    strict = True
-
-    transition = BoboTransition(
-        state_names=state_names,
-        strict=strict
-    )
-
-    assert transition.to_dict() == {
-        BoboTransition.STATE_NAMES: state_names,
-        BoboTransition.STRICT: strict
-    }
-
-
-def test_transition_from_dict_valid():
-    name = "test_name"
-    state_names = {name}
-    strict = True
-
-    transition_dict = {
-        BoboTransition.STATE_NAMES: state_names,
-        BoboTransition.STRICT: strict
-    }
-
-    transition = BoboTransition.from_dict(d=transition_dict)
-
-    assert transition.state_names == state_names
-    assert transition.strict == strict
-
-# todo from_dict test_invalid

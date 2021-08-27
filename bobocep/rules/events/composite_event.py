@@ -54,29 +54,3 @@ class CompositeEvent(BoboEvent):
         self.event_name = event_name
         self.nfa_name = nfa_name
         self.history = history
-
-    @overrides
-    def to_dict(self) -> dict:
-        return {
-            self.EVENT_ID: self.event_id,
-            self.TIMESTAMP: self.timestamp,
-            self.DATA: copy(self.data),
-            self.EVENT_NAME: self.event_name,
-            self.NFA_NAME: self.nfa_name,
-            self.HISTORY: self.history.to_dict()
-        }
-
-    @staticmethod
-    @overrides
-    def from_dict(d: dict) -> 'CompositeEvent':
-        """
-        :rtype: CompositeEvent
-        """
-        return CompositeEvent(
-            event_id=d[CompositeEvent.EVENT_ID],
-            timestamp=d[CompositeEvent.TIMESTAMP],
-            data=d[CompositeEvent.DATA],
-            event_name=d[CompositeEvent.EVENT_NAME],
-            nfa_name=d[CompositeEvent.NFA_NAME],
-            history=BoboHistory.from_dict(d[CompositeEvent.HISTORY])
-        )

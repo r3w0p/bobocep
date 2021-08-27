@@ -38,18 +38,3 @@ class BoboTransition(BoboSerializable, BoboRule):
         self.state_names = state_names
         self.strict = strict
         self.deterministic = len(state_names) == 1
-
-    @overrides
-    def to_dict(self) -> dict:
-        return {
-            self.STATE_NAMES: copy(self.state_names),
-            self.STRICT: self.strict
-        }
-
-    @staticmethod
-    @overrides
-    def from_dict(d: dict) -> 'BoboTransition':
-        return BoboTransition(
-            state_names=d[BoboTransition.STATE_NAMES],
-            strict=d[BoboTransition.STRICT]
-        )

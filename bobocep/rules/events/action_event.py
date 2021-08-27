@@ -1,11 +1,14 @@
 from typing import Dict
+from copy import copy
+from dpcontracts import require
 from overrides import overrides
 
 from bobocep.rules.events.bobo_event import BoboEvent
+from bobocep.rules.events.bobo_history import BoboHistory
 
 
-class PrimitiveEvent(BoboEvent):
-    """A primitive event.
+class ActionEvent(BoboEvent):
+    """An action event.
 
     :param event_id: The event ID.
     :type event_id: str
@@ -21,6 +24,9 @@ class PrimitiveEvent(BoboEvent):
                  event_id: str,
                  timestamp: int,
                  data: Dict[str, str]) -> None:
+
         super().__init__(event_id=event_id,
                          timestamp=timestamp,
                          data=data)
+        # todo
+

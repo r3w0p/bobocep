@@ -45,34 +45,3 @@ class BoboHistory(BoboSerializable, BoboRule):
                 if self.last is None or \
                         event.timestamp > self.last.timestamp:
                     self.last = event
-
-    @overrides
-    def to_dict(self) -> dict:
-        d = {}
-        for key in self.events.keys():
-            d[key] = []
-            for event in self.events[key]:
-                d[key].append({
-                    self.HISTORY_EVENT: event.to_dict(),
-                    self.HISTORY_EVENT_MODULE: event.__class__.__module__,
-                    self.HISTORY_EVENT_CLASS: event.__class__.__name__
-                })
-        return d
-
-    @staticmethod
-    @overrides
-    def from_dict(d: dict) -> 'BoboHistory':
-        """
-        :rtype: BoboHistory
-        """
-        events = {}
-        for key in d.keys():
-            events[key] = []
-            for event_dict in d[key]:
-                event_class = getattr(
-                    sys.modules[event_dict[BoboHistory.HISTORY_EVENT_MODULE]],
-                    event_dict[BoboHistory.HISTORY_EVENT_CLASS])
-                events[key].append(
-                    event_class.from_dict(
-                        event_dict[BoboHistory.HISTORY_EVENT]))
-        return BoboHistory(events=events)
