@@ -1,4 +1,5 @@
 from typing import Dict, List
+
 from dpcontracts import require
 
 from bobocep.rules.bobo_rule import BoboRule

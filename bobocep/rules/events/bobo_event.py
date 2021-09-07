@@ -1,12 +1,12 @@
 from abc import ABC
 from typing import Dict
+
 from dpcontracts import require
 
-from bobocep.bobo_serializable import BoboSerializable
 from bobocep.rules.bobo_rule import BoboRule
 
 
-class BoboEvent(BoboSerializable, BoboRule, ABC):
+class BoboEvent(BoboRule, ABC):
     """An abstract event.
 
     :param event_id: The event ID.

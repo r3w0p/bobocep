@@ -1,12 +1,11 @@
 import pytest
+from dpcontracts import PreconditionError
 
-from bobocep.rules.events.bobo_event import BoboEvent
-from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.rules.events.bobo_history import BoboHistory
+from bobocep.rules.events.primitive_event import PrimitiveEvent
 from bobocep.rules.predicates.bobo_predicate_callable import \
     BoboPredicateCallable
 from bobocep.rules.states.bobo_state import BoboState
-from dpcontracts import PreconditionError
 
 
 def test_state_valid_arguments():

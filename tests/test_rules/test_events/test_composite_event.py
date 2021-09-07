@@ -1,8 +1,8 @@
 import pytest
-
-from bobocep.rules.events.composite_event import CompositeEvent
-from bobocep.rules.events.bobo_history import BoboHistory
 from dpcontracts import PreconditionError
+
+from bobocep.rules.events.bobo_history import BoboHistory
+from bobocep.rules.events.composite_event import CompositeEvent
 
 
 def test_composite_valid_arguments():

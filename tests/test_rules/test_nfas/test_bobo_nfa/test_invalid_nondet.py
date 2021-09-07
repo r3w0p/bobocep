@@ -1,15 +1,9 @@
 import pytest
-
-from bobocep.rules.events.bobo_event import BoboEvent
-from bobocep.rules.states.bobo_state import BoboState
-from bobocep.rules.states.bobo_transition import BoboTransition
-from bobocep.rules.events.primitive_event import PrimitiveEvent
-from bobocep.rules.events.bobo_history import BoboHistory
-from bobocep.rules.predicates.bobo_predicate_callable import \
-    BoboPredicateCallable
-from bobocep.rules.nfas.bobo_nfa import BoboNFA
 from dpcontracts import PreconditionError
+
+from bobocep.rules.nfas.bobo_nfa import BoboNFA
 from tests.test_rules.test_nfas.test_bobo_nfa.helpers_bobo_nfa import *
+
 
 # todo nondet negated group: one in group and all
 # todo nondet optional group: one in group and all

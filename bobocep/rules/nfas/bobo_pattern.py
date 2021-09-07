@@ -1,7 +1,8 @@
 from typing import List
-
+from dpcontracts import require
 from bobocep.rules.nfas.bobo_pattern_layer import BoboPatternLayer
 from bobocep.rules.predicates.bobo_predicate import BoboPredicate
+from bobocep.rules.nfas.bobo_nfa import BoboNFA
 
 
 class BoboPattern:
@@ -17,6 +18,13 @@ class BoboPattern:
 
         self._started = False
 
+    def generate_nfa(self) -> BoboNFA:
+        """"""  # todo
+
+    @require("'group' must be a str",
+             lambda args: isinstance(args.group, str))
+    @require("'predicate' must be a BoboPredicate instance",
+             lambda args: isinstance(args.predicate, BoboPredicate))
     def start(self,
               group: str,
               predicate: BoboPredicate) -> 'BoboPattern':
@@ -44,6 +52,16 @@ class BoboPattern:
         self._started = True
         return self
 
+    @require("'group' must be a str",
+             lambda args: isinstance(args.group, str))
+    @require("'predicate' must be a BoboPredicate instance",
+             lambda args: isinstance(args.predicate, BoboPredicate))
+    @require("'times' must be a int",
+             lambda args: isinstance(args.times, int))
+    @require("'loop' must be a bool",
+             lambda args: isinstance(args.loop, bool))
+    @require("'optional' must be a bool",
+             lambda args: isinstance(args.optional, bool))
     def next(self,
              group: str,
              predicate: BoboPredicate,
@@ -85,6 +103,10 @@ class BoboPattern:
             optional=optional))
         return self
 
+    @require("'group' must be a str",
+             lambda args: isinstance(args.group, str))
+    @require("'predicate' must be a BoboPredicate instance",
+             lambda args: isinstance(args.predicate, BoboPredicate))
     def not_next(self,
                  group: str,
                  predicate: BoboPredicate) -> 'BoboPattern':
@@ -113,6 +135,16 @@ class BoboPattern:
             optional=False))
         return self
 
+    @require("'group' must be a str",
+             lambda args: isinstance(args.group, str))
+    @require("'predicate' must be a BoboPredicate instance",
+             lambda args: isinstance(args.predicate, BoboPredicate))
+    @require("'times' must be a int",
+             lambda args: isinstance(args.times, int))
+    @require("'loop' must be a bool",
+             lambda args: isinstance(args.loop, bool))
+    @require("'optional' must be a bool",
+             lambda args: isinstance(args.optional, bool))
     def followed_by(self,
                     group: str,
                     predicate: BoboPredicate,
@@ -154,6 +186,10 @@ class BoboPattern:
             optional=optional))
         return self
 
+    @require("'group' must be a str",
+             lambda args: isinstance(args.group, str))
+    @require("'predicate' must be a BoboPredicate instance",
+             lambda args: isinstance(args.predicate, BoboPredicate))
     def not_followed_by(self,
                         group: str,
                         predicate: BoboPredicate) -> 'BoboPattern':
@@ -182,6 +218,14 @@ class BoboPattern:
             optional=False))
         return self
 
+    @require("'group' must be a str",
+             lambda args: isinstance(args.group, str))
+    @require("'predicates' must be a list of BoboPredicate instances with "
+             "length > 0",
+             lambda args: isinstance(args.predicates, list) and
+                          len(args.predicates) > 0 and
+                          all(isinstance(obj, BoboPredicate) for obj in
+                              args.predicates))
     def followed_by_any(self,
                         group: str,
                         predicates: List[BoboPredicate]) -> 'BoboPattern':
@@ -212,6 +256,8 @@ class BoboPattern:
             optional=False))
         return self
 
+    @require("'predicate' must be a BoboPredicate instance",
+             lambda args: isinstance(args.predicate, BoboPredicate))
     def precondition(self, predicate: BoboPredicate) -> 'BoboPattern':
         """Adds a new precondition predicate.
 
@@ -224,6 +270,8 @@ class BoboPattern:
         self.preconditions.append(predicate)
         return self
 
+    @require("'predicate' must be a BoboPredicate instance",
+             lambda args: isinstance(args.predicate, BoboPredicate))
     def haltcondition(self, predicate: BoboPredicate) -> 'BoboPattern':
         """Adds a new haltcondition predicate.
 
@@ -234,24 +282,4 @@ class BoboPattern:
         """
 
         self.haltconditions.append(predicate)
-        return self
-
-    def append(self, patterns: List['BoboPattern']) -> 'BoboPattern':
-        """Appends a list of patterns to the current pattern, in list order.
-
-        :param patterns: The patterns to append to the current pattern.
-        :type patterns: List[BoboPattern]
-
-        :return: The current pattern.
-        """
-
-        if not self._started:
-            raise RuntimeError(
-                "Method 'start' must be called before 'append'")
-
-        for pattern in patterns:
-            self.layers.extend(pattern.layers)
-            self.preconditions.extend(pattern.preconditions)
-            self.haltconditions.extend(pattern.haltconditions)
-
         return self

@@ -1,9 +1,9 @@
 from dpcontracts import require, ensure
 
+from bobocep.rules.bobo_rule import BoboRule
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.bobo_history import BoboHistory
 from bobocep.rules.predicates.bobo_predicate import BoboPredicate
-from bobocep.rules.bobo_rule import BoboRule
 
 
 class BoboState(BoboRule):

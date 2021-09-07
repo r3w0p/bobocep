@@ -1,14 +1,12 @@
 from typing import Dict, List
-from dpcontracts import require
-from overrides import overrides
-import sys
 
-from bobocep.bobo_serializable import BoboSerializable
+from dpcontracts import require
+
 from bobocep.rules.bobo_rule import BoboRule
 from bobocep.rules.events.bobo_event import BoboEvent
 
 
-class BoboHistory(BoboSerializable, BoboRule):
+class BoboHistory(BoboRule):
     """A history of events.
 
     :param events: The history of events, where each key is a group with which

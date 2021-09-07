@@ -1,7 +1,7 @@
 import pytest
+from dpcontracts import PreconditionError
 
 from bobocep.rules.states.bobo_transition import BoboTransition
-from dpcontracts import PreconditionError
 
 
 def test_transition_valid_arguments_state_names_not_empty():

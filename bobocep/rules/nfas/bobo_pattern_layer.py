@@ -1,5 +1,7 @@
 from typing import List
 
+from dpcontracts import require
+
 from bobocep.rules.predicates.bobo_predicate import BoboPredicate
 
 
@@ -30,6 +32,24 @@ class BoboPatternLayer:
     :type optional: bool
     """
 
+    @require("'group' must be a str",
+             lambda args: isinstance(args.group, str))
+    @require("'predicates' must be a list of BoboPredicate instances with "
+             "length > 0",
+             lambda args: isinstance(args.predicates, list) and
+                          len(args.predicates) > 0 and
+                          all(isinstance(obj, BoboPredicate) for obj in
+                              args.predicates))
+    @require("'times' must be a int",
+             lambda args: isinstance(args.times, int))
+    @require("'loop' must be a bool",
+             lambda args: isinstance(args.loop, bool))
+    @require("'strict' must be a bool",
+             lambda args: isinstance(args.strict, bool))
+    @require("'negated' must be a bool",
+             lambda args: isinstance(args.negated, bool))
+    @require("'optional' must be a bool",
+             lambda args: isinstance(args.optional, bool))
     def __init__(self,
                  group: str,
                  predicates: List[BoboPredicate],

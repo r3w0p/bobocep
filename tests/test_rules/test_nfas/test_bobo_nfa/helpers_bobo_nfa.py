@@ -1,7 +1,7 @@
-from bobocep.rules.states.bobo_state import BoboState
-from bobocep.rules.states.bobo_transition import BoboTransition
 from bobocep.rules.predicates.bobo_predicate_callable import \
     BoboPredicateCallable
+from bobocep.rules.states.bobo_state import BoboState
+from bobocep.rules.states.bobo_transition import BoboTransition
 
 
 def simple_state(

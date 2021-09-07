@@ -1,8 +1,7 @@
 import pytest
+from dpcontracts import PreconditionError
 
 from bobocep.rules.events.primitive_event import PrimitiveEvent
-from dpcontracts import PreconditionError
-from bobocep.bobo_serializable import BoboSerializable
 
 
 def test_primitive_valid_arguments():

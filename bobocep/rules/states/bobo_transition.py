@@ -1,12 +1,11 @@
-from copy import copy
 from typing import Set
+
 from dpcontracts import require
-from bobocep.bobo_serializable import BoboSerializable
+
 from bobocep.rules.bobo_rule import BoboRule
-from overrides import overrides
 
 
-class BoboTransition(BoboSerializable, BoboRule):
+class BoboTransition(BoboRule):
     """A state transition.
 
     :param state_names: The names of states to which a transition can be made.

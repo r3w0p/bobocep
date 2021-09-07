@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from dpcontracts import require, ensure
 
 from bobocep.rules.bobo_rule import BoboRule

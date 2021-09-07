@@ -1,5 +1,4 @@
 from typing import Dict
-from overrides import overrides
 
 from bobocep.rules.events.bobo_event import BoboEvent
 

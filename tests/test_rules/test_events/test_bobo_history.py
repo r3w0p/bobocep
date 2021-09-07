@@ -1,8 +1,8 @@
 import pytest
+from dpcontracts import PreconditionError
 
 from bobocep.rules.events.bobo_history import BoboHistory
 from bobocep.rules.events.primitive_event import PrimitiveEvent
-from dpcontracts import PreconditionError
 
 
 def test_history_valid_arguments():
