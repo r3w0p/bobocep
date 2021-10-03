@@ -29,9 +29,10 @@ class BoboPredicateCallable(BoboPredicate):
     def __init__(self, call: Callable) -> None:
         super().__init__()
 
-        self._call = call
+        self.call = call
+
         # Prevent garbage collection of object if callable is a method.
         self._obj = call.__self__ if isinstance(call, MethodType) else None
 
     def evaluate(self, event: BoboEvent, history: BoboHistory) -> bool:
-        return self._call(event, history)
+        return self.call(event, history)

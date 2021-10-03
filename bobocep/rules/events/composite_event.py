@@ -28,10 +28,6 @@ class CompositeEvent(BoboEvent):
     :type history: BoboHistory
     """
 
-    EVENT_NAME = "event_name"
-    NFA_NAME = "nfa_name"
-    HISTORY = "history"
-
     @require("'name' must be a str",
              lambda args: isinstance(args.event_name, str))
     @require("'nfa_name' must be a str",
@@ -44,11 +40,8 @@ class CompositeEvent(BoboEvent):
                  data: Dict[str, str],
                  event_name: str,
                  nfa_name: str,
-                 history: BoboHistory) -> None:
-
-        super().__init__(event_id=event_id,
-                         timestamp=timestamp,
-                         data=data)
+                 history: BoboHistory):
+        super().__init__(event_id=event_id, timestamp=timestamp, data=data)
 
         self.event_name = event_name
         self.nfa_name = nfa_name

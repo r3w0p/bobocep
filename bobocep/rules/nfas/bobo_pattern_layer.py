@@ -1,4 +1,4 @@
-from typing import List
+from typing import Set
 
 from dpcontracts import require
 
@@ -13,7 +13,7 @@ class BoboPatternLayer:
 
     :param predicates: The predicate(s) that the state(s) will use for
                        evaluation.
-    :type predicates: List[BoboPredicate]
+    :type predicates: Set[BoboPredicate]
 
     :param times: How many copies of the state(s) to have in sequence,
                   default to 1.
@@ -34,9 +34,9 @@ class BoboPatternLayer:
 
     @require("'group' must be a str",
              lambda args: isinstance(args.group, str))
-    @require("'predicates' must be a list of BoboPredicate instances with "
+    @require("'predicates' must be a set of BoboPredicate instances with "
              "length > 0",
-             lambda args: isinstance(args.predicates, list) and
+             lambda args: isinstance(args.predicates, set) and
                           len(args.predicates) > 0 and
                           all(isinstance(obj, BoboPredicate) for obj in
                               args.predicates))
@@ -52,7 +52,7 @@ class BoboPatternLayer:
              lambda args: isinstance(args.optional, bool))
     def __init__(self,
                  group: str,
-                 predicates: List[BoboPredicate],
+                 predicates: Set[BoboPredicate],
                  times: int,
                  loop: bool,
                  strict: bool,

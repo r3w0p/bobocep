@@ -19,10 +19,6 @@ class BoboEvent(BoboRule, ABC):
     :type data: Dict[str, str]
     """
 
-    EVENT_ID = "event_id"
-    TIMESTAMP = "timestamp"
-    DATA = "data"
-
     @require("'event_id' must be a str",
              lambda args: isinstance(args.event_id, str))
     @require("'timestamp' must be an int",
@@ -35,7 +31,7 @@ class BoboEvent(BoboRule, ABC):
     def __init__(self,
                  event_id: str,
                  timestamp: int,
-                 data: Dict[str, str]) -> None:
+                 data: Dict[str, str]):
         super().__init__()
 
         self.event_id = event_id

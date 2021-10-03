@@ -1,11 +1,8 @@
-import pytest
-
 from bobocep.rules.events.bobo_event import BoboEvent
 from bobocep.rules.events.bobo_history import BoboHistory
-from bobocep.rules.events.primitive_event import PrimitiveEvent
+from bobocep.rules.nfas.bobo_pattern_layer import BoboPatternLayer
 from bobocep.rules.predicates.bobo_predicate_callable import \
     BoboPredicateCallable
-from bobocep.rules.nfas.bobo_pattern_layer import BoboPatternLayer
 
 
 def predicate_callable_function(event: BoboEvent, history: BoboHistory):
@@ -14,9 +11,9 @@ def predicate_callable_function(event: BoboEvent, history: BoboHistory):
 
 def test_valid_arguments():
     test_group = "test_group"
-    test_predicates = [
+    test_predicates = {
         BoboPredicateCallable(call=predicate_callable_function)
-    ]
+    }
     test_times = 1
     test_loop = False
     test_strict = False

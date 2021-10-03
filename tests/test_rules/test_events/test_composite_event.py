@@ -14,13 +14,13 @@ def test_composite_valid_arguments():
     history = BoboHistory(events={})
 
     event = CompositeEvent(
-            event_id=event_id,
-            timestamp=timestamp,
-            data=data,
-            event_name=event_name,
-            nfa_name=nfa_name,
-            history=history
-        )
+        event_id=event_id,
+        timestamp=timestamp,
+        data=data,
+        event_name=event_name,
+        nfa_name=nfa_name,
+        history=history
+    )
 
     assert event.event_id == event_id
     assert event.timestamp == timestamp

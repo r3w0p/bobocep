@@ -19,7 +19,7 @@ def test_transition_valid_arguments_state_names_not_empty():
 
 
 def test_transition_valid_arguments_state_names_empty():
-    state_names = {}
+    state_names = set()
     strict = True
 
     with pytest.raises(PreconditionError):

@@ -40,8 +40,8 @@ def test_invalid_nondet_start_state_nondet_transitions():
     }
     test_start_state_name = test_state_start.name
     test_final_state_name = test_state_final.name
-    test_preconditions = []
-    test_haltconditions = []
+    test_preconditions = set()
+    test_haltconditions = set()
 
     with pytest.raises(PreconditionError):
         BoboNFA(

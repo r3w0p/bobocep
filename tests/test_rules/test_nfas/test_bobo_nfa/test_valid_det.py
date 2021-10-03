@@ -2,6 +2,38 @@ from bobocep.rules.nfas.bobo_nfa import BoboNFA
 from tests.test_rules.test_nfas.test_bobo_nfa.helpers_bobo_nfa import *
 
 
+def test_invalid_det_one_state_only():
+    test_state_start = simple_state("start")
+
+    test_nfa_name = "test_nfa_name"
+    test_nfa_states = {
+        test_state_start.name: test_state_start
+    }
+    test_nfa_transitions = {}
+    test_start_state_name = test_state_start.name
+    test_final_state_name = test_state_start.name
+    test_preconditions = set()
+    test_haltconditions = set()
+
+    test_nfa = BoboNFA(
+        name=test_nfa_name,
+        states=test_nfa_states,
+        transitions=test_nfa_transitions,
+        start_state_name=test_start_state_name,
+        final_state_name=test_final_state_name,
+        preconditions=test_preconditions,
+        haltconditions=test_haltconditions
+    )
+
+    assert test_nfa.name == test_nfa_name
+    assert test_nfa.states == test_nfa_states
+    assert test_nfa.transitions == test_nfa_transitions
+    assert test_nfa.start_state == test_state_start
+    assert test_nfa.final_state == test_state_start
+    assert test_nfa.preconditions == test_preconditions
+    assert test_nfa.haltconditions == test_haltconditions
+
+
 def test_valid_det_start_final():
     test_state_start = simple_state("start")
     test_state_final = simple_state("final")
@@ -16,8 +48,8 @@ def test_valid_det_start_final():
     }
     test_start_state_name = test_state_start.name
     test_final_state_name = test_state_final.name
-    test_preconditions = []
-    test_haltconditions = []
+    test_preconditions = set()
+    test_haltconditions = set()
 
     test_nfa = BoboNFA(
         name=test_nfa_name,
@@ -56,8 +88,8 @@ def test_valid_det_start_a_final():
         },
         start_state_name=test_state_start.name,
         final_state_name=test_state_final.name,
-        preconditions=[],
-        haltconditions=[]
+        preconditions=set(),
+        haltconditions=set()
     )
 
     assert test_nfa.start_state == test_state_start
@@ -88,8 +120,8 @@ def test_valid_det_start_a_b_c_final():
         },
         start_state_name=test_state_start.name,
         final_state_name=test_state_final.name,
-        preconditions=[],
-        haltconditions=[]
+        preconditions=set(),
+        haltconditions=set()
     )
 
     assert test_nfa.start_state == test_state_start
@@ -120,8 +152,8 @@ def test_valid_det_start_aloop_final():
         },
         start_state_name=test_state_start.name,
         final_state_name=test_state_final.name,
-        preconditions=[],
-        haltconditions=[]
+        preconditions=set(),
+        haltconditions=set()
     )
 
     assert test_nfa.start_state == test_state_start
@@ -158,8 +190,8 @@ def test_valid_det_start_a_bloop_c_final():
         },
         start_state_name=test_state_start.name,
         final_state_name=test_state_final.name,
-        preconditions=[],
-        haltconditions=[]
+        preconditions=set(),
+        haltconditions=set()
     )
 
     assert test_nfa.start_state == test_state_start
@@ -190,8 +222,8 @@ def test_valid_det_start_a_bnegated_c_final():
         },
         start_state_name=test_state_start.name,
         final_state_name=test_state_final.name,
-        preconditions=[],
-        haltconditions=[]
+        preconditions=set(),
+        haltconditions=set()
     )
 
     assert test_nfa.start_state == test_state_start
@@ -222,8 +254,8 @@ def test_valid_det_start_a_boptional_c_final():
         },
         start_state_name=test_state_start.name,
         final_state_name=test_state_final.name,
-        preconditions=[],
-        haltconditions=[]
+        preconditions=set(),
+        haltconditions=set()
     )
 
     assert test_nfa.start_state == test_state_start

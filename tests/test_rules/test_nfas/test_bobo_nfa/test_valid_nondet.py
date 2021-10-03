@@ -32,8 +32,8 @@ def test_valid_nondet_start_a_2group_final():
         },
         start_state_name=test_state_start.name,
         final_state_name=test_state_final.name,
-        preconditions=[],
-        haltconditions=[]
+        preconditions=set(),
+        haltconditions=set()
     )
 
     assert test_nfa.start_state == test_state_start
@@ -92,8 +92,8 @@ def test_valid_nondet_start_a_2group_d_3group_h_final():
         },
         start_state_name=test_state_start.name,
         final_state_name=test_state_final.name,
-        preconditions=[],
-        haltconditions=[]
+        preconditions=set(),
+        haltconditions=set()
     )
 
     assert test_nfa.start_state == test_state_start
@@ -163,8 +163,8 @@ def test_valid_nondet_start_a_3group_3group_h_final():
         },
         start_state_name=test_state_start.name,
         final_state_name=test_state_final.name,
-        preconditions=[],
-        haltconditions=[]
+        preconditions=set(),
+        haltconditions=set()
     )
 
     assert test_nfa.start_state == test_state_start

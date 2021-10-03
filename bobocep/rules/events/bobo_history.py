@@ -14,10 +14,6 @@ class BoboHistory(BoboRule):
     :type events: Dict[str, List[BoboEvent]]
     """
 
-    HISTORY_EVENT = "history_event"
-    HISTORY_EVENT_MODULE = "history_event_module"
-    HISTORY_EVENT_CLASS = "history_event_class"
-
     @require("'history' must be a dict with keys of type str and values of "
              "lists of type BoboEvent",
              lambda args:
@@ -26,7 +22,7 @@ class BoboHistory(BoboRule):
              all([isinstance(val_list, list) and
                   all(isinstance(val_str, BoboEvent) for val_str in val_list)
                   for val_list in args.events.values()]))
-    def __init__(self, events: Dict[str, List[BoboEvent]]) -> None:
+    def __init__(self, events: Dict[str, List[BoboEvent]]):
 
         super().__init__()
 

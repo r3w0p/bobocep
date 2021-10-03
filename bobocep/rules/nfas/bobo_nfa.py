@@ -1,5 +1,5 @@
-from typing import Dict, List
-
+from typing import Dict, Set
+from uuid import uuid4
 from dpcontracts import require
 
 from bobocep.rules.bobo_rule import BoboRule
@@ -11,15 +11,30 @@ from bobocep.rules.states.bobo_transition import BoboTransition
 def _require_valid_start_state(
         states: Dict[str, BoboState],
         transitions: Dict[str, BoboTransition],
-        start_state_name: str) -> bool:
+        start_state_name: str,
+        final_state_name: str) -> bool:
+    """
+    A valid start state must:
+    - Be in the list of states
+    - Be in the list of transitions (unless it is the final state)
+    - Not be negated
+    - Not be optional
+    - Be deterministic (if it has any transitions)
+    - Not be self-looping (if it has any transitions)
+    """
+
+    if start_state_name not in states:
+        return False
 
     if any([
-        start_state_name not in states,
-        start_state_name not in transitions,
+        (start_state_name not in transitions and
+         start_state_name != final_state_name),
         states[start_state_name].negated,
         states[start_state_name].optional,
-        start_state_name in transitions[start_state_name].state_names,
-        len(transitions[start_state_name].state_names) != 1
+        start_state_name in transitions and (
+                len(transitions[start_state_name].state_names) != 1 or
+                start_state_name in transitions[start_state_name].state_names
+        )
     ]):
         return False
 
@@ -29,7 +44,15 @@ def _require_valid_start_state(
 def _require_valid_final_state(
         states: Dict[str, BoboState],
         transitions: Dict[str, BoboTransition],
+        start_state_name: str,
         final_state_name: str) -> bool:
+    """
+    A valid final state must:
+    - Be in the list of states
+    - Not have a transition
+    - Not be negated
+    - Not be optional
+    """
 
     if final_state_name not in states:
         return False
@@ -46,63 +69,27 @@ def _require_valid_final_state(
     return True
 
 
-def _require_valid_second_state(
-        states: Dict[str, BoboState],
-        transitions: Dict[str, BoboTransition],
-        start_state_name: str,
-        final_state_name: str):
-
-    second_state_name = next(iter(transitions[start_state_name].state_names))
-
-    if second_state_name != final_state_name:
-        # for reasons unknown, this needs to be separated from any()
-        if second_state_name not in states:
-            return False
-
-        if any([
-            second_state_name not in transitions,
-            states[second_state_name].negated,
-            states[second_state_name].optional
-        ]):
-            return False
-
-    return True
-
-
-def _require_valid_penultimate_state(
-        states: Dict[str, BoboState],
-        transitions: Dict[str, BoboTransition],
-        final_state_name: str):
-
-    penultimate_states = [
-        state for state in states.values()
-        if (state.name in transitions and
-            final_state_name in transitions[state.name].state_names)
-    ]
-
-    if len(penultimate_states) == 0:
-        return False
-
-    for state in penultimate_states:
-        if any([
-            state.negated,
-            state.optional
-        ]):
-            return False
-
-    return True
-
-
 def _require_valid_path_start_to_final(
         states: Dict[str, BoboState],
         transitions: Dict[str, BoboTransition],
         start_state_name: str,
         final_state_name: str) -> bool:
-
     state_names = set(states.keys())
     state_names_reached = set()
     state_groups_reached = set()
     state_names_current = {start_state_name}
+    """
+    A valid path from start to final must:
+    - Reach all states
+    - Only transition to a state once (except for a self-loop)
+    - Only transition to a group once
+    - Not be negated in non-deterministic groups
+    - Not be optional in non-deterministic groups
+    - Not self-loop in non-deterministic groups
+    """
+
+    # if start_state_name == final_state_name:
+    #     return True
 
     while final_state_name not in state_names_reached:
         group_last = None
@@ -145,17 +132,24 @@ def _require_valid_path_start_to_final(
 
                 transition = transitions[state_current.name]
                 state_transition_names = transition.state_names.copy()
-                state_transition_names.discard(state_current.name)  # self loop
 
-                if len(state_transition_names) == 0:
-                    # state only has self loop
-                    return False
+                if state_current.name in state_transition_names:
+                    if len(state_names_current) > 1:
+                        # states in non-deterministic group must not self-loop
+                        return False
+
+                    if len(state_transition_names) == 1:
+                        # state only has self loop
+                        return False
 
                 if group_last is None:
                     group_last = state_current.group
                 elif group_last != state_current.group:
                     # current states have inconsistent groups
                     return False
+
+                # ignore current state on further iterations
+                state_transition_names.discard(state_current.name)
 
                 if states_next is None:
                     states_next = state_transition_names
@@ -189,12 +183,12 @@ class BoboNFA(BoboRule):
     :param preconditions: Predicates checked before any state's predicate
                           whereby, if any precondition returns False, the
                           automaton halts.
-    :type preconditions: List[BoboPredicate]
+    :type preconditions: Set[BoboPredicate]
 
     :param haltconditions: Predicates checked before any state's predicate
                            whereby, if any haltcondition returns True, the
                            automaton halts.
-    :type haltconditions: List[BoboPredicate]
+    :type haltconditions: Set[BoboPredicate]
     """
 
     @require("'name' must be a str",
@@ -217,47 +211,26 @@ class BoboNFA(BoboRule):
              lambda args: isinstance(args.start_state_name, str))
     @require("'final_state_name' must be a str",
              lambda args: isinstance(args.final_state_name, str))
-    @require("'preconditions' must be a list of only BoboPredicate instances",
-             lambda args: isinstance(args.preconditions, list) and
+    @require("'preconditions' must be a set of only BoboPredicate instances",
+             lambda args: isinstance(args.preconditions, set) and
                           all(isinstance(pre, BoboPredicate) for pre in
                               args.preconditions))
-    @require("'haltconditions' must be a list of only BoboPredicate instances",
-             lambda args: isinstance(args.haltconditions, list) and
+    @require("'haltconditions' must be a set of only BoboPredicate instances",
+             lambda args: isinstance(args.haltconditions, set) and
                           all(isinstance(halt, BoboPredicate) for halt in
                               args.haltconditions))
-    @require("'start_state_name' must be a key in 'states'",
-             lambda args: args.start_state_name in args.states)
-    @require("'final_state_name' must be a key in 'states'",
-             lambda args: args.final_state_name in args.states)
-    @require("'start_state_name' must not be the same as 'final_state_name'",
-             lambda args: args.start_state_name != args.final_state_name)
-    @require("transition must exist for start state",
-             lambda args: args.start_state_name in args.transitions)
-    @require("transition must not exist for final state",
-             lambda args: args.final_state_name not in args.transitions)
-    @require("_require_valid_start_state",
+    @require("start state must be valid",
              lambda args: _require_valid_start_state(
-                 states=args.states,
-                 transitions=args.transitions,
-                 start_state_name=args.start_state_name
-             ))
-    @require("_require_valid_final_state",
-             lambda args: _require_valid_final_state(
-                 states=args.states,
-                 transitions=args.transitions,
-                 final_state_name=args.final_state_name
-             ))
-    @require("_require_valid_second_state",
-             lambda args: _require_valid_second_state(
                  states=args.states,
                  transitions=args.transitions,
                  start_state_name=args.start_state_name,
                  final_state_name=args.final_state_name
              ))
-    @require("_require_valid_penultimate_state",
-             lambda args: _require_valid_penultimate_state(
+    @require("final state must be valid",
+             lambda args: _require_valid_final_state(
                  states=args.states,
                  transitions=args.transitions,
+                 start_state_name=args.start_state_name,
                  final_state_name=args.final_state_name
              ))
     @require("valid path must exist between start state and final state",
@@ -273,8 +246,8 @@ class BoboNFA(BoboRule):
                  transitions: Dict[str, BoboTransition],
                  start_state_name: str,
                  final_state_name: str,
-                 preconditions: List[BoboPredicate],
-                 haltconditions: List[BoboPredicate]) -> None:
+                 preconditions: Set[BoboPredicate],
+                 haltconditions: Set[BoboPredicate]):
         super().__init__()
 
         self.name = name
