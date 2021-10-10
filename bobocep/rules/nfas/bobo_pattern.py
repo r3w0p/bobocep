@@ -19,7 +19,6 @@ class BoboPattern:
     """
 
     _STATE = "state"
-    _GROUP = "group"
 
     def __init__(self, name: str):
         super().__init__()
@@ -52,7 +51,7 @@ class BoboPattern:
 
         all_state_names = set()
         all_group_names = set()
-        last_states = None
+        last_states = []
         last_layer = None
 
         for i, layer in enumerate(self.layers):
@@ -84,7 +83,7 @@ class BoboPattern:
                     nfa_states[state.name] = state
 
                 # add transitions for previous state(s)
-                if last_states is not None and last_layer is not None:
+                if len(last_states) > 0 and last_layer is not None:
                     if last_layer.loop:
                         if len(last_states) > 1:
                             raise RuntimeError(
@@ -102,6 +101,9 @@ class BoboPattern:
 
                 last_states = layer_states
                 last_layer = layer
+
+        if nfa_start_state_name is None:
+            raise RuntimeError("Start state not specified.")
 
         if last_states is None:
             raise RuntimeError("No previous state(s) before final state")
@@ -132,7 +134,8 @@ class BoboPattern:
              lambda args: isinstance(args.predicate, BoboPredicate))
     def start(self,
               group: str,
-              predicate: BoboPredicate) -> 'BoboPattern':
+              predicate: BoboPredicate,
+              times: int = 1) -> 'BoboPattern':
         """
         Adds a start state.
 
@@ -142,6 +145,10 @@ class BoboPattern:
         :param predicate: The predicate that the state will use for evaluation.
         :type predicate: BoboPredicate
 
+        :param times: How many copies of the state to have in sequence,
+                      default to 1.
+        :type times: int, optional
+
         :return: The current pattern.
         :rtype: BoboPattern
         """
@@ -149,7 +156,7 @@ class BoboPattern:
         self.layers.append(BoboPatternLayer(
             group=group,
             predicates={predicate},
-            times=1,
+            times=times,
             loop=False,
             strict=False,
             negated=False,
@@ -174,7 +181,8 @@ class BoboPattern:
              times: int = 1,
              loop: bool = False,
              optional: bool = False) -> 'BoboPattern':
-        """Adds a new state, with strict contiguity.
+        """Adds a new state, with strict contiguity. The predicate must be
+        fulfilled by the next event, else halt.
 
         :param group: The group with which the state will be associated.
         :type group: str
@@ -217,7 +225,8 @@ class BoboPattern:
     def not_next(self,
                  group: str,
                  predicate: BoboPredicate) -> 'BoboPattern':
-        """Adds a new negated state, with strict contiguity.
+        """Adds a new negated state, with strict contiguity. The predicate
+        must not be fulfilled by the next event, else halt.
 
         :param group: The group with which the state will be associated.
         :type group: str
@@ -259,7 +268,8 @@ class BoboPattern:
                     times: int = 1,
                     loop: bool = False,
                     optional: bool = False) -> 'BoboPattern':
-        """Adds a new state, with relaxed contiguity.
+        """Adds a new state, with relaxed contiguity. The predicate may be
+        fulfilled by any future event.
 
         :param group: The group with which the state will be associated.
         :type group: str
@@ -302,7 +312,9 @@ class BoboPattern:
     def not_followed_by(self,
                         group: str,
                         predicate: BoboPredicate) -> 'BoboPattern':
-        """Adds a new negated state, with relaxed contiguity.
+        """Adds a new negated state, with relaxed contiguity. The predicate
+        may not be fulfilled by any event until a state directly after this
+        state has been fulfilled.
 
         :param group: The group with which the state will be associated.
         :type group: str
@@ -338,7 +350,8 @@ class BoboPattern:
                               args.predicates))
     def followed_by_any(self,
                         group: str,
-                        predicates: Set[BoboPredicate]) -> 'BoboPattern':
+                        predicates: Set[BoboPredicate],
+                        times: int = 1) -> 'BoboPattern':
         """Adds a new state for each predicate, with non-deterministic relaxed
         contiguity.
 
@@ -348,6 +361,10 @@ class BoboPattern:
         :param predicates: The predicates that the states will use for
                            evaluation.
         :type predicates: Set[BoboPredicate]
+
+        :param times: How many copies of the state to have in sequence,
+                      default to 1.
+        :type times: int, optional
 
         :return: The current pattern.
         :rtype: BoboPattern
@@ -360,7 +377,7 @@ class BoboPattern:
         self.layers.append(BoboPatternLayer(
             group=group,
             predicates=predicates,
-            times=1,
+            times=times,
             loop=False,
             strict=False,
             negated=False,

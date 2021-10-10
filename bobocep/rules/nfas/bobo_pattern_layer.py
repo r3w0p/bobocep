@@ -32,16 +32,16 @@ class BoboPatternLayer:
     :type optional: bool
     """
 
-    @require("'group' must be a str",
-             lambda args: isinstance(args.group, str))
+    @require("'group' must be a str with length greater than 0",
+             lambda args: isinstance(args.group, str) and len(args.group) > 0)
     @require("'predicates' must be a set of BoboPredicate instances with "
-             "length > 0",
+             "length greater than 0",
              lambda args: isinstance(args.predicates, set) and
                           len(args.predicates) > 0 and
                           all(isinstance(obj, BoboPredicate) for obj in
                               args.predicates))
-    @require("'times' must be a int",
-             lambda args: isinstance(args.times, int))
+    @require("'times' must be an int greater than 0",
+             lambda args: isinstance(args.times, int) and args.times > 0)
     @require("'loop' must be a bool",
              lambda args: isinstance(args.loop, bool))
     @require("'strict' must be a bool",
