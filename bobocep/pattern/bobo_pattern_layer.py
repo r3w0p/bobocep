@@ -2,7 +2,7 @@ from typing import Set
 
 from dpcontracts import require
 
-from bobocep.rules.predicates.bobo_predicate import BoboPredicate
+from bobocep.predicate.bobo_predicate import BoboPredicate
 
 
 class BoboPatternLayer:

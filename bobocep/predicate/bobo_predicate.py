@@ -2,12 +2,11 @@ from abc import ABC, abstractmethod
 
 from dpcontracts import require, ensure
 
-from bobocep.rules.bobo_rule import BoboRule
-from bobocep.rules.events.bobo_event import BoboEvent
-from bobocep.rules.events.bobo_history import BoboHistory
+from bobocep.events.bobo_event import BoboEvent
+from bobocep.events.bobo_history import BoboHistory
 
 
-class BoboPredicate(BoboRule, ABC):
+class BoboPredicate(ABC):
     """An abstract predicate."""
 
     @abstractmethod
@@ -15,7 +14,7 @@ class BoboPredicate(BoboRule, ABC):
              lambda args: isinstance(args.event, BoboEvent))
     @require("'history' must be an instance of BoboHistory",
              lambda args: isinstance(args.history, BoboHistory))
-    @ensure("result must be a bool",
+    @ensure("result must be of type bool",
             lambda args, result: isinstance(result, bool))
     def evaluate(self,
                  event: BoboEvent,
