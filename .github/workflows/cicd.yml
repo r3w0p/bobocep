@@ -42,7 +42,7 @@ jobs:
 
       - name: Generate coverage report
         run: |
-          coverage html
+          coverage html --skip-covered --skip-empty
           coverage report    
 
       - name: Upload coverage report
