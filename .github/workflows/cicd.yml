@@ -43,7 +43,7 @@ jobs:
       - name: Generate coverage report
         run: |
           coverage html
-          coverage report --fail-under=100        
+          coverage report    
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v2
