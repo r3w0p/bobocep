@@ -40,6 +40,11 @@ jobs:
         run: |
           coverage run --source=bobocep -m pytest tests
 
+      - name: Download coverage data
+        uses: actions/download-artifact@v2
+        with:
+          name: coverage-data
+
       - name: Generate coverage report
         run: |
           coverage combine
