@@ -1,4 +1,4 @@
-from uuid import uuid4
+from time import time_ns
 from uuid import uuid4
 
 from bobocep.engine.receiver.generator.event_id.bobo_event_id import \

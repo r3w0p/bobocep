@@ -7,8 +7,6 @@ https://github.com/r3w0p/bobocep/blob/master/LICENSE)
 https://github.com/r3w0p/bobocep/graphs/commit-activity)
 [![Open Issues](https://img.shields.io/github/issues-raw/r3w0p/bobocep.svg)](
 https://github.com/r3w0p/bobocep/issues)
-[![Merch](https://img.shields.io/badge/merch-redbubble-red.svg)](
-https://www.redbubble.com/people/r3w0p)
 
 [![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P044N2B)
 
