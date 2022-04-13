@@ -1,0 +1,2 @@
+class BoboReceiverQueueFullError(Exception):
+    pass

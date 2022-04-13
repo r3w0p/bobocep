@@ -7,7 +7,7 @@ from bobocep.events.bobo_history import BoboHistory
 
 
 class BoboPredicate(ABC):
-    """An abstract predicate."""
+    """A predicate."""
 
     @abstractmethod
     @require("'event' must be an instance of BoboEvent",

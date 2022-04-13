@@ -27,13 +27,13 @@ class BoboPredicateCallable(BoboPredicate):
              "'evaluate' method from BoboPredicate",
              lambda args: len(signature(args.call).parameters) ==
                           len(signature(args.self.evaluate).parameters))
-    def __init__(self, call: Callable) -> None:
+    def __init__(self, call: Callable):
         super().__init__()
 
-        self.call = call
+        self._call = call
 
         # Prevent garbage collection of object if callable is a method.
         self._obj = call.__self__ if isinstance(call, MethodType) else None
 
     def evaluate(self, event: BoboEvent, history: BoboHistory) -> bool:
-        return self.call(event, history)
+        return self._call(event, history)

@@ -1,4 +1,4 @@
-from typing import Dict
+from datetime import datetime
 
 from dpcontracts import require
 
@@ -6,7 +6,7 @@ from bobocep.events.bobo_event import BoboEvent
 from bobocep.events.bobo_history import BoboHistory
 
 
-class CompositeEvent(BoboEvent):
+class BoboEventComposite(BoboEvent):
     """A composite event.
 
     :param event_name: The composite event name.
@@ -27,8 +27,7 @@ class CompositeEvent(BoboEvent):
              lambda args: isinstance(args.history, BoboHistory))
     def __init__(self,
                  event_id: str,
-                 timestamp: int,
-                 data_type: type,
+                 timestamp: datetime,
                  data,
                  event_name: str,
                  pattern_name: str,
@@ -36,9 +35,11 @@ class CompositeEvent(BoboEvent):
         super().__init__(
             event_id=event_id,
             timestamp=timestamp,
-            data_type=data_type,
             data=data)
 
         self.event_name = event_name
         self.pattern_name = pattern_name
         self.history = history
+
+    # todo correct parameters in constructor
+    # todo property and setter decorations

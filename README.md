@@ -14,10 +14,10 @@ https://www.redbubble.com/people/r3w0p)
 
 # BoboCEP
 
-`bobocep` is a [complex event processing](https://en.wikipedia.org/wiki/Complex_event_processing) (CEP) engine
+`BoboCEP` is a [complex event processing](https://en.wikipedia.org/wiki/Complex_event_processing) (CEP) engine
 designed for [edge computing](https://en.wikipedia.org/wiki/Edge_computing) in
 [Internet of Things](https://en.wikipedia.org/wiki/Internet_of_things) (IoT) systems
 to provide inferential reasoning and decision making using stream data.
 It provides [fault tolerance](https://en.wikipedia.org/wiki/Fault_tolerance) (FT) via the
 [active replication](https://en.wikipedia.org/wiki/Replication_(computing)) of
-partially completed complex events across other instances of `bobocep` software.
+partially completed complex events across other instances of `BoboCEP` software.
