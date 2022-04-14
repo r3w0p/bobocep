@@ -1,6 +1,10 @@
 [![bobocep](https://raw.githubusercontent.com/r3w0p/bobocep/develop/config/images/icon/150.png)](
 https://github.com/r3w0p/bobocep)
 
+[![CI/CD](https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml/badge.svg)](
+https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml)
+[![Security](https://github.com/r3w0p/bobocep/actions/workflows/security.yml/badge.svg)](
+https://github.com/r3w0p/bobocep/actions/workflows/security.yml)
 [![License](https://img.shields.io/github/license/r3w0p/bobocep.svg)](
 https://github.com/r3w0p/bobocep/blob/master/LICENSE)
 [![Last Commit](https://img.shields.io/github/last-commit/r3w0p/bobocep.svg)](
