@@ -5,9 +5,9 @@ from bobocep.engine.receiver.bobo_receiver_subscriber import \
     BoboReceiverSubscriber
 from bobocep.engine.receiver.exceptions.bobo_receiver_queue_full_error import \
     BoboReceiverQueueFullError
-from bobocep.engine.receiver.generator.event_id.bobo_event_id_standard import \
+from bobocep.events.event_id.bobo_event_id_standard import \
     BoboEventIDStandard
-from bobocep.engine.receiver.generator.null_event.bobo_null_event_none import \
+from bobocep.engine.receiver.null_event.bobo_null_event_none import \
     BoboNullEventNone
 from bobocep.engine.receiver.validator.bobo_validator_all import \
     BoboValidatorAll

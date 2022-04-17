@@ -5,12 +5,12 @@ from bobocep.events.bobo_history import BoboHistory
 from bobocep.predicate.bobo_predicate_callable import BoboPredicateCallable
 
 
-class BoboPredicateCallableType(BoboPredicateCallable):
+class BoboPredicateCallableNotType(BoboPredicateCallable):
     """A predicate that evaluates using a custom function or method after
-       first checking whether the event data type matches given types.
+       first checking whether the event data type does not match given types.
 
-    :param types: A list of valid data types. The event's data type must match
-                  at least one.
+    :param types: A list of valid data types. The event's data type must not
+                  match any of them.
     :type types: List[type]
 
     :param subtype: If True, it will match subtypes of types, equivalent to
@@ -31,10 +31,10 @@ class BoboPredicateCallableType(BoboPredicateCallable):
 
     def evaluate(self, event: BoboEvent, history: BoboHistory) -> bool:
         if self._subtype:
-            if not any(isinstance(event.data, t) for t in self._types):
+            if any(isinstance(event.data, t) for t in self._types):
                 return False
         else:
-            if not any(type(event.data) == t for t in self._types):
+            if any(type(event.data) == t for t in self._types):
                 return False
 
         return self._call(event, history)

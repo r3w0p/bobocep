@@ -1,8 +1,6 @@
 from bobocep.pattern.bobo_pattern_builder import BoboPatternBuilder
 from bobocep.predicate.bobo_predicate_callable import BoboPredicateCallable
 
-# with pytest.raises(PreconditionError):
-
 
 def test_1_block_1_pre_1_halt():
     name_a = "name_a"

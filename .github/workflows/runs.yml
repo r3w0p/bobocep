@@ -1,11 +1,11 @@
 name: Runs
+
 on:
   push:
     branches: [ develop ]
   pull_request:
     branches: [ develop ]
-  schedule:
-    - cron: '0 0 1 * *'
+  workflow_dispatch:
 
 jobs:
   del_runs:

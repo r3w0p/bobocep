@@ -1,0 +1,2 @@
+class BoboDeciderQueueFullError(Exception):
+    pass

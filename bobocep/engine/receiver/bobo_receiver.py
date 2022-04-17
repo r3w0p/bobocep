@@ -7,9 +7,8 @@ from bobocep.engine.receiver.bobo_receiver_publisher import \
     BoboReceiverPublisher
 from bobocep.engine.receiver.exceptions.bobo_receiver_queue_full_error import \
     BoboReceiverQueueFullError
-from bobocep.engine.receiver.generator.event_id.bobo_event_id import \
-    BoboEventID
-from bobocep.engine.receiver.generator.null_event.bobo_null_event import \
+from bobocep.events.event_id.bobo_event_id import BoboEventID
+from bobocep.engine.receiver.null_event.bobo_null_event import \
     BoboNullEvent
 from bobocep.engine.receiver.validator.bobo_validator import BoboValidator
 from bobocep.events.bobo_event import BoboEvent
@@ -17,7 +16,7 @@ from bobocep.events.bobo_event_primitive import BoboEventPrimitive
 
 
 class BoboReceiver(BoboEngineTask, BoboReceiverPublisher):
-    _STR_EXC_QUEUE_FULL = "Data queue is full (max size: {})"
+    _STR_EXC_QUEUE_FULL = "Queue is full (max size: {})"
 
     def __init__(self,
                  validator: BoboValidator,

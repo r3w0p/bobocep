@@ -14,15 +14,15 @@ class BoboPattern:
 
     :param blocks: The sequence of blocks that constitute the pattern of
                    behaviour.
-    :type blocks: List[BoboPatternBlock]
+    :type blocks: Tuple[BoboPatternBlock]
 
     :param preconditions: The preconditions that must all equal True for any
                           new event that is being checked against the pattern.
-    :type preconditions: List[BoboPredicate]
+    :type preconditions: Tuple[BoboPredicate]
 
     :param haltconditions: The haltconditions that must all equal False for any
                            new event that is being checked against the pattern.
-    :type haltconditions: List[BoboPredicate]
+    :type haltconditions: Tuple[BoboPredicate]
     """
 
     @require("'name' must be of type str",

@@ -2,7 +2,7 @@ from datetime import datetime
 from time import time_ns
 from typing import Union, Callable
 
-from bobocep.engine.receiver.generator.null_event.bobo_null_event import \
+from bobocep.engine.receiver.null_event.bobo_null_event import \
     BoboNullEvent
 from bobocep.events.bobo_event import BoboEvent
 from bobocep.events.bobo_event_primitive import BoboEventPrimitive

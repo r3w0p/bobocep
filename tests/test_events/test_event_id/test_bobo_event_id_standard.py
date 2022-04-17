@@ -1,4 +1,4 @@
-from bobocep.engine.receiver.generator.event_id.bobo_event_id_standard import BoboEventIDStandard
+from bobocep.events.event_id.bobo_event_id_standard import BoboEventIDStandard
 
 
 def test_output_type_length():

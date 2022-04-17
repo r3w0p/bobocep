@@ -1,6 +1,6 @@
 from typing import Union
 
-from bobocep.engine.receiver.generator.null_event.bobo_null_event import \
+from bobocep.engine.receiver.null_event.bobo_null_event import \
     BoboNullEvent
 from bobocep.events.bobo_event import BoboEvent
 

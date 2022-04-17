@@ -9,9 +9,6 @@ from bobocep.events.bobo_history import BoboHistory
 class BoboEventComposite(BoboEvent):
     """A composite event.
 
-    :param event_name: The composite event name.
-    :type event_name: str
-
     :param pattern_name: The pattern which generated the composite event.
     :type pattern_name: str
 
@@ -19,8 +16,6 @@ class BoboEventComposite(BoboEvent):
     :type history: BoboHistory
     """
 
-    @require("'event_name' must be of type str",
-             lambda args: isinstance(args.event_name, str))
     @require("'pattern_name' must be of type str",
              lambda args: isinstance(args.pattern_name, str))
     @require("'history' must be an instance of BoboHistory",
@@ -29,7 +24,6 @@ class BoboEventComposite(BoboEvent):
                  event_id: str,
                  timestamp: datetime,
                  data,
-                 event_name: str,
                  pattern_name: str,
                  history: BoboHistory):
         super().__init__(
@@ -37,9 +31,5 @@ class BoboEventComposite(BoboEvent):
             timestamp=timestamp,
             data=data)
 
-        self.event_name = event_name
         self.pattern_name = pattern_name
         self.history = history
-
-    # todo correct parameters in constructor
-    # todo property and setter decorations

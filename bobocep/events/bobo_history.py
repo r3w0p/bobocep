@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from dpcontracts import require
 
@@ -14,13 +14,16 @@ class BoboHistory:
     """
 
     @require("'events' must be of type dict",
-             lambda args: isinstance(args.events, dict))
+             lambda args: isinstance(args.events,
+                                     dict))
     @require("'events' keys must be of type str only",
              lambda args: all([isinstance(key, str)
-                               for key in args.events.keys()]))
+                               for key in
+                               args.events.keys()]))
     @require("'events' values must be of type list only",
              lambda args: all([isinstance(val, list)
-                               for val in args.events.values()]))
+                               for val in
+                               args.events.values()]))
     @require("'events' lists must contain BoboEvent instances only",
              lambda args: all([
                  all(isinstance(val_str, BoboEvent)
@@ -28,31 +31,24 @@ class BoboHistory:
                  for val_list in args.events.values()
              ]))
     def __init__(self, events: Dict[str, List[BoboEvent]]):
-
         super().__init__()
 
-        self.events = {}
-        self.first = None
-        self.last = None
+        self.events: Dict[str, List[BoboEvent]] = {}
+        self.first: Union[BoboEvent, None] = None
+        self.last: Union[BoboEvent, None] = None
 
-        for name, event_list in events.items():
-            for event in event_list:
-                if self.first is None or \
-                        event.timestamp < self.first.timestamp:
-                    self.first = event
+        if events is not None:
+            for name, event_list in events.items():
+                for event in event_list:
+                    if name not in self.events:
+                        self.events[name] = []
 
-                if self.last is None or \
-                        event.timestamp > self.last.timestamp:
-                    self.last = event
+                    self.events[name].append(event)
 
-                if name not in self.events:
-                    self.events[name] = []
-                self.events[name].append(event)
+                    if self.first is None or \
+                            event.timestamp < self.first.timestamp:
+                        self.first = event
 
-    def add_event(self, name: str, event: BoboEvent) -> None:
-        if name not in self.events:
-            self.events[name] = [event]
-
-        elif not any([e.event_id == event.event_id
-                      for e in self.events[name]]):
-            self.events[name].append(event)
+                    if self.last is None or \
+                            event.timestamp > self.last.timestamp:
+                        self.last = event

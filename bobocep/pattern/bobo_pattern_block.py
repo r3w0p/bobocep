@@ -12,7 +12,7 @@ class BoboPatternBlock:
     :type group: str
 
     :param predicates: The predicate(s) to use for evaluation.
-    :type predicates: List[BoboPredicate]
+    :type predicates: Tuple[BoboPredicate]
 
     :param strict: Whether the predicate(s) has/have strict contiguity.
     :type strict: bool

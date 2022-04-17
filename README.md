@@ -6,11 +6,13 @@ https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml)
 [![Security](https://github.com/r3w0p/bobocep/actions/workflows/security.yml/badge.svg)](
 https://github.com/r3w0p/bobocep/actions/workflows/security.yml)
 [![License](https://img.shields.io/github/license/r3w0p/bobocep.svg)](
-https://github.com/r3w0p/bobocep/blob/master/LICENSE)
-[![Last Commit](https://img.shields.io/github/last-commit/r3w0p/bobocep.svg)](
-https://github.com/r3w0p/bobocep/graphs/commit-activity)
+https://github.com/r3w0p/bobocep/blob/develop/LICENSE)
+[![coverage](https://coveralls.io/repos/github/r3w0p/bobocep/badge.svg?branch=develop)](
+https://coveralls.io/github/r3w0p/bobocep?branch=develop)
 [![Open Issues](https://img.shields.io/github/issues-raw/r3w0p/bobocep.svg)](
 https://github.com/r3w0p/bobocep/issues)
+[![Last Commit](https://img.shields.io/github/last-commit/r3w0p/bobocep.svg)](
+https://github.com/r3w0p/bobocep/graphs/commit-activity)
 
 [![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P044N2B)
 

@@ -11,20 +11,20 @@ class BoboValidatorNotType(BoboValidator):
     :param list_types: A list of valid data types.
     :type list_types: List[type]
 
-    :param subclass: If True, will match subclasses of a type, equivalent to
+    :param subtype: If True, will match subtypes of a type, equivalent to
                      isinstance() functionality.
                      If False, will match exact types only, equivalent to
                      type() functionality.
-    :type subclass: bool
+    :type subtype: bool
     """
 
     def __init__(self,
-                 list_types: List[type],
-                 subclass: bool = True):
+                 types: List[type],
+                 subtype: bool = True):
         super().__init__()
 
-        self._list_types = list_types
-        self._subclass = subclass
+        self._types = types
+        self._subtype = subtype
 
     def is_valid(self, entity) -> bool:
         if isinstance(entity, BoboEvent):
@@ -32,9 +32,7 @@ class BoboValidatorNotType(BoboValidator):
         else:
             data = entity
 
-        if self._subclass:
-            return not any(isinstance(data, data_type)
-                           for data_type in self._list_types)
+        if self._subtype:
+            return not any(isinstance(data, t) for t in self._types)
         else:
-            return not any(type(data) == data_type
-                           for data_type in self._list_types)
+            return not any(type(data) == t for t in self._types)
