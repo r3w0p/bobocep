@@ -1,6 +1,5 @@
 bumpversion==0.6.0
 coverage==6.3.2
 dpcontracts==0.6.0
-flake8==3.8.4
 overrides==3.1.0
 pytest==7.1.1
