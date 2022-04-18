@@ -1,3 +1,7 @@
+# Copyright (c) 2022, The BoboCEP Contributors
+# This program is free software: you can redistribute it and/or
+# modify it under the terms of the GNU General Public License v3.0.
+
 from bobocep.engine.decider.bobo_decider import BoboDecider
 from bobocep.engine.producer.bobo_producer import BoboProducer
 from bobocep.engine.receiver.bobo_receiver import BoboReceiver

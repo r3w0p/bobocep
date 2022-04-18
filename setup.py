@@ -13,14 +13,14 @@ setup(
     description="A fault-tolerant complex event processing engine designed "
                 "for edge computing in IoT systems.",
     long_description=long_description,
-    long_description_content_type='text/x-rst',
-    license="MIT",
+    long_description_content_type='text/markdown',
+    license="GPL-3.0-only",
     keywords='bobocep',
     url='https://github.com/r3w0p/bobocep',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Natural Language :: English',
         'Programming Language :: Python :: 3.8',
     ],

@@ -5,14 +5,12 @@ from bobocep.engine.receiver.bobo_receiver_subscriber import \
     BoboReceiverSubscriber
 from bobocep.engine.receiver.exceptions.bobo_receiver_queue_full_error import \
     BoboReceiverQueueFullError
-from bobocep.events.event_id.bobo_event_id_standard import \
-    BoboEventIDStandard
-from bobocep.engine.receiver.null_event.bobo_null_event_none import \
-    BoboNullEventNone
 from bobocep.engine.receiver.validator.bobo_validator_all import \
     BoboValidatorAll
 from bobocep.events.bobo_event import BoboEvent
 from bobocep.events.bobo_event_primitive import BoboEventPrimitive
+from bobocep.events.event_id.bobo_event_id_standard import \
+    BoboEventIDStandard
 
 
 class TestReceiverSubscriber(BoboReceiverSubscriber):
@@ -28,7 +26,7 @@ def test_size_add_1_event_then_update():
     receiver = BoboReceiver(
         validator=BoboValidatorAll(),
         event_id_gen=BoboEventIDStandard(),
-        null_event_gen=BoboNullEventNone(),
+        null_event_gen=None,
         max_size=255)
 
     assert receiver.size() == 0
@@ -42,7 +40,7 @@ def test_subscriber_add_1_event_then_update():
     receiver = BoboReceiver(
         validator=BoboValidatorAll(),
         event_id_gen=BoboEventIDStandard(),
-        null_event_gen=BoboNullEventNone(),
+        null_event_gen=None,
         max_size=255)
 
     subscriber = TestReceiverSubscriber()
@@ -61,7 +59,7 @@ def test_add_on_queue_full():
     receiver = BoboReceiver(
         validator=BoboValidatorAll(),
         event_id_gen=BoboEventIDStandard(),
-        null_event_gen=BoboNullEventNone(),
+        null_event_gen=None,
         max_size=1)
 
     receiver.add_data(data=123)
@@ -74,7 +72,7 @@ def test_update_on_queue_empty():
     receiver = BoboReceiver(
         validator=BoboValidatorAll(),
         event_id_gen=BoboEventIDStandard(),
-        null_event_gen=BoboNullEventNone(),
+        null_event_gen=None,
         max_size=255)
 
     assert receiver.update() is None

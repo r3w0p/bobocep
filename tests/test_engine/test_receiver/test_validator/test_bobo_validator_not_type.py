@@ -68,4 +68,3 @@ def test_1_type_subtype_false_invalid():
     validator = BoboValidatorNotType(types=[TestClassType], subtype=False)
 
     assert not validator.is_valid(entity=TestClassType())
-

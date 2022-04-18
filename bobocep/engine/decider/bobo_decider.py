@@ -1,23 +1,28 @@
-from queue import Queue, Full, Empty
+# Copyright (c) 2022, The BoboCEP Contributors
+# This program is free software: you can redistribute it and/or
+# modify it under the terms of the GNU General Public License v3.0.
+
+from datetime import datetime
+from queue import Queue, Full
 from threading import RLock
 from typing import List, Dict
 
 from bobocep.engine.bobo_engine_task import BoboEngineTask
+from bobocep.engine.decider.bobo_decider_publisher import BoboDeciderPublisher
 from bobocep.engine.decider.bobo_decider_run import BoboDeciderRun
 from bobocep.engine.decider.exceptions.bobo_decider_queue_full_error import \
     BoboDeciderQueueFullError
 from bobocep.engine.receiver.bobo_receiver_subscriber import \
     BoboReceiverSubscriber
 from bobocep.events.bobo_event import BoboEvent
-from datetime import datetime
 from bobocep.events.bobo_event_composite import BoboEventComposite
 from bobocep.events.bobo_history import BoboHistory
-from bobocep.pattern.bobo_pattern import BoboPattern
-from bobocep.engine.decider.bobo_decider_publisher import BoboDeciderPublisher
 from bobocep.events.event_id.bobo_event_id import BoboEventID
+from bobocep.pattern.bobo_pattern import BoboPattern
 
 
-class BoboDecider(BoboEngineTask, BoboDeciderPublisher, BoboReceiverSubscriber):
+class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
+                  BoboReceiverSubscriber):
     _STR_EXC_QUEUE_FULL = "Queue is full (max size: {})"
 
     def __init__(self,
@@ -39,11 +44,8 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher, BoboReceiverSubscriber):
     def update(self) -> None:
         with self._lock:
             if not self._queue.empty():
-                try:
-                    self._on_completed_runs(runs=self._process_event(
-                        event=self._queue.get_nowait()))
-                except Empty:
-                    pass
+                self._on_completed_runs(runs=self._process_event(
+                    event=self._queue.get_nowait()))
 
     def _process_event(self, event: BoboEvent) -> List[BoboDeciderRun]:
         return self._check_against_runs(event=event) + \
@@ -57,7 +59,8 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher, BoboReceiverSubscriber):
                 # todo (remove from runs)
         return completed
 
-    def _check_against_patterns(self, event: BoboEvent) -> List[BoboDeciderRun]:
+    def _check_against_patterns(self, event: BoboEvent) -> List[
+        BoboDeciderRun]:
         completed = []
         for pattern in self._patterns:
             if any(predicate.evaluate(event=event, history=self._history_stub)

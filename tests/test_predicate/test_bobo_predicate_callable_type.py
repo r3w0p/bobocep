@@ -1,7 +1,3 @@
-from bobocep.predicate.bobo_predicate_callable_type import BoboPredicateCallableType
-from bobocep.events.bobo_event_primitive import BoboEventPrimitive
-from bobocep.events.bobo_history import BoboHistory
-from datetime import datetime
 from datetime import datetime
 
 from bobocep.events.bobo_event_primitive import BoboEventPrimitive
