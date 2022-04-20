@@ -1,3 +1,7 @@
+# Copyright (c) The BoboCEP Authors
+# This program is free software: you can redistribute it and/or
+# modify it under the terms of the GNU General Public License v3.0.
+
 from datetime import datetime
 
 from bobocep.engine.receiver.validator.bobo_validator_type import \

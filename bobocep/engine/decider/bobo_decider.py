@@ -1,8 +1,7 @@
-# Copyright (c) 2022, The BoboCEP Contributors
+# Copyright (c) The BoboCEP Authors
 # This program is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License v3.0.
 
-from datetime import datetime
 from queue import Queue, Full
 from threading import RLock
 from typing import List, Dict
@@ -10,14 +9,13 @@ from typing import List, Dict
 from bobocep.engine.bobo_engine_task import BoboEngineTask
 from bobocep.engine.decider.bobo_decider_publisher import BoboDeciderPublisher
 from bobocep.engine.decider.bobo_decider_run import BoboDeciderRun
-from bobocep.engine.decider.exceptions.bobo_decider_queue_full_error import \
-    BoboDeciderQueueFullError
 from bobocep.engine.receiver.bobo_receiver_subscriber import \
     BoboReceiverSubscriber
 from bobocep.events.bobo_event import BoboEvent
-from bobocep.events.bobo_event_composite import BoboEventComposite
 from bobocep.events.bobo_history import BoboHistory
 from bobocep.events.event_id.bobo_event_id import BoboEventID
+from bobocep.exceptions.engine.bobo_decider_queue_full_error import \
+    BoboDeciderQueueFullError
 from bobocep.pattern.bobo_pattern import BoboPattern
 
 
@@ -75,13 +73,7 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
     def _on_completed_runs(self, runs: List[BoboDeciderRun]):
         for run in runs:
             for subscriber in self._subscribers:
-                subscriber.on_decider_composite_event(
-                    event=BoboEventComposite(
-                        event_id=self._event_id_gen.generate(),
-                        timestamp=datetime.now(),
-                        data=None,  # todo
-                        pattern_name=run.pattern.name
-                    ))
+                subscriber.on_decider_completed_run(run=run)
 
     def on_receiver_event(self, event: BoboEvent):
         with self._lock:

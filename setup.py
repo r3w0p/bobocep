@@ -18,11 +18,17 @@ setup(
     keywords='bobocep',
     url='https://github.com/r3w0p/bobocep',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Natural Language :: English',
+        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Topic :: Scientific/Engineering :: Information Analysis',
+        'Topic :: System :: Monitoring'
     ],
     install_requires=install_requires,
     packages=find_packages(include=['bobocep', 'bobocep.*']),

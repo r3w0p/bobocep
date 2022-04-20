@@ -1,16 +1,20 @@
+# Copyright (c) The BoboCEP Authors
+# This program is free software: you can redistribute it and/or
+# modify it under the terms of the GNU General Public License v3.0.
+
 import pytest
 
 from bobocep.engine.receiver.bobo_receiver import BoboReceiver
 from bobocep.engine.receiver.bobo_receiver_subscriber import \
     BoboReceiverSubscriber
-from bobocep.engine.receiver.exceptions.bobo_receiver_queue_full_error import \
-    BoboReceiverQueueFullError
 from bobocep.engine.receiver.validator.bobo_validator_all import \
     BoboValidatorAll
 from bobocep.events.bobo_event import BoboEvent
 from bobocep.events.bobo_event_primitive import BoboEventPrimitive
 from bobocep.events.event_id.bobo_event_id_standard import \
     BoboEventIDStandard
+from bobocep.exceptions.engine.bobo_receiver_queue_full_error import \
+    BoboReceiverQueueFullError
 
 
 class TestReceiverSubscriber(BoboReceiverSubscriber):
