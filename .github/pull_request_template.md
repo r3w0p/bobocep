@@ -3,8 +3,10 @@ Include a summary of the changes and the related issue.
 Include relevant motivation and context.
 List any dependencies that are required for this change.
 
+
 ## Issue
 Closes #(issue number)
+
 
 ## Change Type
 Delete any options that are not relevant.
@@ -14,15 +16,19 @@ Delete any options that are not relevant.
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 - [ ] This change requires a documentation update
 
+
 # Testing
 Describe the tests that you ran to verify your changes.
 
-- [ ] Unit testing: _% passed.
+- [ ] Unit testing: _ of _ passed.
 - [ ] Code coverage: _% coverage.
 
 **Test Configuration**:
 - [ ] Operating system: _
 - [ ] Python version: _
+- [ ] Unit testing module: _ (version _)
+- [ ] Code coverage module: _ (version _)
+
 
 ## Checklist
 Ensure that the following have been completed before requesting a review.
@@ -32,7 +38,8 @@ Ensure that the following have been completed before requesting a review.
 - [ ] Performed a self-review of my code.
 - [ ] Commented my code, where appropriate.
 - [ ] Provided a copyright notice at the top of any new source files.
-- [ ] Implemented design-by-contract programming in any new source files.
+- [ ] Ensured that third-party code has been used in accordance with the terms of their respective licenses.
+- [ ] Implemented design-by-contract programming in any new class methods.
 - [ ] Made changes that generate no new errors or warnings.
 - [ ] Added tests that provide confidence that my fix is effective or that my feature works as intended.
 - [ ] Ensured that new and existing unit tests pass locally with my changes.
