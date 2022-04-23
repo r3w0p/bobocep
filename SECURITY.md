@@ -14,4 +14,4 @@ The following versions of Python are currently supported:
 
 ## Reporting a Vulnerability
 
-Email: rr33ww00pp@gmail.com
+Email: rr33ww00pp [at] gmail [dot] com
