@@ -42,12 +42,22 @@ class BoboDeciderRun:
                 return False
 
             block: BoboPatternBlock = self.pattern.blocks[self._block_index]
-            match = self._is_match(event, block.predicates)
+            # match = self._is_match(event, block.predicates)
 
-            # 'negated' and 'optional' must both be False if 'loop' is True
-            # 'negated' and 'optional' must not both be True if 'loop' is False
-            # _process_loop
-            # _process_non_loop
+            if block.loop:
+                self._process_loop()
+            else:
+                self._process_not_loop()
+
+    def _process_loop(self) -> None:
+        # a looping block cannot be negated or optional
+        # i.e. negated and optional are False if loop is True
+        pass
+
+    def _process_not_loop(self) -> None:
+        # a non-looping block cannot be both negated and optional
+        # i.e. negated and optional are not both True if loop is False
+        pass
 
     def _is_match(self, event: BoboEvent, predicates: List[BoboPredicate]):
         return any(predicate.evaluate(event=event, history=self.history)

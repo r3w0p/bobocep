@@ -55,10 +55,8 @@ class BoboPatternBlock:
                            not args.optional) if args.loop else True)
     @require("'negated' and 'optional' must not both be True "
              "if 'loop' is False",
-             lambda args: not (args.negated and
-                               not args.optional) or
-                          (not args.negated and
-                           args.optional) if (not args.loop) else True)
+             lambda args: not (args.negated and args.optional)
+             if (not args.loop) else True)
     def __init__(self,
                  group: str,
                  predicates: List[BoboPredicate],
