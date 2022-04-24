@@ -61,6 +61,7 @@ class BoboPatternBuilder:
                     group: str,
                     predicate: BoboPredicate,
                     times: int = 1,
+                    loop: bool = False,
                     optional: bool = False) -> 'BoboPatternBuilder':
 
         for _ in range(max(times, 1)):
@@ -68,6 +69,7 @@ class BoboPatternBuilder:
                 group=group,
                 predicates=[predicate],
                 strict=False,
+                loop=loop,
                 negated=False,
                 optional=optional))
         return self
@@ -90,6 +92,7 @@ class BoboPatternBuilder:
                         group: str,
                         predicates: List[BoboPredicate],
                         times: int = 1,
+                        loop: bool = False,
                         optional: bool = False) -> 'BoboPatternBuilder':
 
         for _ in range(max(times, 1)):
@@ -97,6 +100,7 @@ class BoboPatternBuilder:
                 group=group,
                 predicates=predicates,
                 strict=False,
+                loop=loop,
                 negated=False,
                 optional=optional))
         return self
