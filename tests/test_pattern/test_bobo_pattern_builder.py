@@ -17,8 +17,7 @@ def test_1_block_1_pre_1_halt():
         .next(group=group_a,
               predicate=predicate_block_a,
               times=1,
-              loop=False,
-              optional=False) \
+              loop=False) \
         .precondition(predicate=predicate_pre_a) \
         .haltcondition(predicate=predicate_halt_a)
 
@@ -64,18 +63,15 @@ def test_3_blocks_3_pres_3_halts():
         .next(group=group_a,
               predicate=predicate_block_a,
               times=1,
-              loop=False,
-              optional=False) \
+              loop=False) \
         .next(group=group_b,
               predicate=predicate_block_b,
               times=1,
-              loop=False,
-              optional=False) \
+              loop=False) \
         .next(group=group_c,
               predicate=predicate_block_c,
               times=1,
-              loop=False,
-              optional=False) \
+              loop=False) \
         .precondition(predicate=predicate_pre_a) \
         .precondition(predicate=predicate_pre_b) \
         .precondition(predicate=predicate_pre_c) \

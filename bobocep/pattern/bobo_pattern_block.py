@@ -31,6 +31,8 @@ class BoboPatternBlock:
     :type optional: bool
     """
 
+    # todo cannot be strict and optional?
+
     @require("'group' must be of type str",
              lambda args: isinstance(args.group, str))
     @require("'group' must have a length greater than 0",
@@ -50,6 +52,8 @@ class BoboPatternBlock:
              lambda args: isinstance(args.negated, bool))
     @require("'optional' must be of type bool",
              lambda args: isinstance(args.optional, bool))
+    @require("'strict' and 'optional' must not both be True",
+             lambda args: not (args.strict and args.optional))
     @require("'negated' and 'optional' must both be False if 'loop' is True",
              lambda args: (not args.negated and
                            not args.optional) if args.loop else True)

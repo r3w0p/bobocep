@@ -31,8 +31,7 @@ class BoboPatternBuilder:
              group: str,
              predicate: BoboPredicate,
              times: int = 1,
-             loop: bool = False,
-             optional: bool = False) -> 'BoboPatternBuilder':
+             loop: bool = False) -> 'BoboPatternBuilder':
 
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
@@ -41,7 +40,7 @@ class BoboPatternBuilder:
                 strict=True,
                 loop=loop,
                 negated=False,
-                optional=optional))
+                optional=False))
         return self
 
     def not_next(self,
