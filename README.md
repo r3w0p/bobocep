@@ -1,20 +1,4 @@
-[![bobocep](https://raw.githubusercontent.com/r3w0p/bobocep/develop/config/images/icon/150.png)](
-https://github.com/r3w0p/bobocep)
-
-[![CI/CD](https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml/badge.svg)](
-https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml)
-[![Security](https://github.com/r3w0p/bobocep/actions/workflows/security.yml/badge.svg)](
-https://github.com/r3w0p/bobocep/actions/workflows/security.yml)
-[![License](https://img.shields.io/github/license/r3w0p/bobocep.svg)](
-https://github.com/r3w0p/bobocep/blob/develop/LICENSE)
-[![coverage](https://coveralls.io/repos/github/r3w0p/bobocep/badge.svg?branch=develop)](
-https://coveralls.io/github/r3w0p/bobocep?branch=develop)
-[![Open Issues](https://img.shields.io/github/issues-raw/r3w0p/bobocep.svg)](
-https://github.com/r3w0p/bobocep/issues)
-[![Last Commit](https://img.shields.io/github/last-commit/r3w0p/bobocep.svg)](
-https://github.com/r3w0p/bobocep/graphs/commit-activity)
-
-[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P044N2B)
+<img width="150" height="150" align="left" style="float: left; margin: 0 10px 0 0;" alt="BoboCEP" src="https://raw.githubusercontent.com/r3w0p/bobocep/develop/config/images/icon/400.png">
 
 # BoboCEP
 
@@ -24,4 +8,18 @@ designed for [edge computing](https://en.wikipedia.org/wiki/Edge_computing) in
 to provide inferential reasoning and decision making using stream data.
 It provides [fault tolerance](https://en.wikipedia.org/wiki/Fault_tolerance) (FT) via the
 [active replication](https://en.wikipedia.org/wiki/Replication_(computing)) of
-partially completed complex events across other instances of `BoboCEP` software.
+partially completed complex events across multiple instances of the software.
+
+The code in this repository can be redistributed and/or modified under the terms of the 
+[GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html).
+
+[![CI/CD](https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml/badge.svg)](
+https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml)
+[![Security](https://github.com/r3w0p/bobocep/actions/workflows/security.yml/badge.svg)](
+https://github.com/r3w0p/bobocep/actions/workflows/security.yml)
+[![coverage](https://coveralls.io/repos/github/r3w0p/bobocep/badge.svg?branch=develop)](
+https://coveralls.io/github/r3w0p/bobocep?branch=develop)
+[![Open Issues](https://img.shields.io/github/issues-raw/r3w0p/bobocep.svg)](
+https://github.com/r3w0p/bobocep/issues)
+
+[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P044N2B)

@@ -1,6 +1,6 @@
 # Copyright (c) The BoboCEP Authors
-# This program is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License v3.0.
+# The following code can be redistributed and/or modified
+# under the terms of the GNU General Public License v3.0.
 
 from bobocep.events.event_id.bobo_event_id_standard import BoboEventIDStandard
 

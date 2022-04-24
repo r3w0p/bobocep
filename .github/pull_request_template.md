@@ -26,8 +26,6 @@ Describe the tests that you ran to verify your changes.
 **Test Configuration**:
 - [ ] Operating system: _
 - [ ] Python version: _
-- [ ] Unit testing module: _ (version _)
-- [ ] Code coverage module: _ (version _)
 
 
 ## Checklist

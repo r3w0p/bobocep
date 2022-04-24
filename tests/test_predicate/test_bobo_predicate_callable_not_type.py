@@ -1,6 +1,6 @@
 # Copyright (c) The BoboCEP Authors
-# This program is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License v3.0.
+# The following code can be redistributed and/or modified
+# under the terms of the GNU General Public License v3.0.
 
 from datetime import datetime
 
@@ -11,13 +11,11 @@ from bobocep.predicate.bobo_predicate_callable_not_type import \
 
 
 class TestSuperclass:
-    def __init__(self):
-        super().__init__()
+    pass
 
 
 class TestSubclass(TestSuperclass):
-    def __init__(self):
-        super().__init__()
+    pass
 
 
 def test_3_types_int_str_bool_subtype_true_evaluate_invalid():

@@ -14,4 +14,4 @@ The following versions of Python are currently supported:
 
 ## Reporting a Vulnerability
 
-For now, use [Issues](https://github.com/r3w0p/bobocep/issues).
+Email: **rr33ww00pp [at] gmail [dot] com**
