@@ -12,12 +12,10 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
         language: [ 'python' ]
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -34,6 +32,7 @@ jobs:
       uses: github/codeql-action/analyze@v1
 
   cleanup:
+    name: Clean-up
     runs-on: ubuntu-latest
     steps:
       - name: Delete old workflow runs

@@ -9,6 +9,7 @@ on:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -59,6 +60,7 @@ jobs:
           coveralls
 
   cleanup:
+    name: Clean-up
     runs-on: ubuntu-latest
     steps:
       - name: Delete old workflow runs
