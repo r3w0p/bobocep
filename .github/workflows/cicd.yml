@@ -58,6 +58,9 @@ jobs:
         run: |
           coveralls
 
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
       - name: Delete old workflow runs
         uses: Mattraks/delete-workflow-runs@v2
         with:
