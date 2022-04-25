@@ -1,4 +1,4 @@
-# Copyright (c) The BoboCEP Authors
+# Copyright (c) 2022 The BoboCEP Authors
 # The following code can be redistributed and/or modified
 # under the terms of the GNU General Public License v3.0.
 
@@ -29,10 +29,12 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
     def __init__(self,
                  patterns: List[BoboPattern],
                  event_id_gen: BoboEventID,
+                 run_id_gen: BoboEventID,
                  max_size: int):
         super().__init__()
         self._patterns = patterns
         self._event_id_gen = event_id_gen
+        self._run_id_gen = run_id_gen
         self._runs: Dict[str, Dict[str, BoboDeciderRun]] = {}
         self._max_size = max_size
         self._history_stub = BoboHistory(events={})
@@ -65,24 +67,24 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
         for pattern_name, dict_runs in self._runs.items():
             for _, run in dict_runs.items():
                 if run.process(event=event):
-                    if run.is_halted():
-                        self._remove_run(pattern_name, run.run_id)
-                    elif run.is_complete():
+                    if run.is_complete():
                         self._remove_run(pattern_name, run.run_id)
                         completed.append(run)
+                    elif run.is_halted():
+                        self._remove_run(pattern_name, run.run_id)
                     else:
                         pass  # a change that neither halted nor completed
 
         return completed
 
-    def _check_against_patterns(self, event: BoboEvent) -> List[
-        BoboDeciderRun]:
+    def _check_against_patterns(self,
+                                event: BoboEvent) -> List[BoboDeciderRun]:
         completed = []
         for pattern in self._patterns:
             if any(predicate.evaluate(event=event, history=self._history_stub)
                    for predicate in pattern.blocks[0].predicates):
                 run = BoboDeciderRun(
-                    run_id=self._event_id_gen.generate(),
+                    run_id=self._run_id_gen.generate(),
                     pattern=pattern,
                     event=event)
                 if run.is_complete():

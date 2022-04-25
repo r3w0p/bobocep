@@ -1,4 +1,4 @@
-<img width="130" height="130" align="left" style="float: left; margin: 0 8px 0 0;" alt="BoboCEP" src="https://raw.githubusercontent.com/r3w0p/bobocep/develop/config/images/icon/400.png">
+<img width="130" height="130" align="left" style="float: left; margin: 0 8px 0 0;" alt="BoboCEP" src="https://raw.githubusercontent.com/r3w0p/bobocep/develop/config/images/icon.png">
 
 # BoboCEP
 
