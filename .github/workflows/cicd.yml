@@ -42,10 +42,6 @@ jobs:
         run: |
           coverage run --source=bobocep -m pytest tests
 
-  coverage:
-    name: Coverage
-    runs-on: ubuntu-latest
-    steps:
       - name: Generate coverage report
         run: |
           coverage html --skip-covered --skip-empty
