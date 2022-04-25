@@ -37,7 +37,7 @@ def test_pattern_3_block_halt_complete_on_init():
     assert not run.is_complete()
 
 
-def test_pattern_3_block_halt_complete_process_to_complete():
+def test_pattern_3_block_halt_complete_to_complete():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
         .followed_by("group_b", BoboPredicateCallable(lambda e, h: True)) \
@@ -86,6 +86,25 @@ def test_pattern_3_block_halt_no_match_on_strict():
     assert not run.is_complete()
 
 
+def test_pattern_3_block_halt_no_match_on_strict_negated_to_complete():
+    pattern = BoboPatternBuilder() \
+        .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
+        .not_next("group_b", BoboPredicateCallable(lambda e, h: False)) \
+        .followed_by("group_c", BoboPredicateCallable(lambda e, h: True)) \
+        .generate("pattern")
+
+    run = BoboDeciderRun("run_id", pattern,
+                         BoboEventPrimitive("event_a", datetime.now(), None))
+
+    run.process(BoboEventPrimitive("event_b", datetime.now(), None))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_c", datetime.now(), None))
+    assert run.is_halted()
+    assert run.is_complete()
+
+
 def test_pattern_3_block_halt_match_on_strict_negated():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
@@ -101,7 +120,7 @@ def test_pattern_3_block_halt_match_on_strict_negated():
     assert not run.is_complete()
 
 
-def test_pattern_4_block_not_match_optional_process_to_complete():
+def test_pattern_4_block_not_match_optional_to_complete():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
         .followed_by("group_b", BoboPredicateCallable(lambda e, h: False),
@@ -118,5 +137,179 @@ def test_pattern_4_block_not_match_optional_process_to_complete():
     assert not run.is_complete()
 
     run.process(BoboEventPrimitive("event_c", datetime.now(), None))
+    assert run.is_halted()
+    assert run.is_complete()
+
+
+def test_pattern_4_block_match_optional_to_complete():
+    pattern = BoboPatternBuilder() \
+        .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
+        .followed_by("group_b", BoboPredicateCallable(lambda e, h: True),
+                     optional=True) \
+        .followed_by("group_c", BoboPredicateCallable(lambda e, h: True)) \
+        .followed_by("group_d", BoboPredicateCallable(lambda e, h: True)) \
+        .generate("pattern")
+
+    run = BoboDeciderRun("run_id", pattern,
+                         BoboEventPrimitive("event_a", datetime.now(), None))
+
+    run.process(BoboEventPrimitive("event_b", datetime.now(), None))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_c", datetime.now(), None))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_d", datetime.now(), None))
+    assert run.is_halted()
+    assert run.is_complete()
+
+
+def test_pattern_4_block_not_match_optional_then_loop():
+    pattern = BoboPatternBuilder() \
+        .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
+        .followed_by("group_b", BoboPredicateCallable(lambda e, h: True),
+                     optional=False) \
+        .followed_by("group_c", BoboPredicateCallable(lambda e, h: True),
+                     loop=True) \
+        .followed_by("group_d", BoboPredicateCallable(lambda e, h: True)) \
+        .generate("pattern")
+
+    run = BoboDeciderRun("run_id", pattern,
+                         BoboEventPrimitive("event_a", datetime.now(), None))
+
+    run.process(BoboEventPrimitive("event_b", datetime.now(), None))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_c", datetime.now(), None))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_d", datetime.now(), None))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_e", datetime.now(), None))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+
+def test_pattern_4_block_match_optional_then_loop():
+    pattern = BoboPatternBuilder() \
+        .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
+        .followed_by("group_b", BoboPredicateCallable(lambda e, h: True),
+                     optional=True) \
+        .followed_by("group_c", BoboPredicateCallable(lambda e, h: True),
+                     loop=True) \
+        .followed_by("group_d", BoboPredicateCallable(lambda e, h: True)) \
+        .generate("pattern")
+
+    run = BoboDeciderRun("run_id", pattern,
+                         BoboEventPrimitive("event_a", datetime.now(), None))
+
+    run.process(BoboEventPrimitive("event_b", datetime.now(), None))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_c", datetime.now(), None))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_d", datetime.now(), None))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_e", datetime.now(), None))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+
+def test_pattern_3_block_loop_not_match_strict():
+    pattern = BoboPatternBuilder() \
+        .followed_by("group_a", BoboPredicateCallable(lambda e, h: e.data)) \
+        .next("group_b", BoboPredicateCallable(lambda e, h: e.data),
+              loop=True) \
+        .followed_by("group_c", BoboPredicateCallable(lambda e, h: e.data)) \
+        .generate("pattern")
+
+    run = BoboDeciderRun("run_id", pattern,
+                         BoboEventPrimitive("event_a", datetime.now(), True))
+
+    run.process(BoboEventPrimitive("event_b", datetime.now(), True))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_c", datetime.now(), True))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_d", datetime.now(), False))
+    assert run.is_halted()
+    assert not run.is_complete()
+
+
+def test_pattern_3_block_loop_to_complete():
+    pattern = BoboPatternBuilder() \
+        .followed_by("group_a",
+                     BoboPredicateCallable(lambda e, h: e.data == 1)) \
+        .followed_by("group_b",
+                     BoboPredicateCallable(lambda e, h: e.data == 2),
+                     loop=True) \
+        .followed_by("group_c",
+                     BoboPredicateCallable(lambda e, h: e.data == 3)) \
+        .generate("pattern")
+
+    run = BoboDeciderRun("run_id", pattern,
+                         BoboEventPrimitive("event_a", datetime.now(), 1))
+
+    run.process(BoboEventPrimitive("event_b", datetime.now(), 2))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_c", datetime.now(), 2))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_d", datetime.now(), 3))
+    assert run.is_halted()
+    assert run.is_complete()
+
+
+def test_pattern_4_block_2_loop_to_complete():
+    pattern = BoboPatternBuilder() \
+        .followed_by("group_a",
+                     BoboPredicateCallable(lambda e, h: e.data == 1)) \
+        .followed_by("group_b",
+                     BoboPredicateCallable(lambda e, h: e.data == 2),
+                     loop=True) \
+        .followed_by("group_c",
+                     BoboPredicateCallable(lambda e, h: e.data == 3),
+                     loop=True) \
+        .followed_by("group_d",
+                     BoboPredicateCallable(lambda e, h: e.data == 4)) \
+        .generate("pattern")
+
+    run = BoboDeciderRun("run_id", pattern,
+                         BoboEventPrimitive("event_a", datetime.now(), 1))
+
+    run.process(BoboEventPrimitive("event_b", datetime.now(), 2))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_c", datetime.now(), 2))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_d", datetime.now(), 3))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_e", datetime.now(), 3))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+    run.process(BoboEventPrimitive("event_f", datetime.now(), 4))
     assert run.is_halted()
     assert run.is_complete()

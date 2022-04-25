@@ -87,23 +87,25 @@ class BoboDeciderRun:
                 if block.strict:
                     self._halted = True
             else:
-                temp_index += 1
                 self._move_forward(event, block, temp_index)
 
         elif block.optional:
-            if not match and temp_index + 1 < len(self.pattern.blocks):
-                temp_index += 1
-                block = self.pattern.blocks[temp_index]
-                if block.loop:
-                    self._process_loop(event, block, temp_index)
-                else:
-                    self._process_not_loop(event, block, temp_index)
+            if not match:
+                if temp_index + 1 < len(self.pattern.blocks):
+                    temp_index += 1
+                    block = self.pattern.blocks[temp_index]
+                    if block.loop:
+                        self._process_loop(event, block, temp_index)
+                    else:
+                        self._process_not_loop(event, block, temp_index)
+            else:
+                self._move_forward(event, block, temp_index)
+
         else:
             if not match:
                 if block.strict:
                     self._halted = True
             else:
-                temp_index += 1
                 self._move_forward(event, block, temp_index)
 
     def _is_match(self,
@@ -123,5 +125,5 @@ class BoboDeciderRun:
                       block: BoboPatternBlock,
                       temp_index: int):
         self._add_event(event, block)
-        self._block_index = temp_index
+        self._block_index = temp_index + 1
         self._halted = self.is_complete()
