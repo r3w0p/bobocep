@@ -2,10 +2,11 @@
 # The following code can be redistributed and/or modified
 # under the terms of the GNU General Public License v3.0.
 
+import pytest
+from dpcontracts import PreconditionError
+
 from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
 from bobocep.predicate.bobo_predicate_callable import BoboPredicateCallable
-from dpcontracts import PreconditionError
-import pytest
 
 
 def test_negated_and_optional_both_false_if_loop_true():

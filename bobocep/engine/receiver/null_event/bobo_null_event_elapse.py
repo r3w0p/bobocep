@@ -16,14 +16,15 @@ class BoboNullEventElapse(BoboNullEvent):
 
     def __init__(self,
                  milliseconds: int,
-                 datagen=Callable,
+                 datagen: Callable,
+                 from_now: bool = True,
                  tz=None):
         super().__init__()
 
         self._milliseconds = milliseconds
         self._datagen = datagen
         self._tz = tz
-        self._last = 0
+        self._last = self._time_ms() if from_now else 0
 
     def maybe_generate(self, event_id: str) -> Union[BoboEvent, None]:
         now = BoboNullEventElapse._time_ms()

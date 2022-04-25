@@ -2,7 +2,6 @@
 # The following code can be redistributed and/or modified
 # under the terms of the GNU General Public License v3.0.
 
-import pytest
 from datetime import datetime
 
 from bobocep.engine.decider.bobo_decider_run import BoboDeciderRun
@@ -69,6 +68,21 @@ def test_pattern_3_block_manual_halt_not_complete():
     run.halt()
     assert run.is_halted()
     assert not run.is_complete()
+
+
+def test_pattern_3_block_process_on_halt():
+    pattern = BoboPatternBuilder() \
+        .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
+        .followed_by("group_b", BoboPredicateCallable(lambda e, h: True)) \
+        .followed_by("group_c", BoboPredicateCallable(lambda e, h: True)) \
+        .generate("pattern")
+
+    run = BoboDeciderRun("run_id", pattern,
+                         BoboEventPrimitive("event_a", datetime.now(), None))
+
+    run.halt()
+    run.process(BoboEventPrimitive("event_b", datetime.now(), None))
+    assert run.is_halted()
 
 
 def test_pattern_3_block_halt_no_match_on_strict():

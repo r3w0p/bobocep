@@ -2,12 +2,12 @@
 # The following code can be redistributed and/or modified
 # under the terms of the GNU General Public License v3.0.
 
-from bobocep.events.bobo_event import BoboEvent
-from bobocep.events.bobo_history import BoboHistory
-from bobocep.pattern.bobo_pattern import BoboPattern
 from threading import RLock
 from typing import List
 
+from bobocep.events.bobo_event import BoboEvent
+from bobocep.events.bobo_history import BoboHistory
+from bobocep.pattern.bobo_pattern import BoboPattern
 from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
 from bobocep.predicate.bobo_predicate import BoboPredicate
 
