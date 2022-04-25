@@ -53,6 +53,7 @@ class BoboPatternBuilder:
                 group=group,
                 predicates=[predicate],
                 strict=True,
+                loop=False,
                 negated=True,
                 optional=False))
         return self
@@ -84,6 +85,7 @@ class BoboPatternBuilder:
                 group=group,
                 predicates=[predicate],
                 strict=False,
+                loop=False,
                 negated=True,
                 optional=False))
         return self
@@ -115,6 +117,7 @@ class BoboPatternBuilder:
                 group=group,
                 predicates=predicates,
                 strict=False,
+                loop=False,
                 negated=True,
                 optional=False))
         return self

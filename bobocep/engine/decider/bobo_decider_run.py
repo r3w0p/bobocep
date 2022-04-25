@@ -45,16 +45,18 @@ class BoboDeciderRun:
             if self._halted:
                 return False
 
-            block: BoboPatternBlock = self.pattern.blocks[self._block_index]
+            temp_index = self._block_index
+            block: BoboPatternBlock = self.pattern.blocks[temp_index]
 
             if block.loop:
-                self._process_loop(event, block)
+                self._process_loop(event, block, temp_index)
             else:
-                self._process_not_loop(event, block)
+                self._process_not_loop(event, block, temp_index)
 
     def _process_loop(self,
                       event: BoboEvent,
-                      block: BoboPatternBlock) -> None:
+                      block: BoboPatternBlock,
+                      temp_index: int) -> None:
         # a looping block can neither be negated nor optional
         match = self._is_match(event, block.predicates)
 
@@ -62,18 +64,20 @@ class BoboDeciderRun:
             if block.strict:
                 self._halted = True
 
-            elif self._block_index + 1 < len(self.pattern.blocks):
-                block = self.pattern.blocks[self._block_index + 1]
+            elif temp_index + 1 < len(self.pattern.blocks):
+                temp_index += 1
+                block = self.pattern.blocks[temp_index]
                 if block.loop:
-                    self._process_loop(event, block)
+                    self._process_loop(event, block, temp_index)
                 else:
-                    self._process_not_loop(event, block)
+                    self._process_not_loop(event, block, temp_index)
         else:
             self._add_event(event, block)
 
     def _process_not_loop(self,
                           event: BoboEvent,
-                          block: BoboPatternBlock) -> None:
+                          block: BoboPatternBlock,
+                          temp_index: int) -> None:
         # a non-looping block cannot be both negated and optional
         # a strict block cannot be optional
         match = self._is_match(event, block.predicates)
@@ -83,22 +87,24 @@ class BoboDeciderRun:
                 if block.strict:
                     self._halted = True
             else:
-                self._move_forward(event, block)
+                temp_index += 1
+                self._move_forward(event, block, temp_index)
 
         elif block.optional:
-            if not match and self._block_index + 1 < len(self.pattern.blocks):
-                block = self.pattern.blocks[self._block_index + 1]
+            if not match and temp_index + 1 < len(self.pattern.blocks):
+                temp_index += 1
+                block = self.pattern.blocks[temp_index]
                 if block.loop:
-                    self._process_loop(event, block)
+                    self._process_loop(event, block, temp_index)
                 else:
-                    self._process_not_loop(event, block)
-
+                    self._process_not_loop(event, block, temp_index)
         else:
             if not match:
                 if block.strict:
                     self._halted = True
             else:
-                self._move_forward(event, block)
+                temp_index += 1
+                self._move_forward(event, block, temp_index)
 
     def _is_match(self,
                   event: BoboEvent,
@@ -112,7 +118,10 @@ class BoboDeciderRun:
             self._events[block.group] = []
         self._events[block.group].append(event)
 
-    def _move_forward(self, event: BoboEvent, block: BoboPatternBlock):
+    def _move_forward(self,
+                      event: BoboEvent,
+                      block: BoboPatternBlock,
+                      temp_index: int):
         self._add_event(event, block)
-        self._block_index += 1
+        self._block_index = temp_index
         self._halted = self.is_complete()

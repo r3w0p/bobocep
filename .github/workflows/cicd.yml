@@ -42,6 +42,10 @@ jobs:
         run: |
           coverage run --source=bobocep -m pytest tests
 
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    steps:
       - name: Generate coverage report
         run: |
           coverage html --skip-covered --skip-empty
@@ -58,15 +62,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
         run: |
           coveralls
-
-  cleanup:
-    name: Clean-up
-    runs-on: ubuntu-latest
-    steps:
-      - name: Delete old workflow runs
-        uses: Mattraks/delete-workflow-runs@v2
-        with:
-          token: ${{ github.token }}
-          repository: ${{ github.repository }}
-          retain_days: 1
-          keep_minimum_runs: 10
