@@ -6,10 +6,13 @@
 https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml)
 [![Security](https://github.com/r3w0p/bobocep/actions/workflows/security.yml/badge.svg)](
 https://github.com/r3w0p/bobocep/actions/workflows/security.yml)
-[![Coverage](https://coveralls.io/repos/github/r3w0p/bobocep/badge.svg?branch=develop)](
-https://coveralls.io/github/r3w0p/bobocep?branch=develop)
+[![Coverage](https://img.shields.io/codeclimate/coverage/r3w0p/bobocep)](
+https://codeclimate.com/github/r3w0p/bobocep)
 [![Open Issues](https://img.shields.io/github/issues-raw/r3w0p/bobocep.svg)](
 https://github.com/r3w0p/bobocep/issues)
+
+
+
 
 `BoboCEP` is a [complex event processing](https://en.wikipedia.org/wiki/Complex_event_processing) (CEP) engine
 designed for [edge computing](https://en.wikipedia.org/wiki/Edge_computing) in

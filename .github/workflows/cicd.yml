@@ -42,19 +42,9 @@ jobs:
         run: |
           coverage run --source=bobocep -m pytest tests
 
-      - name: Generate coverage report
-        run: |
-          coverage html --skip-covered --skip-empty
-          coverage report    
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v2
-        with:
-          name: html-report
-          path: htmlcov
-
-      - name: Upload coverage to Coveralls
+      - name: Upload coverage to Code Climate
+        uses: paambaati/codeclimate-action@v2.5.3
         env:
-          GITHUB_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
-        run: |
-          coveralls
+          CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: coverage xml
