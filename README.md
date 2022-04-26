@@ -2,13 +2,13 @@
 
 # BoboCEP
 
-[![CI/CD](https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml/badge.svg)](
-https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml)
-[![Security](https://github.com/r3w0p/bobocep/actions/workflows/security.yml/badge.svg)](
+[![CI](https://img.shields.io/github/workflow/status/r3w0p/bobocep/CI)](
+https://github.com/r3w0p/bobocep/actions/workflows/ci.yml)
+[![Security](https://img.shields.io/github/workflow/status/r3w0p/bobocep/Security?label=security)](
 https://github.com/r3w0p/bobocep/actions/workflows/security.yml)
 [![Coverage](https://img.shields.io/codeclimate/coverage/r3w0p/bobocep)](
-https://codeclimate.com/github/r3w0p/bobocep)
-[![Open Issues](https://img.shields.io/github/issues-raw/r3w0p/bobocep.svg)](
+https://codeclimate.com/github/r3w0p/bobocep/test_coverage)
+[![Issues](https://img.shields.io/github/issues/r3w0p/bobocep)](
 https://github.com/r3w0p/bobocep/issues)
 
 
@@ -24,5 +24,3 @@ partially completed complex events across multiple instances of the software.
 
 The `BoboCEP` code can be redistributed and/or modified under the terms of the 
 [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html).
-
-[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P044N2B)

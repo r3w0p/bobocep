@@ -5,7 +5,6 @@
 from inspect import signature
 from types import MethodType
 from typing import Callable
-
 from dpcontracts import require
 
 from bobocep.events.bobo_event import BoboEvent
