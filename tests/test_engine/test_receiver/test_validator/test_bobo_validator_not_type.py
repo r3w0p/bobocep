@@ -55,13 +55,6 @@ def test_1_type_str_event_data_invalid_only():
         event_id="id", timestamp=datetime.now(), data="abc"))
 
 
-def test_1_type_subtype_true_invalid():
-    validator = BoboValidatorNotType(types=[TestClassType])
-
-    assert not validator.is_valid(entity=TestClassType())
-    assert not validator.is_valid(entity=TestClassSubtype())
-
-
 def test_1_type_subtype_false_valid():
     validator = BoboValidatorNotType(types=[TestClassType], subtype=False)
 

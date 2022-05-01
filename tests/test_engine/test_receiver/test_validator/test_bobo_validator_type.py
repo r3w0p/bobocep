@@ -9,6 +9,16 @@ from bobocep.engine.receiver.validator.bobo_validator_type import \
 from bobocep.events.bobo_event_primitive import BoboEventPrimitive
 
 
+class TestClassType:
+    def __init__(self):
+        super().__init__()
+
+
+class TestClassSubtype(TestClassType):
+    def __init__(self):
+        super().__init__()
+
+
 def test_1_type_dict_valid_only():
     validator = BoboValidatorType(types=[dict])
 
@@ -46,3 +56,15 @@ def test_1_type_str_event_data_invalid_only():
 
     assert not validator.is_valid(entity=BoboEventPrimitive(
         event_id="id", timestamp=datetime.now(), data={"key": 123}))
+
+
+def test_1_type_subtype_false_valid():
+    validator = BoboValidatorType(types=[TestClassType], subtype=False)
+
+    assert validator.is_valid(entity=TestClassType())
+
+
+def test_1_type_subtype_false_invalid():
+    validator = BoboValidatorType(types=[TestClassType], subtype=False)
+
+    assert not validator.is_valid(entity=TestClassSubtype())

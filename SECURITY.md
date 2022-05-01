@@ -1,6 +1,6 @@
 # Security Policy
 
-> _Last updated: 1 May 2022_
+> _Last updated: 2 May 2022_
 
 ## Supported Versions
 
@@ -8,19 +8,22 @@ Below are versions which have been tested for support.
 
 ### Python
 
-| Version | Supported |
-|:-------:|:---------:|
-| ≥ 3.11  |  &cross;  |
-|  ≥ 3.7  |  &check;  |
-|  ≤ 3.6  |  &cross;  |
+|   Version    | Supported |
+|:------------:|:---------:|
+|   `> 3.10`   |  &cross;  |
+| `3.7 - 3.10` |  &check;  |
+|   `< 3.7`    |  &cross;  |
 
 ### OS
 
-| Version | Supported |
-|:-------:|:---------:|
-| Windows |  &check;  |
-|   Mac   |  &check;  |
-|  Linux  |  &check;  |
+|     Version      | Supported |
+|:----------------:|:---------:|
+| `windows-latest` |  &check;  |
+|  `macos-latest`  |  &check;  |
+| `ubuntu-latest`  |  &check;  |
+
+The _"latest"_ version refers to the `*-latest` [available environments](https://github.com/actions/virtual-environments#available-environments)
+from GitHub Actions Virtual Environments.
 
 ## Reporting a Vulnerability
 

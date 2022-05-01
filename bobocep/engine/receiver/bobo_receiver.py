@@ -50,17 +50,19 @@ class BoboReceiver(BoboEngineTask, BoboReceiverPublisher):
                     self._process_entity(entity=null_event)
 
     def _process_entity(self, entity) -> None:
-        if self._validator.is_valid(entity):
-            if isinstance(entity, BoboEvent):
-                event = entity
-            else:
-                event = BoboEventPrimitive(
-                    event_id=self._event_id_gen.generate(),
-                    timestamp=datetime.now(),
-                    data=entity)
+        if not self._validator.is_valid(entity):
+            return None
 
-            for subscriber in self._subscribers:
-                subscriber.on_receiver_event(event=event)
+        if isinstance(entity, BoboEvent):
+            event = entity
+        else:
+            event = BoboEventPrimitive(
+                event_id=self._event_id_gen.generate(),
+                timestamp=datetime.now(),
+                data=entity)
+
+        for subscriber in self._subscribers:
+            subscriber.on_receiver_event(event=event)
 
     def add_data(self, data):
         with self._lock:
