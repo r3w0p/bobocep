@@ -22,7 +22,7 @@ def test_pattern_1_block_halt_complete_on_init():
     assert run.is_complete()
 
 
-def test_pattern_3_block_halt_complete_on_init():
+def test_pattern_3_blocks_not_halt_not_complete_on_init():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
         .followed_by("group_b", BoboPredicateCallable(lambda e, h: True)) \
@@ -36,7 +36,7 @@ def test_pattern_3_block_halt_complete_on_init():
     assert not run.is_complete()
 
 
-def test_pattern_3_block_halt_complete_to_complete():
+def test_pattern_3_blocks_halt_complete_to_complete():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
         .followed_by("group_b", BoboPredicateCallable(lambda e, h: True)) \
@@ -55,7 +55,7 @@ def test_pattern_3_block_halt_complete_to_complete():
     assert run.is_complete()
 
 
-def test_pattern_3_block_manual_halt_not_complete():
+def test_pattern_3_blocks_manual_halt_not_complete():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
         .followed_by("group_b", BoboPredicateCallable(lambda e, h: True)) \
@@ -70,7 +70,7 @@ def test_pattern_3_block_manual_halt_not_complete():
     assert not run.is_complete()
 
 
-def test_pattern_3_block_process_on_halt():
+def test_pattern_3_blocks_process_on_halt():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
         .followed_by("group_b", BoboPredicateCallable(lambda e, h: True)) \
@@ -85,7 +85,7 @@ def test_pattern_3_block_process_on_halt():
     assert run.is_halted()
 
 
-def test_pattern_3_block_halt_no_match_on_strict():
+def test_pattern_3_blocks_halt_no_match_on_strict():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
         .next("group_b", BoboPredicateCallable(lambda e, h: False)) \
@@ -100,7 +100,7 @@ def test_pattern_3_block_halt_no_match_on_strict():
     assert not run.is_complete()
 
 
-def test_pattern_3_block_halt_no_match_on_strict_negated_to_complete():
+def test_pattern_3_blocks_halt_no_match_on_strict_negated_to_complete():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
         .not_next("group_b", BoboPredicateCallable(lambda e, h: False)) \
@@ -119,7 +119,7 @@ def test_pattern_3_block_halt_no_match_on_strict_negated_to_complete():
     assert run.is_complete()
 
 
-def test_pattern_3_block_halt_match_on_strict_negated():
+def test_pattern_3_blocks_halt_match_on_strict_negated():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
         .not_next("group_b", BoboPredicateCallable(lambda e, h: True)) \
@@ -134,7 +134,7 @@ def test_pattern_3_block_halt_match_on_strict_negated():
     assert not run.is_complete()
 
 
-def test_pattern_4_block_not_match_optional_to_complete():
+def test_pattern_4_blocks_not_match_optional_to_complete():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
         .followed_by("group_b", BoboPredicateCallable(lambda e, h: False),
@@ -155,7 +155,7 @@ def test_pattern_4_block_not_match_optional_to_complete():
     assert run.is_complete()
 
 
-def test_pattern_4_block_match_optional_to_complete():
+def test_pattern_4_blocks_match_optional_to_complete():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
         .followed_by("group_b", BoboPredicateCallable(lambda e, h: True),
@@ -180,11 +180,11 @@ def test_pattern_4_block_match_optional_to_complete():
     assert run.is_complete()
 
 
-def test_pattern_4_block_not_match_optional_then_loop():
+def test_pattern_4_blocks_not_match_optional_then_loop():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
-        .followed_by("group_b", BoboPredicateCallable(lambda e, h: True),
-                     optional=False) \
+        .followed_by("group_b", BoboPredicateCallable(lambda e, h: False),
+                     optional=True) \
         .followed_by("group_c", BoboPredicateCallable(lambda e, h: True),
                      loop=True) \
         .followed_by("group_d", BoboPredicateCallable(lambda e, h: True)) \
@@ -210,7 +210,7 @@ def test_pattern_4_block_not_match_optional_then_loop():
     assert not run.is_complete()
 
 
-def test_pattern_4_block_match_optional_then_loop():
+def test_pattern_4_blocks_match_optional_then_loop():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCallable(lambda e, h: True)) \
         .followed_by("group_b", BoboPredicateCallable(lambda e, h: True),
@@ -240,7 +240,7 @@ def test_pattern_4_block_match_optional_then_loop():
     assert not run.is_complete()
 
 
-def test_pattern_3_block_loop_not_match_strict():
+def test_pattern_3_blocks_1_loop_not_match_strict():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCallable(lambda e, h: e.data)) \
         .next("group_b", BoboPredicateCallable(lambda e, h: e.data),
@@ -264,7 +264,7 @@ def test_pattern_3_block_loop_not_match_strict():
     assert not run.is_complete()
 
 
-def test_pattern_3_block_loop_to_complete():
+def test_pattern_3_blocks_1_loop_to_complete():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a",
                      BoboPredicateCallable(lambda e, h: e.data == 1)) \
@@ -291,7 +291,7 @@ def test_pattern_3_block_loop_to_complete():
     assert run.is_complete()
 
 
-def test_pattern_4_block_2_loop_to_complete():
+def test_pattern_4_blocks_2_loops_to_complete():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a",
                      BoboPredicateCallable(lambda e, h: e.data == 1)) \
