@@ -2,17 +2,14 @@
 
 # BoboCEP
 
-[![CI](https://img.shields.io/github/workflow/status/r3w0p/bobocep/CI)](
+[![CI](https://img.shields.io/github/workflow/status/r3w0p/bobocep/CI?label=CI)](
 https://github.com/r3w0p/bobocep/actions/workflows/ci.yml)
 [![Security](https://img.shields.io/github/workflow/status/r3w0p/bobocep/Security?label=security)](
 https://github.com/r3w0p/bobocep/actions/workflows/security.yml)
 [![Coverage](https://img.shields.io/codeclimate/coverage/r3w0p/bobocep)](
-https://codeclimate.com/github/r3w0p/bobocep/test_coverage)
+https://codeclimate.com/github/r3w0p/bobocep/code)
 [![Issues](https://img.shields.io/github/issues/r3w0p/bobocep)](
 https://github.com/r3w0p/bobocep/issues)
-
-
-
 
 `BoboCEP` is a [complex event processing](https://en.wikipedia.org/wiki/Complex_event_processing) (CEP) engine
 designed for [edge computing](https://en.wikipedia.org/wiki/Edge_computing) in

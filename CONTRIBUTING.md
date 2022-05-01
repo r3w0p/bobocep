@@ -1,5 +1,7 @@
 # Contributing
 
+> _Last updated: 1 May 2022_
+
 ## Resources
 
 Here are some important resources:
