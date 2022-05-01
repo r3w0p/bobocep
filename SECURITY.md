@@ -10,6 +10,7 @@ Below are versions which have been tested for support.
 
 | Version | Supported |
 |:-------:|:---------:|
+| ≥ 3.11  |  &cross;  |
 |  ≥ 3.7  |  &check;  |
 |  ≤ 3.6  |  &cross;  |
 
