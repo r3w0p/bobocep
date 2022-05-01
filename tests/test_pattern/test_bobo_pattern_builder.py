@@ -1,6 +1,8 @@
 # Copyright (c) 2022 r3w0p
 # The following code can be redistributed and/or modified
 # under the terms of the GNU General Public License v3.0.
+import pytest
+from dpcontracts import PreconditionError
 
 from bobocep.pattern.bobo_pattern_builder import BoboPatternBuilder
 from bobocep.predicate.bobo_predicate_callable import BoboPredicateCallable
@@ -121,6 +123,72 @@ class TestNext:
         assert pattern.haltconditions[2] == predicate_halt_c
 
 
+class TestNotNext:
+
+    def test_1_block_1_precon_1_haltcon_error(self):
+        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
+
+        builder = BoboPatternBuilder() \
+            .not_next(group="group_a",
+                      predicate=predicate_block_a) \
+            .precondition(predicate=predicate_pre_a) \
+            .haltcondition(predicate=predicate_halt_a)
+
+        with pytest.raises(PreconditionError):
+            builder.generate(name="name")
+
+    def test_3_block_1_not_next_3_precon_3_haltcon(self):
+        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_b = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_c = BoboPredicateCallable(call=lambda e, h: True)
+
+        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_pre_b = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_pre_c = BoboPredicateCallable(call=lambda e, h: True)
+
+        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_halt_b = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_halt_c = BoboPredicateCallable(call=lambda e, h: True)
+
+        builder = BoboPatternBuilder() \
+            .next(group="group_a",
+                  predicate=predicate_block_a) \
+            .not_next(group="group_b",
+                      predicate=predicate_block_b) \
+            .next(group="group_c",
+                  predicate=predicate_block_c) \
+            .precondition(predicate=predicate_pre_a) \
+            .precondition(predicate=predicate_pre_b) \
+            .precondition(predicate=predicate_pre_c) \
+            .haltcondition(predicate=predicate_halt_a) \
+            .haltcondition(predicate=predicate_halt_b) \
+            .haltcondition(predicate=predicate_halt_c)
+
+        pattern = builder.generate(name="name")
+
+        assert len(pattern.blocks) == 3
+        assert len(pattern.preconditions) == 3
+        assert len(pattern.haltconditions) == 3
+
+        assert len(pattern.blocks[0].predicates) == 1
+        assert len(pattern.blocks[1].predicates) == 1
+        assert len(pattern.blocks[2].predicates) == 1
+
+        assert pattern.blocks[0].predicates[0] == predicate_block_a
+        assert pattern.blocks[1].predicates[0] == predicate_block_b
+        assert pattern.blocks[2].predicates[0] == predicate_block_c
+
+        assert pattern.preconditions[0] == predicate_pre_a
+        assert pattern.preconditions[1] == predicate_pre_b
+        assert pattern.preconditions[2] == predicate_pre_c
+
+        assert pattern.haltconditions[0] == predicate_halt_a
+        assert pattern.haltconditions[1] == predicate_halt_b
+        assert pattern.haltconditions[2] == predicate_halt_c
+
+
 class TestFollowedBy:
 
     def test_1_block_1_precon_1_haltcon(self):
@@ -211,6 +279,72 @@ class TestFollowedBy:
                          times=1,
                          loop=False,
                          optional=False) \
+            .precondition(predicate=predicate_pre_a) \
+            .precondition(predicate=predicate_pre_b) \
+            .precondition(predicate=predicate_pre_c) \
+            .haltcondition(predicate=predicate_halt_a) \
+            .haltcondition(predicate=predicate_halt_b) \
+            .haltcondition(predicate=predicate_halt_c)
+
+        pattern = builder.generate(name="name")
+
+        assert len(pattern.blocks) == 3
+        assert len(pattern.preconditions) == 3
+        assert len(pattern.haltconditions) == 3
+
+        assert len(pattern.blocks[0].predicates) == 1
+        assert len(pattern.blocks[1].predicates) == 1
+        assert len(pattern.blocks[2].predicates) == 1
+
+        assert pattern.blocks[0].predicates[0] == predicate_block_a
+        assert pattern.blocks[1].predicates[0] == predicate_block_b
+        assert pattern.blocks[2].predicates[0] == predicate_block_c
+
+        assert pattern.preconditions[0] == predicate_pre_a
+        assert pattern.preconditions[1] == predicate_pre_b
+        assert pattern.preconditions[2] == predicate_pre_c
+
+        assert pattern.haltconditions[0] == predicate_halt_a
+        assert pattern.haltconditions[1] == predicate_halt_b
+        assert pattern.haltconditions[2] == predicate_halt_c
+
+
+class TestNotFollowedBy:
+
+    def test_1_block_1_precon_1_haltcon_error(self):
+        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
+
+        builder = BoboPatternBuilder() \
+            .not_followed_by(group="group_a",
+                             predicate=predicate_block_a) \
+            .precondition(predicate=predicate_pre_a) \
+            .haltcondition(predicate=predicate_halt_a)
+
+        with pytest.raises(PreconditionError):
+            builder.generate(name="name")
+
+    def test_3_block_1_not_followed_by_3_precon_3_haltcon(self):
+        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_b = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_c = BoboPredicateCallable(call=lambda e, h: True)
+
+        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_pre_b = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_pre_c = BoboPredicateCallable(call=lambda e, h: True)
+
+        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_halt_b = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_halt_c = BoboPredicateCallable(call=lambda e, h: True)
+
+        builder = BoboPatternBuilder() \
+            .next(group="group_a",
+                  predicate=predicate_block_a) \
+            .not_followed_by(group="group_b",
+                             predicate=predicate_block_b) \
+            .next(group="group_c",
+                  predicate=predicate_block_c) \
             .precondition(predicate=predicate_pre_a) \
             .precondition(predicate=predicate_pre_b) \
             .precondition(predicate=predicate_pre_c) \
@@ -387,6 +521,82 @@ class TestFollowedByAny:
         assert pattern.blocks[2].predicates[0] == predicate_block_c_1
         assert pattern.blocks[2].predicates[1] == predicate_block_c_2
         assert pattern.blocks[2].predicates[2] == predicate_block_c_3
+
+        assert pattern.preconditions[0] == predicate_pre_a
+        assert pattern.preconditions[1] == predicate_pre_b
+        assert pattern.preconditions[2] == predicate_pre_c
+
+        assert pattern.haltconditions[0] == predicate_halt_a
+        assert pattern.haltconditions[1] == predicate_halt_b
+        assert pattern.haltconditions[2] == predicate_halt_c
+
+
+class TestNotFollowedByAny:
+
+    def test_1_block_1_precon_1_haltcon_error(self):
+        predicate_block_a1 = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a2 = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a3 = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
+
+        builder = BoboPatternBuilder() \
+            .not_followed_by_any(group="group_a",
+                                 predicates=[predicate_block_a1,
+                                             predicate_block_a2,
+                                             predicate_block_a3]) \
+            .precondition(predicate=predicate_pre_a) \
+            .haltcondition(predicate=predicate_halt_a)
+
+        with pytest.raises(PreconditionError):
+            builder.generate(name="name")
+
+    def test_3_block_1_not_followed_by_any_3_precon_3_haltcon(self):
+        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_b1 = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_b2 = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_b3 = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_c = BoboPredicateCallable(call=lambda e, h: True)
+
+        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_pre_b = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_pre_c = BoboPredicateCallable(call=lambda e, h: True)
+
+        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_halt_b = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_halt_c = BoboPredicateCallable(call=lambda e, h: True)
+
+        builder = BoboPatternBuilder() \
+            .next(group="group_a",
+                  predicate=predicate_block_a) \
+            .not_followed_by_any(group="group_b",
+                                 predicates=[predicate_block_b1,
+                                             predicate_block_b2,
+                                             predicate_block_b3]) \
+            .next(group="group_c",
+                  predicate=predicate_block_c) \
+            .precondition(predicate=predicate_pre_a) \
+            .precondition(predicate=predicate_pre_b) \
+            .precondition(predicate=predicate_pre_c) \
+            .haltcondition(predicate=predicate_halt_a) \
+            .haltcondition(predicate=predicate_halt_b) \
+            .haltcondition(predicate=predicate_halt_c)
+
+        pattern = builder.generate(name="name")
+
+        assert len(pattern.blocks) == 3
+        assert len(pattern.preconditions) == 3
+        assert len(pattern.haltconditions) == 3
+
+        assert len(pattern.blocks[0].predicates) == 1
+        assert len(pattern.blocks[1].predicates) == 3
+        assert len(pattern.blocks[2].predicates) == 1
+
+        assert pattern.blocks[0].predicates[0] == predicate_block_a
+        assert pattern.blocks[1].predicates[0] == predicate_block_b1
+        assert pattern.blocks[1].predicates[1] == predicate_block_b2
+        assert pattern.blocks[1].predicates[2] == predicate_block_b3
+        assert pattern.blocks[2].predicates[0] == predicate_block_c
 
         assert pattern.preconditions[0] == predicate_pre_a
         assert pattern.preconditions[1] == predicate_pre_b
