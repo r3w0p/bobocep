@@ -1,7 +1,5 @@
 # Contributor Covenant Code of Conduct
 
-> _Last updated: 1 May 2022_
-
 ## Our Pledge
 
 We as members, contributors, and leaders pledge to make participation in our

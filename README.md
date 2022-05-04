@@ -1,4 +1,4 @@
-<img width="130" height="130" align="left" style="float: left; margin: 0 8px 0 0;" alt="BoboCEP" src="https://raw.githubusercontent.com/r3w0p/bobocep/develop/media/images/logo.png">
+<img width="140" height="150" align="left" style="float: left; margin: 0 8px 0 0;" alt="BoboCEP" src="https://raw.githubusercontent.com/r3w0p/bobocep/develop/media/images/logo.png">
 
 # BoboCEP
 
@@ -7,9 +7,9 @@ https://github.com/r3w0p/bobocep/actions/workflows/ci.yml)
 [![Security](https://img.shields.io/github/workflow/status/r3w0p/bobocep/Security?label=Security)](
 https://github.com/r3w0p/bobocep/actions/workflows/security.yml)
 [![Coverage](https://img.shields.io/codeclimate/coverage/r3w0p/bobocep?label=Coverage)](
-https://codeclimate.com/github/r3w0p/bobocep/code?sort=test_coverage)
+https://codeclimate.com/github/r3w0p/bobocep/progress/coverage)
 [![Maintainability](https://img.shields.io/codeclimate/maintainability-percentage/r3w0p/bobocep?label=Maintainability)](
-https://codeclimate.com/github/r3w0p/bobocep/code?sort=maintainability)
+https://codeclimate.com/github/r3w0p/bobocep/progress/maintainability)
 [![Issues](https://img.shields.io/github/issues-raw/r3w0p/bobocep?label=Issues)](
 https://github.com/r3w0p/bobocep/issues) \
 [![PyPI](https://img.shields.io/pypi/v/bobocep?color=blue&label=PyPI)](
