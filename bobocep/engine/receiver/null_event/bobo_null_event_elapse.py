@@ -8,8 +8,8 @@ from typing import Union, Callable
 
 from bobocep.engine.receiver.null_event.bobo_null_event import \
     BoboNullEvent
-from bobocep.events.bobo_event import BoboEvent
-from bobocep.events.bobo_event_primitive import BoboEventPrimitive
+from bobocep.event.bobo_event import BoboEvent
+from bobocep.event.bobo_event_simple import BoboEventSimple
 
 
 class BoboNullEventElapse(BoboNullEvent):
@@ -30,7 +30,7 @@ class BoboNullEventElapse(BoboNullEvent):
         now = BoboNullEventElapse._time_ms()
         if (now - self._last) > self._milliseconds:
             self._last = now
-            return BoboEventPrimitive(
+            return BoboEventSimple(
                 event_id=event_id,
                 timestamp=datetime.now(tz=self._tz),
                 data=self._datagen())

@@ -6,8 +6,8 @@ from abc import ABC, abstractmethod
 
 from dpcontracts import require, ensure
 
-from bobocep.events.bobo_event import BoboEvent
-from bobocep.events.bobo_history import BoboHistory
+from bobocep.event.bobo_event import BoboEvent
+from bobocep.event.bobo_history import BoboHistory
 
 
 class BoboPredicate(ABC):
@@ -28,7 +28,7 @@ class BoboPredicate(ABC):
         :param event: An event.
         :type event: BoboEvent
 
-        :param history: A history of events.
+        :param history: A history of event.
         :type history: BoboHistory
 
         :return: True if the predicate evaluates to True,

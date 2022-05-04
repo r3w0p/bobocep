@@ -15,10 +15,10 @@
 !.github/**
 !bobocep/
 !bobocep/**
-!config/
-!config/**
+!media/
+!media/**
 !tests/
 !tests/**
 
-__pycache__/
- *.pyc
+__pycache__
+*.pyc

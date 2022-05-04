@@ -6,13 +6,13 @@ import pytest
 from dpcontracts import PreconditionError
 
 from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
-from bobocep.predicate.bobo_predicate_callable import BoboPredicateCallable
+from bobocep.predicate.bobo_predicate_call import BoboPredicateCall
 
 
 def test_negated_and_optional_both_false_if_loop_true():
     assert type(BoboPatternBlock(
         group="group",
-        predicates=[BoboPredicateCallable(call=lambda e, h: True)],
+        predicates=[BoboPredicateCall(call=lambda e, h: True)],
         strict=False,
         loop=True,
         negated=False,
@@ -24,7 +24,7 @@ def test_negated_and_optional_both_true_if_loop_true():
     with pytest.raises(PreconditionError):
         BoboPatternBlock(
             group="group",
-            predicates=[BoboPredicateCallable(call=lambda e, h: True)],
+            predicates=[BoboPredicateCall(call=lambda e, h: True)],
             strict=False,
             loop=True,
             negated=True,
@@ -36,7 +36,7 @@ def test_negated_true_optional_false_if_loop_true():
     with pytest.raises(PreconditionError):
         BoboPatternBlock(
             group="group",
-            predicates=[BoboPredicateCallable(call=lambda e, h: True)],
+            predicates=[BoboPredicateCall(call=lambda e, h: True)],
             strict=False,
             loop=True,
             negated=True,
@@ -48,7 +48,7 @@ def test_negated_false_optional_true_if_loop_true():
     with pytest.raises(PreconditionError):
         BoboPatternBlock(
             group="group",
-            predicates=[BoboPredicateCallable(call=lambda e, h: True)],
+            predicates=[BoboPredicateCall(call=lambda e, h: True)],
             strict=False,
             loop=True,
             negated=False,
@@ -59,7 +59,7 @@ def test_negated_false_optional_true_if_loop_true():
 def test_negated_and_optional_both_false_if_loop_false():
     assert type(BoboPatternBlock(
         group="group",
-        predicates=[BoboPredicateCallable(call=lambda e, h: True)],
+        predicates=[BoboPredicateCall(call=lambda e, h: True)],
         strict=False,
         loop=False,
         negated=False,
@@ -71,7 +71,7 @@ def test_negated_and_optional_both_true_if_loop_false():
     with pytest.raises(PreconditionError):
         BoboPatternBlock(
             group="group",
-            predicates=[BoboPredicateCallable(call=lambda e, h: True)],
+            predicates=[BoboPredicateCall(call=lambda e, h: True)],
             strict=False,
             loop=False,
             negated=True,
@@ -82,7 +82,7 @@ def test_negated_and_optional_both_true_if_loop_false():
 def test_negated_true_optional_false_if_loop_false():
     assert type(BoboPatternBlock(
         group="group",
-        predicates=[BoboPredicateCallable(call=lambda e, h: True)],
+        predicates=[BoboPredicateCall(call=lambda e, h: True)],
         strict=False,
         loop=False,
         negated=True,
@@ -93,7 +93,7 @@ def test_negated_true_optional_false_if_loop_false():
 def test_negated_false_optional_true_if_loop_false():
     assert type(BoboPatternBlock(
         group="group",
-        predicates=[BoboPredicateCallable(call=lambda e, h: True)],
+        predicates=[BoboPredicateCall(call=lambda e, h: True)],
         strict=False,
         loop=False,
         negated=False,

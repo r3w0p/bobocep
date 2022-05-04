@@ -5,8 +5,8 @@
 from threading import RLock
 from typing import List
 
-from bobocep.events.bobo_event import BoboEvent
-from bobocep.events.bobo_history import BoboHistory
+from bobocep.event.bobo_event import BoboEvent
+from bobocep.event.bobo_history import BoboHistory
 from bobocep.pattern.bobo_pattern import BoboPattern
 from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
 from bobocep.predicate.bobo_predicate import BoboPredicate

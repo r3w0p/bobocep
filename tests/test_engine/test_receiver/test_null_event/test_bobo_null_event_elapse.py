@@ -6,7 +6,7 @@ from time import sleep
 
 from bobocep.engine.receiver.null_event.bobo_null_event_elapse import \
     BoboNullEventElapse
-from bobocep.events.bobo_event_primitive import BoboEventPrimitive
+from bobocep.event.bobo_event_simple import BoboEventSimple
 
 
 def test_not_from_now():
@@ -14,7 +14,7 @@ def test_not_from_now():
     event_id = "id"
     event = gen.maybe_generate(event_id)
 
-    assert type(event) == BoboEventPrimitive
+    assert type(event) == BoboEventSimple
     assert event.event_id == event_id
     assert event.data == 123
 
@@ -31,4 +31,4 @@ def test_from_now_gen():
     sleep(1)
     event = gen.maybe_generate("id")
 
-    assert type(event) == BoboEventPrimitive
+    assert type(event) == BoboEventSimple

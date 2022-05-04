@@ -6,7 +6,7 @@ from datetime import datetime
 
 from bobocep.engine.receiver.validator.bobo_validator_type import \
     BoboValidatorType
-from bobocep.events.bobo_event_primitive import BoboEventPrimitive
+from bobocep.event.bobo_event_simple import BoboEventSimple
 
 
 class TestClassType:
@@ -38,23 +38,23 @@ def test_1_type_dict_invalid_only():
 def test_1_type_str_event_data_valid_only():
     validator = BoboValidatorType(types=[str])
 
-    assert validator.is_valid(entity=BoboEventPrimitive(
+    assert validator.is_valid(entity=BoboEventSimple(
         event_id="id", timestamp=datetime.now(), data=""))
 
-    assert validator.is_valid(entity=BoboEventPrimitive(
+    assert validator.is_valid(entity=BoboEventSimple(
         event_id="id", timestamp=datetime.now(), data="abc"))
 
 
 def test_1_type_str_event_data_invalid_only():
     validator = BoboValidatorType(types=[str])
 
-    assert not validator.is_valid(entity=BoboEventPrimitive(
+    assert not validator.is_valid(entity=BoboEventSimple(
         event_id="id", timestamp=datetime.now(), data=None))
 
-    assert not validator.is_valid(entity=BoboEventPrimitive(
+    assert not validator.is_valid(entity=BoboEventSimple(
         event_id="id", timestamp=datetime.now(), data=123))
 
-    assert not validator.is_valid(entity=BoboEventPrimitive(
+    assert not validator.is_valid(entity=BoboEventSimple(
         event_id="id", timestamp=datetime.now(), data={"key": 123}))
 
 

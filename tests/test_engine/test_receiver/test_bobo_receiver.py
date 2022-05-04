@@ -7,14 +7,14 @@ import pytest
 from bobocep.engine.receiver.bobo_receiver import BoboReceiver
 from bobocep.engine.receiver.bobo_receiver_subscriber import \
     BoboReceiverSubscriber
+from bobocep.engine.receiver.exception.bobo_receiver_queue_full_error import \
+    BoboReceiverQueueFullError
 from bobocep.engine.receiver.validator.bobo_validator_all import \
     BoboValidatorAll
-from bobocep.events.bobo_event import BoboEvent
-from bobocep.events.bobo_event_primitive import BoboEventPrimitive
-from bobocep.events.event_id.bobo_event_id_standard import \
+from bobocep.event.bobo_event import BoboEvent
+from bobocep.event.bobo_event_simple import BoboEventSimple
+from bobocep.event.event_id.bobo_event_id_standard import \
     BoboEventIDStandard
-from bobocep.exceptions.engine.bobo_receiver_queue_full_error import \
-    BoboReceiverQueueFullError
 
 
 class TestReceiverSubscriber(BoboReceiverSubscriber):
@@ -55,7 +55,7 @@ def test_subscriber_add_1_event_then_update():
     receiver.update()
 
     assert len(subscriber.events) == 1
-    assert isinstance(subscriber.events[0], BoboEventPrimitive)
+    assert isinstance(subscriber.events[0], BoboEventSimple)
     assert subscriber.events[0].data == data
 
 

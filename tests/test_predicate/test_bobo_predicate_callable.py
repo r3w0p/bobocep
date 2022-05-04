@@ -4,19 +4,19 @@
 
 from datetime import datetime
 
-from bobocep.events.bobo_event_primitive import BoboEventPrimitive
-from bobocep.events.bobo_history import BoboHistory
-from bobocep.predicate.bobo_predicate_callable import \
-    BoboPredicateCallable
+from bobocep.event.bobo_event_simple import BoboEventSimple
+from bobocep.event.bobo_history import BoboHistory
+from bobocep.predicate.bobo_predicate_call import \
+    BoboPredicateCall
 
 
 def test_evaluate_return_true_if_int_value_greater_than():
-    predicate = BoboPredicateCallable(call=lambda e, h: e.data > 10)
+    predicate = BoboPredicateCall(call=lambda e, h: e.data > 10)
 
-    event_1 = BoboEventPrimitive(
+    event_1 = BoboEventSimple(
         event_id="id_1", timestamp=datetime.now(), data=20)
 
-    event_2 = BoboEventPrimitive(
+    event_2 = BoboEventSimple(
         event_id="id_2", timestamp=datetime.now(), data=5)
 
     history = BoboHistory(events={})

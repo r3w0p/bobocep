@@ -9,7 +9,7 @@ from bobocep.engine.bobo_engine_task import BoboEngineTask
 from bobocep.engine.decider.bobo_decider_run import BoboDeciderRun
 from bobocep.engine.decider.bobo_decider_subscriber import \
     BoboDeciderSubscriber
-from bobocep.exceptions.engine.bobo_producer_queue_full_error import \
+from bobocep.engine.producer.exception.bobo_producer_queue_full_error import \
     BoboProducerQueueFullError
 
 

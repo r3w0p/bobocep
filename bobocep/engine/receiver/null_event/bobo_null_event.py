@@ -5,7 +5,7 @@
 from abc import ABC, abstractmethod
 from typing import Union
 
-from bobocep.events.bobo_event import BoboEvent
+from bobocep.event.bobo_event import BoboEvent
 
 
 class BoboNullEvent(ABC):

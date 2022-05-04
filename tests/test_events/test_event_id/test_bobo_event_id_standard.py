@@ -2,7 +2,7 @@
 # The following code can be redistributed and/or modified
 # under the terms of the GNU General Public License v3.0.
 
-from bobocep.events.event_id.bobo_event_id_standard import BoboEventIDStandard
+from bobocep.event.event_id.bobo_event_id_standard import BoboEventIDStandard
 
 
 def test_output_type_length():

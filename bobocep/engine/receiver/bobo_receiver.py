@@ -10,14 +10,14 @@ from typing import Union
 from bobocep.engine.bobo_engine_task import BoboEngineTask
 from bobocep.engine.receiver.bobo_receiver_publisher import \
     BoboReceiverPublisher
+from bobocep.engine.receiver.exception.bobo_receiver_queue_full_error import \
+    BoboReceiverQueueFullError
 from bobocep.engine.receiver.null_event.bobo_null_event import \
     BoboNullEvent
 from bobocep.engine.receiver.validator.bobo_validator import BoboValidator
-from bobocep.events.bobo_event import BoboEvent
-from bobocep.events.bobo_event_primitive import BoboEventPrimitive
-from bobocep.events.event_id.bobo_event_id import BoboEventID
-from bobocep.exceptions.engine.bobo_receiver_queue_full_error import \
-    BoboReceiverQueueFullError
+from bobocep.event.bobo_event import BoboEvent
+from bobocep.event.bobo_event_simple import BoboEventSimple
+from bobocep.event.event_id.bobo_event_id import BoboEventID
 
 
 class BoboReceiver(BoboEngineTask, BoboReceiverPublisher):
@@ -56,7 +56,7 @@ class BoboReceiver(BoboEngineTask, BoboReceiverPublisher):
         if isinstance(entity, BoboEvent):
             event = entity
         else:
-            event = BoboEventPrimitive(
+            event = BoboEventSimple(
                 event_id=self._event_id_gen.generate(),
                 timestamp=datetime.now(),
                 data=entity)

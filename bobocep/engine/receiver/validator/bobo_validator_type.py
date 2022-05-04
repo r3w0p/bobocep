@@ -5,7 +5,7 @@
 from typing import List
 
 from bobocep.engine.receiver.validator.bobo_validator import BoboValidator
-from bobocep.events.bobo_event import BoboEvent
+from bobocep.event.bobo_event import BoboEvent
 
 
 class BoboValidatorType(BoboValidator):

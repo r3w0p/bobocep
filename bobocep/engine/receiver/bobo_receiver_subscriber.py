@@ -4,7 +4,7 @@
 
 from abc import abstractmethod
 
-from bobocep.events.bobo_event import BoboEvent
+from bobocep.event.bobo_event import BoboEvent
 
 
 class BoboReceiverSubscriber:

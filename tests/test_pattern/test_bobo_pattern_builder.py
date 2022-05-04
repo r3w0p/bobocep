@@ -5,7 +5,7 @@ import pytest
 from dpcontracts import PreconditionError
 
 from bobocep.pattern.bobo_pattern_builder import BoboPatternBuilder
-from bobocep.predicate.bobo_predicate_callable import BoboPredicateCallable
+from bobocep.predicate.bobo_predicate_call import BoboPredicateCall
 
 
 class TestNext:
@@ -13,9 +13,9 @@ class TestNext:
     def test_1_block_1_precon_1_haltcon(self):
         name = "name"
         group_a = "group_a"
-        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_a = BoboPredicateCall(call=lambda e, h: True)
 
         builder = BoboPatternBuilder() \
             .next(group=group_a,
@@ -45,7 +45,7 @@ class TestNext:
         assert pattern.haltconditions[0] == predicate_halt_a
 
     def test_1_block_3_times(self):
-        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a = BoboPredicateCall(call=lambda e, h: True)
 
         builder = BoboPatternBuilder() \
             .next(group="group_a",
@@ -68,17 +68,17 @@ class TestNext:
         assert pattern.blocks[2].predicates[0] == predicate_block_a
 
     def test_3_block_3_precon_3_haltcon(self):
-        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_c = BoboPredicateCall(call=lambda e, h: True)
 
-        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_pre_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_c = BoboPredicateCall(call=lambda e, h: True)
 
-        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_halt_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_c = BoboPredicateCall(call=lambda e, h: True)
 
         builder = BoboPatternBuilder() \
             .next(group="group_a",
@@ -126,9 +126,9 @@ class TestNext:
 class TestNotNext:
 
     def test_1_block_1_precon_1_haltcon_error(self):
-        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_a = BoboPredicateCall(call=lambda e, h: True)
 
         builder = BoboPatternBuilder() \
             .not_next(group="group_a",
@@ -140,17 +140,17 @@ class TestNotNext:
             builder.generate(name="name")
 
     def test_3_block_1_not_next_3_precon_3_haltcon(self):
-        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_c = BoboPredicateCall(call=lambda e, h: True)
 
-        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_pre_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_c = BoboPredicateCall(call=lambda e, h: True)
 
-        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_halt_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_c = BoboPredicateCall(call=lambda e, h: True)
 
         builder = BoboPatternBuilder() \
             .next(group="group_a",
@@ -194,9 +194,9 @@ class TestFollowedBy:
     def test_1_block_1_precon_1_haltcon(self):
         name = "name"
         group_a = "group_a"
-        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_a = BoboPredicateCall(call=lambda e, h: True)
 
         builder = BoboPatternBuilder() \
             .followed_by(group=group_a,
@@ -227,7 +227,7 @@ class TestFollowedBy:
         assert pattern.haltconditions[0] == predicate_halt_a
 
     def test_1_block_3_times(self):
-        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a = BoboPredicateCall(call=lambda e, h: True)
 
         builder = BoboPatternBuilder() \
             .followed_by(group="group_a",
@@ -251,17 +251,17 @@ class TestFollowedBy:
         assert pattern.blocks[2].predicates[0] == predicate_block_a
 
     def test_3_block_3_precon_3_haltcon(self):
-        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_c = BoboPredicateCall(call=lambda e, h: True)
 
-        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_pre_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_c = BoboPredicateCall(call=lambda e, h: True)
 
-        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_halt_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_c = BoboPredicateCall(call=lambda e, h: True)
 
         builder = BoboPatternBuilder() \
             .followed_by(group="group_a",
@@ -312,9 +312,9 @@ class TestFollowedBy:
 class TestNotFollowedBy:
 
     def test_1_block_1_precon_1_haltcon_error(self):
-        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_a = BoboPredicateCall(call=lambda e, h: True)
 
         builder = BoboPatternBuilder() \
             .not_followed_by(group="group_a",
@@ -326,17 +326,17 @@ class TestNotFollowedBy:
             builder.generate(name="name")
 
     def test_3_block_1_not_followed_by_3_precon_3_haltcon(self):
-        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_c = BoboPredicateCall(call=lambda e, h: True)
 
-        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_pre_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_c = BoboPredicateCall(call=lambda e, h: True)
 
-        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_halt_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_c = BoboPredicateCall(call=lambda e, h: True)
 
         builder = BoboPatternBuilder() \
             .next(group="group_a",
@@ -380,11 +380,11 @@ class TestFollowedByAny:
     def test_1_block_3_pred_1_precon_1_haltcon(self):
         name = "name"
         group_a = "group_a"
-        predicate_block_a_1 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_a_2 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_a_3 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a_1 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_a_2 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_a_3 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_a = BoboPredicateCall(call=lambda e, h: True)
 
         builder = BoboPatternBuilder() \
             .followed_by_any(group=group_a,
@@ -419,9 +419,9 @@ class TestFollowedByAny:
         assert pattern.haltconditions[0] == predicate_halt_a
 
     def test_1_block_3_pred_3_times(self):
-        predicate_block_a_1 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_a_2 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_a_3 = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a_1 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_a_2 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_a_3 = BoboPredicateCall(call=lambda e, h: True)
 
         builder = BoboPatternBuilder() \
             .followed_by_any(group="group_a",
@@ -455,25 +455,25 @@ class TestFollowedByAny:
         assert pattern.blocks[2].predicates[2] == predicate_block_a_3
 
     def test_3_block_3_pred_3_precon_3_haltcon(self):
-        predicate_block_a_1 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_a_2 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_a_3 = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a_1 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_a_2 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_a_3 = BoboPredicateCall(call=lambda e, h: True)
 
-        predicate_block_b_1 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_b_2 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_b_3 = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_b_1 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_b_2 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_b_3 = BoboPredicateCall(call=lambda e, h: True)
 
-        predicate_block_c_1 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_c_2 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_c_3 = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_c_1 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_c_2 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_c_3 = BoboPredicateCall(call=lambda e, h: True)
 
-        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_pre_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_c = BoboPredicateCall(call=lambda e, h: True)
 
-        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_halt_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_c = BoboPredicateCall(call=lambda e, h: True)
 
         builder = BoboPatternBuilder() \
             .followed_by_any(group="group_a",
@@ -534,11 +534,11 @@ class TestFollowedByAny:
 class TestNotFollowedByAny:
 
     def test_1_block_1_precon_1_haltcon_error(self):
-        predicate_block_a1 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_a2 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_a3 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a1 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_a2 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_a3 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_a = BoboPredicateCall(call=lambda e, h: True)
 
         builder = BoboPatternBuilder() \
             .not_followed_by_any(group="group_a",
@@ -552,19 +552,19 @@ class TestNotFollowedByAny:
             builder.generate(name="name")
 
     def test_3_block_1_not_followed_by_any_3_precon_3_haltcon(self):
-        predicate_block_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_b1 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_b2 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_b3 = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_block_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_block_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_b1 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_b2 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_b3 = BoboPredicateCall(call=lambda e, h: True)
+        predicate_block_c = BoboPredicateCall(call=lambda e, h: True)
 
-        predicate_pre_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_pre_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_pre_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_pre_c = BoboPredicateCall(call=lambda e, h: True)
 
-        predicate_halt_a = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_b = BoboPredicateCallable(call=lambda e, h: True)
-        predicate_halt_c = BoboPredicateCallable(call=lambda e, h: True)
+        predicate_halt_a = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_b = BoboPredicateCall(call=lambda e, h: True)
+        predicate_halt_c = BoboPredicateCall(call=lambda e, h: True)
 
         builder = BoboPatternBuilder() \
             .next(group="group_a",
