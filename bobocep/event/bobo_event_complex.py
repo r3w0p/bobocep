@@ -20,6 +20,8 @@ class BoboEventComplex(BoboEvent):
     :type history: BoboHistory
     """
 
+    @require("'process_name' must be of type str",
+             lambda args: isinstance(args.process_name, str))
     @require("'pattern_name' must be of type str",
              lambda args: isinstance(args.pattern_name, str))
     @require("'history' must be an instance of BoboHistory",
@@ -28,6 +30,7 @@ class BoboEventComplex(BoboEvent):
                  event_id: str,
                  timestamp: datetime,
                  data,
+                 process_name: str,
                  pattern_name: str,
                  history: BoboHistory):
         super().__init__(
@@ -35,5 +38,6 @@ class BoboEventComplex(BoboEvent):
             timestamp=timestamp,
             data=data)
 
+        self.process_name = process_name
         self.pattern_name = pattern_name
         self.history = history

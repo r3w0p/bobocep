@@ -11,14 +11,14 @@ from bobocep.event.bobo_history import BoboHistory
 
 
 class BoboPredicate(ABC):
-    """A predicate."""
+    """A predicate that evaluates to either True or False."""
 
     @abstractmethod
     @require("'event' must be an instance of BoboEvent",
              lambda args: isinstance(args.event, BoboEvent))
     @require("'history' must be an instance of BoboHistory",
              lambda args: isinstance(args.history, BoboHistory))
-    @ensure("result must be of type bool",
+    @ensure("result must be an instance of bool",
             lambda args, result: isinstance(result, bool))
     def evaluate(self,
                  event: BoboEvent,
@@ -28,7 +28,7 @@ class BoboPredicate(ABC):
         :param event: An event.
         :type event: BoboEvent
 
-        :param history: A history of event.
+        :param history: A history of events.
         :type history: BoboHistory
 
         :return: True if the predicate evaluates to True,

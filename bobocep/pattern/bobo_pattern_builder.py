@@ -4,6 +4,8 @@
 
 from typing import List
 
+from dpcontracts import require, ensure
+
 from bobocep.pattern.bobo_pattern import BoboPattern
 from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
 from bobocep.predicate.bobo_predicate import BoboPredicate
@@ -19,6 +21,12 @@ class BoboPatternBuilder:
         self._preconditions = []
         self._haltconditions = []
 
+    @require("'name' must be an instance of str",
+             lambda args: isinstance(args.name, str))
+    @require("'name' must have a length greater than 0",
+             lambda args: len(args.name) > 0)
+    @ensure("result must be an instance of BoboPattern",
+            lambda args, result: isinstance(result, BoboPattern))
     def generate(self, name: str) -> BoboPattern:
         return BoboPattern(
             name=name,

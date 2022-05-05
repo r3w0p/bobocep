@@ -17,9 +17,9 @@ class BoboPredicateCallNotType(BoboPredicateCall):
                   match any of them.
     :type types: List[type]
 
-    :param subtype: If True, it will match subtypes of types, equivalent to
+    :param subtype: If True, it will check subtypes of types, equivalent to
                     isinstance() functionality.
-                    If False, it will match exact types only, equivalent to
+                    If False, it will check exact types only, equivalent to
                     type() functionality.
     :type subtype: bool
     """

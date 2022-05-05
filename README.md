@@ -10,10 +10,16 @@ https://github.com/r3w0p/bobocep/actions/workflows/security.yml)
 https://codeclimate.com/github/r3w0p/bobocep/progress/coverage)
 [![Maintainability](https://img.shields.io/codeclimate/maintainability-percentage/r3w0p/bobocep?label=Maintainability)](
 https://codeclimate.com/github/r3w0p/bobocep/progress/maintainability)
+[![Dependencies](https://img.shields.io/librariesio/github/r3w0p/bobocep?label=Dependencies)](
+https://github.com/r3w0p/bobocep/network/dependencies)
 [![Issues](https://img.shields.io/github/issues-raw/r3w0p/bobocep?label=Issues)](
 https://github.com/r3w0p/bobocep/issues) \
 [![PyPI](https://img.shields.io/pypi/v/bobocep?color=blue&label=PyPI)](
 https://pypi.org/project/bobocep/)
+[![Python](https://img.shields.io/pypi/pyversions/bobocep?color=blue&label=Python)](
+https://pypi.org/project/bobocep/)
+[![SourceRank](https://img.shields.io/librariesio/sourcerank/pypi/bobocep?color=blue&label=SourceRank)](
+https://libraries.io/pypi/bobocep/sourcerank/)
 [![Commits](https://img.shields.io/github/commit-activity/m/r3w0p/bobocep/develop?color=blue&label=Commits)](
 https://github.com/r3w0p/bobocep/graphs/commit-activity/)
 

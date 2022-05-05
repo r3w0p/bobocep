@@ -22,7 +22,7 @@ Below are versions which have been tested for support.
 |  `macos-latest`  |  &check;  |
 | `ubuntu-latest`  |  &check;  |
 
-The _"latest"_ version refers to the `*-latest` [available environments](https://github.com/actions/virtual-environments#available-environments)
+The `*-latest` version refers to the `*-latest` [available environments](https://github.com/actions/virtual-environments#available-environments)
 from GitHub Actions Virtual Environments.
 
 ## Reporting a Vulnerability
