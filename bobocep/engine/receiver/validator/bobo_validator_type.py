@@ -27,7 +27,7 @@ class BoboValidatorType(BoboValidator):
                  subtype: bool = True):
         super().__init__()
 
-        self._types = types
+        self._types = tuple(types)
         self._subtype = subtype
 
     def is_valid(self, entity) -> bool:

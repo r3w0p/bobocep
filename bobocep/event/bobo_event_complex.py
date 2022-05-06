@@ -4,8 +4,6 @@
 
 from datetime import datetime
 
-from dpcontracts import require
-
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_history import BoboHistory
 
@@ -20,12 +18,6 @@ class BoboEventComplex(BoboEvent):
     :type history: BoboHistory
     """
 
-    @require("'process_name' must be of type str",
-             lambda args: isinstance(args.process_name, str))
-    @require("'pattern_name' must be of type str",
-             lambda args: isinstance(args.pattern_name, str))
-    @require("'history' must be an instance of BoboHistory",
-             lambda args: isinstance(args.history, BoboHistory))
     def __init__(self,
                  event_id: str,
                  timestamp: datetime,

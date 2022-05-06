@@ -33,6 +33,8 @@ It provides [fault tolerance](https://en.wikipedia.org/wiki/Fault_tolerance) (FT
 [active replication](https://en.wikipedia.org/wiki/Replication_(computing)) of
 partially completed complex events across multiple instances of the software.
 
+> **This branch is for the redesign of the software that will take the project to v1.**
+
 ## License
 
 `BoboCEP` is open source, as per

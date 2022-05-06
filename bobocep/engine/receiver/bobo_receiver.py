@@ -21,7 +21,7 @@ from bobocep.event.event_id.bobo_event_id import BoboEventID
 
 
 class BoboReceiver(BoboEngineTask, BoboReceiverPublisher):
-    _STR_EXC_QUEUE_FULL = "Queue is full (max size: {})"
+    _EXC_QUEUE_FULL = "queue is full (max size: {})"
 
     def __init__(self,
                  validator: BoboValidator,
@@ -34,7 +34,7 @@ class BoboReceiver(BoboEngineTask, BoboReceiverPublisher):
         self._event_id_gen = event_id_gen
         self._null_event_gen = null_event_gen
         self._max_size = max_size
-        self._queue = Queue(maxsize=self._max_size)
+        self._queue: Queue = Queue(maxsize=self._max_size)
         self._lock = RLock()
 
     def update(self) -> None:
@@ -71,10 +71,10 @@ class BoboReceiver(BoboEngineTask, BoboReceiverPublisher):
                     self._queue.put(data)
                 except Full:
                     raise BoboReceiverQueueFullError(
-                        self._STR_EXC_QUEUE_FULL.format(self._max_size))
+                        self._EXC_QUEUE_FULL.format(self._max_size))
             else:
                 raise BoboReceiverQueueFullError(
-                    self._STR_EXC_QUEUE_FULL.format(self._max_size))
+                    self._EXC_QUEUE_FULL.format(self._max_size))
 
     def size(self) -> int:
         with self._lock:

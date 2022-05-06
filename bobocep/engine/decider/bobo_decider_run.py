@@ -19,6 +19,7 @@ class BoboDeciderRun:
                  pattern: BoboPattern,
                  event: BoboEvent):
         super().__init__()
+
         self.run_id = run_id
         self.pattern = pattern
         self._events = {

@@ -30,7 +30,7 @@ class BoboPredicateCallType(BoboPredicateCall):
                  subtype: bool = True):
         super().__init__(call=call)
 
-        self._types = types
+        self._types = tuple(types)
         self._subtype = subtype
 
     def evaluate(self, event: BoboEvent, history: BoboHistory) -> bool:

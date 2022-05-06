@@ -6,11 +6,11 @@ from inspect import signature
 from types import MethodType
 from typing import Callable
 
-from dpcontracts import require
-
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_history import BoboHistory
 from bobocep.predicate.bobo_predicate import BoboPredicate
+from bobocep.predicate.exception.bobo_predicate_invalid_callable_error import \
+    BoboPredicateInvalidCallableError
 
 
 class BoboPredicateCall(BoboPredicate):
@@ -20,19 +20,20 @@ class BoboPredicateCall(BoboPredicate):
                  It must match the BoboPredicate 'evaluate' method's parameter
                  count and return a bool.
     :type call: Callable
-
-    :raises RuntimeError: Callable is not a function or method.
-    :raises RuntimeError: Callable does not have the correct parameter count.
     """
 
-    @require("'call' must be an instance of Callable",
-             lambda args: isinstance(args.call, Callable))
-    @require("'call' must have an equal number of parameters to the "
-             "'evaluate' method from BoboPredicate",
-             lambda args: len(signature(args.call).parameters) ==
-                          len(signature(args.self.evaluate).parameters))
+    _EXC_INVALID_CALL = "'call' must have {} parameters, found {}"
+
     def __init__(self, call: Callable):
         super().__init__()
+
+        len_param_call = len(signature(call).parameters)
+        len_param_eval = len(signature(self.evaluate).parameters)
+
+        if len_param_call != len_param_eval:
+            raise BoboPredicateInvalidCallableError(
+                self._EXC_INVALID_CALL.format(len_param_eval,
+                                              len_param_call))
 
         self._call = call
 

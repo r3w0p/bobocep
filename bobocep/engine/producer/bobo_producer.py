@@ -14,13 +14,14 @@ from bobocep.engine.producer.exception.bobo_producer_queue_full_error import \
 
 
 class BoboProducer(BoboEngineTask, BoboDeciderSubscriber):
-    _STR_EXC_QUEUE_FULL = "Queue is full (max size: {})"
+    _EXC_QUEUE_FULL = "queue is full (max size: {})"
 
     def __init__(self,
                  max_size: int):
         super().__init__()
+
         self._max_size = max_size
-        self._queue = Queue(maxsize=self._max_size)
+        self._queue: Queue = Queue(maxsize=self._max_size)
         self._lock = RLock()
 
     def update(self) -> None:
@@ -33,7 +34,7 @@ class BoboProducer(BoboEngineTask, BoboDeciderSubscriber):
                     self._queue.put(run)
                 except Full:
                     raise BoboProducerQueueFullError(
-                        self._STR_EXC_QUEUE_FULL.format(self._max_size))
+                        self._EXC_QUEUE_FULL.format(self._max_size))
             else:
                 raise BoboProducerQueueFullError(
-                    self._STR_EXC_QUEUE_FULL.format(self._max_size))
+                    self._EXC_QUEUE_FULL.format(self._max_size))

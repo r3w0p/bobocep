@@ -1,5 +1,5 @@
 bumpversion==0.6.0
 coverage==6.3.2
-dpcontracts==0.6.0
 flake8==4.0.1
+mypy==0.950
 pytest==7.1.1

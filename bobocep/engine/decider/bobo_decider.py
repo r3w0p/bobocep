@@ -23,8 +23,8 @@ from bobocep.pattern.bobo_pattern import BoboPattern
 
 class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
                   BoboReceiverSubscriber):
-    _STR_EXC_QUEUE_FULL = "Queue is full (max size: {})"
-    _STR_EXC_RUN_NOT_FOUND = "Run ID {} not found for pattern {}"
+    _EXC_QUEUE_FULL = "queue is full (max size: {})"
+    _EXC_RUN_NOT_FOUND = "run ID {} not found for pattern {}"
 
     def __init__(self,
                  patterns: List[BoboPattern],
@@ -32,13 +32,14 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
                  run_id_gen: BoboEventID,
                  max_size: int):
         super().__init__()
+
         self._patterns = patterns
         self._event_id_gen = event_id_gen
         self._run_id_gen = run_id_gen
         self._runs: Dict[str, Dict[str, BoboDeciderRun]] = {}
         self._max_size = max_size
         self._history_stub = BoboHistory(events={})
-        self._queue = Queue(maxsize=self._max_size)
+        self._queue: Queue = Queue(maxsize=self._max_size)
         self._lock = RLock()
 
         for pattern in self._patterns:
@@ -60,7 +61,7 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
             del self._runs[pattern_name][run_id]
         except KeyError:
             raise BoboDeciderRunNotFoundError(
-                self._STR_EXC_RUN_NOT_FOUND.format(pattern_name, run_id))
+                self._EXC_RUN_NOT_FOUND.format(pattern_name, run_id))
 
     def _check_against_runs(self, event: BoboEvent) -> List[BoboDeciderRun]:
         completed = []
@@ -100,10 +101,10 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
                     self._queue.put(event)
                 except Full:
                     raise BoboDeciderQueueFullError(
-                        self._STR_EXC_QUEUE_FULL.format(self._max_size))
+                        self._EXC_QUEUE_FULL.format(self._max_size))
             else:
                 raise BoboDeciderQueueFullError(
-                    self._STR_EXC_QUEUE_FULL.format(self._max_size))
+                    self._EXC_QUEUE_FULL.format(self._max_size))
 
     def size(self) -> int:
         with self._lock:

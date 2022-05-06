@@ -18,3 +18,5 @@ class BoboEventAction(BoboEvent):
             event_id=event_id,
             timestamp=timestamp,
             data=data)
+
+        # todo action event implementation

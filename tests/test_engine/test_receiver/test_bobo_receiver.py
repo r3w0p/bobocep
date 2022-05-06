@@ -13,8 +13,8 @@ from bobocep.engine.receiver.validator.bobo_validator_all import \
     BoboValidatorAll
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_event_simple import BoboEventSimple
-from bobocep.event.event_id.bobo_event_id_standard import \
-    BoboEventIDStandard
+from bobocep.event.event_id.bobo_event_id_unique import \
+    BoboEventIDUnique
 
 
 class TestReceiverSubscriber(BoboReceiverSubscriber):
@@ -29,7 +29,7 @@ class TestReceiverSubscriber(BoboReceiverSubscriber):
 def test_size_add_1_event_then_update():
     receiver = BoboReceiver(
         validator=BoboValidatorAll(),
-        event_id_gen=BoboEventIDStandard(),
+        event_id_gen=BoboEventIDUnique(),
         null_event_gen=None,
         max_size=255)
 
@@ -43,7 +43,7 @@ def test_size_add_1_event_then_update():
 def test_subscriber_add_1_event_then_update():
     receiver = BoboReceiver(
         validator=BoboValidatorAll(),
-        event_id_gen=BoboEventIDStandard(),
+        event_id_gen=BoboEventIDUnique(),
         null_event_gen=None,
         max_size=255)
 
@@ -62,7 +62,7 @@ def test_subscriber_add_1_event_then_update():
 def test_add_on_queue_full():
     receiver = BoboReceiver(
         validator=BoboValidatorAll(),
-        event_id_gen=BoboEventIDStandard(),
+        event_id_gen=BoboEventIDUnique(),
         null_event_gen=None,
         max_size=1)
 
@@ -75,7 +75,7 @@ def test_add_on_queue_full():
 def test_update_on_queue_empty():
     receiver = BoboReceiver(
         validator=BoboValidatorAll(),
-        event_id_gen=BoboEventIDStandard(),
+        event_id_gen=BoboEventIDUnique(),
         null_event_gen=None,
         max_size=255)
 

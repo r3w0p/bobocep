@@ -3,9 +3,10 @@
 # under the terms of the GNU General Public License v3.0.
 
 import pytest
-from dpcontracts import PreconditionError
 
 from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
+from bobocep.pattern.exception.bobo_pattern_block_error import \
+    BoboPatternBlockError
 from bobocep.predicate.bobo_predicate_call import BoboPredicateCall
 
 
@@ -21,7 +22,7 @@ def test_negated_and_optional_both_false_if_loop_true():
 
 
 def test_negated_and_optional_both_true_if_loop_true():
-    with pytest.raises(PreconditionError):
+    with pytest.raises(BoboPatternBlockError):
         BoboPatternBlock(
             group="group",
             predicates=[BoboPredicateCall(call=lambda e, h: True)],
@@ -33,7 +34,7 @@ def test_negated_and_optional_both_true_if_loop_true():
 
 
 def test_negated_true_optional_false_if_loop_true():
-    with pytest.raises(PreconditionError):
+    with pytest.raises(BoboPatternBlockError):
         BoboPatternBlock(
             group="group",
             predicates=[BoboPredicateCall(call=lambda e, h: True)],
@@ -45,7 +46,7 @@ def test_negated_true_optional_false_if_loop_true():
 
 
 def test_negated_false_optional_true_if_loop_true():
-    with pytest.raises(PreconditionError):
+    with pytest.raises(BoboPatternBlockError):
         BoboPatternBlock(
             group="group",
             predicates=[BoboPredicateCall(call=lambda e, h: True)],
@@ -68,7 +69,7 @@ def test_negated_and_optional_both_false_if_loop_false():
 
 
 def test_negated_and_optional_both_true_if_loop_false():
-    with pytest.raises(PreconditionError):
+    with pytest.raises(BoboPatternBlockError):
         BoboPatternBlock(
             group="group",
             predicates=[BoboPredicateCall(call=lambda e, h: True)],

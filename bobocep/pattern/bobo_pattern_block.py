@@ -4,8 +4,8 @@
 
 from typing import List
 
-from dpcontracts import require
-
+from bobocep.pattern.exception.bobo_pattern_block_error import \
+    BoboPatternBlockError
 from bobocep.predicate.bobo_predicate import BoboPredicate
 
 
@@ -31,36 +31,14 @@ class BoboPatternBlock:
     :type optional: bool
     """
 
-    # todo cannot be strict and optional?
+    _EXC_GROUP_LEN = "'group' must have a length greater than 0"
+    _EXC_PREDICATES_LEN = "'predicates' must have a length greater than 0"
+    _EXC_STRICT_OPT_TRUE = "'strict' and 'optional' must not both be True"
+    _EXC_NEG_OR_OPT_LOOP_TRUE = "'negated' and 'optional' must " \
+                                "both be False if 'loop' is True"
+    _EXC_NEG_AND_OPT_LOOP_FALSE = "'negated' and 'optional' must not " \
+                                  "both be True if 'loop' is False"
 
-    @require("'group' must be of type str",
-             lambda args: isinstance(args.group, str))
-    @require("'group' must have a length greater than 0",
-             lambda args: len(args.group) > 0)
-    @require("'predicates' must be of type list",
-             lambda args: isinstance(args.predicates, list))
-    @require("'predicates' must have a length greater than 0",
-             lambda args: len(args.predicates) > 0)
-    @require("'predicates' must only contain BoboPredicate instances",
-             lambda args: all(isinstance(obj, BoboPredicate)
-                              for obj in args.predicates))
-    @require("'strict' must be of type bool",
-             lambda args: isinstance(args.strict, bool))
-    @require("'loop' must be of type bool",
-             lambda args: isinstance(args.loop, bool))
-    @require("'negated' must be of type bool",
-             lambda args: isinstance(args.negated, bool))
-    @require("'optional' must be of type bool",
-             lambda args: isinstance(args.optional, bool))
-    @require("'strict' and 'optional' must not both be True",
-             lambda args: not (args.strict and args.optional))
-    @require("'negated' and 'optional' must both be False if 'loop' is True",
-             lambda args: (not args.negated and
-                           not args.optional) if args.loop else True)
-    @require("'negated' and 'optional' must not both be True "
-             "if 'loop' is False",
-             lambda args: not (args.negated and args.optional)
-             if (not args.loop) else True)
     def __init__(self,
                  group: str,
                  predicates: List[BoboPredicate],
@@ -69,6 +47,21 @@ class BoboPatternBlock:
                  negated: bool,
                  optional: bool):
         super().__init__()
+
+        if len(group) == 0:
+            raise BoboPatternBlockError(self._EXC_GROUP_LEN)
+
+        if len(predicates) == 0:
+            raise BoboPatternBlockError(self._EXC_PREDICATES_LEN)
+
+        if strict and optional:
+            raise BoboPatternBlockError(self._EXC_STRICT_OPT_TRUE)
+
+        if loop and (negated or optional):
+            raise BoboPatternBlockError(self._EXC_NEG_OR_OPT_LOOP_TRUE)
+
+        if (not loop) and (negated and optional):
+            raise BoboPatternBlockError(self._EXC_NEG_AND_OPT_LOOP_FALSE)
 
         self.group = group
         self.predicates = tuple(predicates)

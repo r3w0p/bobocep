@@ -2,9 +2,11 @@
 # The following code can be redistributed and/or modified
 # under the terms of the GNU General Public License v3.0.
 import pytest
-from dpcontracts import PreconditionError
 
 from bobocep.pattern.bobo_pattern_builder import BoboPatternBuilder
+from bobocep.pattern.exception.bobo_pattern_builder_error import \
+    BoboPatternBuilderError
+from bobocep.pattern.exception.bobo_pattern_error import BoboPatternError
 from bobocep.predicate.bobo_predicate_call import BoboPredicateCall
 
 
@@ -136,7 +138,7 @@ class TestNotNext:
             .precondition(predicate=predicate_pre_a) \
             .haltcondition(predicate=predicate_halt_a)
 
-        with pytest.raises(PreconditionError):
+        with pytest.raises(BoboPatternError):
             builder.generate(name="name")
 
     def test_3_block_1_not_next_3_precon_3_haltcon(self):
@@ -322,7 +324,7 @@ class TestNotFollowedBy:
             .precondition(predicate=predicate_pre_a) \
             .haltcondition(predicate=predicate_halt_a)
 
-        with pytest.raises(PreconditionError):
+        with pytest.raises(BoboPatternError):
             builder.generate(name="name")
 
     def test_3_block_1_not_followed_by_3_precon_3_haltcon(self):
@@ -548,7 +550,7 @@ class TestNotFollowedByAny:
             .precondition(predicate=predicate_pre_a) \
             .haltcondition(predicate=predicate_halt_a)
 
-        with pytest.raises(PreconditionError):
+        with pytest.raises(BoboPatternError):
             builder.generate(name="name")
 
     def test_3_block_1_not_followed_by_any_3_precon_3_haltcon(self):

@@ -19,6 +19,8 @@ class BoboEngine:
         self.decider = decider
         self.producer = producer
 
+        # todo subscriptions, distributed, etc...
+
     def update(self) -> None:
         self.receiver.update()
         self.decider.update()

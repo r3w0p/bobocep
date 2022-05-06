@@ -12,8 +12,8 @@ class BoboValidatorNotType(BoboValidator):
     """Validates whether the type of the entity does not match any of the given
     data types. If the entity is a BoboEvent, the event's data are checked.
 
-    :param list_types: A list of valid data types.
-    :type list_types: List[type]
+    :param types: A list of valid data types.
+    :type types: List[type]
 
     :param subtype: If True, will match subtypes of a type, equivalent to
                      isinstance() functionality.
@@ -27,7 +27,7 @@ class BoboValidatorNotType(BoboValidator):
                  subtype: bool = True):
         super().__init__()
 
-        self._types = types
+        self._types = tuple(types)
         self._subtype = subtype
 
     def is_valid(self, entity) -> bool:

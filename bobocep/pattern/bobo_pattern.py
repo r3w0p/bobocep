@@ -4,9 +4,8 @@
 
 from typing import List
 
-from dpcontracts import require
-
 from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
+from bobocep.pattern.exception.bobo_pattern_error import BoboPatternError
 from bobocep.predicate.bobo_predicate import BoboPredicate
 
 
@@ -29,45 +28,45 @@ class BoboPattern:
     :type haltconditions: Tuple[BoboPredicate]
     """
 
-    @require("'name' must be of type str",
-             lambda args: isinstance(args.name, str))
-    @require("'name' must have a length greater than 0",
-             lambda args: len(args.name) > 0)
-    @require("'blocks' must be of type list",
-             lambda args: isinstance(args.blocks, list))
-    @require("'blocks' must have a length greater than 0",
-             lambda args: len(args.blocks) > 0)
-    @require("'blocks' must only contain BoboPatternBlock instances",
-             lambda args: all(isinstance(obj, BoboPatternBlock)
-                              for obj in args.blocks))
-    @require("'preconditions' must be of type list",
-             lambda args: isinstance(args.preconditions, list))
-    @require("'preconditions' must only contain BoboPredicate instances",
-             lambda args: all(isinstance(obj, BoboPredicate)
-                              for obj in args.preconditions))
-    @require("'haltconditions' must be of type list",
-             lambda args: isinstance(args.haltconditions, list))
-    @require("'haltconditions' must only contain BoboPredicate instances",
-             lambda args: all(isinstance(obj, BoboPredicate)
-                              for obj in args.haltconditions))
-    @require("first block cannot be negated",
-             lambda args: not args.blocks[0].negated)
-    @require("first block cannot be optional",
-             lambda args: not args.blocks[0].optional)
-    @require("first block cannot loop",
-             lambda args: not args.blocks[0].loop)
-    @require("last block cannot be negated",
-             lambda args: not args.blocks[-1].negated)
-    @require("last block cannot be optional",
-             lambda args: not args.blocks[-1].optional)
-    @require("last block cannot loop",
-             lambda args: not args.blocks[-1].loop)
+    _EXC_NAME_LEN = "'name' must have a length greater than 0"
+    _EXC_BLOCKS_LEN = "'blocks' must have a length greater than 0"
+    _EXC_BLOCK_FIRST_NOT_NEG = "first block cannot be negated"
+    _EXC_BLOCK_FIRST_NOT_OPT = "first block cannot be optional"
+    _EXC_BLOCK_FIRST_NOT_LOOP = "first block cannot loop"
+    _EXC_BLOCK_LAST_NOT_NEG = "last block cannot be negated"
+    _EXC_BLOCK_LAST_NOT_OPT = "last block cannot be optional"
+    _EXC_BLOCK_LAST_NOT_LOOP = "last block cannot loop"
+
     def __init__(self,
                  name: str,
                  blocks: List[BoboPatternBlock],
                  preconditions: List[BoboPredicate],
                  haltconditions: List[BoboPredicate]):
         super().__init__()
+
+        if len(name) == 0:
+            raise BoboPatternError(self._EXC_NAME_LEN)
+
+        if len(blocks) == 0:
+            raise BoboPatternError(self._EXC_BLOCKS_LEN)
+
+        if blocks[0].negated:
+            raise BoboPatternError(self._EXC_BLOCK_FIRST_NOT_NEG)
+
+        if blocks[0].optional:
+            raise BoboPatternError(self._EXC_BLOCK_FIRST_NOT_OPT)
+
+        if blocks[0].loop:
+            raise BoboPatternError(self._EXC_BLOCK_FIRST_NOT_LOOP)
+
+        if blocks[-1].negated:
+            raise BoboPatternError(self._EXC_BLOCK_LAST_NOT_NEG)
+
+        if blocks[-1].optional:
+            raise BoboPatternError(self._EXC_BLOCK_LAST_NOT_OPT)
+
+        if blocks[-1].loop:
+            raise BoboPatternError(self._EXC_BLOCK_LAST_NOT_LOOP)
 
         self.name = name
         self.blocks = tuple(blocks)

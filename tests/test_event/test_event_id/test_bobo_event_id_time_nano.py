@@ -2,11 +2,11 @@
 # The following code can be redistributed and/or modified
 # under the terms of the GNU General Public License v3.0.
 
-from bobocep.event.event_id.bobo_event_id_standard import BoboEventIDStandard
+from bobocep.event.event_id.bobo_event_id_unique import BoboEventIDUnique
 
 
 def test_output_type_length():
-    generator = BoboEventIDStandard()
+    generator = BoboEventIDUnique()
     event_id = generator.generate()
 
     assert type(event_id) == str
@@ -14,7 +14,7 @@ def test_output_type_length():
 
 
 def test_1_generator_2_different_outputs():
-    generator = BoboEventIDStandard()
+    generator = BoboEventIDUnique()
 
     event_id_1 = generator.generate()
     event_id_2 = generator.generate()
