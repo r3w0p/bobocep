@@ -10,12 +10,12 @@ https://github.com/r3w0p/bobocep/actions/workflows/cd.yml)
 https://github.com/r3w0p/bobocep/actions/workflows/security.yml)
 [![Issues](https://img.shields.io/github/issues-raw/r3w0p/bobocep?label=Issues)](
 https://github.com/r3w0p/bobocep/issues) \
+[![SourceRank](https://img.shields.io/librariesio/sourcerank/pypi/bobocep?label=SourceRank)](
+https://libraries.io/pypi/bobocep/sourcerank/)
 [![Coverage](https://img.shields.io/codeclimate/coverage/r3w0p/bobocep?label=Coverage)](
 https://codeclimate.com/github/r3w0p/bobocep/progress/coverage)
 [![Maintainability](https://img.shields.io/codeclimate/maintainability-percentage/r3w0p/bobocep?label=Maintainability)](
 https://codeclimate.com/github/r3w0p/bobocep/progress/maintainability)
-[![SourceRank](https://img.shields.io/librariesio/sourcerank/pypi/bobocep?label=SourceRank)](
-https://libraries.io/pypi/bobocep/sourcerank/)
 [![Dependencies](https://img.shields.io/librariesio/github/r3w0p/bobocep?label=Dependencies)](
 https://github.com/r3w0p/bobocep/network/dependencies) \
 [![License](https://img.shields.io/github/license/r3w0p/develop?color=blue&label=License)](
@@ -24,8 +24,6 @@ https://github.com/r3w0p/bobocep/blob/develop/LICENSE/)
 https://pypi.org/project/bobocep/)
 [![Python](https://img.shields.io/pypi/pyversions/bobocep?color=blue&label=Python)](
 https://pypi.org/project/bobocep/)
-[![Commits](https://img.shields.io/github/commit-activity/m/r3w0p/bobocep/develop?color=blue&label=Commits)](
-https://github.com/r3w0p/bobocep/graphs/commit-activity/)
 
 `BoboCEP` is a [complex event processing](https://en.wikipedia.org/wiki/Complex_event_processing) (CEP) engine
 designed for [edge computing](https://en.wikipedia.org/wiki/Edge_computing) in
@@ -42,3 +40,5 @@ partially completed complex events across multiple instances of the software.
 by the [Open Source Initiative](https://opensource.org/) (OSI).
 The code in this repository can be redistributed and/or modified under the terms of the 
 [GNU General Public License v3.0](https://github.com/r3w0p/bobocep/blob/develop/LICENSE).
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep?ref=badge_large)
