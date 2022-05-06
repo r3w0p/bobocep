@@ -4,7 +4,7 @@
 
 from queue import Queue, Full
 from threading import RLock
-from typing import List, Dict
+from typing import Tuple, Dict, List
 
 from bobocep.engine.bobo_engine_task import BoboEngineTask
 from bobocep.engine.decider.bobo_decider_publisher import BoboDeciderPublisher
@@ -27,7 +27,7 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
     _EXC_RUN_NOT_FOUND = "run ID {} not found for pattern {}"
 
     def __init__(self,
-                 patterns: List[BoboPattern],
+                 patterns: Tuple[BoboPattern, ...],
                  event_id_gen: BoboEventID,
                  run_id_gen: BoboEventID,
                  max_size: int):

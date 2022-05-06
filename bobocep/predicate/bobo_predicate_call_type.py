@@ -2,7 +2,7 @@
 # The following code can be redistributed and/or modified
 # under the terms of the GNU General Public License v3.0.
 
-from typing import Callable, List
+from typing import Callable, Tuple
 
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_history import BoboHistory
@@ -15,7 +15,7 @@ class BoboPredicateCallType(BoboPredicateCall):
 
     :param types: A list of valid data types. The event's data type must match
                   at least one.
-    :type types: List[type]
+    :type types: Tuple[type, ...]
 
     :param subtype: If True, it will check subtypes of types, equivalent to
                     isinstance() functionality.
@@ -26,11 +26,11 @@ class BoboPredicateCallType(BoboPredicateCall):
 
     def __init__(self,
                  call: Callable,
-                 types: List[type],
+                 types: Tuple[type, ...],
                  subtype: bool = True):
         super().__init__(call=call)
 
-        self._types = tuple(types)
+        self._types = types
         self._subtype = subtype
 
     def evaluate(self, event: BoboEvent, history: BoboHistory) -> bool:

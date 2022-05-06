@@ -2,7 +2,7 @@
 # The following code can be redistributed and/or modified
 # under the terms of the GNU General Public License v3.0.
 
-from typing import List
+from typing import Tuple
 
 from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
 from bobocep.pattern.exception.bobo_pattern_error import BoboPatternError
@@ -17,15 +17,15 @@ class BoboPattern:
 
     :param blocks: The sequence of blocks that constitute the pattern of
                    behaviour.
-    :type blocks: Tuple[BoboPatternBlock]
+    :type blocks: Tuple[BoboPatternBlock, ...]
 
     :param preconditions: The preconditions that must all equal True for any
                           new event that is being checked against the pattern.
-    :type preconditions: Tuple[BoboPredicate]
+    :type preconditions: Tuple[BoboPredicate, ...]
 
     :param haltconditions: The haltconditions that must all equal False for any
                            new event that is being checked against the pattern.
-    :type haltconditions: Tuple[BoboPredicate]
+    :type haltconditions: Tuple[BoboPredicate, ...]
     """
 
     _EXC_NAME_LEN = "'name' must have a length greater than 0"
@@ -39,9 +39,9 @@ class BoboPattern:
 
     def __init__(self,
                  name: str,
-                 blocks: List[BoboPatternBlock],
-                 preconditions: List[BoboPredicate],
-                 haltconditions: List[BoboPredicate]):
+                 blocks: Tuple[BoboPatternBlock, ...],
+                 preconditions: Tuple[BoboPredicate, ...],
+                 haltconditions: Tuple[BoboPredicate, ...]):
         super().__init__()
 
         if len(name) == 0:
@@ -69,6 +69,6 @@ class BoboPattern:
             raise BoboPatternError(self._EXC_BLOCK_LAST_NOT_LOOP)
 
         self.name = name
-        self.blocks = tuple(blocks)
-        self.preconditions = tuple(preconditions)
-        self.haltconditions = tuple(haltconditions)
+        self.blocks = blocks
+        self.preconditions = preconditions
+        self.haltconditions = haltconditions

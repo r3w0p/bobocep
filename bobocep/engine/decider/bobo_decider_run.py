@@ -3,7 +3,7 @@
 # under the terms of the GNU General Public License v3.0.
 
 from threading import RLock
-from typing import List
+from typing import Tuple
 
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_history import BoboHistory
@@ -50,68 +50,72 @@ class BoboDeciderRun:
             block: BoboPatternBlock = self.pattern.blocks[temp_index]
 
             if block.loop:
-                self._process_loop(event, block, temp_index)
+                return self._process_loop(event, block, temp_index)
             else:
-                self._process_not_loop(event, block, temp_index)
+                return self._process_not_loop(event, block, temp_index)
 
     def _process_loop(self,
                       event: BoboEvent,
                       block: BoboPatternBlock,
-                      temp_index: int) -> None:
-        # a looping block can neither be negated nor optional
+                      temp_index: int) -> bool:
         match = self._is_match(event, block.predicates)
 
         if not match:
+            # looping block can be neither negated nor optional
             if block.strict:
                 self._halted = True
-
-            elif temp_index + 1 < len(self.pattern.blocks):
+                return False
+            else:
+                # looping block cannot be final state
                 temp_index += 1
                 block = self.pattern.blocks[temp_index]
                 if block.loop:
-                    self._process_loop(event, block, temp_index)
+                    return self._process_loop(event, block, temp_index)
                 else:
-                    self._process_not_loop(event, block, temp_index)
+                    return self._process_not_loop(event, block, temp_index)
         else:
             self._add_event(event, block)
+            return True
 
     def _process_not_loop(self,
                           event: BoboEvent,
                           block: BoboPatternBlock,
-                          temp_index: int) -> None:
-        # a non-looping block cannot be both negated and optional
-        # a strict block cannot be optional
+                          temp_index: int) -> bool:
+        # non-looping block cannot be both negated and optional
         match = self._is_match(event, block.predicates)
 
         if block.negated:
-            if match:
-                if block.strict:
-                    self._halted = True
+            if match and block.strict:
+                self._halted = True
+                return False
             else:
                 self._move_forward(event, block, temp_index)
+                return True
 
         elif block.optional:
+            # strict block cannot be optional
             if not match:
-                if temp_index + 1 < len(self.pattern.blocks):
-                    temp_index += 1
-                    block = self.pattern.blocks[temp_index]
-                    if block.loop:
-                        self._process_loop(event, block, temp_index)
-                    else:
-                        self._process_not_loop(event, block, temp_index)
+                temp_index += 1
+                block = self.pattern.blocks[temp_index]
+                if block.loop:
+                    return self._process_loop(event, block, temp_index)
+                else:
+                    return self._process_not_loop(event, block, temp_index)
             else:
                 self._move_forward(event, block, temp_index)
+                return True
 
         else:
-            if not match:
-                if block.strict:
-                    self._halted = True
+            if (not match) and block.strict:
+                self._halted = True
+                return False
             else:
                 self._move_forward(event, block, temp_index)
+                return True
 
     def _is_match(self,
                   event: BoboEvent,
-                  predicates: List[BoboPredicate]) -> bool:
+                  predicates: Tuple[BoboPredicate, ...]) -> bool:
         return any(predicate.evaluate(event=event,
                                       history=BoboHistory(events=self._events))
                    for predicate in predicates)
