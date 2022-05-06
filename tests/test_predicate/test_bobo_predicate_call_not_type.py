@@ -10,11 +10,11 @@ from bobocep.predicate.bobo_predicate_call_not_type import \
     BoboPredicateCallNotType
 
 
-class TestSuperclass:
+class StubSuperclass:
     pass
 
 
-class TestSubclass(TestSuperclass):
+class StubSubclass(StubSuperclass):
     pass
 
 
@@ -53,12 +53,12 @@ def test_3_types_none_float_subtype_true_evaluate_valid():
 
 def test_superclass_subtype_true_evaluate():
     predicate = BoboPredicateCallNotType(
-        call=lambda e, h: True, types=[TestSuperclass])
+        call=lambda e, h: True, types=[StubSuperclass])
 
     event_1 = BoboEventSimple(
-        event_id="id_1", timestamp=datetime.now(), data=TestSuperclass())
+        event_id="id_1", timestamp=datetime.now(), data=StubSuperclass())
     event_2 = BoboEventSimple(
-        event_id="id_2", timestamp=datetime.now(), data=TestSubclass())
+        event_id="id_2", timestamp=datetime.now(), data=StubSubclass())
 
     history = BoboHistory(events={})
 
@@ -68,12 +68,12 @@ def test_superclass_subtype_true_evaluate():
 
 def test_superclass_subtype_false_evaluate():
     predicate = BoboPredicateCallNotType(
-        call=lambda e, h: True, types=[TestSuperclass], subtype=False)
+        call=lambda e, h: True, types=[StubSuperclass], subtype=False)
 
     event_1 = BoboEventSimple(
-        event_id="id_1", timestamp=datetime.now(), data=TestSuperclass())
+        event_id="id_1", timestamp=datetime.now(), data=StubSuperclass())
     event_2 = BoboEventSimple(
-        event_id="id_2", timestamp=datetime.now(), data=TestSubclass())
+        event_id="id_2", timestamp=datetime.now(), data=StubSubclass())
 
     history = BoboHistory(events={})
 

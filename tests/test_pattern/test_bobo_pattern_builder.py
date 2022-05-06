@@ -4,8 +4,6 @@
 import pytest
 
 from bobocep.pattern.bobo_pattern_builder import BoboPatternBuilder
-from bobocep.pattern.exception.bobo_pattern_builder_error import \
-    BoboPatternBuilderError
 from bobocep.pattern.exception.bobo_pattern_error import BoboPatternError
 from bobocep.predicate.bobo_predicate_call import BoboPredicateCall
 

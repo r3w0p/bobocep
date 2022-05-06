@@ -9,12 +9,12 @@ from bobocep.engine.receiver.validator.bobo_validator_not_type import \
 from bobocep.event.bobo_event_simple import BoboEventSimple
 
 
-class TestClassType:
+class StubClassType:
     def __init__(self):
         super().__init__()
 
 
-class TestClassSubtype(TestClassType):
+class StubClassSubtype(StubClassType):
     def __init__(self):
         super().__init__()
 
@@ -56,12 +56,12 @@ def test_1_type_str_event_data_invalid_only():
 
 
 def test_1_type_subtype_false_valid():
-    validator = BoboValidatorNotType(types=[TestClassType], subtype=False)
+    validator = BoboValidatorNotType(types=[StubClassType], subtype=False)
 
-    assert validator.is_valid(entity=TestClassSubtype())
+    assert validator.is_valid(entity=StubClassSubtype())
 
 
 def test_1_type_subtype_false_invalid():
-    validator = BoboValidatorNotType(types=[TestClassType], subtype=False)
+    validator = BoboValidatorNotType(types=[StubClassType], subtype=False)
 
-    assert not validator.is_valid(entity=TestClassType())
+    assert not validator.is_valid(entity=StubClassType())

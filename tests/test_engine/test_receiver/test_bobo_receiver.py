@@ -17,7 +17,7 @@ from bobocep.event.event_id.bobo_event_id_unique import \
     BoboEventIDUnique
 
 
-class TestReceiverSubscriber(BoboReceiverSubscriber):
+class StubReceiverSubscriber(BoboReceiverSubscriber):
     def __init__(self):
         super().__init__()
         self.events = []
@@ -47,7 +47,7 @@ def test_subscriber_add_1_event_then_update():
         null_event_gen=None,
         max_size=255)
 
-    subscriber = TestReceiverSubscriber()
+    subscriber = StubReceiverSubscriber()
     receiver.subscribe(subscriber=subscriber)
 
     data = 123
