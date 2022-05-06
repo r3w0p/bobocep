@@ -2,8 +2,8 @@
 
 # BoboCEP
 
-[![CI](https://img.shields.io/github/workflow/status/r3w0p/bobocep/CI?label=CI)](
-https://github.com/r3w0p/bobocep/actions/workflows/ci.yml)
+[![CI/CD](https://img.shields.io/github/workflow/status/r3w0p/bobocep/CI/CD?label=CI/CD)](
+https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml)
 [![CD](https://img.shields.io/github/workflow/status/r3w0p/bobocep/CD?label=CD)](
 https://github.com/r3w0p/bobocep/actions/workflows/cd.yml)
 [![Security](https://img.shields.io/github/workflow/status/r3w0p/bobocep/Security?label=Security)](
