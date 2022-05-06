@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep?ref=badge_shield)
+
 .. image:: https://img.shields.io/travis/r3w0p/bobocep/master.svg
    :target: https://travis-ci.org/r3w0p/bobocep
    :alt: Travis CI
@@ -61,3 +63,6 @@ partially-completed complex events across multiple instances of the software usi
 
 This is **experimental** software that is currently being used for research purposes.
 All aspects of the software are subject to change.
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep?ref=badge_large)
