@@ -61,10 +61,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Python $PYTHON_VERSION
+      - name: Set up Python ${{ $PYTHON_VERSION }}
         uses: actions/setup-python@v2
         with:
-          python-version: $PYTHON_VERSION
+          python-version: ${{ $PYTHON_VERSION }}
 
       - name: Install pypa/build
         run: >-
