@@ -55,16 +55,14 @@ jobs:
     name: CD
     needs: ci
     runs-on: ubuntu-latest
-    env:
-      PYTHON_VERSION: "3.10"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Python ${{ $PYTHON_VERSION }}
+      - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ $PYTHON_VERSION }}
+          python-version: "3.7"
 
       - name: Install pypa/build
         run: >-
