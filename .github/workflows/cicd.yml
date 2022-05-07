@@ -7,9 +7,6 @@ on:
     branches: [ develop ]
   workflow_dispatch:
 
-env:
-  PYTHON_VERSION_CD: "3.10"
-
 jobs:
   ci:
     name: CI
@@ -58,14 +55,16 @@ jobs:
     name: CD
     needs: ci
     runs-on: ubuntu-latest
+    env:
+      PYTHON_VERSION: "3.10"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Python $PYTHON_VERSION_CD
+      - name: Set up Python $PYTHON_VERSION
         uses: actions/setup-python@v2
         with:
-          python-version: $PYTHON_VERSION_CD
+          python-version: $PYTHON_VERSION
 
       - name: Install pypa/build
         run: >-
