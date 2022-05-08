@@ -45,3 +45,8 @@ class TestValid:
 
         assert history.first() == event_low
         assert history.last() == event_high
+
+    def test_group_name_that_does_not_exist(self):
+        history = BoboHistory(events={})
+
+        assert history.group(group="group") == tuple()
