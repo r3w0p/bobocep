@@ -54,15 +54,19 @@ jobs:
   cd:
     name: CD
     needs: ci
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ "3.7" ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Python
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          python-version: "3.7"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install pypa/build
         run: >-
