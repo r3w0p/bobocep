@@ -4,22 +4,39 @@
 
 from datetime import datetime
 
+import pytest
+
 from bobocep.event.bobo_event_simple import BoboEventSimple
 from bobocep.event.bobo_history import BoboHistory
 from bobocep.predicate.bobo_predicate_call import \
     BoboPredicateCall
+from bobocep.predicate.exception.bobo_predicate_invalid_callable_error import \
+    BoboPredicateInvalidCallableError
 
 
-def test_evaluate_return_true_if_int_value_greater_than():
-    predicate = BoboPredicateCall(call=lambda e, h: e.data > 10)
+class TestValid:
 
-    event_1 = BoboEventSimple(
-        event_id="id_1", timestamp=datetime.now(), data=20)
+    def test_evaluate_correct_return_value(self):
+        predicate = BoboPredicateCall(call=lambda e, h: e.data)
 
-    event_2 = BoboEventSimple(
-        event_id="id_2", timestamp=datetime.now(), data=5)
+        event_1 = BoboEventSimple(
+            event_id="1", timestamp=datetime.now(), data=True)
 
-    history = BoboHistory(events={})
+        event_2 = BoboEventSimple(
+            event_id="2", timestamp=datetime.now(), data=False)
 
-    assert predicate.evaluate(event=event_1, history=history)
-    assert not predicate.evaluate(event=event_2, history=history)
+        history = BoboHistory(events={})
+
+        assert predicate.evaluate(event=event_1, history=history)
+        assert not predicate.evaluate(event=event_2, history=history)
+
+
+class TestInvalid:
+
+    def test_callable_too_few_parameters(self):
+        with pytest.raises(BoboPredicateInvalidCallableError):
+            BoboPredicateCall(call=lambda a: True)
+
+    def test_callable_too_many_parameters(self):
+        with pytest.raises(BoboPredicateInvalidCallableError):
+            BoboPredicateCall(call=lambda a, b, c, d, e: True)

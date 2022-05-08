@@ -10,93 +10,117 @@ from bobocep.pattern.exception.bobo_pattern_block_error import \
 from bobocep.predicate.bobo_predicate_call import BoboPredicateCall
 
 
-def test_negated_and_optional_both_false_if_loop_true():
-    assert type(BoboPatternBlock(
-        group="group",
-        predicates=[BoboPredicateCall(call=lambda e, h: True)],
-        strict=False,
-        loop=True,
-        negated=False,
-        optional=False
-    )) is BoboPatternBlock
+class TestValid:
 
-
-def test_negated_and_optional_both_true_if_loop_true():
-    with pytest.raises(BoboPatternBlockError):
-        BoboPatternBlock(
-            group="group",
-            predicates=[BoboPredicateCall(call=lambda e, h: True)],
-            strict=False,
-            loop=True,
-            negated=True,
-            optional=True
-        )
-
-
-def test_negated_true_optional_false_if_loop_true():
-    with pytest.raises(BoboPatternBlockError):
-        BoboPatternBlock(
-            group="group",
-            predicates=[BoboPredicateCall(call=lambda e, h: True)],
-            strict=False,
-            loop=True,
-            negated=True,
-            optional=False
-        )
-
-
-def test_negated_false_optional_true_if_loop_true():
-    with pytest.raises(BoboPatternBlockError):
-        BoboPatternBlock(
+    def test_negated_and_optional_both_false_if_loop_true(self):
+        assert type(BoboPatternBlock(
             group="group",
             predicates=[BoboPredicateCall(call=lambda e, h: True)],
             strict=False,
             loop=True,
             negated=False,
-            optional=True
-        )
+            optional=False
+        )) is BoboPatternBlock
 
+    def test_negated_and_optional_both_false_if_loop_false(self):
+        assert type(BoboPatternBlock(
+            group="group",
+            predicates=[BoboPredicateCall(call=lambda e, h: True)],
+            strict=False,
+            loop=False,
+            negated=False,
+            optional=False
+        )) is BoboPatternBlock
 
-def test_negated_and_optional_both_false_if_loop_false():
-    assert type(BoboPatternBlock(
-        group="group",
-        predicates=[BoboPredicateCall(call=lambda e, h: True)],
-        strict=False,
-        loop=False,
-        negated=False,
-        optional=False
-    )) is BoboPatternBlock
-
-
-def test_negated_and_optional_both_true_if_loop_false():
-    with pytest.raises(BoboPatternBlockError):
-        BoboPatternBlock(
+    def test_negated_true_optional_false_if_loop_false(self):
+        assert type(BoboPatternBlock(
             group="group",
             predicates=[BoboPredicateCall(call=lambda e, h: True)],
             strict=False,
             loop=False,
             negated=True,
+            optional=False
+        )) is BoboPatternBlock
+
+    def test_negated_false_optional_true_if_loop_false(self):
+        assert type(BoboPatternBlock(
+            group="group",
+            predicates=[BoboPredicateCall(call=lambda e, h: True)],
+            strict=False,
+            loop=False,
+            negated=False,
             optional=True
-        )
+        )) is BoboPatternBlock
 
 
-def test_negated_true_optional_false_if_loop_false():
-    assert type(BoboPatternBlock(
-        group="group",
-        predicates=[BoboPredicateCall(call=lambda e, h: True)],
-        strict=False,
-        loop=False,
-        negated=True,
-        optional=False
-    )) is BoboPatternBlock
+class TestInvalid:
 
+    def test_group_0_length(self):
+        with pytest.raises(BoboPatternBlockError):
+            BoboPatternBlock(
+                group="",
+                predicates=[BoboPredicateCall(call=lambda e, h: True)],
+                strict=False,
+                loop=True,
+                negated=False,
+                optional=False)
 
-def test_negated_false_optional_true_if_loop_false():
-    assert type(BoboPatternBlock(
-        group="group",
-        predicates=[BoboPredicateCall(call=lambda e, h: True)],
-        strict=False,
-        loop=False,
-        negated=False,
-        optional=True
-    )) is BoboPatternBlock
+    def test_predicates_0_length(self):
+        with pytest.raises(BoboPatternBlockError):
+            BoboPatternBlock(
+                group="group",
+                predicates=[],
+                strict=False,
+                loop=True,
+                negated=False,
+                optional=False)
+
+    def test_strict_and_optional_true(self):
+        with pytest.raises(BoboPatternBlockError):
+            BoboPatternBlock(
+                group="group",
+                predicates=[BoboPredicateCall(call=lambda e, h: True)],
+                strict=True,
+                loop=False,
+                negated=False,
+                optional=True)
+
+    def test_negated_and_optional_true_if_loop_true(self):
+        with pytest.raises(BoboPatternBlockError):
+            BoboPatternBlock(
+                group="group",
+                predicates=[BoboPredicateCall(call=lambda e, h: True)],
+                strict=False,
+                loop=True,
+                negated=True,
+                optional=True)
+
+    def test_negated_true_optional_false_if_loop_true(self):
+        with pytest.raises(BoboPatternBlockError):
+            BoboPatternBlock(
+                group="group",
+                predicates=[BoboPredicateCall(call=lambda e, h: True)],
+                strict=False,
+                loop=True,
+                negated=True,
+                optional=False)
+
+    def test_negated_false_optional_true_if_loop_true(self):
+        with pytest.raises(BoboPatternBlockError):
+            BoboPatternBlock(
+                group="group",
+                predicates=[BoboPredicateCall(call=lambda e, h: True)],
+                strict=False,
+                loop=True,
+                negated=False,
+                optional=True)
+
+    def test_negated_and_optional_true_if_loop_false(self):
+        with pytest.raises(BoboPatternBlockError):
+            BoboPatternBlock(
+                group="group",
+                predicates=[BoboPredicateCall(call=lambda e, h: True)],
+                strict=False,
+                loop=False,
+                negated=True,
+                optional=True)
