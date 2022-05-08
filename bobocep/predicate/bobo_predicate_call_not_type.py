@@ -1,8 +1,8 @@
 # Copyright (c) 2022 r3w0p
-# The following code can be redistributed and/or modified
-# under the terms of the GNU General Public License v3.0.
+# The following code can be redistributed and/or
+# modified under the terms of the MIT License.
 
-from typing import Callable, Tuple
+from typing import Callable, Tuple, List
 
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_history import BoboHistory
@@ -15,7 +15,7 @@ class BoboPredicateCallNotType(BoboPredicateCall):
 
     :param types: A list of valid data types. The event's data type must not
                   match any of them.
-    :type types: Tuple[type, ...]
+    :type types: List[type]
 
     :param subtype: If True, it will check subtypes of types, equivalent to
                     isinstance() functionality.
@@ -26,11 +26,11 @@ class BoboPredicateCallNotType(BoboPredicateCall):
 
     def __init__(self,
                  call: Callable,
-                 types: Tuple[type, ...],
+                 types: List[type],
                  subtype: bool = True):
         super().__init__(call=call)
 
-        self._types = types
+        self._types: Tuple[type, ...] = tuple(types)
         self._subtype = subtype
 
     def evaluate(self, event: BoboEvent, history: BoboHistory) -> bool:

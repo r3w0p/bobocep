@@ -1,8 +1,8 @@
 # Copyright (c) 2022 r3w0p
-# The following code can be redistributed and/or modified
-# under the terms of the GNU General Public License v3.0.
+# The following code can be redistributed and/or
+# modified under the terms of the MIT License.
 
-from time import time_ns
+from time import time
 
 from bobocep.event.event_id.bobo_event_id import \
     BoboEventID
@@ -17,12 +17,12 @@ class BoboEventIDUnique(BoboEventID):
         self._count: int = 0
 
     def generate(self) -> str:
-        time: int = time_ns()
+        now: int = int(time())
 
-        if time == self._last:
+        if now == self._last:
             self._count += 1
         else:
             self._count = 1
-            self._last = time
+            self._last = now
 
-        return "{}_{}".format(time, self._count)
+        return "{}_{}".format(now, self._count)

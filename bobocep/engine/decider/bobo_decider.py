@@ -1,6 +1,6 @@
 # Copyright (c) 2022 r3w0p
-# The following code can be redistributed and/or modified
-# under the terms of the GNU General Public License v3.0.
+# The following code can be redistributed and/or
+# modified under the terms of the MIT License.
 
 from queue import Queue, Full
 from threading import RLock
@@ -27,13 +27,13 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
     _EXC_RUN_NOT_FOUND = "run ID {} not found for pattern {}"
 
     def __init__(self,
-                 patterns: Tuple[BoboPattern, ...],
+                 patterns: List[BoboPattern],
                  event_id_gen: BoboEventID,
                  run_id_gen: BoboEventID,
                  max_size: int):
         super().__init__()
 
-        self._patterns = patterns
+        self._patterns: Tuple[BoboPattern, ...] = tuple(patterns)
         self._event_id_gen = event_id_gen
         self._run_id_gen = run_id_gen
         self._runs: Dict[str, Dict[str, BoboDeciderRun]] = {}

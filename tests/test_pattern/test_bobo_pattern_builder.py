@@ -1,14 +1,28 @@
 # Copyright (c) 2022 r3w0p
-# The following code can be redistributed and/or modified
-# under the terms of the GNU General Public License v3.0.
+# The following code can be redistributed and/or
+# modified under the terms of the MIT License.
 import pytest
 
 from bobocep.pattern.bobo_pattern_builder import BoboPatternBuilder
+from bobocep.pattern.exception.bobo_pattern_builder_error import \
+    BoboPatternBuilderError
 from bobocep.pattern.exception.bobo_pattern_error import BoboPatternError
 from bobocep.predicate.bobo_predicate_call import BoboPredicateCall
 
 
 class TestNext:
+
+    def test_1_block_name_0_chars(self):
+        predicate_block_a = BoboPredicateCall(call=lambda e, h: True)
+
+        builder = BoboPatternBuilder() \
+            .next(group="group_a",
+                  predicate=predicate_block_a,
+                  times=1,
+                  loop=False)
+
+        with pytest.raises(BoboPatternBuilderError):
+            builder.generate(name="")
 
     def test_1_block_1_precon_1_haltcon(self):
         name = "name"

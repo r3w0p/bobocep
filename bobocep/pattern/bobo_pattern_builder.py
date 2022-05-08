@@ -1,6 +1,6 @@
 # Copyright (c) 2022 r3w0p
-# The following code can be redistributed and/or modified
-# under the terms of the GNU General Public License v3.0.
+# The following code can be redistributed and/or
+# modified under the terms of the MIT License.
 
 from typing import List
 
@@ -29,9 +29,9 @@ class BoboPatternBuilder:
 
         return BoboPattern(
             name=name,
-            blocks=tuple(self._blocks),
-            preconditions=tuple(self._preconditions),
-            haltconditions=tuple(self._haltconditions)
+            blocks=self._blocks,
+            preconditions=self._preconditions,
+            haltconditions=self._haltconditions
         )
 
     def next(self,
@@ -43,7 +43,7 @@ class BoboPatternBuilder:
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
                 group=group,
-                predicates=(predicate,),
+                predicates=[predicate],
                 strict=True,
                 loop=loop,
                 negated=False,
@@ -58,7 +58,7 @@ class BoboPatternBuilder:
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
                 group=group,
-                predicates=(predicate,),
+                predicates=[predicate],
                 strict=True,
                 loop=False,
                 negated=True,
@@ -75,7 +75,7 @@ class BoboPatternBuilder:
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
                 group=group,
-                predicates=(predicate,),
+                predicates=[predicate],
                 strict=False,
                 loop=loop,
                 negated=False,
@@ -90,7 +90,7 @@ class BoboPatternBuilder:
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
                 group=group,
-                predicates=(predicate,),
+                predicates=[predicate],
                 strict=False,
                 loop=False,
                 negated=True,
@@ -107,7 +107,7 @@ class BoboPatternBuilder:
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
                 group=group,
-                predicates=tuple(predicates),
+                predicates=predicates,
                 strict=False,
                 loop=loop,
                 negated=False,
@@ -122,7 +122,7 @@ class BoboPatternBuilder:
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
                 group=group,
-                predicates=tuple(predicates),
+                predicates=predicates,
                 strict=False,
                 loop=False,
                 negated=True,

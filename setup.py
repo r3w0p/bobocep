@@ -8,20 +8,20 @@ with open('requirements.txt') as f:
 
 setup(
     author="r3w0p",
-    name='bobocep-develop',
-    version='0.5.0',
+    name='bobocep',
+    version='0.6.0',
     description="A fault-tolerant complex event processing engine designed "
                 "for edge computing in IoT systems.",
     long_description=long_description,
     long_description_content_type='text/markdown',
-    license="GPL-3.0-only",
+    license="MIT",
     keywords='bobocep',
     url='https://github.com/r3w0p/bobocep',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',

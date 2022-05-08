@@ -1,8 +1,8 @@
 # Copyright (c) 2022 r3w0p
-# The following code can be redistributed and/or modified
-# under the terms of the GNU General Public License v3.0.
+# The following code can be redistributed and/or
+# modified under the terms of the MIT License.
 
-from typing import Tuple
+from typing import Tuple, List
 
 from bobocep.engine.receiver.validator.bobo_validator import BoboValidator
 from bobocep.event.bobo_event import BoboEvent
@@ -13,7 +13,7 @@ class BoboValidatorType(BoboValidator):
     types. If the entity is a BoboEvent, the event's data are checked.
 
     :param types: A list of valid data types.
-    :type types: Tuple[type, ...]
+    :type types: List[type]
 
     :param subtype: If True, will match subtypes of a type, equivalent to
                      isinstance() functionality.
@@ -23,11 +23,11 @@ class BoboValidatorType(BoboValidator):
     """
 
     def __init__(self,
-                 types: Tuple[type, ...],
+                 types: List[type],
                  subtype: bool = True):
         super().__init__()
 
-        self._types = types
+        self._types: Tuple[type, ...] = tuple(types)
         self._subtype = subtype
 
     def is_valid(self, entity) -> bool:

@@ -1,8 +1,8 @@
 # Copyright (c) 2022 r3w0p
-# The following code can be redistributed and/or modified
-# under the terms of the GNU General Public License v3.0.
+# The following code can be redistributed and/or
+# modified under the terms of the MIT License.
 
-from typing import Tuple
+from typing import Tuple, List
 
 from bobocep.pattern.exception.bobo_pattern_block_error import \
     BoboPatternBlockError
@@ -16,7 +16,7 @@ class BoboPatternBlock:
     :type group: str
 
     :param predicates: The predicate(s) to use for evaluation.
-    :type predicates: Tuple[BoboPredicate, ...]
+    :type predicates: List[BoboPredicate]
 
     :param strict: Whether the predicate(s) has/have strict contiguity.
     :type strict: bool
@@ -41,7 +41,7 @@ class BoboPatternBlock:
 
     def __init__(self,
                  group: str,
-                 predicates: Tuple[BoboPredicate, ...],
+                 predicates: List[BoboPredicate],
                  strict: bool,
                  loop: bool,
                  negated: bool,
@@ -64,7 +64,7 @@ class BoboPatternBlock:
             raise BoboPatternBlockError(self._EXC_NEG_AND_OPT_LOOP_FALSE)
 
         self.group = group
-        self.predicates = predicates
+        self.predicates: Tuple[BoboPredicate, ...] = tuple(predicates)
         self.strict = strict
         self.loop = loop
         self.negated = negated
