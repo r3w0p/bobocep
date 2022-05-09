@@ -6,7 +6,7 @@
 https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml)
 [![Security](https://img.shields.io/github/workflow/status/r3w0p/bobocep/Security?label=Security)](
 https://github.com/r3w0p/bobocep/actions/workflows/security.yml)
-[![License](https://img.shields.io/github/license/r3w0p/bobocep?label=License)](
+[![License](https://img.shields.io/github/license/r3w0p/bobocep?color=blue&label=License)](
 https://github.com/r3w0p/bobocep/blob/develop/LICENSE/)
 [![Issues](https://img.shields.io/github/issues-raw/r3w0p/bobocep?label=Issues)](
 https://github.com/r3w0p/bobocep/issues)

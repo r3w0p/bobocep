@@ -26,7 +26,7 @@ class BoboReceiver(BoboEngineTask, BoboReceiverPublisher):
     def __init__(self,
                  validator: BoboValidator,
                  event_id_gen: BoboEventID,
-                 null_event_gen: Union[BoboNullEvent, None],
+                 null_event_gen: BoboNullEvent,
                  max_size: int):
         super().__init__()
 
@@ -42,12 +42,11 @@ class BoboReceiver(BoboEngineTask, BoboReceiverPublisher):
             if not self._queue.empty():
                 self._process_entity(entity=self._queue.get_nowait())
 
-            if self._null_event_gen is not None:
-                null_event = self._null_event_gen.maybe_generate(
-                    event_id=self._event_id_gen.generate())
+            null_event = self._null_event_gen.maybe_generate(
+                event_id=self._event_id_gen.generate())
 
-                if null_event is not None:
-                    self._process_entity(entity=null_event)
+            if null_event is not None:
+                self._process_entity(entity=null_event)
 
     def _process_entity(self, entity) -> None:
         if not self._validator.is_valid(entity):
@@ -67,11 +66,7 @@ class BoboReceiver(BoboEngineTask, BoboReceiverPublisher):
     def add_data(self, data):
         with self._lock:
             if not self._queue.full():
-                try:
-                    self._queue.put(data)
-                except Full:
-                    raise BoboReceiverQueueFullError(
-                        self._EXC_QUEUE_FULL.format(self._max_size))
+                self._queue.put(data)
             else:
                 raise BoboReceiverQueueFullError(
                     self._EXC_QUEUE_FULL.format(self._max_size))
