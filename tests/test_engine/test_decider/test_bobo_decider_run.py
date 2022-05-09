@@ -134,6 +134,21 @@ def test_pattern_3_blocks_halt_match_on_strict_negated():
     assert not run.is_complete()
 
 
+def test_pattern_3_blocks_not_strict_negated():
+    pattern = BoboPatternBuilder() \
+        .followed_by("group_a", BoboPredicateCall(lambda e, h: e.data)) \
+        .not_followed_by("group_b", BoboPredicateCall(lambda e, h: e.data)) \
+        .followed_by("group_c", BoboPredicateCall(lambda e, h: e.data)) \
+        .generate("pattern")
+
+    run = BoboDeciderRun("run_id", pattern,
+                         BoboEventSimple("event_a", datetime.now(), True))
+
+    run.process(BoboEventSimple("event_b", datetime.now(), True))
+    assert not run.is_halted()
+    assert not run.is_complete()
+
+
 def test_pattern_4_blocks_not_match_optional_to_complete():
     pattern = BoboPatternBuilder() \
         .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
