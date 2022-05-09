@@ -2,14 +2,11 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-from datetime import datetime
-from time import time_ns
-from typing import Union, Callable
+from typing import Union
 
 from bobocep.engine.receiver.null_event.bobo_null_event import \
     BoboNullEvent
 from bobocep.event.bobo_event import BoboEvent
-from bobocep.event.bobo_event_simple import BoboEventSimple
 
 
 class BoboNullEventNone(BoboNullEvent):

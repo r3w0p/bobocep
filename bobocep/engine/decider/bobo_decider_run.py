@@ -42,6 +42,8 @@ class BoboDeciderRun:
             self._halted = True
 
     def process(self, event: BoboEvent) -> bool:
+        # True if state change occurred; False otherwise.
+        # E.g. accepted event, changed block, completed, halted.
         with self._lock:
             if self._halted:
                 return False
@@ -60,58 +62,65 @@ class BoboDeciderRun:
                       temp_index: int) -> bool:
         match = self._is_match(event, block.predicates)
 
-        if not match:
-            # looping block can be neither negated nor optional
+        if match:
+            self._add_event(event, block)
+            return True
+        else:
+            # Looping block can be neither negated nor optional.
             if block.strict:
                 self._halted = True
-                return False
+                return True
             else:
-                # looping block cannot be final state
+                # Looping block cannot be the final state.
                 temp_index += 1
                 block = self.pattern.blocks[temp_index]
                 if block.loop:
                     return self._process_loop(event, block, temp_index)
                 else:
                     return self._process_not_loop(event, block, temp_index)
-        else:
-            self._add_event(event, block)
-            return True
 
     def _process_not_loop(self,
                           event: BoboEvent,
                           block: BoboPatternBlock,
                           temp_index: int) -> bool:
-        # non-looping block cannot be both negated and optional
+        # Non-looping block cannot be both negated and optional.
         match = self._is_match(event, block.predicates)
 
         if block.negated:
-            if match and block.strict:
-                self._halted = True
+            if match:
+                # Negated predicate happened: failure.
+                if block.strict:
+                    self._halted = True
+                    return True
                 return False
             else:
+                # Negated predicate did not happen: success.
                 self._move_forward(event, block, temp_index)
                 return True
 
         elif block.optional:
-            # strict block cannot be optional
-            if not match:
+            # Strict block cannot be optional.
+            if match:
+                # Optional block consumes event.
+                self._move_forward(event, block, temp_index)
+                return True
+            else:
+                # Try event against next block.
                 temp_index += 1
                 block = self.pattern.blocks[temp_index]
                 if block.loop:
                     return self._process_loop(event, block, temp_index)
                 else:
                     return self._process_not_loop(event, block, temp_index)
-            else:
-                self._move_forward(event, block, temp_index)
-                return True
-
         else:
-            if (not match) and block.strict:
-                self._halted = True
-                return False
-            else:
+            if match:
                 self._move_forward(event, block, temp_index)
                 return True
+            else:
+                if block.strict:
+                    self._halted = True
+                    return True
+                return False
 
     def _is_match(self,
                   event: BoboEvent,

@@ -4,7 +4,7 @@
 
 from queue import Queue, Full
 from threading import RLock
-from typing import Tuple, Dict, List
+from typing import Tuple, Dict, List, Union
 
 from bobocep.engine.bobo_engine_task import BoboEngineTask
 from bobocep.engine.decider.bobo_decider_publisher import BoboDeciderPublisher
@@ -64,17 +64,19 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
                 self._EXC_RUN_NOT_FOUND.format(pattern_name, run_id))
 
     def _check_against_runs(self, event: BoboEvent) -> List[BoboDeciderRun]:
-        completed = []
+        completed: List[BoboDeciderRun] = []
+        runs_to_remove: List[Tuple[str, str]] = []
+
         for pattern_name, dict_runs in self._runs.items():
             for _, run in dict_runs.items():
                 if run.process(event=event):
-                    if run.is_complete():
-                        self._remove_run(pattern_name, run.run_id)
-                        completed.append(run)
-                    elif run.is_halted():
-                        self._remove_run(pattern_name, run.run_id)
-                    else:
-                        pass  # a change that neither halted nor completed
+                    if run.is_halted():
+                        runs_to_remove.append((pattern_name, run.run_id))
+                        if run.is_complete():
+                            completed.append(run)
+
+        for pattern_name, run_id in runs_to_remove:
+            self._remove_run(pattern_name, run_id)
 
         return completed
 
@@ -105,6 +107,25 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
             else:
                 raise BoboDeciderQueueFullError(
                     self._EXC_QUEUE_FULL.format(self._max_size))
+
+    def patterns(self) -> Tuple[BoboPattern, ...]:
+        with self._lock:
+            return self._patterns
+
+    def all_runs(self) -> Tuple[BoboDeciderRun, ...]:
+        with self._lock:
+            runs: List[BoboDeciderRun] = []
+            for pattern_name, dict_runs in self._runs.items():
+                for _, run in dict_runs.items():
+                    runs.append(run)
+            return tuple(runs)
+
+    def runs_from(self,
+                  pattern: str) -> Union[Tuple[BoboDeciderRun, ...], None]:
+        with self._lock:
+            if pattern in self._runs:
+                return tuple(self._runs[pattern].values())
+            return None
 
     def size(self) -> int:
         with self._lock:

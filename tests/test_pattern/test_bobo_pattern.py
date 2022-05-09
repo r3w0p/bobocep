@@ -12,7 +12,7 @@ from bobocep.predicate.bobo_predicate_call import BoboPredicateCall
 
 
 def _block(group: str,
-           call: Callable = lambda e, h: True,
+           call: Callable = lambda e, h: e.data,
            strict: bool = False,
            loop: bool = False,
            negated: bool = False,

@@ -3,9 +3,8 @@
 # modified under the terms of the MIT License.
 
 from datetime import datetime
-from queue import Queue, Full
+from queue import Queue
 from threading import RLock
-from typing import Union
 
 from bobocep.engine.bobo_engine_task import BoboEngineTask
 from bobocep.engine.receiver.bobo_receiver_publisher import \

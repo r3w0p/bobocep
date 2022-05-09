@@ -3,8 +3,6 @@
 # modified under the terms of the MIT License.
 from datetime import datetime
 
-import pytest
-
 from bobocep.event.bobo_event_simple import BoboEventSimple
 from bobocep.event.bobo_history import BoboHistory
 
