@@ -9,7 +9,7 @@ from typing import Callable
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_history import BoboHistory
 from bobocep.predicate.bobo_predicate import BoboPredicate
-from bobocep.predicate.exception.bobo_predicate_invalid_callable_error import \
+from bobocep.exception.bobo_predicate_invalid_callable_error import \
     BoboPredicateInvalidCallableError
 
 

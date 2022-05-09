@@ -20,7 +20,7 @@ https://pypi.org/project/bobocep/)
 https://codeclimate.com/github/r3w0p/bobocep/code?sort=test_coverage)
 [![Maintainability](https://img.shields.io/codeclimate/maintainability-percentage/r3w0p/bobocep?label=Maintainability)](
 https://codeclimate.com/github/r3w0p/bobocep/code?sort=maintainability)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep?ref=badge_small)
+[![Compliance](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep?ref=badge_shield)
 
 `BoboCEP` is a [complex event processing](https://en.wikipedia.org/wiki/Complex_event_processing) (CEP) engine
 designed for [edge computing](https://en.wikipedia.org/wiki/Edge_computing) in

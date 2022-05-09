@@ -5,7 +5,7 @@
 from typing import Tuple, List
 
 from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
-from bobocep.pattern.exception.bobo_pattern_error import BoboPatternError
+from bobocep.exception.bobo_pattern_error import BoboPatternError
 from bobocep.predicate.bobo_predicate import BoboPredicate
 
 

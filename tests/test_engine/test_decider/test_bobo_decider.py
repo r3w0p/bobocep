@@ -10,16 +10,17 @@ from bobocep.engine.decider.bobo_decider import BoboDecider
 from bobocep.engine.decider.bobo_decider_run import BoboDeciderRun
 from bobocep.engine.decider.bobo_decider_subscriber import \
     BoboDeciderSubscriber
-from bobocep.engine.decider.exception.bobo_decider_queue_full_error import \
-    BoboDeciderQueueFullError
-from bobocep.engine.decider.exception.bobo_decider_run_not_found_error import \
+from bobocep.exception.bobo_decider_run_not_found_error import \
     BoboDeciderRunNotFoundError
 from bobocep.event.bobo_event_simple import BoboEventSimple
 from bobocep.event.event_id.bobo_event_id import BoboEventID
 from bobocep.event.event_id.bobo_event_id_unique import BoboEventIDUnique
+from bobocep.exception.bobo_key_error import BoboKeyError
+from bobocep.exception.bobo_queue_full_error import BoboQueueFullError
 from bobocep.pattern.bobo_pattern import BoboPattern
 from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
 from bobocep.predicate.bobo_predicate_call import BoboPredicateCall
+from bobocep.process.bobo_process import BoboProcess
 
 
 def _simple(event_id: str = "event_id",
@@ -69,8 +70,14 @@ def _decsub(patterns: List[BoboPattern],
             event_id_gen: BoboEventID = None,
             run_id_gen: BoboEventID = None,
             max_size: int = 255):
+
+    process = BoboProcess(
+        name="process",
+        datagen=lambda: True,
+        patterns=patterns)
+
     decider = BoboDecider(
-        patterns=patterns,
+        processes=[process],
         event_id_gen=event_id_gen if event_id_gen is not None else
         BoboEventIDUnique(),
         run_id_gen=run_id_gen if run_id_gen is not None else
@@ -108,12 +115,14 @@ class TestValid:
             pattern_123_ab, pattern_456_cd, pattern_789_ef
         ])
 
-        decider_patterns = decider.patterns()
+        processes = decider.processes()
+        assert len(processes) == 1
+        assert len(processes[0].patterns) == 3
 
-        assert len(decider_patterns) == 3
-        assert pattern_123_ab in decider_patterns
-        assert pattern_456_cd in decider_patterns
-        assert pattern_789_ef in decider_patterns
+        assert pattern_123_ab in processes[0].patterns
+        assert pattern_456_cd in processes[0].patterns
+        assert pattern_789_ef in processes[0].patterns
+
         assert len(decider.all_runs()) == 0
         assert decider.size() == 0
 
@@ -131,6 +140,8 @@ class TestValid:
             pattern_123_ab, pattern_456_cd, pattern_789_ef
         ])
 
+        process_name = decider.processes()[0].name
+
         for event, pattern in [
             (_simple(data=1), pattern_123_ab),
             (_simple(data=4), pattern_456_cd),
@@ -141,9 +152,9 @@ class TestValid:
 
             decider.update()
             assert decider.size() == 0
-            assert len(decider.runs_from(pattern=pattern.name)) == 1
-            assert decider.runs_from(
-                pattern=pattern.name)[0].pattern == pattern
+            assert len(decider.runs_from(process_name, pattern.name)) == 1
+            assert decider.runs_from(process_name,
+                                     pattern.name)[0].pattern == pattern
 
     def test_3_patterns_same_blocks(self):
         pattern_123_ab_1 = _pattern_3_blocks_1_pre_1_halt(
@@ -162,22 +173,26 @@ class TestValid:
         decider.on_receiver_event(event=_simple(data=1))
         decider.update()
 
+        process_name = decider.processes()[0].name
+
         assert decider.size() == 0
         assert len(decider.all_runs()) == 3
-        assert len(decider.runs_from(pattern=pattern_123_ab_1.name)) == 1
-        assert len(decider.runs_from(pattern=pattern_123_ab_2.name)) == 1
-        assert len(decider.runs_from(pattern=pattern_123_ab_3.name)) == 1
+        assert len(decider.runs_from(process_name, pattern_123_ab_1.name)) == 1
+        assert len(decider.runs_from(process_name, pattern_123_ab_2.name)) == 1
+        assert len(decider.runs_from(process_name, pattern_123_ab_3.name)) == 1
 
     def test_1_pattern_init_3_runs(self):
         pattern_123_ab = _pattern_3_blocks_1_pre_1_halt(
             "pattern_123_ab", ("1", "2", "3"), (1, 2, 3), "a", "b")
 
         decider, subscriber = _decsub([pattern_123_ab])
+        process_name = decider.processes()[0].name
 
         for i in range(3):
             decider.on_receiver_event(event=_simple(data=1))
             decider.update()
-            assert len(decider.runs_from(pattern=pattern_123_ab.name)) == i + 1
+            assert len(decider.runs_from(process_name,
+                                         pattern_123_ab.name)) == i + 1
 
     def test_1_pattern_to_completion(self):
         pattern_123_ab = _pattern_3_blocks_1_pre_1_halt(
@@ -193,8 +208,10 @@ class TestValid:
             decider.on_receiver_event(event=event)
             decider.update()
 
+            process_name = decider.processes()[0].name
+
             assert len(decider.runs_from(
-                pattern=pattern_123_ab.name)) == length
+                process_name, pattern_123_ab.name)) == length
 
         assert len(subscriber.runs) == 1
 
@@ -203,8 +220,9 @@ class TestValid:
             "pattern_123_ab", ("1", "2", "3"), (1, 2, 3), "a", "b")
 
         decider, subscriber = _decsub([pattern_123_ab])
+        process_name = decider.processes()[0].name
 
-        assert len(decider.runs_from("pattern_unknown")) == 0
+        assert len(decider.runs_from(process_name, "pattern_unknown")) == 0
 
     def test_1_block_pattern_init_run_immediately_completes(self):
         block_1 = _block("1", call=lambda e, h: e.data == e.data)
@@ -217,7 +235,7 @@ class TestValid:
 
         decider, subscriber = _decsub([pattern_1])
 
-        decider.on_receiver_event(event=_simple(data=True))
+        decider.on_receiver_event(_simple(data=True))
         decider.update()
 
         assert len(subscriber.runs) == 1
@@ -231,16 +249,43 @@ class TestInvalid:
 
         decider, subscriber = _decsub([pattern_123_ab], max_size=1)
 
-        decider.on_receiver_event(event=_simple(data=1))
+        decider.on_receiver_event(_simple(data=1))
 
-        with pytest.raises(BoboDeciderQueueFullError):
-            decider.on_receiver_event(event=_simple(data=2))
+        with pytest.raises(BoboQueueFullError):
+            decider.on_receiver_event(_simple(data=2))
 
     def test_try_to_remove_run_that_does_not_exist(self):
         pattern_123_ab = _pattern_3_blocks_1_pre_1_halt(
             "pattern_123_ab", ("1", "2", "3"), (1, 2, 3), "a", "b")
 
         decider, subscriber = _decsub([pattern_123_ab])
+        process_name = decider.processes()[0].name
 
         with pytest.raises(BoboDeciderRunNotFoundError):
-            decider._remove_run(pattern_name="a", run_id="b")
+            decider._remove_run(process_name=process_name,
+                                pattern_name="a",
+                                run_id="b")
+
+    def test_duplicate_process_names(self):
+        pattern = BoboPattern(
+            name="pattern",
+            blocks=[_block("1", call=lambda e, h: True)],
+            preconditions=[],
+            haltconditions=[])
+
+        process_1 = BoboProcess(
+            name="process",
+            datagen=lambda: True,
+            patterns=[pattern])
+
+        process_2 = BoboProcess(
+            name="process",
+            datagen=lambda: True,
+            patterns=[pattern])
+
+        with pytest.raises(BoboKeyError):
+            BoboDecider(
+                processes=[process_1, process_2],
+                event_id_gen=BoboEventIDUnique(),
+                run_id_gen=BoboEventIDUnique(),
+                max_size=255)

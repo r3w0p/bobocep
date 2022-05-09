@@ -10,7 +10,7 @@ from bobocep.event.bobo_event_simple import BoboEventSimple
 from bobocep.event.bobo_history import BoboHistory
 from bobocep.predicate.bobo_predicate_call import \
     BoboPredicateCall
-from bobocep.predicate.exception.bobo_predicate_invalid_callable_error import \
+from bobocep.exception.bobo_predicate_invalid_callable_error import \
     BoboPredicateInvalidCallableError
 
 

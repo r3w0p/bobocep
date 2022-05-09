@@ -7,7 +7,7 @@ import pytest
 
 from bobocep.pattern.bobo_pattern import BoboPattern
 from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
-from bobocep.pattern.exception.bobo_pattern_error import BoboPatternError
+from bobocep.exception.bobo_pattern_error import BoboPatternError
 from bobocep.predicate.bobo_predicate_call import BoboPredicateCall
 
 

@@ -6,7 +6,7 @@ from typing import List
 
 from bobocep.pattern.bobo_pattern import BoboPattern
 from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
-from bobocep.pattern.exception.bobo_pattern_builder_error import \
+from bobocep.exception.bobo_pattern_builder_error import \
     BoboPatternBuilderError
 from bobocep.predicate.bobo_predicate import BoboPredicate
 

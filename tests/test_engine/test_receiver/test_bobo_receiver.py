@@ -8,8 +8,6 @@ import pytest
 from bobocep.engine.receiver.bobo_receiver import BoboReceiver
 from bobocep.engine.receiver.bobo_receiver_subscriber import \
     BoboReceiverSubscriber
-from bobocep.engine.receiver.exception.bobo_receiver_queue_full_error import \
-    BoboReceiverQueueFullError
 from bobocep.engine.receiver.null_event.bobo_null_event import BoboNullEvent
 from bobocep.engine.receiver.null_event.bobo_null_event_elapse import \
     BoboNullEventElapse
@@ -25,6 +23,7 @@ from bobocep.event.bobo_event_simple import BoboEventSimple
 from bobocep.event.event_id.bobo_event_id import BoboEventID
 from bobocep.event.event_id.bobo_event_id_unique import \
     BoboEventIDUnique
+from bobocep.exception.bobo_queue_full_error import BoboQueueFullError
 
 
 def _recsub(validator: BoboValidator = None,
@@ -132,5 +131,5 @@ class TestInvalid:
 
         receiver.add_data(data=123)
 
-        with pytest.raises(BoboReceiverQueueFullError):
+        with pytest.raises(BoboQueueFullError):
             receiver.add_data(data=456)
