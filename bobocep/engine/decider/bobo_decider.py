@@ -57,9 +57,9 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
                self._check_against_patterns(event=event)
 
     def _remove_run(self, pattern_name: str, run_id: str) -> None:
-        try:
+        if pattern_name in self._runs and run_id in self._runs[pattern_name]:
             del self._runs[pattern_name][run_id]
-        except KeyError:
+        else:
             raise BoboDeciderRunNotFoundError(
                 self._EXC_RUN_NOT_FOUND.format(pattern_name, run_id))
 
@@ -99,11 +99,7 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
     def on_receiver_event(self, event: BoboEvent):
         with self._lock:
             if not self._queue.full():
-                try:
-                    self._queue.put(event)
-                except Full:
-                    raise BoboDeciderQueueFullError(
-                        self._EXC_QUEUE_FULL.format(self._max_size))
+                self._queue.put(event)
             else:
                 raise BoboDeciderQueueFullError(
                     self._EXC_QUEUE_FULL.format(self._max_size))
@@ -121,11 +117,11 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
             return tuple(runs)
 
     def runs_from(self,
-                  pattern: str) -> Union[Tuple[BoboDeciderRun, ...], None]:
+                  pattern: str) -> Tuple[BoboDeciderRun, ...]:
         with self._lock:
             if pattern in self._runs:
                 return tuple(self._runs[pattern].values())
-            return None
+            return tuple()
 
     def size(self) -> int:
         with self._lock:
