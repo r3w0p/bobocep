@@ -8,9 +8,9 @@ from typing import Callable
 
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_history import BoboHistory
-from bobocep.predicate.bobo_predicate import BoboPredicate
 from bobocep.exception.bobo_predicate_invalid_callable_error import \
     BoboPredicateInvalidCallableError
+from bobocep.predicate.bobo_predicate import BoboPredicate
 
 
 class BoboPredicateCall(BoboPredicate):
@@ -22,17 +22,17 @@ class BoboPredicateCall(BoboPredicate):
     :type call: Callable
     """
 
-    _EXC_INVALID_CALL = "'call' must have {} parameters, found {}"
+    _EXC_INVALID_CALL = "'call' must have {0} parameters, found {1}"
+    _LEN_PARAM_CALL = 2
 
     def __init__(self, call: Callable):
         super().__init__()
 
         len_param_call = len(signature(call).parameters)
-        len_param_eval = len(signature(self.evaluate).parameters)
 
-        if len_param_call != len_param_eval:
+        if len_param_call != self._LEN_PARAM_CALL:
             raise BoboPredicateInvalidCallableError(
-                self._EXC_INVALID_CALL.format(len_param_eval,
+                self._EXC_INVALID_CALL.format(self._LEN_PARAM_CALL,
                                               len_param_call))
 
         self._call = call

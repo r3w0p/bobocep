@@ -4,15 +4,15 @@
 
 ## Supported Versions
 
-Below are versions which have been tested for support.
+Below are the versions that are tested for support.
 
 ### Python
 
 |   Version    | Supported |
 |:------------:|:---------:|
 |   `> 3.10`   |  &cross;  |
-| `3.7 - 3.10` |  &check;  |
-|   `< 3.7`    |  &cross;  |
+| `3.9 - 3.10` |  &check;  |
+|   `< 3.9`    |  &cross;  |
 
 ### OS
 

@@ -10,6 +10,7 @@ from bobocep.engine.decider.bobo_decider import BoboDecider
 from bobocep.engine.decider.bobo_decider_run import BoboDeciderRun
 from bobocep.engine.decider.bobo_decider_subscriber import \
     BoboDeciderSubscriber
+from bobocep.event.bobo_history import BoboHistory
 from bobocep.exception.bobo_decider_run_not_found_error import \
     BoboDeciderRunNotFoundError
 from bobocep.event.bobo_event_simple import BoboEventSimple
@@ -73,8 +74,9 @@ def _decsub(patterns: List[BoboPattern],
 
     process = BoboProcess(
         name="process",
-        datagen=lambda: True,
-        patterns=patterns)
+        datagen=lambda p, h: True,
+        patterns=patterns,
+        requests=[])
 
     decider = BoboDecider(
         processes=[process],
@@ -93,10 +95,13 @@ def _decsub(patterns: List[BoboPattern],
 class StubDeciderSubscriber(BoboDeciderSubscriber):
     def __init__(self):
         super().__init__()
-        self.runs = []
+        self.output: List[Tuple[str, str, BoboHistory]] = []
 
-    def on_decider_completed_run(self, run: BoboDeciderRun):
-        self.runs.append(run)
+    def on_decider_completed_run(self,
+                                 process_name: str,
+                                 pattern_name: str,
+                                 history: BoboHistory):
+        self.output.append((process_name, pattern_name, history))
 
 
 class TestValid:
@@ -213,7 +218,7 @@ class TestValid:
             assert len(decider.runs_from(
                 process_name, pattern_123_ab.name)) == length
 
-        assert len(subscriber.runs) == 1
+        assert len(subscriber.output) == 1
 
     def test_get_run_from_non_existent_pattern(self):
         pattern_123_ab = _pattern_3_blocks_1_pre_1_halt(
@@ -238,7 +243,7 @@ class TestValid:
         decider.on_receiver_event(_simple(data=True))
         decider.update()
 
-        assert len(subscriber.runs) == 1
+        assert len(subscriber.output) == 1
 
 
 class TestInvalid:
@@ -275,13 +280,15 @@ class TestInvalid:
 
         process_1 = BoboProcess(
             name="process",
-            datagen=lambda: True,
-            patterns=[pattern])
+            datagen=lambda p, h: True,
+            patterns=[pattern],
+            requests=[])
 
         process_2 = BoboProcess(
             name="process",
-            datagen=lambda: True,
-            patterns=[pattern])
+            datagen=lambda p, h: True,
+            patterns=[pattern],
+            requests=[])
 
         with pytest.raises(BoboKeyError):
             BoboDecider(

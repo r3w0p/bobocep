@@ -3,6 +3,7 @@
 # modified under the terms of the MIT License.
 
 from datetime import datetime
+from typing import Any
 
 from bobocep.event.bobo_event import BoboEvent
 
@@ -13,7 +14,7 @@ class BoboEventSimple(BoboEvent):
     def __init__(self,
                  event_id: str,
                  timestamp: datetime,
-                 data):
+                 data: Any):
         super().__init__(
             event_id=event_id,
             timestamp=timestamp,

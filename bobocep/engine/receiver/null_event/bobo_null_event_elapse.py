@@ -4,6 +4,7 @@
 
 from datetime import datetime
 from time import time_ns
+from types import MethodType
 from typing import Union, Callable
 
 from bobocep.engine.receiver.null_event.bobo_null_event import \
@@ -25,6 +26,9 @@ class BoboNullEventElapse(BoboNullEvent):
         self._datagen = datagen
         self._tz = tz
         self._last = self._time_ms() if from_now else 0
+
+        # Prevent garbage collection of object if callable is a method.
+        self._obj = datagen.__self__ if isinstance(datagen, MethodType) else None
 
     def maybe_generate(self, event_id: str) -> Union[BoboEvent, None]:
         now = BoboNullEventElapse._time_ms()

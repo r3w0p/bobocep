@@ -9,13 +9,13 @@ from typing import Tuple, Dict, List
 from bobocep.engine.bobo_engine_task import BoboEngineTask
 from bobocep.engine.decider.bobo_decider_publisher import BoboDeciderPublisher
 from bobocep.engine.decider.bobo_decider_run import BoboDeciderRun
-from bobocep.exception.bobo_decider_run_not_found_error import \
-    BoboDeciderRunNotFoundError
 from bobocep.engine.receiver.bobo_receiver_subscriber import \
     BoboReceiverSubscriber
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_history import BoboHistory
 from bobocep.event.event_id.bobo_event_id import BoboEventID
+from bobocep.exception.bobo_decider_run_not_found_error import \
+    BoboDeciderRunNotFoundError
 from bobocep.exception.bobo_key_error import BoboKeyError
 from bobocep.exception.bobo_queue_full_error import BoboQueueFullError
 from bobocep.process.bobo_process import BoboProcess
@@ -47,10 +47,9 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
         self._event_id_gen = event_id_gen
         self._run_id_gen = run_id_gen
         self._max_size = max_size
-
         self._runs: Dict[str, Dict[str, Dict[str, BoboDeciderRun]]] = {}
-        self._history_stub = BoboHistory(events={})
-        self._queue: Queue = Queue(maxsize=self._max_size)
+        self._history_stub = BoboHistory({})
+        self._queue: Queue[BoboEvent] = Queue(self._max_size)
         self._lock = RLock()
 
     def update(self) -> None:
@@ -58,7 +57,10 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
             if not self._queue.empty():
                 for run in self._process_event(self._queue.get_nowait()):
                     for subscriber in self._subscribers:
-                        subscriber.on_decider_completed_run(run=run)  # todo update to make it jsonable
+                        subscriber.on_decider_completed_run(
+                            process_name=run.process_name,
+                            pattern_name=run.pattern.name,
+                            history=run.history())
 
     def on_receiver_event(self, event: BoboEvent):
         with self._lock:
@@ -105,7 +107,7 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
         for process_name, dict_patterns in self._runs.items():
             for pattern_name, dict_runs in dict_patterns.items():
                 for _, run in dict_runs.items():
-                    if run.process(event=event):
+                    if run.process(event):
                         if run.is_halted():
                             runs_to_remove.append((
                                 process_name, pattern_name, run.run_id))
@@ -127,6 +129,7 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
                        for predicate in pattern.blocks[0].predicates):
                     run = BoboDeciderRun(
                         run_id=self._run_id_gen.generate(),
+                        process_name=process.name,
                         pattern=pattern,
                         event=event)
                     if run.is_complete():

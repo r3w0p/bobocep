@@ -5,6 +5,7 @@
 from abc import ABC
 
 from datetime import datetime
+from typing import Any
 
 
 class BoboEvent(ABC):
@@ -17,12 +18,13 @@ class BoboEvent(ABC):
     :type timestamp: datetime
 
     :param data: The event data.
+    :type data: Any
     """
 
     def __init__(self,
                  event_id: str,
                  timestamp: datetime,
-                 data):
+                 data: Any):
         super().__init__()
 
         self.event_id = event_id

@@ -3,31 +3,37 @@
 # modified under the terms of the MIT License.
 
 from threading import RLock
-from typing import Tuple
+from typing import Tuple, Dict, List
 
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_history import BoboHistory
 from bobocep.pattern.bobo_pattern import BoboPattern
 from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
 from bobocep.predicate.bobo_predicate import BoboPredicate
+from bobocep.process.bobo_process import BoboProcess
 
 
 class BoboDeciderRun:
 
     def __init__(self,
                  run_id: str,
+                 process_name: str,
                  pattern: BoboPattern,
                  event: BoboEvent):
         super().__init__()
 
         self.run_id = run_id
+        self.process_name = process_name
         self.pattern = pattern
-        self._events = {
+        self._events: Dict[str, List[BoboEvent]] = {
             self.pattern.blocks[0].group: [event]
         }
         self._block_index = 1
         self._lock = RLock()
         self._halted = self.is_complete()
+
+    def history(self) -> BoboHistory:
+        return BoboHistory(self._events)
 
     def is_complete(self) -> bool:
         with self._lock:

@@ -16,7 +16,7 @@ def test_pattern_1_block_halt_complete_on_init():
         .generate("pattern")
 
     event = BoboEventSimple("event_id", datetime.now(), None)
-    run = BoboDeciderRun("run_id", pattern, event)
+    run = BoboDeciderRun("run_id", "process_name", pattern, event)
 
     assert run.is_halted()
     assert run.is_complete()
@@ -30,7 +30,7 @@ def test_pattern_3_blocks_not_halt_not_complete_on_init():
         .generate("pattern")
 
     event = BoboEventSimple("event_id", datetime.now(), None)
-    run = BoboDeciderRun("run_id", pattern, event)
+    run = BoboDeciderRun("run_id", "process_name", pattern, event)
 
     assert not run.is_halted()
     assert not run.is_complete()
@@ -43,7 +43,7 @@ def test_pattern_3_blocks_halt_complete_to_complete():
         .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
         .generate("pattern")
 
-    run = BoboDeciderRun("run_id", pattern,
+    run = BoboDeciderRun("run_id", "process_name", pattern,
                          BoboEventSimple("event_a", datetime.now(), None))
 
     run.process(BoboEventSimple("event_b", datetime.now(), None))
@@ -62,7 +62,7 @@ def test_pattern_3_blocks_manual_halt_not_complete():
         .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
         .generate("pattern")
 
-    run = BoboDeciderRun("run_id", pattern,
+    run = BoboDeciderRun("run_id", "process_name", pattern,
                          BoboEventSimple("event_a", datetime.now(), None))
 
     run.halt()
@@ -77,7 +77,7 @@ def test_pattern_3_blocks_process_on_halt():
         .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
         .generate("pattern")
 
-    run = BoboDeciderRun("run_id", pattern,
+    run = BoboDeciderRun("run_id", "process_name", pattern,
                          BoboEventSimple("event_a", datetime.now(), None))
 
     run.halt()
@@ -92,7 +92,7 @@ def test_pattern_3_blocks_halt_no_match_on_strict():
         .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
         .generate("pattern")
 
-    run = BoboDeciderRun("run_id", pattern,
+    run = BoboDeciderRun("run_id", "process_name", pattern,
                          BoboEventSimple("event_a", datetime.now(), None))
 
     run.process(BoboEventSimple("event_b", datetime.now(), None))
@@ -107,7 +107,7 @@ def test_pattern_3_blocks_halt_no_match_on_strict_negated_to_complete():
         .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
         .generate("pattern")
 
-    run = BoboDeciderRun("run_id", pattern,
+    run = BoboDeciderRun("run_id", "process_name", pattern,
                          BoboEventSimple("event_a", datetime.now(), None))
 
     run.process(BoboEventSimple("event_b", datetime.now(), None))
@@ -126,7 +126,7 @@ def test_pattern_3_blocks_halt_match_on_strict_negated():
         .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
         .generate("pattern")
 
-    run = BoboDeciderRun("run_id", pattern,
+    run = BoboDeciderRun("run_id", "process_name", pattern,
                          BoboEventSimple("event_a", datetime.now(), None))
 
     run.process(BoboEventSimple("event_b", datetime.now(), None))
@@ -141,7 +141,7 @@ def test_pattern_3_blocks_not_strict_negated():
         .followed_by("group_c", BoboPredicateCall(lambda e, h: e.data)) \
         .generate("pattern")
 
-    run = BoboDeciderRun("run_id", pattern,
+    run = BoboDeciderRun("run_id", "process_name", pattern,
                          BoboEventSimple("event_a", datetime.now(), True))
 
     run.process(BoboEventSimple("event_b", datetime.now(), True))
@@ -158,7 +158,7 @@ def test_pattern_4_blocks_not_match_optional_to_complete():
         .followed_by("group_d", BoboPredicateCall(lambda e, h: True)) \
         .generate("pattern")
 
-    run = BoboDeciderRun("run_id", pattern,
+    run = BoboDeciderRun("run_id", "process_name", pattern,
                          BoboEventSimple("event_a", datetime.now(), None))
 
     run.process(BoboEventSimple("event_b", datetime.now(), None))
@@ -179,7 +179,7 @@ def test_pattern_4_blocks_match_optional_to_complete():
         .followed_by("group_d", BoboPredicateCall(lambda e, h: True)) \
         .generate("pattern")
 
-    run = BoboDeciderRun("run_id", pattern,
+    run = BoboDeciderRun("run_id", "process_name", pattern,
                          BoboEventSimple("event_a", datetime.now(), None))
 
     run.process(BoboEventSimple("event_b", datetime.now(), None))
@@ -205,7 +205,7 @@ def test_pattern_4_blocks_not_match_optional_then_loop():
         .followed_by("group_d", BoboPredicateCall(lambda e, h: True)) \
         .generate("pattern")
 
-    run = BoboDeciderRun("run_id", pattern,
+    run = BoboDeciderRun("run_id", "process_name", pattern,
                          BoboEventSimple("event_a", datetime.now(), None))
 
     run.process(BoboEventSimple("event_b", datetime.now(), None))
@@ -235,7 +235,7 @@ def test_pattern_4_blocks_match_optional_then_loop():
         .followed_by("group_d", BoboPredicateCall(lambda e, h: True)) \
         .generate("pattern")
 
-    run = BoboDeciderRun("run_id", pattern,
+    run = BoboDeciderRun("run_id", "process_name", pattern,
                          BoboEventSimple("event_a", datetime.now(), None))
 
     run.process(BoboEventSimple("event_b", datetime.now(), None))
@@ -263,7 +263,7 @@ def test_pattern_3_blocks_1_loop_not_match_strict():
         .followed_by("group_c", BoboPredicateCall(lambda e, h: e.data)) \
         .generate("pattern")
 
-    run = BoboDeciderRun("run_id", pattern,
+    run = BoboDeciderRun("run_id", "process_name", pattern,
                          BoboEventSimple("event_a", datetime.now(), True))
 
     run.process(BoboEventSimple("event_b", datetime.now(), True))
@@ -290,7 +290,7 @@ def test_pattern_3_blocks_1_loop_to_complete():
                      BoboPredicateCall(lambda e, h: e.data == 3)) \
         .generate("pattern")
 
-    run = BoboDeciderRun("run_id", pattern,
+    run = BoboDeciderRun("run_id", "process_name", pattern,
                          BoboEventSimple("event_a", datetime.now(), 1))
 
     run.process(BoboEventSimple("event_b", datetime.now(), 2))
@@ -320,7 +320,7 @@ def test_pattern_4_blocks_2_loops_to_complete():
                      BoboPredicateCall(lambda e, h: e.data == 4)) \
         .generate("pattern")
 
-    run = BoboDeciderRun("run_id", pattern,
+    run = BoboDeciderRun("run_id", "process_name", pattern,
                          BoboEventSimple("event_a", datetime.now(), 1))
 
     run.process(BoboEventSimple("event_b", datetime.now(), 2))
