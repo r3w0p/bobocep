@@ -2,23 +2,23 @@
 
 # BoboCEP
 
-[![CI/CD](https://img.shields.io/github/workflow/status/r3w0p/bobocep/CICD?label=CI/CD)](
+[![CI/CD](https://img.shields.io/github/workflow/status/r3w0p/bobocep/CICD?label=ci/cd)](
 https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml)
-[![Security](https://img.shields.io/github/workflow/status/r3w0p/bobocep/Security?label=Security)](
+[![Security](https://img.shields.io/github/workflow/status/r3w0p/bobocep/Security?label=security)](
 https://github.com/r3w0p/bobocep/actions/workflows/security.yml)
-[![License](https://img.shields.io/github/license/r3w0p/bobocep?color=blue&label=License)](
+[![License](https://img.shields.io/github/license/r3w0p/bobocep?color=blue&label=license)](
 https://github.com/r3w0p/bobocep/blob/develop/LICENSE/)
-[![Issues](https://img.shields.io/github/issues-raw/r3w0p/bobocep?label=Issues)](
+[![Issues](https://img.shields.io/github/issues-raw/r3w0p/bobocep?label=issues)](
 https://github.com/r3w0p/bobocep/issues)
-[![Dependencies](https://img.shields.io/librariesio/github/r3w0p/bobocep?label=Dependencies)](
+[![Dependencies](https://img.shields.io/librariesio/github/r3w0p/bobocep?label=dependencies)](
 https://github.com/r3w0p/bobocep/network/dependencies) \
-[![PyPI](https://img.shields.io/pypi/v/bobocep?color=blue&label=PyPI)](
+[![PyPI](https://img.shields.io/pypi/v/bobocep?color=blue&label=pypi)](
 https://pypi.org/project/bobocep/)
-[![Python](https://img.shields.io/pypi/pyversions/bobocep?color=blue&label=Python)](
+[![Python](https://img.shields.io/pypi/pyversions/bobocep?color=blue&label=python)](
 https://pypi.org/project/bobocep/)
-[![Coverage](https://img.shields.io/codeclimate/coverage/r3w0p/bobocep?label=Coverage)](
+[![Coverage](https://img.shields.io/codeclimate/coverage/r3w0p/bobocep?label=coverage)](
 https://codeclimate.com/github/r3w0p/bobocep/code?sort=test_coverage)
-[![Maintainability](https://img.shields.io/codeclimate/maintainability-percentage/r3w0p/bobocep?label=Maintainability)](
+[![Maintainability](https://img.shields.io/codeclimate/maintainability-percentage/r3w0p/bobocep?label=maintainability)](
 https://codeclimate.com/github/r3w0p/bobocep/code?sort=maintainability)
 [![Compliance](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep?ref=badge_shield)
 
@@ -35,7 +35,6 @@ partially completed complex events across multiple instances of the software.
 ## License
 
 `BoboCEP` is open source, as per
-[The Open Source Definition](https://github.com/r3w0p/bobocep/blob/develop/OPEN_SOURCE_DEFINITION.md)
-by the [Open Source Initiative](https://opensource.org/) (OSI).
+[The Open Source Definition](https://opensource.org/osd).
 The code in this repository can be redistributed and/or modified under the terms of the 
 [MIT License](https://github.com/r3w0p/bobocep/blob/develop/LICENSE).
