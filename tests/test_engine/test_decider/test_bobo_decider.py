@@ -72,11 +72,7 @@ def _decsub(patterns: List[BoboPattern],
             run_id_gen: BoboEventID = None,
             max_size: int = 255):
 
-    process = BoboProcess(
-        name="process",
-        datagen=lambda p, h: True,
-        patterns=patterns,
-        requests=[])
+    process = BoboProcess(name="process", datagen=lambda p, h: True, patterns=patterns, action=[])
 
     decider = BoboDecider(
         processes=[process],
@@ -278,17 +274,9 @@ class TestInvalid:
             preconditions=[],
             haltconditions=[])
 
-        process_1 = BoboProcess(
-            name="process",
-            datagen=lambda p, h: True,
-            patterns=[pattern],
-            requests=[])
+        process_1 = BoboProcess(name="process", datagen=lambda p, h: True, patterns=[pattern], action=[])
 
-        process_2 = BoboProcess(
-            name="process",
-            datagen=lambda p, h: True,
-            patterns=[pattern],
-            requests=[])
+        process_2 = BoboProcess(name="process", datagen=lambda p, h: True, patterns=[pattern], action=[])
 
         with pytest.raises(BoboKeyError):
             BoboDecider(

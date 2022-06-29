@@ -4,13 +4,14 @@
 from datetime import datetime
 from queue import Queue
 from threading import RLock
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Union
 
-from bobocep.action.bobo_action_handler import BoboActionHandler
+from bobocep.action.bobo_action_response import BoboActionResponse
 from bobocep.engine.bobo_engine_task import BoboEngineTask
-from bobocep.engine.decider.bobo_decider_run import BoboDeciderRun
 from bobocep.engine.decider.bobo_decider_subscriber import \
     BoboDeciderSubscriber
+from bobocep.engine.forwarder.bobo_forwarder_subscriber import \
+    BoboForwarderSubscriber
 from bobocep.engine.producer.bobo_producer_publisher import \
     BoboProducerPublisher
 from bobocep.event.bobo_event_complex import BoboEventComplex
@@ -27,14 +28,13 @@ from bobocep.process.bobo_process import BoboProcess
 
 class BoboProducer(BoboEngineTask,
                    BoboProducerPublisher,
-                   BoboDeciderSubscriber):
+                   BoboDeciderSubscriber,
+                   BoboForwarderSubscriber):
     _EXC_PROCESS_NAME_DUP = "duplicate name in processes: {0}"
-    _EXC_HANDLER_NAME_DUP = "duplicate name in handlers: {0}"
     _EXC_QUEUE_FULL = "queue is full (max size: {0})"
 
     def __init__(self,
                  processes: List[BoboProcess],
-                 handlers: List[BoboActionHandler],
                  event_id_gen: BoboEventID,
                  max_size: int):
         super().__init__()
@@ -48,54 +48,50 @@ class BoboProducer(BoboEngineTask,
                 raise BoboKeyError(
                     self._EXC_PROCESS_NAME_DUP.format(process.name))
 
-        self._handlers: Dict[str, BoboActionHandler] = {}
-
-        for handler in handlers:
-            if handler.name not in self._handlers:
-                self._handlers[handler.name] = handler
-            else:
-                raise BoboKeyError(
-                    self._EXC_HANDLER_NAME_DUP.format(handler.name))
-
-        # todo subscribe each handler to producer
-        # todo queue for action events
-
         self._event_id_gen = event_id_gen
         self._max_size = max_size
-        self._queue: Queue[Tuple[str, str, BoboHistory]] = \
-            Queue(self._max_size)
+        self._queue: Queue[Union[
+            Tuple[str, str, BoboHistory],
+            BoboActionResponse]] = Queue(self._max_size)
         self._lock = RLock()
 
     def update(self) -> None:
         with self._lock:
             if not self._queue.empty():
-                process_name, pattern_name, history = self._queue.get_nowait()
+                data: Union[
+                    Tuple[str, str, BoboHistory],
+                    BoboActionResponse] = self._queue.get_nowait()
 
-                if process_name not in self._processes:
-                    raise BoboProcessNotFoundError(process_name)
+                if isinstance(data, BoboActionResponse):
+                    self._handle_action_response(data)
+                else:
+                    process_name, pattern_name, history = data
+                    self._handle_completed_run(
+                        process_name, pattern_name, history)
 
-                process = self._processes[process_name]
+    def _handle_action_response(self, response: BoboActionResponse):
+        pass  # todo
 
-                if not any(pattern_name == pattern.name
-                           for pattern in process.patterns):
-                    raise BoboPatternNotFoundError(pattern_name)
+    def _handle_completed_run(self, process_name, pattern_name, history):
+        if process_name not in self._processes:
+            raise BoboProcessNotFoundError(process_name)
 
-                event_complex = BoboEventComplex(
-                    event_id=self._event_id_gen.generate(),
-                    timestamp=datetime.now(),
-                    data=process.datagen(process, history),
-                    process_name=process_name,
-                    pattern_name=pattern_name,
-                    history=history)
+        process = self._processes[process_name]
 
-                for subscriber in self._subscribers:
-                    subscriber.on_producer_complex_event(event_complex)
+        if not any(pattern_name == pattern.name
+                   for pattern in process.patterns):
+            raise BoboPatternNotFoundError(pattern_name)
 
-                for request in process.requests:
-                    if request.handler_name in self._handlers:
-                        self._handlers[request.handler_name].handle(request)
-                    else:
-                        pass  # todo raise exception
+        event_complex = BoboEventComplex(
+            event_id=self._event_id_gen.generate(),
+            timestamp=datetime.now(),
+            data=process.datagen(process, history),
+            process_name=process_name,
+            pattern_name=pattern_name,
+            history=history)
+
+        for subscriber in self._subscribers:
+            subscriber.on_producer_complex_event(event_complex)
 
     def on_decider_completed_run(self,
                                  process_name: str,
@@ -104,6 +100,14 @@ class BoboProducer(BoboEngineTask,
         with self._lock:
             if not self._queue.full():
                 self._queue.put((process_name, pattern_name, history))
+            else:
+                raise BoboQueueFullError(
+                    self._EXC_QUEUE_FULL.format(self._max_size))
+
+    def on_forwarder_action_response(self, response: BoboActionResponse):
+        with self._lock:
+            if not self._queue.full():
+                self._queue.put(response)
             else:
                 raise BoboQueueFullError(
                     self._EXC_QUEUE_FULL.format(self._max_size))

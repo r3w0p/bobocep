@@ -4,7 +4,6 @@
 
 from abc import abstractmethod, ABC
 
-from bobocep.engine.decider.bobo_decider_run import BoboDeciderRun
 from bobocep.event.bobo_history import BoboHistory
 
 

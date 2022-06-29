@@ -28,7 +28,8 @@ class BoboNullEventElapse(BoboNullEvent):
         self._last = self._time_ms() if from_now else 0
 
         # Prevent garbage collection of object if callable is a method.
-        self._obj = datagen.__self__ if isinstance(datagen, MethodType) else None
+        self._obj = datagen.__self__ \
+            if isinstance(datagen, MethodType) else None
 
     def maybe_generate(self, event_id: str) -> Union[BoboEvent, None]:
         now = BoboNullEventElapse._time_ms()

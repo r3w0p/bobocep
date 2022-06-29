@@ -6,17 +6,11 @@ from abc import ABC, abstractmethod
 from bobocep.action.bobo_action_response import BoboActionResponse
 
 
-class BoboAction(ABC):
+class BoboForwarderSubscriber(ABC):
 
-    def __init__(self,
-                 name: str):
+    def __init__(self):
         super().__init__()
 
-        if len(name) == 0:
-            pass  # todo raise exception
-
-        self.name = name
-
     @abstractmethod
-    def execute(self) -> BoboActionResponse:
+    def on_forwarder_action_response(self, response: BoboActionResponse):
         """"""

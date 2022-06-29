@@ -10,7 +10,6 @@ from bobocep.event.bobo_history import BoboHistory
 from bobocep.pattern.bobo_pattern import BoboPattern
 from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
 from bobocep.predicate.bobo_predicate import BoboPredicate
-from bobocep.process.bobo_process import BoboProcess
 
 
 class BoboDeciderRun:
