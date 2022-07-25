@@ -4,10 +4,10 @@
 
 from typing import List
 
-from bobocep.process.pattern.bobo_pattern_builder_error import \
-    BoboPatternBuilderError
 from bobocep.process.pattern.bobo_pattern import BoboPattern
 from bobocep.process.pattern.bobo_pattern_block import BoboPatternBlock
+from bobocep.process.pattern.bobo_pattern_builder_error import \
+    BoboPatternBuilderError
 from bobocep.process.pattern.predicate.bobo_predicate import BoboPredicate
 
 

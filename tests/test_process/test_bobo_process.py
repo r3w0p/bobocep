@@ -1,7 +1,6 @@
 # Copyright (c) 2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
-from typing import Callable
 
 import pytest
 
@@ -9,7 +8,6 @@ from bobocep.process.bobo_process import BoboProcess
 from bobocep.process.bobo_process_error import BoboProcessError
 from bobocep.process.pattern.bobo_pattern import BoboPattern
 from bobocep.process.pattern.bobo_pattern_block import BoboPatternBlock
-from bobocep.process.pattern.bobo_pattern_error import BoboPatternError
 from bobocep.process.pattern.predicate.bobo_predicate_call import \
     BoboPredicateCall
 

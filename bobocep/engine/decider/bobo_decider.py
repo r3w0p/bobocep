@@ -7,6 +7,8 @@ from threading import RLock
 from typing import Tuple, Dict, List
 
 from bobocep.engine.bobo_engine_task import BoboEngineTask
+from bobocep.engine.decider.bobo_decider_error import \
+    BoboDeciderError
 from bobocep.engine.decider.bobo_decider_publisher import BoboDeciderPublisher
 from bobocep.engine.decider.bobo_decider_run import BoboDeciderRun
 from bobocep.engine.receiver.bobo_receiver_subscriber import \
@@ -14,8 +16,6 @@ from bobocep.engine.receiver.bobo_receiver_subscriber import \
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_history import BoboHistory
 from bobocep.event.event_id.bobo_event_id import BoboEventID
-from bobocep.engine.decider.bobo_decider_error import \
-    BoboDeciderError
 from bobocep.process.bobo_process import BoboProcess
 
 

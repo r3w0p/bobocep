@@ -6,6 +6,7 @@ from datetime import datetime
 import pytest
 
 from bobocep.engine.receiver.bobo_receiver import BoboReceiver
+from bobocep.engine.receiver.bobo_receiver_error import BoboReceiverError
 from bobocep.engine.receiver.bobo_receiver_subscriber import \
     BoboReceiverSubscriber
 from bobocep.engine.receiver.null_event.bobo_null_event import BoboNullEvent
@@ -25,7 +26,6 @@ from bobocep.event.bobo_history import BoboHistory
 from bobocep.event.event_id.bobo_event_id import BoboEventID
 from bobocep.event.event_id.bobo_event_id_unique import \
     BoboEventIDUnique
-from bobocep.engine.receiver.bobo_receiver_error import BoboReceiverError
 
 
 def _recsub(validator: BoboValidator = None,

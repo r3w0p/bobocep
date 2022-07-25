@@ -2,13 +2,16 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-import pytest
 from datetime import datetime
+
+import pytest
 
 from bobocep.action.bobo_action import BoboAction
 from bobocep.action.bobo_action_response import BoboActionResponse
 from bobocep.action.handler.bobo_action_handler_blocking import \
     BoboActionHandlerBlocking
+from bobocep.action.handler.bobo_action_handler_error import \
+    BoboActionHandlerError
 from bobocep.event.bobo_event_complex import BoboEventComplex
 from bobocep.event.bobo_history import BoboHistory
 from bobocep.event.event_id.bobo_event_id_unique import BoboEventIDUnique
@@ -49,3 +52,12 @@ class TestValid:
 
         handler.handle(BoboActionTrue("action_1"), _complex())
         assert handler.get_response() is not None
+
+
+class TestInvalid:
+
+    def test_name_length_0(self):
+        with pytest.raises(BoboActionHandlerError):
+            BoboActionHandlerBlocking(
+                name="",
+                max_size=255)

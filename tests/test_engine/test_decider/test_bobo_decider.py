@@ -7,17 +7,17 @@ from typing import List, Callable, Tuple
 import pytest
 
 from bobocep.engine.decider.bobo_decider import BoboDecider
-from bobocep.engine.decider.bobo_decider_subscriber import \
-    BoboDeciderSubscriber
-from bobocep.event.bobo_history import BoboHistory
 from bobocep.engine.decider.bobo_decider_error import \
     BoboDeciderError
+from bobocep.engine.decider.bobo_decider_subscriber import \
+    BoboDeciderSubscriber
 from bobocep.event.bobo_event_simple import BoboEventSimple
+from bobocep.event.bobo_history import BoboHistory
 from bobocep.event.event_id.bobo_event_id import BoboEventID
 from bobocep.event.event_id.bobo_event_id_unique import BoboEventIDUnique
+from bobocep.process.bobo_process import BoboProcess
 from bobocep.process.pattern.bobo_pattern import BoboPattern
 from bobocep.process.pattern.bobo_pattern_block import BoboPatternBlock
-from bobocep.process.bobo_process import BoboProcess
 from bobocep.process.pattern.predicate.bobo_predicate_call import \
     BoboPredicateCall
 
@@ -69,8 +69,8 @@ def _decsub(patterns: List[BoboPattern],
             event_id_gen: BoboEventID = None,
             run_id_gen: BoboEventID = None,
             max_size: int = 255):
-
-    process = BoboProcess(name="process", datagen=lambda p, h: True, patterns=patterns, action=None)
+    process = BoboProcess(name="process", datagen=lambda p, h: True,
+                          patterns=patterns, action=None)
 
     decider = BoboDecider(
         processes=[process],
@@ -272,8 +272,10 @@ class TestInvalid:
             preconditions=[],
             haltconditions=[])
 
-        process_1 = BoboProcess(name="process", datagen=lambda p, h: True, patterns=[pattern], action=None)
-        process_2 = BoboProcess(name="process", datagen=lambda p, h: True, patterns=[pattern], action=None)
+        process_1 = BoboProcess(name="process", datagen=lambda p, h: True,
+                                patterns=[pattern], action=None)
+        process_2 = BoboProcess(name="process", datagen=lambda p, h: True,
+                                patterns=[pattern], action=None)
 
         with pytest.raises(BoboDeciderError):
             BoboDecider(

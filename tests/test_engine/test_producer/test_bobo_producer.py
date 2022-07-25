@@ -4,23 +4,24 @@
 from typing import List
 
 from bobocep.engine.producer.bobo_producer import BoboProducer
-from bobocep.engine.producer.bobo_producer_subscriber import BoboProducerSubscriber
+from bobocep.engine.producer.bobo_producer_subscriber import \
+    BoboProducerSubscriber
 from bobocep.event.bobo_event_complex import BoboEventComplex
 from bobocep.event.bobo_history import BoboHistory
 from bobocep.event.event_id.bobo_event_id import BoboEventID
 from bobocep.event.event_id.bobo_event_id_unique import BoboEventIDUnique
+from bobocep.process.bobo_process import BoboProcess
 from bobocep.process.pattern.bobo_pattern import BoboPattern
 from bobocep.process.pattern.bobo_pattern_block import BoboPatternBlock
 from bobocep.process.pattern.predicate.bobo_predicate_call import \
     BoboPredicateCall
-from bobocep.process.bobo_process import BoboProcess
 
 
 def _decpro(patterns: List[BoboPattern],
             event_id_gen: BoboEventID = None,
             max_size: int = 255):
-
-    process = BoboProcess(name="process", datagen=lambda p, h: True, patterns=patterns, action=None)
+    process = BoboProcess(name="process", datagen=lambda p, h: True,
+                          patterns=patterns, action=None)
 
     producer = BoboProducer(
         processes=[process],

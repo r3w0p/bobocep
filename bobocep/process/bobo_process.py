@@ -6,8 +6,8 @@ from types import MethodType
 from typing import Callable, List, Tuple, Union
 
 from bobocep.action.bobo_action import BoboAction
-from bobocep.process.pattern.bobo_pattern import BoboPattern
 from bobocep.process.bobo_process_error import BoboProcessError
+from bobocep.process.pattern.bobo_pattern import BoboPattern
 
 
 class BoboProcess:
@@ -39,7 +39,7 @@ class BoboProcess:
         self.name: str = name
         self.patterns: Tuple[BoboPattern, ...] = tuple(patterns)
         self.datagen: Callable = datagen
-        self.action: BoboAction = action
+        self.action: Union[BoboAction, None] = action
 
         # Prevent garbage collection of object if callable is a method.
         self._obj = datagen.__self__ \

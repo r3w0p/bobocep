@@ -2,7 +2,7 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 from abc import ABC, abstractmethod
-from multiprocessing import Queue
+from queue import Queue
 from threading import RLock
 from typing import Union
 
@@ -17,13 +17,14 @@ class BoboActionHandler(ABC):
     _EXC_NAME_LEN = "'name' must have a length greater than 0"
     _EXC_QUEUE_FULL = "queue is full (max size: {0})"
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, max_size: int):
         super().__init__()
 
         if len(name) == 0:
             raise BoboActionHandlerError(self._EXC_NAME_LEN)
 
-        self.name = name
+        self._name = name
+        self._max_size = max_size
         self._lock = RLock()
 
     def handle(self,
@@ -39,13 +40,16 @@ class BoboActionHandler(ABC):
         """"""
 
     @abstractmethod
-    def add_response(self, response: BoboActionResponse) -> None:
+    def _get_queue(self) -> Queue:
         """"""
 
-    @abstractmethod
     def get_response(self) -> Union[BoboActionResponse, None]:
-        """"""
+        with self._lock:
+            queue = self._get_queue()
+            if not queue.empty():
+                return queue.get_nowait()
+            return None
 
-    @abstractmethod
     def size(self) -> int:
-        """"""
+        with self._lock:
+            return self._get_queue().qsize()

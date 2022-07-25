@@ -6,7 +6,8 @@ from typing import Callable, Tuple, List
 
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_history import BoboHistory
-from bobocep.process.pattern.predicate.bobo_predicate_call import BoboPredicateCall
+from bobocep.process.pattern.predicate.bobo_predicate_call import \
+    BoboPredicateCall
 
 
 class BoboPredicateCallNotType(BoboPredicateCall):

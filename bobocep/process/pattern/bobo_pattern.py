@@ -4,8 +4,8 @@
 
 from typing import Tuple, List
 
-from bobocep.process.pattern.bobo_pattern_error import BoboPatternError
 from bobocep.process.pattern.bobo_pattern_block import BoboPatternBlock
+from bobocep.process.pattern.bobo_pattern_error import BoboPatternError
 from bobocep.process.pattern.predicate.bobo_predicate import BoboPredicate
 
 

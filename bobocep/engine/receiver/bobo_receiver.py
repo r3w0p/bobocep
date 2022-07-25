@@ -10,6 +10,7 @@ from typing import Any
 from bobocep.engine.bobo_engine_task import BoboEngineTask
 from bobocep.engine.producer.bobo_producer_subscriber import \
     BoboProducerSubscriber
+from bobocep.engine.receiver.bobo_receiver_error import BoboReceiverError
 from bobocep.engine.receiver.bobo_receiver_publisher import \
     BoboReceiverPublisher
 from bobocep.engine.receiver.null_event.bobo_null_event import \
@@ -19,7 +20,6 @@ from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_event_complex import BoboEventComplex
 from bobocep.event.bobo_event_simple import BoboEventSimple
 from bobocep.event.event_id.bobo_event_id import BoboEventID
-from bobocep.engine.receiver.bobo_receiver_error import BoboReceiverError
 
 
 class BoboReceiver(BoboEngineTask,

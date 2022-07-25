@@ -1,16 +1,15 @@
 # Copyright (c) 2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
-from typing import Union
+
+from multiprocessing import Manager, Pool
+from queue import Queue
 
 from bobocep.action.bobo_action import BoboAction
 from bobocep.action.bobo_action_response import BoboActionResponse
 from bobocep.action.handler.bobo_action_handler import \
     BoboActionHandler
-from bobocep.action.handler.bobo_action_handler_error import \
-    BoboActionHandlerError
 from bobocep.event.bobo_event_complex import BoboEventComplex
-from multiprocessing import Manager, Pool, Queue
 
 
 def _pool_execute_action(
@@ -26,14 +25,12 @@ class BoboActionHandlerPool(BoboActionHandler):
                  name: str,
                  max_size: int,
                  processes: int):
-        super().__init__(name)
+        super().__init__(name, max_size)
 
-        self._max_size = max_size
         self._processes = processes
-
         self._pool = Pool(processes=processes)
         self._manager = Manager()
-        self._queue = self._manager.Queue()
+        self._queue: "Queue[BoboActionResponse]" = self._manager.Queue()
 
     def _execute_action(self,
                         action: BoboAction,
@@ -41,23 +38,8 @@ class BoboActionHandlerPool(BoboActionHandler):
         self._pool.starmap(_pool_execute_action,
                            [(self._queue, action, event)])
 
-    def add_response(self, response: BoboActionResponse) -> None:
-        with self._lock:
-            if not self._queue.full():
-                self._queue.put(response)
-            else:
-                raise BoboActionHandlerError(
-                    self._EXC_QUEUE_FULL.format(self._max_size))
-
-    def get_response(self) -> Union[BoboActionResponse, None]:
-        with self._lock:
-            if not self._queue.empty():
-                return self._queue.get_nowait()
-            return None
-
-    def size(self) -> int:
-        with self._lock:
-            return self._queue.qsize()
+    def _get_queue(self) -> Queue:
+        return self._queue
 
     def close(self) -> None:
         with self._lock:
