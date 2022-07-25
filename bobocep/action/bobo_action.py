@@ -3,20 +3,25 @@
 # modified under the terms of the MIT License.
 from abc import ABC, abstractmethod
 
-from bobocep.action.bobo_action_response import BoboActionResponse
+from bobocep.action.bobo_action_error import BoboActionError
+from bobocep.action.bobo_action_response import \
+    BoboActionResponse
+from bobocep.event.bobo_event_complex import BoboEventComplex
 
 
 class BoboAction(ABC):
+    """An action."""
 
-    def __init__(self,
-                 name: str):
+    _EXC_NAME_LEN = "'name' must have a length greater than 0"
+
+    def __init__(self, name: str):
         super().__init__()
 
         if len(name) == 0:
-            pass  # todo raise exception
+            raise BoboActionError(self._EXC_NAME_LEN)
 
         self.name = name
 
     @abstractmethod
-    def execute(self) -> BoboActionResponse:
+    def execute(self, event: BoboEventComplex) -> BoboActionResponse:
         """"""

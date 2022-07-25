@@ -3,7 +3,8 @@
 # modified under the terms of the MIT License.
 from abc import ABC, abstractmethod
 
-from bobocep.action.bobo_action_response import BoboActionResponse
+from bobocep.action.bobo_action_response import \
+    BoboActionResponse
 
 
 class BoboForwarderSubscriber(ABC):

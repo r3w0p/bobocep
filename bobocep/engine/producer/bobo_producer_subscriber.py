@@ -13,4 +13,4 @@ class BoboProducerSubscriber(ABC):
 
     @abstractmethod
     def on_producer_complex_event(self, event: BoboEventComplex):
-        pass
+        """"""

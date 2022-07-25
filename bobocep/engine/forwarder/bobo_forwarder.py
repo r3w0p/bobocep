@@ -5,15 +5,15 @@ from queue import Queue
 from threading import RLock
 from typing import Dict, List, Union
 
-from bobocep.action.bobo_action_response import BoboActionResponse
 from bobocep.engine.bobo_engine_task import BoboEngineTask
-from bobocep.engine.forwarder.bobo_action_handler import BoboActionHandler
+from bobocep.action.handler.bobo_action_handler import BoboActionHandler
+from bobocep.engine.forwarder.bobo_forwarder_error import BoboForwarderError
 from bobocep.engine.forwarder.bobo_forwarder_publisher import \
     BoboForwarderPublisher
+from bobocep.action.bobo_action_response import \
+    BoboActionResponse
 from bobocep.event.bobo_event_complex import BoboEventComplex
 from bobocep.event.event_id.bobo_event_id import BoboEventID
-from bobocep.exception.bobo_key_error import BoboKeyError
-from bobocep.exception.bobo_queue_full_error import BoboQueueFullError
 from bobocep.process.bobo_process import BoboProcess
 
 
@@ -34,7 +34,7 @@ class BoboForwarder(BoboEngineTask, BoboForwarderPublisher):
             if process.name not in self._processes:
                 self._processes[process.name] = process
             else:
-                raise BoboKeyError(
+                raise BoboForwarderError(
                     self._EXC_PROCESS_NAME_DUP.format(process.name))
 
         self._handler: BoboActionHandler = handler
@@ -61,6 +61,7 @@ class BoboForwarder(BoboEngineTask, BoboForwarderPublisher):
     def _update_responses(self):
         response: Union[BoboActionResponse, None] = \
             self._handler.get_response()
+
         if response is not None:
             for subscriber in self._subscribers:
                 subscriber.on_forwarder_action_response(response)
@@ -70,5 +71,5 @@ class BoboForwarder(BoboEngineTask, BoboForwarderPublisher):
             if not self._queue.full():
                 self._queue.put(event)
             else:
-                raise BoboQueueFullError(
+                raise BoboForwarderError(
                     self._EXC_QUEUE_FULL.format(self._max_size))

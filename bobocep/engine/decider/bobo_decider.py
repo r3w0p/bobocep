@@ -14,10 +14,8 @@ from bobocep.engine.receiver.bobo_receiver_subscriber import \
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_history import BoboHistory
 from bobocep.event.event_id.bobo_event_id import BoboEventID
-from bobocep.exception.bobo_decider_run_not_found_error import \
-    BoboDeciderRunNotFoundError
-from bobocep.exception.bobo_key_error import BoboKeyError
-from bobocep.exception.bobo_queue_full_error import BoboQueueFullError
+from bobocep.engine.decider.bobo_decider_error import \
+    BoboDeciderError
 from bobocep.process.bobo_process import BoboProcess
 
 
@@ -41,7 +39,7 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
             if process.name not in self._processes:
                 self._processes[process.name] = process
             else:
-                raise BoboKeyError(
+                raise BoboDeciderError(
                     self._EXC_PROCESS_NAME_DUP.format(process.name))
 
         self._event_id_gen = event_id_gen
@@ -67,7 +65,7 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
             if not self._queue.full():
                 self._queue.put(event)
             else:
-                raise BoboQueueFullError(
+                raise BoboDeciderError(
                     self._EXC_QUEUE_FULL.format(self._max_size))
 
     def processes(self) -> Tuple[BoboProcess, ...]:
@@ -163,5 +161,5 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
                 run_id in self._runs[process_name][pattern_name]:
             del self._runs[process_name][pattern_name][run_id]
         else:
-            raise BoboDeciderRunNotFoundError(self._EXC_RUN_NOT_FOUND.format(
+            raise BoboDeciderError(self._EXC_RUN_NOT_FOUND.format(
                 process_name, pattern_name, run_id))

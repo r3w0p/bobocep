@@ -7,21 +7,19 @@ from typing import List, Callable, Tuple
 import pytest
 
 from bobocep.engine.decider.bobo_decider import BoboDecider
-from bobocep.engine.decider.bobo_decider_run import BoboDeciderRun
 from bobocep.engine.decider.bobo_decider_subscriber import \
     BoboDeciderSubscriber
 from bobocep.event.bobo_history import BoboHistory
-from bobocep.exception.bobo_decider_run_not_found_error import \
-    BoboDeciderRunNotFoundError
+from bobocep.engine.decider.bobo_decider_error import \
+    BoboDeciderError
 from bobocep.event.bobo_event_simple import BoboEventSimple
 from bobocep.event.event_id.bobo_event_id import BoboEventID
 from bobocep.event.event_id.bobo_event_id_unique import BoboEventIDUnique
-from bobocep.exception.bobo_key_error import BoboKeyError
-from bobocep.exception.bobo_queue_full_error import BoboQueueFullError
-from bobocep.pattern.bobo_pattern import BoboPattern
-from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
-from bobocep.predicate.bobo_predicate_call import BoboPredicateCall
+from bobocep.process.pattern.bobo_pattern import BoboPattern
+from bobocep.process.pattern.bobo_pattern_block import BoboPatternBlock
 from bobocep.process.bobo_process import BoboProcess
+from bobocep.process.pattern.predicate.bobo_predicate_call import \
+    BoboPredicateCall
 
 
 def _simple(event_id: str = "event_id",
@@ -72,7 +70,7 @@ def _decsub(patterns: List[BoboPattern],
             run_id_gen: BoboEventID = None,
             max_size: int = 255):
 
-    process = BoboProcess(name="process", datagen=lambda p, h: True, patterns=patterns, action=[])
+    process = BoboProcess(name="process", datagen=lambda p, h: True, patterns=patterns, action=None)
 
     decider = BoboDecider(
         processes=[process],
@@ -252,7 +250,7 @@ class TestInvalid:
 
         decider.on_receiver_event(_simple(data=1))
 
-        with pytest.raises(BoboQueueFullError):
+        with pytest.raises(BoboDeciderError):
             decider.on_receiver_event(_simple(data=2))
 
     def test_try_to_remove_run_that_does_not_exist(self):
@@ -262,7 +260,7 @@ class TestInvalid:
         decider, subscriber = _decsub([pattern_123_ab])
         process_name = decider.processes()[0].name
 
-        with pytest.raises(BoboDeciderRunNotFoundError):
+        with pytest.raises(BoboDeciderError):
             decider._remove_run(process_name=process_name,
                                 pattern_name="a",
                                 run_id="b")
@@ -274,11 +272,10 @@ class TestInvalid:
             preconditions=[],
             haltconditions=[])
 
-        process_1 = BoboProcess(name="process", datagen=lambda p, h: True, patterns=[pattern], action=[])
+        process_1 = BoboProcess(name="process", datagen=lambda p, h: True, patterns=[pattern], action=None)
+        process_2 = BoboProcess(name="process", datagen=lambda p, h: True, patterns=[pattern], action=None)
 
-        process_2 = BoboProcess(name="process", datagen=lambda p, h: True, patterns=[pattern], action=[])
-
-        with pytest.raises(BoboKeyError):
+        with pytest.raises(BoboDeciderError):
             BoboDecider(
                 processes=[process_1, process_2],
                 event_id_gen=BoboEventIDUnique(),

@@ -6,8 +6,9 @@ from datetime import datetime
 
 from bobocep.engine.decider.bobo_decider_run import BoboDeciderRun
 from bobocep.event.bobo_event_simple import BoboEventSimple
-from bobocep.pattern.bobo_pattern_builder import BoboPatternBuilder
-from bobocep.predicate.bobo_predicate_call import BoboPredicateCall
+from bobocep.process.pattern.bobo_pattern_builder import BoboPatternBuilder
+from bobocep.process.pattern.predicate.bobo_predicate_call import \
+    BoboPredicateCall
 
 
 def test_pattern_1_block_halt_complete_on_init():

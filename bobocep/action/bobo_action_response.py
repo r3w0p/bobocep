@@ -6,7 +6,9 @@
 class BoboActionResponse:
 
     def __init__(self,
+                 action_name: str,
                  success: bool):
         super().__init__()
 
-        self._success = success
+        self.action_name = action_name
+        self.success = success

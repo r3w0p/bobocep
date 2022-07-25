@@ -19,7 +19,7 @@ from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_event_complex import BoboEventComplex
 from bobocep.event.bobo_event_simple import BoboEventSimple
 from bobocep.event.event_id.bobo_event_id import BoboEventID
-from bobocep.exception.bobo_queue_full_error import BoboQueueFullError
+from bobocep.engine.receiver.bobo_receiver_error import BoboReceiverError
 
 
 class BoboReceiver(BoboEngineTask,
@@ -76,7 +76,7 @@ class BoboReceiver(BoboEngineTask,
             if not self._queue.full():
                 self._queue.put(data)
             else:
-                raise BoboQueueFullError(
+                raise BoboReceiverError(
                     self._EXC_QUEUE_FULL.format(self._max_size))
 
     def size(self) -> int:

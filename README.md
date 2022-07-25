@@ -2,9 +2,9 @@
 
 # BoboCEP
 
-[![CI/CD](https://img.shields.io/github/workflow/status/r3w0p/bobocep/CICD?label=ci/cd)](
+[![CICD](https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml/badge.svg)](
 https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml)
-[![Security](https://img.shields.io/github/workflow/status/r3w0p/bobocep/Security?label=security)](
+[![Security](https://github.com/r3w0p/bobocep/actions/workflows/security.yml/badge.svg)](
 https://github.com/r3w0p/bobocep/actions/workflows/security.yml)
 [![License](https://img.shields.io/github/license/r3w0p/bobocep?color=blue&label=license)](
 https://github.com/r3w0p/bobocep/blob/develop/LICENSE/)
@@ -20,7 +20,8 @@ https://pypi.org/project/bobocep/)
 https://codeclimate.com/github/r3w0p/bobocep/code?sort=test_coverage)
 [![Maintainability](https://img.shields.io/codeclimate/maintainability-percentage/r3w0p/bobocep?label=maintainability)](
 https://codeclimate.com/github/r3w0p/bobocep/code?sort=maintainability)
-[![Compliance](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep?ref=badge_shield)
+[![License Scan](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep.svg?type=shield)](
+https://app.fossa.com/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep?ref=badge_shield)
 
 `BoboCEP` is a [complex event processing](https://en.wikipedia.org/wiki/Complex_event_processing) (CEP) engine
 designed for [edge computing](https://en.wikipedia.org/wiki/Edge_computing) in

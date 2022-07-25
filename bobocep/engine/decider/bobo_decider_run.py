@@ -7,9 +7,9 @@ from typing import Tuple, Dict, List
 
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_history import BoboHistory
-from bobocep.pattern.bobo_pattern import BoboPattern
-from bobocep.pattern.bobo_pattern_block import BoboPatternBlock
-from bobocep.predicate.bobo_predicate import BoboPredicate
+from bobocep.process.pattern.bobo_pattern import BoboPattern
+from bobocep.process.pattern.bobo_pattern_block import BoboPatternBlock
+from bobocep.process.pattern.predicate.bobo_predicate import BoboPredicate
 
 
 class BoboDeciderRun:

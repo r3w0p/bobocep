@@ -19,11 +19,13 @@ from bobocep.engine.receiver.validator.bobo_validator_all import \
 from bobocep.engine.receiver.validator.bobo_validator_not_type import \
     BoboValidatorNotType
 from bobocep.event.bobo_event import BoboEvent
+from bobocep.event.bobo_event_complex import BoboEventComplex
 from bobocep.event.bobo_event_simple import BoboEventSimple
+from bobocep.event.bobo_history import BoboHistory
 from bobocep.event.event_id.bobo_event_id import BoboEventID
 from bobocep.event.event_id.bobo_event_id_unique import \
     BoboEventIDUnique
-from bobocep.exception.bobo_queue_full_error import BoboQueueFullError
+from bobocep.engine.receiver.bobo_receiver_error import BoboReceiverError
 
 
 def _recsub(validator: BoboValidator = None,
@@ -123,6 +125,23 @@ class TestValid:
         assert subscriber.events[0] == event
         assert subscriber.events[0].data == data_event
 
+    def test_on_producer_complex_event(self):
+        receiver, subscriber = _recsub()
+
+        event_complex = BoboEventComplex(
+            event_id=BoboEventIDUnique().generate(),
+            timestamp=datetime.now(),
+            data=None,
+            process_name="process_1",
+            pattern_name="pattern_1",
+            history=BoboHistory(events={}))
+
+        assert receiver.size() == 0
+
+        receiver.on_producer_complex_event(event=event_complex)
+
+        assert receiver.size() == 1
+
 
 class TestInvalid:
 
@@ -131,5 +150,5 @@ class TestInvalid:
 
         receiver.add_data(data=123)
 
-        with pytest.raises(BoboQueueFullError):
+        with pytest.raises(BoboReceiverError):
             receiver.add_data(data=456)

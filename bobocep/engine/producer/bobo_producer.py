@@ -6,23 +6,19 @@ from queue import Queue
 from threading import RLock
 from typing import Dict, List, Tuple, Union
 
-from bobocep.action.bobo_action_response import BoboActionResponse
 from bobocep.engine.bobo_engine_task import BoboEngineTask
 from bobocep.engine.decider.bobo_decider_subscriber import \
     BoboDeciderSubscriber
 from bobocep.engine.forwarder.bobo_forwarder_subscriber import \
     BoboForwarderSubscriber
+from bobocep.action.bobo_action_response import \
+    BoboActionResponse
 from bobocep.engine.producer.bobo_producer_publisher import \
     BoboProducerPublisher
 from bobocep.event.bobo_event_complex import BoboEventComplex
 from bobocep.event.bobo_history import BoboHistory
 from bobocep.event.event_id.bobo_event_id import BoboEventID
-from bobocep.exception.bobo_key_error import BoboKeyError
-from bobocep.exception.bobo_pattern_not_found_error import \
-    BoboPatternNotFoundError
-from bobocep.exception.bobo_process_not_found_error import \
-    BoboProcessNotFoundError
-from bobocep.exception.bobo_queue_full_error import BoboQueueFullError
+from bobocep.engine.producer.bobo_producer_error import BoboProducerError
 from bobocep.process.bobo_process import BoboProcess
 
 
@@ -45,7 +41,7 @@ class BoboProducer(BoboEngineTask,
             if process.name not in self._processes:
                 self._processes[process.name] = process
             else:
-                raise BoboKeyError(
+                raise BoboProducerError(
                     self._EXC_PROCESS_NAME_DUP.format(process.name))
 
         self._event_id_gen = event_id_gen
@@ -74,13 +70,13 @@ class BoboProducer(BoboEngineTask,
 
     def _handle_completed_run(self, process_name, pattern_name, history):
         if process_name not in self._processes:
-            raise BoboProcessNotFoundError(process_name)
+            raise BoboProducerError(process_name)
 
         process = self._processes[process_name]
 
         if not any(pattern_name == pattern.name
                    for pattern in process.patterns):
-            raise BoboPatternNotFoundError(pattern_name)
+            raise BoboProducerError(pattern_name)
 
         event_complex = BoboEventComplex(
             event_id=self._event_id_gen.generate(),
@@ -101,7 +97,7 @@ class BoboProducer(BoboEngineTask,
             if not self._queue.full():
                 self._queue.put((process_name, pattern_name, history))
             else:
-                raise BoboQueueFullError(
+                raise BoboProducerError(
                     self._EXC_QUEUE_FULL.format(self._max_size))
 
     def on_forwarder_action_response(self, response: BoboActionResponse):
@@ -109,5 +105,9 @@ class BoboProducer(BoboEngineTask,
             if not self._queue.full():
                 self._queue.put(response)
             else:
-                raise BoboQueueFullError(
+                raise BoboProducerError(
                     self._EXC_QUEUE_FULL.format(self._max_size))
+
+    def size(self) -> int:
+        with self._lock:
+            return self._queue.qsize()
