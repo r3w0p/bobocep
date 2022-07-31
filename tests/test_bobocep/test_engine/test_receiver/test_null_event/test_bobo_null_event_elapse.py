@@ -4,13 +4,13 @@
 
 from time import sleep
 
-from bobocep.engine.receiver.null_event.bobo_null_event_elapse import \
-    BoboNullEventElapse
+from bobocep.engine.receiver.time_event.bobo_time_event_elapse import \
+    BoboTimeEventElapse
 from bobocep.event.bobo_event_simple import BoboEventSimple
 
 
 def test_not_from_now():
-    gen = BoboNullEventElapse(1000, lambda: 123, from_now=False)
+    gen = BoboTimeEventElapse(1000, lambda: 123, from_now=False)
     event_id = "id"
     event = gen.maybe_generate(event_id)
 
@@ -20,14 +20,14 @@ def test_not_from_now():
 
 
 def test_from_now_not_gen():
-    gen = BoboNullEventElapse(int(3.6e+6), lambda: 123)
+    gen = BoboTimeEventElapse(int(3.6e+6), lambda: 123)
     event = gen.maybe_generate("id")
 
     assert event is None
 
 
 def test_from_now_gen():
-    gen = BoboNullEventElapse(1, lambda: 123)
+    gen = BoboTimeEventElapse(1, lambda: 123)
     sleep(1)
     event = gen.maybe_generate("id")
 

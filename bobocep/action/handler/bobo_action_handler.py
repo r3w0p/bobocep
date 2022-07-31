@@ -4,12 +4,12 @@
 from abc import ABC, abstractmethod
 from queue import Queue
 from threading import RLock
-from typing import Union
+from typing import Union, Any
 
 from bobocep.action.bobo_action import BoboAction
-from bobocep.action.bobo_action_response import BoboActionResponse
 from bobocep.action.handler.bobo_action_handler_error import \
     BoboActionHandlerError
+from bobocep.event.bobo_event_action import BoboEventAction
 from bobocep.event.bobo_event_complex import BoboEventComplex
 
 
@@ -29,21 +29,21 @@ class BoboActionHandler(ABC):
 
     def handle(self,
                action: BoboAction,
-               event: BoboEventComplex) -> None:
+               event: BoboEventComplex) -> Any:
         with self._lock:
-            self._execute_action(action, event)
+            return self._execute_action(action, event)
 
     @abstractmethod
     def _execute_action(self,
                         action: BoboAction,
-                        event: BoboEventComplex) -> None:
+                        event: BoboEventComplex) -> Any:
         """"""
 
     @abstractmethod
     def _get_queue(self) -> Queue:
         """"""
 
-    def get_response(self) -> Union[BoboActionResponse, None]:
+    def get_response(self) -> Union[BoboEventAction, None]:
         with self._lock:
             queue = self._get_queue()
             if not queue.empty():

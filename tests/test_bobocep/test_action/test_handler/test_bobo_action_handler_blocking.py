@@ -7,11 +7,11 @@ from datetime import datetime
 import pytest
 
 from bobocep.action.bobo_action import BoboAction
-from bobocep.action.bobo_action_response import BoboActionResponse
 from bobocep.action.handler.bobo_action_handler_blocking import \
     BoboActionHandlerBlocking
 from bobocep.action.handler.bobo_action_handler_error import \
     BoboActionHandlerError
+from bobocep.event.bobo_event_action import BoboEventAction
 from bobocep.event.bobo_event_complex import BoboEventComplex
 from bobocep.event.bobo_history import BoboHistory
 from bobocep.event.event_id.bobo_event_id_unique import BoboEventIDUnique
@@ -29,8 +29,13 @@ def _complex():
 
 class BoboActionTrue(BoboAction):
 
-    def execute(self, event: BoboEventComplex) -> BoboActionResponse:
-        return BoboActionResponse(action_name=self.name, success=True)
+    def execute(self, event: BoboEventComplex) -> BoboEventAction:
+        return BoboEventAction(
+            event_id=event.event_id,
+            timestamp=datetime.now(),
+            data=True,
+            action_name=self.name,
+            success=True)
 
 
 class TestValid:
@@ -61,3 +66,10 @@ class TestInvalid:
             BoboActionHandlerBlocking(
                 name="",
                 max_size=255)
+
+    def test_add_response_queue_full(self):
+        handler = BoboActionHandlerBlocking(name="handler", max_size=1)
+        handler.handle(BoboActionTrue("action_1"), _complex())
+
+        with pytest.raises(BoboActionHandlerError):
+            handler.handle(BoboActionTrue("action_2"), _complex())

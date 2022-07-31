@@ -3,8 +3,7 @@
 # modified under the terms of the MIT License.
 from abc import ABC, abstractmethod
 
-from bobocep.action.bobo_action_response import \
-    BoboActionResponse
+from bobocep.event.bobo_event_action import BoboEventAction
 
 
 class BoboForwarderSubscriber(ABC):
@@ -13,5 +12,5 @@ class BoboForwarderSubscriber(ABC):
         super().__init__()
 
     @abstractmethod
-    def on_forwarder_action_response(self, response: BoboActionResponse):
+    def on_forwarder_action_response(self, response: BoboEventAction):
         """"""

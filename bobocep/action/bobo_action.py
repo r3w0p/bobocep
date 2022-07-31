@@ -4,8 +4,7 @@
 from abc import ABC, abstractmethod
 
 from bobocep.action.bobo_action_error import BoboActionError
-from bobocep.action.bobo_action_response import \
-    BoboActionResponse
+from bobocep.event.bobo_event_action import BoboEventAction
 from bobocep.event.bobo_event_complex import BoboEventComplex
 
 
@@ -23,5 +22,5 @@ class BoboAction(ABC):
         self.name = name
 
     @abstractmethod
-    def execute(self, event: BoboEventComplex) -> BoboActionResponse:
+    def execute(self, event: BoboEventComplex) -> BoboEventAction:
         """"""

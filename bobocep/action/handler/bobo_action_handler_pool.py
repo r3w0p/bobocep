@@ -3,12 +3,14 @@
 # modified under the terms of the MIT License.
 
 from multiprocessing import Manager, Pool
+from multiprocessing.pool import AsyncResult
 from queue import Queue
-
+from bobocep.event.bobo_event_action import BoboEventAction
 from bobocep.action.bobo_action import BoboAction
-from bobocep.action.bobo_action_response import BoboActionResponse
 from bobocep.action.handler.bobo_action_handler import \
     BoboActionHandler
+from bobocep.action.handler.bobo_action_handler_error import \
+    BoboActionHandlerError
 from bobocep.event.bobo_event_complex import BoboEventComplex
 
 
@@ -30,13 +32,22 @@ class BoboActionHandlerPool(BoboActionHandler):
         self._processes = processes
         self._pool = Pool(processes=processes)
         self._manager = Manager()
-        self._queue: "Queue[BoboActionResponse]" = self._manager.Queue()
+        self._queue: "Queue[BoboEventAction]" = self._manager.Queue()
 
     def _execute_action(self,
                         action: BoboAction,
-                        event: BoboEventComplex) -> None:
-        self._pool.starmap(_pool_execute_action,
-                           [(self._queue, action, event)])
+                        event: BoboEventComplex) -> AsyncResult:
+        # The queue size is checked manually before action execution because
+        # a 'queue full' error within a running process would not be visible
+        # beyond the process itself. Also, the 'maxsize' parameter for the
+        # Manager Queue does not appear to work correctly e.g. a maxsize of 1
+        # causes unit tests to 'hang'.
+        if self._queue.qsize() >= self._max_size:
+            raise BoboActionHandlerError(
+                self._EXC_QUEUE_FULL.format(self._max_size))
+
+        return self._pool.starmap_async(
+            _pool_execute_action, [(self._queue, action, event)])
 
     def _get_queue(self) -> Queue:
         return self._queue

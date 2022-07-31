@@ -13,8 +13,8 @@ from bobocep.engine.producer.bobo_producer_subscriber import \
 from bobocep.engine.receiver.bobo_receiver_error import BoboReceiverError
 from bobocep.engine.receiver.bobo_receiver_publisher import \
     BoboReceiverPublisher
-from bobocep.engine.receiver.null_event.bobo_null_event import \
-    BoboNullEvent
+from bobocep.engine.receiver.time_event.bobo_time_event import \
+    BoboTimeEvent
 from bobocep.engine.receiver.validator.bobo_validator import BoboValidator
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_event_complex import BoboEventComplex
@@ -30,7 +30,7 @@ class BoboReceiver(BoboEngineTask,
     def __init__(self,
                  validator: BoboValidator,
                  event_id_gen: BoboEventID,
-                 null_event_gen: BoboNullEvent,
+                 null_event_gen: BoboTimeEvent,
                  max_size: int):
         super().__init__()
 

@@ -7,13 +7,13 @@ from time import time_ns
 from types import MethodType
 from typing import Union, Callable
 
-from bobocep.engine.receiver.null_event.bobo_null_event import \
-    BoboNullEvent
+from bobocep.engine.receiver.time_event.bobo_time_event import \
+    BoboTimeEvent
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_event_simple import BoboEventSimple
 
 
-class BoboNullEventElapse(BoboNullEvent):
+class BoboTimeEventElapse(BoboTimeEvent):
 
     def __init__(self,
                  milliseconds: int,
@@ -32,7 +32,7 @@ class BoboNullEventElapse(BoboNullEvent):
             if isinstance(datagen, MethodType) else None
 
     def maybe_generate(self, event_id: str) -> Union[BoboEvent, None]:
-        now = BoboNullEventElapse._time_ms()
+        now = BoboTimeEventElapse._time_ms()
         if (now - self._last) > self._milliseconds:
             self._last = now
             return BoboEventSimple(

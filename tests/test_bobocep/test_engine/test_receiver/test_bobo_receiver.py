@@ -9,11 +9,11 @@ from bobocep.engine.receiver.bobo_receiver import BoboReceiver
 from bobocep.engine.receiver.bobo_receiver_error import BoboReceiverError
 from bobocep.engine.receiver.bobo_receiver_subscriber import \
     BoboReceiverSubscriber
-from bobocep.engine.receiver.null_event.bobo_null_event import BoboNullEvent
-from bobocep.engine.receiver.null_event.bobo_null_event_elapse import \
-    BoboNullEventElapse
-from bobocep.engine.receiver.null_event.bobo_null_event_none import \
-    BoboNullEventNone
+from bobocep.engine.receiver.time_event.bobo_time_event import BoboTimeEvent
+from bobocep.engine.receiver.time_event.bobo_time_event_elapse import \
+    BoboTimeEventElapse
+from bobocep.engine.receiver.time_event.bobo_time_event_none import \
+    BoboTimeEventNone
 from bobocep.engine.receiver.validator.bobo_validator import BoboValidator
 from bobocep.engine.receiver.validator.bobo_validator_all import \
     BoboValidatorAll
@@ -30,7 +30,7 @@ from bobocep.event.event_id.bobo_event_id_unique import \
 
 def _recsub(validator: BoboValidator = None,
             event_id_gen: BoboEventID = None,
-            null_event_gen: BoboNullEvent = None,
+            null_event_gen: BoboTimeEvent = None,
             max_size: int = 255):
     receiver = BoboReceiver(
         validator=validator if validator is not None else
@@ -38,7 +38,7 @@ def _recsub(validator: BoboValidator = None,
         event_id_gen=event_id_gen if event_id_gen is not None else
         BoboEventIDUnique(),
         null_event_gen=null_event_gen if null_event_gen is not None else
-        BoboNullEventNone(),
+        BoboTimeEventNone(),
         max_size=max_size)
 
     subscriber = StubReceiverSubscriber()
@@ -97,7 +97,7 @@ class TestValid:
         data_null_event = 456
 
         receiver, subscriber = _recsub(
-            null_event_gen=BoboNullEventElapse(
+            null_event_gen=BoboTimeEventElapse(
                 milliseconds=1,
                 datagen=lambda: data_null_event,
                 from_now=False))
