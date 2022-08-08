@@ -14,10 +14,8 @@ from bobocep.event.bobo_event_complex import BoboEventComplex
 
 class BoboActionHandlerBlocking(BoboActionHandler):
 
-    def __init__(self,
-                 name: str,
-                 max_size: int):
-        super().__init__(name, max_size)
+    def __init__(self, max_size: int):
+        super().__init__(max_size)
 
         self._queue: "Queue[BoboEventAction]" = Queue(self._max_size)
 

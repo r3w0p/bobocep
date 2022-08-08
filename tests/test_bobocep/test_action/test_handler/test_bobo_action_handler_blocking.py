@@ -2,74 +2,41 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-from datetime import datetime
-
 import pytest
 
-from bobocep.action.bobo_action import BoboAction
+import tests.common as tc
 from bobocep.action.handler.bobo_action_handler_blocking import \
     BoboActionHandlerBlocking
 from bobocep.action.handler.bobo_action_handler_error import \
     BoboActionHandlerError
-from bobocep.event.bobo_event_action import BoboEventAction
-from bobocep.event.bobo_event_complex import BoboEventComplex
-from bobocep.event.bobo_history import BoboHistory
-from bobocep.event.event_id.bobo_event_id_unique import BoboEventIDUnique
-
-
-def _complex():
-    return BoboEventComplex(
-        event_id=BoboEventIDUnique().generate(),
-        timestamp=datetime.now(),
-        data=None,
-        process_name="process_name",
-        pattern_name="pattern_name",
-        history=BoboHistory(events={}))
-
-
-class BoboActionTrue(BoboAction):
-
-    def execute(self, event: BoboEventComplex) -> BoboEventAction:
-        return BoboEventAction(
-            event_id=event.event_id,
-            timestamp=datetime.now(),
-            data=True,
-            action_name=self.name,
-            success=True)
 
 
 class TestValid:
 
     def test_handle_action(self):
-        handler = BoboActionHandlerBlocking(name="handler", max_size=255)
+        handler = BoboActionHandlerBlocking(max_size=255)
 
         assert handler.size() == 0
-        handler.handle(BoboActionTrue("action_1"), _complex())
+        handler.handle(tc.BoboActionTrue(), tc.event_complex())
         assert handler.size() == 1
 
     def test_get_response_empty(self):
-        handler = BoboActionHandlerBlocking(name="handler", max_size=255)
+        handler = BoboActionHandlerBlocking(max_size=255)
 
         assert handler.get_response() is None
 
     def test_get_response_not_empty(self):
-        handler = BoboActionHandlerBlocking(name="handler", max_size=255)
+        handler = BoboActionHandlerBlocking(max_size=255)
 
-        handler.handle(BoboActionTrue("action_1"), _complex())
+        handler.handle(tc.BoboActionTrue(), tc.event_complex())
         assert handler.get_response() is not None
 
 
 class TestInvalid:
 
-    def test_name_length_0(self):
-        with pytest.raises(BoboActionHandlerError):
-            BoboActionHandlerBlocking(
-                name="",
-                max_size=255)
-
     def test_add_response_queue_full(self):
-        handler = BoboActionHandlerBlocking(name="handler", max_size=1)
-        handler.handle(BoboActionTrue("action_1"), _complex())
+        handler = BoboActionHandlerBlocking(max_size=1)
+        handler.handle(tc.BoboActionTrue(), tc.event_complex())
 
         with pytest.raises(BoboActionHandlerError):
-            handler.handle(BoboActionTrue("action_2"), _complex())
+            handler.handle(tc.BoboActionTrue(), tc.event_complex())

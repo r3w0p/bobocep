@@ -68,7 +68,7 @@ class BoboPattern:
         if blocks[-1].loop:
             raise BoboPatternError(self._EXC_BLOCK_LAST_NOT_LOOP)
 
-        self.name = name
+        self.name: str = name
         self.blocks: Tuple[BoboPatternBlock, ...] = tuple(blocks)
         self.preconditions: Tuple[BoboPredicate, ...] = tuple(preconditions)
         self.haltconditions: Tuple[BoboPredicate, ...] = tuple(haltconditions)

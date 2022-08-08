@@ -7,23 +7,16 @@ from threading import RLock
 from typing import Union, Any
 
 from bobocep.action.bobo_action import BoboAction
-from bobocep.action.handler.bobo_action_handler_error import \
-    BoboActionHandlerError
 from bobocep.event.bobo_event_action import BoboEventAction
 from bobocep.event.bobo_event_complex import BoboEventComplex
 
 
 class BoboActionHandler(ABC):
-    _EXC_NAME_LEN = "'name' must have a length greater than 0"
     _EXC_QUEUE_FULL = "queue is full (max size: {0})"
 
-    def __init__(self, name: str, max_size: int):
+    def __init__(self, max_size: int):
         super().__init__()
 
-        if len(name) == 0:
-            raise BoboActionHandlerError(self._EXC_NAME_LEN)
-
-        self._name = name
         self._max_size = max_size
         self._lock = RLock()
 

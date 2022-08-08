@@ -149,7 +149,8 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
         if run.run_id not in self._runs[process_name][pattern_name]:
             self._runs[process_name][pattern_name][run.run_id] = run
         else:
-            pass  # todo run already exists error: _EXC_RUN_EXISTS
+            raise BoboDeciderError(self._EXC_RUN_EXISTS.format(
+                process_name, pattern_name, run.run_id))
 
     def _remove_run(self,
                     process_name: str,

@@ -5,17 +5,18 @@
 from bobocep.event.event_id.bobo_event_id_unique import BoboEventIDUnique
 
 
-def test_output_type_length():
-    generator = BoboEventIDUnique()
-    event_id = generator.generate()
+class TestValid:
 
-    assert len(event_id) > 0
+    def test_output_length_greater_than_zero(self):
+        generator = BoboEventIDUnique()
+        event_id = generator.generate()
 
+        assert len(event_id) > 0
 
-def test_1_generator_2_different_outputs():
-    generator = BoboEventIDUnique()
+    def test_1_generator_2_unique_outputs(self):
+        generator = BoboEventIDUnique()
 
-    event_id_1 = generator.generate()
-    event_id_2 = generator.generate()
+        event_id_1 = generator.generate()
+        event_id_2 = generator.generate()
 
-    assert event_id_1 != event_id_2
+        assert event_id_1 != event_id_2

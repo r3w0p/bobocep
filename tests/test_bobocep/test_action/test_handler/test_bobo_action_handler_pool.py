@@ -2,14 +2,13 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-from datetime import datetime
 from multiprocessing import Manager
 from multiprocessing.pool import AsyncResult
 from queue import Queue
 
 import pytest
 
-from bobocep.action.bobo_action import BoboAction
+import tests.common as tc
 from bobocep.action.handler.bobo_action_handler_error import \
     BoboActionHandlerError
 from bobocep.action.handler.bobo_action_handler_pool import \
@@ -17,99 +16,76 @@ from bobocep.action.handler.bobo_action_handler_pool import \
 from bobocep.action.handler.bobo_action_handler_pool import \
     _pool_execute_action
 from bobocep.event.bobo_event_action import BoboEventAction
-from bobocep.event.bobo_event_complex import BoboEventComplex
-from bobocep.event.bobo_history import BoboHistory
-from bobocep.event.event_id.bobo_event_id_unique import BoboEventIDUnique
-
-
-def _complex():
-    return BoboEventComplex(
-        event_id=BoboEventIDUnique().generate(),
-        timestamp=datetime.now(),
-        data=None,
-        process_name="process_name",
-        pattern_name="pattern_name",
-        history=BoboHistory(events={}))
-
-
-class BoboActionTrue(BoboAction):
-
-    def execute(self, event: BoboEventComplex) -> BoboEventAction:
-        return BoboEventAction(
-            event_id=event.event_id,
-            timestamp=datetime.now(),
-            data=True,
-            action_name=self.name,
-            success=True)
 
 
 class TestValid:
 
     def test_pool_execute_action(self):
         m = Manager()
-        q: "Queue[BoboActionResponse]" = m.Queue()
+        q: "Queue[BoboEventAction]" = m.Queue()
 
         assert q.qsize() == 0
 
         _pool_execute_action(
-            queue=q, action=BoboActionTrue("action_1"), event=_complex())
+            queue=q,
+            action=tc.BoboActionTrue(),
+            event=tc.event_complex())
 
         assert q.qsize() == 1
 
     def test_handle_1_action_1_process(self):
         handler = BoboActionHandlerPool(
-            name="handler",
             max_size=255,
             processes=1)
 
         assert handler.size() == 0
         result: AsyncResult = handler.handle(
-            BoboActionTrue("action_1"), _complex())
+            tc.BoboActionTrue(),
+            tc.event_complex())
         result.wait(timeout=5)
         assert handler.size() == 1
 
     def test_handle_10_actions_1_process(self):
         handler = BoboActionHandlerPool(
-            name="handler",
             max_size=255,
             processes=1)
 
         assert handler.size() == 0
         for i in range(10):
-            handler.handle(BoboActionTrue("action_{}".format(i)), _complex())
+            handler.handle(tc.BoboActionTrue("action_{}".format(i)),
+                           tc.event_complex())
         handler.close()
         handler.join()
         assert handler.size() == 10
 
     def test_handle_10_actions_3_processes(self):
         handler = BoboActionHandlerPool(
-            name="handler",
             max_size=255,
             processes=3)
 
         assert handler.size() == 0
         for i in range(10):
-            handler.handle(BoboActionTrue("action_{}".format(i)), _complex())
+            handler.handle(tc.BoboActionTrue("action_{}".format(i)),
+                           tc.event_complex())
         handler.close()
         handler.join()
         assert handler.size() == 10
 
     def test_handle_10_actions_10_processes(self):
         handler = BoboActionHandlerPool(
-            name="handler",
             max_size=255,
             processes=10)
 
         assert handler.size() == 0
         for i in range(10):
-            handler.handle(BoboActionTrue("action_{}".format(i)), _complex())
+            handler.handle(tc.BoboActionTrue("action_{}".format(i)),
+                           tc.event_complex())
         handler.close()
         handler.join()
         assert handler.size() == 10
 
     def test_get_response_empty(self):
         handler = BoboActionHandlerPool(
-            name="handler",
             max_size=255,
             processes=1)
 
@@ -117,12 +93,11 @@ class TestValid:
 
     def test_get_response_not_empty(self):
         handler = BoboActionHandlerPool(
-            name="handler",
             max_size=255,
             processes=1)
 
         result: AsyncResult = handler.handle(
-            BoboActionTrue("action_1"), _complex())
+            tc.BoboActionTrue(), tc.event_complex())
         result.wait(timeout=5)
 
         assert handler.get_response() is not None
@@ -130,24 +105,16 @@ class TestValid:
 
 class TestInvalid:
 
-    def test_name_length_0(self):
-        with pytest.raises(BoboActionHandlerError):
-            BoboActionHandlerPool(
-                name="",
-                max_size=255,
-                processes=1)
-
     def test_add_response_queue_full(self):
         handler = BoboActionHandlerPool(
-            name="handler",
             max_size=1,
             processes=1)
 
         result: AsyncResult = handler.handle(
-            BoboActionTrue("action_1"), _complex())
+            tc.BoboActionTrue(), tc.event_complex())
         result.wait(timeout=5)
 
         assert handler.size() == 1
 
         with pytest.raises(BoboActionHandlerError):
-            handler.handle(BoboActionTrue("action_2"), _complex())
+            handler.handle(tc.BoboActionTrue(), tc.event_complex())

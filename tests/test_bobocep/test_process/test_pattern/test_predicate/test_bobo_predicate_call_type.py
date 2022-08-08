@@ -11,11 +11,11 @@ from bobocep.process.pattern.predicate.bobo_predicate_call_type import \
 
 
 class StubSuperclass:
-    pass
+    """"""
 
 
 class StubSubclass(StubSuperclass):
-    pass
+    """"""
 
 
 def test_3_types_int_str_bool_subtype_true_evaluate_valid():

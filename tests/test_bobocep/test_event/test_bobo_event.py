@@ -5,11 +5,11 @@
 import pytest
 
 import tests.common as tc
-from bobocep.action.bobo_action_error import BoboActionError
+from bobocep.event.bobo_event_error import BoboEventError
 
 
 class TestInvalid:
 
-    def test_name_length_0(self):
-        with pytest.raises(BoboActionError):
-            tc.BoboActionTrue(name="")
+    def test_event_id_length_0(self):
+        with pytest.raises(BoboEventError):
+            tc.event_simple(event_id="")

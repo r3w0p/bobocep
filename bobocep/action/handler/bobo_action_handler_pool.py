@@ -5,12 +5,13 @@
 from multiprocessing import Manager, Pool
 from multiprocessing.pool import AsyncResult
 from queue import Queue
-from bobocep.event.bobo_event_action import BoboEventAction
+
 from bobocep.action.bobo_action import BoboAction
 from bobocep.action.handler.bobo_action_handler import \
     BoboActionHandler
 from bobocep.action.handler.bobo_action_handler_error import \
     BoboActionHandlerError
+from bobocep.event.bobo_event_action import BoboEventAction
 from bobocep.event.bobo_event_complex import BoboEventComplex
 
 
@@ -24,10 +25,9 @@ def _pool_execute_action(
 class BoboActionHandlerPool(BoboActionHandler):
 
     def __init__(self,
-                 name: str,
                  max_size: int,
                  processes: int):
-        super().__init__(name, max_size)
+        super().__init__(max_size)
 
         self._processes = processes
         self._pool = Pool(processes=processes)

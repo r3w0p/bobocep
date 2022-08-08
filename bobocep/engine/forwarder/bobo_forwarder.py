@@ -36,7 +36,7 @@ class BoboForwarder(BoboEngineTask, BoboForwarderPublisher):
                 raise BoboForwarderError(
                     self._EXC_PROCESS_NAME_DUP.format(process.name))
 
-        self._handler: BoboActionHandler = handler
+        self.handler: BoboActionHandler = handler
         self._event_id_gen: BoboEventID = event_id_gen
         self._max_size: int = max_size
         self._queue: Queue[BoboEventComplex] = Queue(self._max_size)
@@ -44,22 +44,22 @@ class BoboForwarder(BoboEngineTask, BoboForwarderPublisher):
 
     def update(self) -> None:
         with self._lock:
-            if not self._queue.empty():
-                self._update_handler()
-                self._update_responses()
+            self._update_handler()
+            self._update_responses()
 
     def _update_handler(self):
-        event: BoboEventComplex = self._queue.get_nowait()
+        if not self._queue.empty():
+            event: BoboEventComplex = self._queue.get_nowait()
 
-        if event.process_name in self._processes:
-            process: BoboProcess = self._processes[event.process_name]
+            if event.process_name in self._processes:
+                process: BoboProcess = self._processes[event.process_name]
 
-            if process.action is not None:
-                self._handler.handle(action=process.action, event=event)
+                if process.action is not None:
+                    self.handler.handle(action=process.action, event=event)
 
     def _update_responses(self):
         response: Union[BoboEventAction, None] = \
-            self._handler.get_response()
+            self.handler.get_response()
 
         if response is not None:
             for subscriber in self._subscribers:
