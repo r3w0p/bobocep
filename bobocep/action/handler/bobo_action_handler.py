@@ -36,7 +36,7 @@ class BoboActionHandler(ABC):
     def _get_queue(self) -> Queue:
         """"""
 
-    def get_response(self) -> Union[BoboEventAction, None]:
+    def get_action_event(self) -> Union[BoboEventAction, None]:
         with self._lock:
             queue = self._get_queue()
             if not queue.empty():

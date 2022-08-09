@@ -22,7 +22,7 @@ class BoboPredicateCall(BoboPredicate):
     :type call: Callable
     """
 
-    _EXC_INVALID_CALL = "'call' must have {0} parameters, found {1}"
+    _EXC_INVALID_PARAM = "'call' must have {0} parameters, found {1}"
     _LEN_PARAM_CALL = 2
 
     def __init__(self, call: Callable):
@@ -32,7 +32,7 @@ class BoboPredicateCall(BoboPredicate):
 
         if len_param_call != self._LEN_PARAM_CALL:
             raise BoboPredicateError(
-                self._EXC_INVALID_CALL.format(
+                self._EXC_INVALID_PARAM.format(
                     self._LEN_PARAM_CALL,
                     len_param_call))
 

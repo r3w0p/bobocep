@@ -12,5 +12,5 @@ class BoboForwarderSubscriber(ABC):
         super().__init__()
 
     @abstractmethod
-    def on_forwarder_action_response(self, response: BoboEventAction):
+    def on_forwarder_action_event(self, event: BoboEventAction):
         """"""

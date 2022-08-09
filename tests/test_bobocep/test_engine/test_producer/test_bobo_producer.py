@@ -14,14 +14,14 @@ from bobocep.event.bobo_event_complex import BoboEventComplex
 from bobocep.event.bobo_history import BoboHistory
 from bobocep.event.event_id.bobo_event_id import BoboEventID
 from bobocep.event.event_id.bobo_event_id_unique import BoboEventIDUnique
-from bobocep.process.pattern.bobo_pattern import BoboPattern
+from bobocep.process.bobo_process import BoboProcess
 
 
-def _decpro(patterns: List[BoboPattern],
+def _prosub(processes: List[BoboProcess],
             event_id_gen: BoboEventID = None,
             max_size: int = 255):
     producer = BoboProducer(
-        processes=[tc.process(patterns=patterns)],
+        processes=processes,
         event_id_gen=event_id_gen if event_id_gen is not None else
         BoboEventIDUnique(),
         max_size=max_size)
@@ -44,9 +44,33 @@ class StubProducerSubscriber(BoboProducerSubscriber):
 
 class TestValid:
 
-    def test_on_decider_completed_run(self):
-        producer, subscriber = _decpro([tc.pattern()])
+    def test_produce_complex_event_on_run(self):
+        process = tc.process(
+            name="process",
+            data=True,
+            patterns=[tc.pattern(name="pattern")],
+            action=tc.BoboActionTrue(name="action_true"))
 
+        producer, subscriber = _prosub([process])
+
+        history = BoboHistory(events={})
+        producer.on_decider_completed_run(
+            process_name="process",
+            pattern_name="pattern",
+            history=history)
+        assert producer.size() == 1
+
+        producer.update()
+        assert producer.size() == 0
+        assert len(subscriber.events) == 1
+
+        assert subscriber.events[0].data is True
+        assert subscriber.events[0].process_name == "process"
+        assert subscriber.events[0].pattern_name == "pattern"
+        assert subscriber.events[0].history == history
+
+    def test_on_decider_completed_run(self):
+        producer, subscriber = _prosub([tc.process()])
         assert producer.size() == 0
 
         producer.on_decider_completed_run(
@@ -56,24 +80,50 @@ class TestValid:
 
         assert producer.size() == 1
 
-    def test_on_forwarder_action_response(self):
-        """"""  # todo
-
 
 class TestInvalid:
 
     def test_add_run_on_queue_full(self):
-        producer, subscriber = _decpro([tc.pattern()], max_size=1)
-        assert True  # todo
+        process_1 = tc.process("process_1")
+        process_2 = tc.process("process_2")
+        producer, subscriber = _prosub([process_1, process_2], max_size=1)
 
-    def test_add_response_on_queue_full(self):
-        producer, subscriber = _decpro([tc.pattern()], max_size=1)
-        assert True  # todo
+        producer.on_decider_completed_run(
+            process_name="process_1",
+            pattern_name="pattern",
+            history=BoboHistory(events={}))
+
+        with pytest.raises(BoboProducerError):
+            producer.on_decider_completed_run(
+                process_name="process_2",
+                pattern_name="pattern",
+                history=BoboHistory(events={}))
 
     def test_duplicate_process_names(self):
         with pytest.raises(BoboProducerError):
             BoboProducer(
-                processes=[tc.process(patterns=[tc.pattern()]),
-                           tc.process(patterns=[tc.pattern()])],
+                processes=[tc.process(), tc.process()],
                 event_id_gen=BoboEventIDUnique(),
                 max_size=255)
+
+    def test_decider_run_process_does_not_exist(self):
+        producer, subscriber = _prosub([tc.process()], max_size=255)
+
+        producer.on_decider_completed_run(
+            process_name="process_invalid",
+            pattern_name="pattern",
+            history=BoboHistory(events={}))
+
+        with pytest.raises(BoboProducerError):
+            producer.update()
+
+    def test_decider_run_pattern_does_not_exist(self):
+        producer, subscriber = _prosub([tc.process()], max_size=255)
+
+        producer.on_decider_completed_run(
+            process_name="process",
+            pattern_name="pattern_invalid",
+            history=BoboHistory(events={}))
+
+        with pytest.raises(BoboProducerError):
+            producer.update()

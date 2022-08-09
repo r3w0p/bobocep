@@ -8,6 +8,8 @@ from threading import RLock
 from typing import Any
 
 from bobocep.engine.bobo_engine_task import BoboEngineTask
+from bobocep.engine.forwarder.bobo_forwarder_subscriber import \
+    BoboForwarderSubscriber
 from bobocep.engine.producer.bobo_producer_subscriber import \
     BoboProducerSubscriber
 from bobocep.engine.receiver.bobo_receiver_error import BoboReceiverError
@@ -17,6 +19,7 @@ from bobocep.engine.receiver.time_event.bobo_time_event import \
     BoboTimeEvent
 from bobocep.engine.receiver.validator.bobo_validator import BoboValidator
 from bobocep.event.bobo_event import BoboEvent
+from bobocep.event.bobo_event_action import BoboEventAction
 from bobocep.event.bobo_event_complex import BoboEventComplex
 from bobocep.event.bobo_event_simple import BoboEventSimple
 from bobocep.event.event_id.bobo_event_id import BoboEventID
@@ -24,7 +27,8 @@ from bobocep.event.event_id.bobo_event_id import BoboEventID
 
 class BoboReceiver(BoboEngineTask,
                    BoboReceiverPublisher,
-                   BoboProducerSubscriber):
+                   BoboProducerSubscriber,
+                   BoboForwarderSubscriber):
     _EXC_QUEUE_FULL = "queue is full (max size: {})"
 
     def __init__(self,
@@ -68,6 +72,10 @@ class BoboReceiver(BoboEngineTask,
             subscriber.on_receiver_event(event=event)
 
     def on_producer_complex_event(self, event: BoboEventComplex):
+        with self._lock:
+            self.add_data(event)
+
+    def on_forwarder_action_event(self, event: BoboEventAction):
         with self._lock:
             self.add_data(event)
 

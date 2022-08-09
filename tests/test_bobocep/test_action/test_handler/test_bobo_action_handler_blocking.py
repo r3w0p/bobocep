@@ -20,21 +20,21 @@ class TestValid:
         handler.handle(tc.BoboActionTrue(), tc.event_complex())
         assert handler.size() == 1
 
-    def test_get_response_empty(self):
+    def test_get_action_event_empty(self):
         handler = BoboActionHandlerBlocking(max_size=255)
 
-        assert handler.get_response() is None
+        assert handler.get_action_event() is None
 
-    def test_get_response_not_empty(self):
+    def test_get_action_event_not_empty(self):
         handler = BoboActionHandlerBlocking(max_size=255)
 
         handler.handle(tc.BoboActionTrue(), tc.event_complex())
-        assert handler.get_response() is not None
+        assert handler.get_action_event() is not None
 
 
 class TestInvalid:
 
-    def test_add_response_queue_full(self):
+    def test_add_action_event_queue_full(self):
         handler = BoboActionHandlerBlocking(max_size=1)
         handler.handle(tc.BoboActionTrue(), tc.event_complex())
 

@@ -22,15 +22,15 @@ class BoboActionHandlerBlocking(BoboActionHandler):
     def _execute_action(self,
                         action: BoboAction,
                         event: BoboEventComplex) -> None:
-        self._add_response(action.execute(event))
+        self._add_action_event(action.execute(event))
 
     def _get_queue(self) -> Queue:
         return self._queue
 
-    def _add_response(self, response: BoboEventAction) -> None:
+    def _add_action_event(self, event: BoboEventAction) -> None:
         with self._lock:
             if not self._queue.full():
-                self._queue.put(response)
+                self._queue.put(event)
             else:
                 raise BoboActionHandlerError(
                     self._EXC_QUEUE_FULL.format(self._max_size))

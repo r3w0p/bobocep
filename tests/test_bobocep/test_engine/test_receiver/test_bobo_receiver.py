@@ -1,10 +1,10 @@
 # Copyright (c) 2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
-from datetime import datetime
 
 import pytest
 
+import tests.common as tc
 from bobocep.engine.receiver.bobo_receiver import BoboReceiver
 from bobocep.engine.receiver.bobo_receiver_error import BoboReceiverError
 from bobocep.engine.receiver.bobo_receiver_subscriber import \
@@ -20,9 +20,7 @@ from bobocep.engine.receiver.validator.bobo_validator_all import \
 from bobocep.engine.receiver.validator.bobo_validator_not_type import \
     BoboValidatorNotType
 from bobocep.event.bobo_event import BoboEvent
-from bobocep.event.bobo_event_complex import BoboEventComplex
 from bobocep.event.bobo_event_simple import BoboEventSimple
-from bobocep.event.bobo_history import BoboHistory
 from bobocep.event.event_id.bobo_event_id import BoboEventID
 from bobocep.event.event_id.bobo_event_id_unique import \
     BoboEventIDUnique
@@ -112,34 +110,30 @@ class TestValid:
         assert subscriber.events[0].data == data
         assert subscriber.events[1].data == data_null_event
 
-    def test_process_add_data_event(self):
+    def test_process_add_data_event_simple(self):
         receiver, subscriber = _recsub()
+        assert receiver.size() == 0
 
-        data_event = 123
-        event = BoboEventSimple(
-            event_id="1", timestamp=datetime.now(), data=data_event)
+        event = tc.event_simple()
         receiver.add_data(data=event)
         receiver.update()
 
         assert len(subscriber.events) == 1
         assert subscriber.events[0] == event
-        assert subscriber.events[0].data == data_event
 
     def test_on_producer_complex_event(self):
         receiver, subscriber = _recsub()
+        assert receiver.size() == 0
 
-        event_complex = BoboEventComplex(
-            event_id=BoboEventIDUnique().generate(),
-            timestamp=datetime.now(),
-            data=None,
-            process_name="process_1",
-            pattern_name="pattern_1",
-            history=BoboHistory(events={}))
+        receiver.on_producer_complex_event(event=tc.event_complex())
+        assert receiver.size() == 1
+
+    def test_on_forwarder_action_event(self):
+        receiver, subscriber = _recsub()
 
         assert receiver.size() == 0
 
-        receiver.on_producer_complex_event(event=event_complex)
-
+        receiver.on_forwarder_action_event(event=tc.event_action())
         assert receiver.size() == 1
 
 

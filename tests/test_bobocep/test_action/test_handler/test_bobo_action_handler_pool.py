@@ -84,14 +84,14 @@ class TestValid:
         handler.join()
         assert handler.size() == 10
 
-    def test_get_response_empty(self):
+    def test_get_action_event_empty(self):
         handler = BoboActionHandlerPool(
             max_size=255,
             processes=1)
 
-        assert handler.get_response() is None
+        assert handler.get_action_event() is None
 
-    def test_get_response_not_empty(self):
+    def test_get_action_event_not_empty(self):
         handler = BoboActionHandlerPool(
             max_size=255,
             processes=1)
@@ -100,12 +100,12 @@ class TestValid:
             tc.BoboActionTrue(), tc.event_complex())
         result.wait(timeout=5)
 
-        assert handler.get_response() is not None
+        assert handler.get_action_event() is not None
 
 
 class TestInvalid:
 
-    def test_add_response_queue_full(self):
+    def test_add_action_event_queue_full(self):
         handler = BoboActionHandlerPool(
             max_size=1,
             processes=1)

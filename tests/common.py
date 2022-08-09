@@ -56,7 +56,7 @@ class BoboActionFalse(BoboAction):
 
 class BoboEventIDSameEveryTime(BoboEventID):
     """Produces the same ID string every time. Useful for testing whether
-       an exception is raised on the presence of duplicate IDs."""
+       an exception is raised on duplicate IDs."""
 
     def __init__(self, id_str: str = "id_str"):
         super().__init__()
@@ -182,5 +182,5 @@ def process(
     return BoboProcess(
         name=name,
         datagen=lambda p, h: data,
-        patterns=patterns if patterns is not None else [],
+        patterns=patterns if patterns is not None else [pattern()],
         action=action)

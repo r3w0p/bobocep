@@ -4,17 +4,14 @@
 from datetime import datetime
 from queue import Queue
 from threading import RLock
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple
 
 from bobocep.engine.bobo_engine_task import BoboEngineTask
 from bobocep.engine.decider.bobo_decider_subscriber import \
     BoboDeciderSubscriber
-from bobocep.engine.forwarder.bobo_forwarder_subscriber import \
-    BoboForwarderSubscriber
 from bobocep.engine.producer.bobo_producer_error import BoboProducerError
 from bobocep.engine.producer.bobo_producer_publisher import \
     BoboProducerPublisher
-from bobocep.event.bobo_event_action import BoboEventAction
 from bobocep.event.bobo_event_complex import BoboEventComplex
 from bobocep.event.bobo_history import BoboHistory
 from bobocep.event.event_id.bobo_event_id import BoboEventID
@@ -23,8 +20,7 @@ from bobocep.process.bobo_process import BoboProcess
 
 class BoboProducer(BoboEngineTask,
                    BoboProducerPublisher,
-                   BoboDeciderSubscriber,
-                   BoboForwarderSubscriber):
+                   BoboDeciderSubscriber):
     _EXC_PROCESS_NAME_DUP = "duplicate name in processes: {0}"
     _EXC_QUEUE_FULL = "queue is full (max size: {0})"
 
@@ -45,27 +41,18 @@ class BoboProducer(BoboEngineTask,
 
         self._event_id_gen = event_id_gen
         self._max_size = max_size
-        self._queue: Queue[Union[
-            Tuple[str, str, BoboHistory],
-            BoboEventAction]] = Queue(self._max_size)
+        self._queue: Queue[Tuple[str, str, BoboHistory]] = \
+            Queue(self._max_size)
         self._lock = RLock()
 
     def update(self) -> None:
         with self._lock:
             if not self._queue.empty():
-                data: Union[
-                    Tuple[str, str, BoboHistory],
-                    BoboEventAction] = self._queue.get_nowait()
+                data: Tuple[str, str, BoboHistory] = self._queue.get_nowait()
 
-                if isinstance(data, BoboEventAction):
-                    self._handle_action_response(data)
-                else:
-                    process_name, pattern_name, history = data
-                    self._handle_completed_run(
-                        process_name, pattern_name, history)
-
-    def _handle_action_response(self, response: BoboEventAction):
-        pass  # todo
+                process_name, pattern_name, history = data
+                self._handle_completed_run(
+                    process_name, pattern_name, history)
 
     def _handle_completed_run(self, process_name, pattern_name, history):
         if process_name not in self._processes:
@@ -95,14 +82,6 @@ class BoboProducer(BoboEngineTask,
         with self._lock:
             if not self._queue.full():
                 self._queue.put((process_name, pattern_name, history))
-            else:
-                raise BoboProducerError(
-                    self._EXC_QUEUE_FULL.format(self._max_size))
-
-    def on_forwarder_action_response(self, response: BoboEventAction):
-        with self._lock:
-            if not self._queue.full():
-                self._queue.put(response)
             else:
                 raise BoboProducerError(
                     self._EXC_QUEUE_FULL.format(self._max_size))

@@ -58,12 +58,12 @@ class BoboForwarder(BoboEngineTask, BoboForwarderPublisher):
                     self.handler.handle(action=process.action, event=event)
 
     def _update_responses(self):
-        response: Union[BoboEventAction, None] = \
-            self.handler.get_response()
+        event: Union[BoboEventAction, None] = \
+            self.handler.get_action_event()
 
-        if response is not None:
+        if event is not None:
             for subscriber in self._subscribers:
-                subscriber.on_forwarder_action_response(response)
+                subscriber.on_forwarder_action_event(event)
 
     def on_producer_complex_event(self, event: BoboEventComplex):
         with self._lock:

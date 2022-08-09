@@ -28,8 +28,8 @@ class StubForwarderSubscriber(BoboForwarderSubscriber):
         super().__init__()
         self.output: List[BoboEventAction] = []
 
-    def on_forwarder_action_response(self, response: BoboEventAction):
-        self.output.append(response)
+    def on_forwarder_action_event(self, event: BoboEventAction):
+        self.output.append(event)
 
 
 def _forsub(patterns: List[BoboPattern],
