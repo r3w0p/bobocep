@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -19,8 +19,11 @@ from bobocep.event.event_id.bobo_event_id import BoboEventID
 from bobocep.process.bobo_process import BoboProcess
 
 
-class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
+class BoboDecider(BoboEngineTask,
+                  BoboDeciderPublisher,
                   BoboReceiverSubscriber):
+    """A decider task."""
+
     _EXC_PROCESS_NAME_DUP = "duplicate name in processes: {0}"
     _EXC_QUEUE_FULL = "queue is full (max size: {0})"
     _EXC_RUN_NOT_FOUND = "run {2} not found for process {0}, pattern {1}"
@@ -50,7 +53,7 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
         self._queue: Queue[BoboEvent] = Queue(self._max_size)
         self._lock = RLock()
 
-    def update(self) -> None:
+    def update(self) -> bool:
         with self._lock:
             if not self._queue.empty():
                 for run in self._process_event(self._queue.get_nowait()):
@@ -59,6 +62,8 @@ class BoboDecider(BoboEngineTask, BoboDeciderPublisher,
                             process_name=run.process_name,
                             pattern_name=run.pattern.name,
                             history=run.history())
+                return True
+            return False
 
     def on_receiver_event(self, event: BoboEvent):
         with self._lock:

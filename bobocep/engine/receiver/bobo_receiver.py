@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -15,8 +15,8 @@ from bobocep.engine.producer.bobo_producer_subscriber import \
 from bobocep.engine.receiver.bobo_receiver_error import BoboReceiverError
 from bobocep.engine.receiver.bobo_receiver_publisher import \
     BoboReceiverPublisher
-from bobocep.engine.receiver.time_event.bobo_time_event import \
-    BoboTimeEvent
+from bobocep.engine.receiver.event_gen.bobo_event_gen import \
+    BoboEventGen
 from bobocep.engine.receiver.validator.bobo_validator import BoboValidator
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_event_action import BoboEventAction
@@ -29,32 +29,38 @@ class BoboReceiver(BoboEngineTask,
                    BoboReceiverPublisher,
                    BoboProducerSubscriber,
                    BoboForwarderSubscriber):
+    """A receiver task."""
+
     _EXC_QUEUE_FULL = "queue is full (max size: {})"
 
     def __init__(self,
                  validator: BoboValidator,
                  event_id_gen: BoboEventID,
-                 null_event_gen: BoboTimeEvent,
+                 event_gen: BoboEventGen,
                  max_size: int):
         super().__init__()
 
         self._validator = validator
         self._event_id_gen = event_id_gen
-        self._null_event_gen = null_event_gen
+        self._event_gen = event_gen
         self._max_size = max_size
         self._queue: Queue[Any] = Queue(self._max_size)
         self._lock = RLock()
 
-    def update(self) -> None:
+    def update(self) -> bool:
         with self._lock:
+            entity = None
             if not self._queue.empty():
-                self._process_entity(self._queue.get_nowait())
+                entity = self._queue.get_nowait()
+                self._process_entity(entity)
 
-            null_event = self._null_event_gen.maybe_generate(
+            gen_event = self._event_gen.maybe_generate(
                 event_id=self._event_id_gen.generate())
 
-            if null_event is not None:
-                self._process_entity(null_event)
+            if gen_event is not None:
+                self._process_entity(gen_event)
+
+            return entity is not None or gen_event is not None
 
     def _process_entity(self, entity: Any) -> None:
         if not self._validator.is_valid(entity):

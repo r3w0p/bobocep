@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 from datetime import datetime
@@ -21,6 +21,8 @@ from bobocep.process.bobo_process import BoboProcess
 class BoboProducer(BoboEngineTask,
                    BoboProducerPublisher,
                    BoboDeciderSubscriber):
+    """A producer task."""
+
     _EXC_PROCESS_NAME_DUP = "duplicate name in processes: {0}"
     _EXC_QUEUE_FULL = "queue is full (max size: {0})"
 
@@ -45,7 +47,7 @@ class BoboProducer(BoboEngineTask,
             Queue(self._max_size)
         self._lock = RLock()
 
-    def update(self) -> None:
+    def update(self) -> bool:
         with self._lock:
             if not self._queue.empty():
                 data: Tuple[str, str, BoboHistory] = self._queue.get_nowait()
@@ -53,6 +55,8 @@ class BoboProducer(BoboEngineTask,
                 process_name, pattern_name, history = data
                 self._handle_completed_run(
                     process_name, pattern_name, history)
+                return True
+            return False
 
     def _handle_completed_run(self, process_name, pattern_name, history):
         if process_name not in self._processes:

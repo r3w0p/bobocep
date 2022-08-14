@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -10,17 +10,7 @@ from bobocep.event.bobo_event import BoboEvent
 
 class BoboValidatorType(BoboValidator):
     """Validates whether the type of the entity matches any of the given data
-    types. If the entity is a BoboEvent, the event's data are checked.
-
-    :param types: A list of valid data types.
-    :type types: List[type]
-
-    :param subtype: If True, will match subtypes of a type, equivalent to
-                     isinstance() functionality.
-                     If False, will match exact types only, equivalent to
-                     type() functionality.
-    :type subtype: bool
-    """
+    types. If the entity is a BoboEvent, the event's data are checked."""
 
     def __init__(self,
                  types: List[type],

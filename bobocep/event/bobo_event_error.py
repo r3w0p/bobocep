@@ -5,4 +5,4 @@ from bobocep.engine.bobo_engine_task_error import BoboEngineTaskError
 
 
 class BoboEventError(BoboEngineTaskError):
-    """"""
+    """An event error."""

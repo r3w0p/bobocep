@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -12,18 +12,8 @@ from bobocep.process.pattern.predicate.bobo_predicate_call import \
 
 class BoboPredicateCallNotType(BoboPredicateCall):
     """A predicate that evaluates using a custom function or method after
-       first checking whether the event data type does not match given types.
-
-    :param types: A list of valid data types. The event's data type must not
-                  match any of them.
-    :type types: List[type]
-
-    :param subtype: If True, it will check subtypes of types, equivalent to
-                    isinstance() functionality.
-                    If False, it will check exact types only, equivalent to
-                    type() functionality.
-    :type subtype: bool
-    """
+       first checking whether the event data type does not match given
+       types."""
 
     def __init__(self,
                  call: Callable,

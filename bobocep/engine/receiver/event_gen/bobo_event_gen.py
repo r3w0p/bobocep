@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -8,7 +8,8 @@ from typing import Union
 from bobocep.event.bobo_event import BoboEvent
 
 
-class BoboTimeEvent(ABC):
+class BoboEventGen(ABC):
+    """An event generator."""
 
     def __init__(self):
         super().__init__()

@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -8,12 +8,7 @@ from bobocep.event.bobo_event import BoboEvent
 
 
 class BoboHistory:
-    """A history of events.
-
-    :param events: A history of events, where the key is a group name for a
-                   list of associated events.
-    :type events: Dict[str, List[BoboEvent]]
-    """
+    """A history of events."""
 
     def __init__(self, events: Dict[str, List[BoboEvent]]):
         super().__init__()

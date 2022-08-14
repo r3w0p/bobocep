@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -13,6 +13,8 @@ from bobocep.process.pattern.predicate.bobo_predicate import BoboPredicate
 
 
 class BoboDeciderRun:
+    """A decider run that tracks the progress of a partially completed complex
+    event."""
 
     def __init__(self,
                  run_id: str,

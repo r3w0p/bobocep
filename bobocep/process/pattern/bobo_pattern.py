@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -10,23 +10,7 @@ from bobocep.process.pattern.predicate.bobo_predicate import BoboPredicate
 
 
 class BoboPattern:
-    """A pattern.
-
-    :param name: The name of the pattern.
-    :type name: str
-
-    :param blocks: The sequence of blocks that constitute the pattern of
-                   behaviour.
-    :type blocks: List[BoboPatternBlock]
-
-    :param preconditions: The preconditions that must all equal True for any
-                          new event that is being checked against the pattern.
-    :type preconditions: List[BoboPredicate]
-
-    :param haltconditions: The haltconditions that must all equal False for any
-                           new event that is being checked against the pattern.
-    :type haltconditions: List[BoboPredicate]
-    """
+    """A pattern."""
 
     _EXC_NAME_LEN = "'name' must have a length greater than 0"
     _EXC_BLOCKS_LEN = "'blocks' must have a length greater than 0"

@@ -3,9 +3,32 @@
 # modified under the terms of the MIT License.
 
 from datetime import datetime
-from typing import Callable, List, Any
+from typing import Callable, List, Any, Tuple
 
 from bobocep.action.bobo_action import BoboAction
+from bobocep.action.handler.bobo_action_handler import BoboActionHandler
+from bobocep.action.handler.bobo_action_handler_blocking import \
+    BoboActionHandlerBlocking
+from bobocep.engine.bobo_engine import BoboEngine
+from bobocep.engine.decider.bobo_decider import BoboDecider
+from bobocep.engine.decider.bobo_decider_subscriber import \
+    BoboDeciderSubscriber
+from bobocep.engine.forwarder.bobo_forwarder import BoboForwarder
+from bobocep.engine.forwarder.bobo_forwarder_subscriber import \
+    BoboForwarderSubscriber
+from bobocep.engine.producer.bobo_producer import BoboProducer
+from bobocep.engine.producer.bobo_producer_subscriber import \
+    BoboProducerSubscriber
+from bobocep.engine.receiver.bobo_receiver import BoboReceiver
+from bobocep.engine.receiver.bobo_receiver_subscriber import \
+    BoboReceiverSubscriber
+from bobocep.engine.receiver.event_gen.bobo_event_gen import BoboEventGen
+from bobocep.engine.receiver.event_gen.bobo_event_gen_none import \
+    BoboEventGenNone
+from bobocep.engine.receiver.validator.bobo_validator import BoboValidator
+from bobocep.engine.receiver.validator.bobo_validator_all import \
+    BoboValidatorAll
+from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_event_action import BoboEventAction
 from bobocep.event.bobo_event_complex import BoboEventComplex
 from bobocep.event.bobo_event_simple import BoboEventSimple
@@ -150,7 +173,7 @@ def pattern(
     blocks: List[BoboPatternBlock] = []
     for i in range(len(data_blocks)):
         blocks.append(block(
-            group=str(i + 1),
+            group="g{}".format(i + 1),
             call=_lambda_event_data_equal(data_blocks[i])))
 
     preconditions: List[BoboPredicate] = []
@@ -176,11 +199,161 @@ def predicate(call: Callable = lambda e, h: True):
 
 def process(
         name: str = "process",
-        data: Any = None,
+        datagen: Callable = lambda p, h: None,
         patterns: List[BoboPattern] = None,
         action: BoboAction = None):
     return BoboProcess(
         name=name,
-        datagen=lambda p, h: data,
+        datagen=datagen,
         patterns=patterns if patterns is not None else [pattern()],
         action=action)
+
+
+def receiver_sub(validator: BoboValidator = None,
+                 event_id_gen: BoboEventID = None,
+                 event_gen: BoboEventGen = None,
+                 max_size: int = 255):
+    receiver = BoboReceiver(
+        validator=validator if validator is not None else
+        BoboValidatorAll(),
+        event_id_gen=event_id_gen if event_id_gen is not None else
+        BoboEventIDUnique(),
+        event_gen=event_gen if event_gen is not None else
+        BoboEventGenNone(),
+        max_size=max_size)
+
+    subscriber = StubReceiverSubscriber()
+    receiver.subscribe(subscriber=subscriber)
+
+    return receiver, subscriber
+
+
+class StubReceiverSubscriber(BoboReceiverSubscriber):
+    def __init__(self):
+        super().__init__()
+        self.output: List[BoboEvent] = []
+
+    def on_receiver_event(self, event: BoboEvent):
+        self.output.append(event)
+
+
+def decider_sub(processes: List[BoboProcess],
+                event_id_gen: BoboEventID = None,
+                run_id_gen: BoboEventID = None,
+                max_size: int = 255):
+    decider = BoboDecider(
+        processes=processes,
+        event_id_gen=event_id_gen if event_id_gen is not None else
+        BoboEventIDUnique(),
+        run_id_gen=run_id_gen if run_id_gen is not None else
+        BoboEventIDUnique(),
+        max_size=max_size)
+
+    subscriber = StubDeciderSubscriber()
+    decider.subscribe(subscriber=subscriber)
+
+    return decider, subscriber
+
+
+class StubDeciderSubscriber(BoboDeciderSubscriber):
+    def __init__(self):
+        super().__init__()
+        self.output: List[Tuple[str, str, BoboHistory]] = []
+
+    def on_decider_completed_run(self,
+                                 process_name: str,
+                                 pattern_name: str,
+                                 history: BoboHistory):
+        self.output.append((process_name, pattern_name, history))
+
+
+def producer_sub(processes: List[BoboProcess],
+                 event_id_gen: BoboEventID = None,
+                 max_size: int = 255):
+    producer = BoboProducer(
+        processes=processes,
+        event_id_gen=event_id_gen if event_id_gen is not None else
+        BoboEventIDUnique(),
+        max_size=max_size)
+
+    subscriber = StubProducerSubscriber()
+    producer.subscribe(subscriber=subscriber)
+
+    return producer, subscriber
+
+
+class StubProducerSubscriber(BoboProducerSubscriber):
+
+    def __init__(self):
+        super().__init__()
+        self.output: List[BoboEventComplex] = []
+
+    def on_producer_complex_event(self, event: BoboEventComplex):
+        self.output.append(event)
+
+
+def forwarder_sub(processes: List[BoboProcess],
+                  handler: BoboActionHandler = None,
+                  event_id_gen: BoboEventID = None,
+                  max_size: int = 255):
+    forwarder = BoboForwarder(
+        processes=processes,
+        handler=handler if handler is not None else
+        BoboActionHandlerBlocking(max_size=max_size),
+        event_id_gen=event_id_gen if event_id_gen is not None else
+        BoboEventIDUnique(),
+        max_size=max_size)
+
+    subscriber = StubForwarderSubscriber()
+    forwarder.subscribe(subscriber=subscriber)
+
+    return forwarder, subscriber
+
+
+class StubForwarderSubscriber(BoboForwarderSubscriber):
+
+    def __init__(self):
+        super().__init__()
+        self.output: List[BoboEventAction] = []
+
+    def on_forwarder_action_event(self, event: BoboEventAction):
+        self.output.append(event)
+
+
+def engine_subs(processes: List[BoboProcess],
+                validator: BoboValidator = None,
+                event_id_gen: BoboEventID = None,
+                event_gen: BoboEventGen = None,
+                run_id_gen: BoboEventID = None,
+                handler: BoboActionHandler = None,
+                max_size: int = 255):
+    rec, rec_sub = receiver_sub(
+        validator=validator,
+        event_id_gen=event_id_gen,
+        event_gen=event_gen,
+        max_size=max_size)
+
+    dec, dec_sub = decider_sub(
+        processes=processes,
+        event_id_gen=event_id_gen,
+        run_id_gen=run_id_gen,
+        max_size=max_size)
+
+    pro, pro_sub = producer_sub(
+        processes=processes,
+        event_id_gen=event_id_gen,
+        max_size=max_size)
+
+    fwd, fwd_sub = forwarder_sub(
+        processes=processes,
+        handler=handler,
+        event_id_gen=event_id_gen,
+        max_size=max_size)
+
+    engine = BoboEngine(
+        receiver=rec,
+        decider=dec,
+        producer=pro,
+        forwarder=fwd)
+
+    return engine, rec_sub, dec_sub, pro_sub, fwd_sub

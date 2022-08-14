@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -7,13 +7,15 @@ from time import time_ns
 from types import MethodType
 from typing import Union, Callable
 
-from bobocep.engine.receiver.time_event.bobo_time_event import \
-    BoboTimeEvent
+from bobocep.engine.receiver.event_gen.bobo_event_gen import \
+    BoboEventGen
 from bobocep.event.bobo_event import BoboEvent
 from bobocep.event.bobo_event_simple import BoboEventSimple
 
 
-class BoboTimeEventElapse(BoboTimeEvent):
+class BoboEventGenTime(BoboEventGen):
+    """An event generator that returns a time event if a given amount of time
+    has elapsed. Otherwise, None is returned."""
 
     def __init__(self,
                  milliseconds: int,
@@ -32,7 +34,7 @@ class BoboTimeEventElapse(BoboTimeEvent):
             if isinstance(datagen, MethodType) else None
 
     def maybe_generate(self, event_id: str) -> Union[BoboEvent, None]:
-        now = BoboTimeEventElapse._time_ms()
+        now = BoboEventGenTime._time_ms()
         if (now - self._last) > self._milliseconds:
             self._last = now
             return BoboEventSimple(

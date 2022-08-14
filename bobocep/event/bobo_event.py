@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -10,17 +10,7 @@ from bobocep.event.bobo_event_error import BoboEventError
 
 
 class BoboEvent(ABC):
-    """An event.
-
-    :param event_id: The event ID.
-    :type event_id: str
-
-    :param timestamp: The event timestamp.
-    :type timestamp: datetime
-
-    :param data: The event data.
-    :type data: Any
-    """
+    """An event."""
 
     _EXC_ID_LEN = "'event_id' must have a length greater than 0"
 

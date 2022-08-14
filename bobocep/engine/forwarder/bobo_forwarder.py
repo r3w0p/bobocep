@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 from queue import Queue
@@ -10,13 +10,19 @@ from bobocep.engine.bobo_engine_task import BoboEngineTask
 from bobocep.engine.forwarder.bobo_forwarder_error import BoboForwarderError
 from bobocep.engine.forwarder.bobo_forwarder_publisher import \
     BoboForwarderPublisher
+from bobocep.engine.producer.bobo_producer_subscriber import \
+    BoboProducerSubscriber
 from bobocep.event.bobo_event_action import BoboEventAction
 from bobocep.event.bobo_event_complex import BoboEventComplex
 from bobocep.event.event_id.bobo_event_id import BoboEventID
 from bobocep.process.bobo_process import BoboProcess
 
 
-class BoboForwarder(BoboEngineTask, BoboForwarderPublisher):
+class BoboForwarder(BoboEngineTask,
+                    BoboForwarderPublisher,
+                    BoboProducerSubscriber):
+    """A forwarder task."""
+
     _EXC_PROCESS_NAME_DUP = "duplicate name in processes: {0}"
     _EXC_QUEUE_FULL = "queue is full (max size: {0})"
 
@@ -42,12 +48,13 @@ class BoboForwarder(BoboEngineTask, BoboForwarderPublisher):
         self._queue: Queue[BoboEventComplex] = Queue(self._max_size)
         self._lock: RLock = RLock()
 
-    def update(self) -> None:
+    def update(self) -> bool:
         with self._lock:
-            self._update_handler()
-            self._update_responses()
+            handle = self._update_handler()
+            response = self._update_responses()
+            return handle or response
 
-    def _update_handler(self):
+    def _update_handler(self) -> bool:
         if not self._queue.empty():
             event: BoboEventComplex = self._queue.get_nowait()
 
@@ -56,14 +63,18 @@ class BoboForwarder(BoboEngineTask, BoboForwarderPublisher):
 
                 if process.action is not None:
                     self.handler.handle(action=process.action, event=event)
+            return True
+        return False
 
-    def _update_responses(self):
+    def _update_responses(self) -> bool:
         event: Union[BoboEventAction, None] = \
             self.handler.get_action_event()
 
         if event is not None:
             for subscriber in self._subscribers:
                 subscriber.on_forwarder_action_event(event)
+            return True
+        return False
 
     def on_producer_complex_event(self, event: BoboEventComplex):
         with self._lock:

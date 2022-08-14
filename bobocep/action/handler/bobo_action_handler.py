@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 from abc import ABC, abstractmethod
@@ -12,6 +12,8 @@ from bobocep.event.bobo_event_complex import BoboEventComplex
 
 
 class BoboActionHandler(ABC):
+    """A handler for the execution of actions."""
+
     _EXC_QUEUE_FULL = "queue is full (max size: {0})"
 
     def __init__(self, max_size: int):

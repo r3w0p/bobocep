@@ -4,5 +4,5 @@
 from bobocep.exception.bobo_error import BoboError
 
 
-class BoboPatternBuilderError(BoboError):
-    """A pattern builder error."""
+class BoboEngineError(BoboError):
+    """An engine error."""

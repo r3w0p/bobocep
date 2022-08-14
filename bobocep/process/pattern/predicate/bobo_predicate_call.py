@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -14,13 +14,7 @@ from bobocep.process.pattern.predicate.bobo_predicate_error import \
 
 
 class BoboPredicateCall(BoboPredicate):
-    """A predicate that evaluates using a custom function or method.
-
-    :param call: A callable that is used to evaluate the predicate.
-                 It must match the BoboPredicate 'evaluate' method's parameter
-                 count and return a bool.
-    :type call: Callable
-    """
+    """A predicate that evaluates using a custom function or method."""
 
     _EXC_INVALID_PARAM = "'call' must have {0} parameters, found {1}"
     _LEN_PARAM_CALL = 2

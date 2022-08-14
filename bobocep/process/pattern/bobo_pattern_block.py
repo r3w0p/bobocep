@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -10,26 +10,7 @@ from bobocep.process.pattern.predicate.bobo_predicate import BoboPredicate
 
 
 class BoboPatternBlock:
-    """A pattern block.
-
-    :param group: The group with which the block is associated.
-    :type group: str
-
-    :param predicates: The predicate(s) to use for evaluation.
-    :type predicates: List[BoboPredicate]
-
-    :param strict: Whether the predicate(s) has/have strict contiguity.
-    :type strict: bool
-
-    :param loop: Whether the block loops.
-    :type loop: bool
-
-    :param negated: Whether the predicate(s) is/are negated.
-    :type negated: bool
-
-    :param optional: Whether the predicate(s) is/are optional.
-    :type optional: bool
-    """
+    """A pattern block."""
 
     _EXC_GROUP_LEN = "'group' must have a length greater than 0"
     _EXC_PREDICATES_LEN = "'predicates' must have a length greater than 0"
