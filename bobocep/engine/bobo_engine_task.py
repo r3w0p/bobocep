@@ -14,3 +14,7 @@ class BoboEngineTask(ABC):
     @abstractmethod
     def update(self) -> bool:
         """"""
+
+    @abstractmethod
+    def close(self) -> None:
+        """"""

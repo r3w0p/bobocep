@@ -45,10 +45,14 @@ class BoboReceiver(BoboEngineTask,
         self._event_gen = event_gen
         self._max_size = max_size
         self._queue: Queue[Any] = Queue(self._max_size)
+        self._closed = False
         self._lock = RLock()
 
     def update(self) -> bool:
         with self._lock:
+            if self._closed:
+                return False
+
             entity = None
             if not self._queue.empty():
                 entity = self._queue.get_nowait()
@@ -61,6 +65,14 @@ class BoboReceiver(BoboEngineTask,
                 self._process_entity(gen_event)
 
             return entity is not None or gen_event is not None
+
+    def close(self) -> None:
+        with self._lock:
+            self._closed = True
+
+    def is_closed(self) -> bool:
+        with self._lock:
+            return self._closed
 
     def _process_entity(self, entity: Any) -> None:
         if not self._validator.is_valid(entity):
@@ -79,14 +91,23 @@ class BoboReceiver(BoboEngineTask,
 
     def on_producer_complex_event(self, event: BoboEventComplex):
         with self._lock:
+            if self._closed:
+                return
+
             self.add_data(event)
 
     def on_forwarder_action_event(self, event: BoboEventAction):
         with self._lock:
+            if self._closed:
+                return
+
             self.add_data(event)
 
     def add_data(self, data: Any):
         with self._lock:
+            if self._closed:
+                return
+
             if not self._queue.full():
                 self._queue.put(data)
             else:

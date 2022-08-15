@@ -17,9 +17,9 @@ https://pypi.org/project/bobocep/)
 [![Python](https://img.shields.io/pypi/pyversions/bobocep?color=blue&label=python)](
 https://pypi.org/project/bobocep/)
 [![Coverage](https://img.shields.io/codeclimate/coverage/r3w0p/bobocep?label=coverage)](
-https://codeclimate.com/github/r3w0p/bobocep/code?sort=test_coverage)
+https://codeclimate.com/github/r3w0p/bobocep)
 [![Maintainability](https://img.shields.io/codeclimate/maintainability-percentage/r3w0p/bobocep?label=maintainability)](
-https://codeclimate.com/github/r3w0p/bobocep/code?sort=maintainability)
+https://codeclimate.com/github/r3w0p/bobocep)
 [![License Scan](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep.svg?type=shield)](
 https://app.fossa.com/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep?ref=badge_shield)
 

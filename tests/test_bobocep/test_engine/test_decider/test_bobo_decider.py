@@ -139,6 +139,23 @@ class TestValid:
         assert result_update is True
         assert len(subscriber.output) == 1
 
+    def test_close_then_update(self):
+        decider, subscriber = tc.decider_sub([tc.process()])
+
+        decider.close()
+        assert decider.is_closed()
+        assert decider.update() is False
+
+    def test_close_then_on_receiver_event(self):
+        decider, subscriber = tc.decider_sub([tc.process()])
+
+        decider.close()
+        assert decider.is_closed()
+        assert decider.size() == 0
+
+        decider.on_receiver_event(tc.event_simple())
+        assert decider.size() == 0
+
 
 class TestInvalid:
 

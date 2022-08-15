@@ -50,6 +50,23 @@ class TestValid:
         forwarder.update()
         assert len(subscriber.output) == 1
 
+    def test_close_then_update(self):
+        forwarder, subscriber = tc.forwarder_sub([tc.process()])
+
+        forwarder.close()
+        assert forwarder.is_closed()
+        assert forwarder.update() is False
+
+    def test_close_then_on_producer_complex_event(self):
+        forwarder, subscriber = tc.forwarder_sub([tc.process()])
+
+        forwarder.close()
+        assert forwarder.is_closed()
+        assert forwarder.size() == 0
+
+        forwarder.on_producer_complex_event(tc.event_complex())
+        assert forwarder.size() == 0
+
 
 class TestInvalid:
 

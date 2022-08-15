@@ -45,10 +45,14 @@ class BoboProducer(BoboEngineTask,
         self._max_size = max_size
         self._queue: Queue[Tuple[str, str, BoboHistory]] = \
             Queue(self._max_size)
+        self._closed = False
         self._lock = RLock()
 
     def update(self) -> bool:
         with self._lock:
+            if self._closed:
+                return False
+
             if not self._queue.empty():
                 data: Tuple[str, str, BoboHistory] = self._queue.get_nowait()
 
@@ -57,6 +61,14 @@ class BoboProducer(BoboEngineTask,
                     process_name, pattern_name, history)
                 return True
             return False
+
+    def close(self) -> None:
+        with self._lock:
+            self._closed = True
+
+    def is_closed(self) -> bool:
+        with self._lock:
+            return self._closed
 
     def _handle_completed_run(self, process_name, pattern_name, history):
         if process_name not in self._processes:
@@ -84,6 +96,9 @@ class BoboProducer(BoboEngineTask,
                                  pattern_name: str,
                                  history: BoboHistory):
         with self._lock:
+            if self._closed:
+                return
+
             if not self._queue.full():
                 self._queue.put((process_name, pattern_name, history))
             else:

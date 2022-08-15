@@ -2,6 +2,8 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
+from threading import RLock
+
 from bobocep.engine.bobo_engine_error import BoboEngineError
 from bobocep.engine.decider.bobo_decider import BoboDecider
 from bobocep.engine.forwarder.bobo_forwarder import BoboForwarder
@@ -19,8 +21,29 @@ class BoboEngine:
                  receiver: BoboReceiver,
                  decider: BoboDecider,
                  producer: BoboProducer,
-                 forwarder: BoboForwarder):
+                 forwarder: BoboForwarder,
+                 times_receiver: int = 0,
+                 times_decider: int = 0,
+                 times_producer: int = 0,
+                 times_forwarder: int = 0,
+                 early_stop: bool = True):
         super().__init__()
+
+        self._closed: bool = False
+        self._lock: RLock = RLock()
+
+        self._times_receiver = None
+        self._times_decider = None
+        self._times_producer = None
+        self._times_forwarder = None
+        self._early_stop = None
+
+        self.set_times(
+            times_receiver=times_receiver,
+            times_decider=times_decider,
+            times_producer=times_producer,
+            times_forwarder=times_forwarder,
+            early_stop=early_stop)
 
         receiver.subscribe(decider)
         decider.subscribe(producer)
@@ -28,40 +51,82 @@ class BoboEngine:
         producer.subscribe(receiver)
         forwarder.subscribe(receiver)
 
-        self.receiver = receiver
-        self.decider = decider
-        self.producer = producer
-        self.forwarder = forwarder
+        self.receiver: BoboReceiver = receiver
+        self.decider: BoboDecider = decider
+        self.producer: BoboProducer = producer
+        self.forwarder: BoboForwarder = forwarder
 
-    def update(self,
-               times_receiver: int = 0,
-               times_decider: int = 0,
-               times_producer: int = 0,
-               times_forwarder: int = 0,
-               early_stop: bool = True):
+    def set_times(self,
+                  times_receiver: int,
+                  times_decider: int,
+                  times_producer: int,
+                  times_forwarder: int,
+                  early_stop: bool = True) -> bool:
+        with self._lock:
+            if self._closed:
+                return False
 
-        if times_receiver < 0:
-            raise BoboEngineError(self._EXC_TIMES_REC)
+            if times_receiver < 0:
+                raise BoboEngineError(self._EXC_TIMES_REC)
 
-        if times_decider < 0:
-            raise BoboEngineError(self._EXC_TIMES_DEC)
+            if times_decider < 0:
+                raise BoboEngineError(self._EXC_TIMES_DEC)
 
-        if times_producer < 0:
-            raise BoboEngineError(self._EXC_TIMES_PRO)
+            if times_producer < 0:
+                raise BoboEngineError(self._EXC_TIMES_PRO)
 
-        if times_forwarder < 0:
-            raise BoboEngineError(self._EXC_TIMES_FOR)
+            if times_forwarder < 0:
+                raise BoboEngineError(self._EXC_TIMES_FOR)
 
-        for task, times in [
-            (self.receiver, times_receiver),
-            (self.decider, times_decider),
-            (self.producer, times_producer),
-            (self.forwarder, times_forwarder)
-        ]:
-            if times == 0:
-                while task.update():
-                    pass
-            else:
-                for i in range(times):
-                    if not task.update() and early_stop:
-                        break
+            self._times_receiver = times_receiver
+            self._times_decider = times_decider
+            self._times_producer = times_producer
+            self._times_forwarder = times_forwarder
+            self._early_stop = early_stop
+            return True
+
+    def close(self) -> None:
+        with self._lock:
+            self._closed = True
+
+            self.receiver.close()
+            self.decider.close()
+            self.producer.close()
+            self.forwarder.close()
+
+    def is_closed(self) -> bool:
+        with self._lock:
+            return self._closed
+
+    def run(self) -> None:
+        while True:
+            with self._lock:
+                if self._closed:
+                    return
+
+                self.update()
+                self._on_post_update()
+
+    def update(self) -> bool:
+        with self._lock:
+            if self._closed:
+                return False
+
+            for task, times in [
+                (self.receiver, self._times_receiver),
+                (self.decider, self._times_decider),
+                (self.producer, self._times_producer),
+                (self.forwarder, self._times_forwarder)
+            ]:
+                if times == 0:
+                    while task.update():
+                        pass
+                else:
+                    for i in range(times):
+                        if not task.update() and self._early_stop:
+                            break
+            # TODO pytest "return True" issue
+            return not self._closed
+
+    def _on_post_update(self) -> None:
+        """"""

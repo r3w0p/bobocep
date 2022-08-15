@@ -51,10 +51,14 @@ class BoboDecider(BoboEngineTask,
         self._runs: Dict[str, Dict[str, Dict[str, BoboDeciderRun]]] = {}
         self._history_stub = BoboHistory({})
         self._queue: Queue[BoboEvent] = Queue(self._max_size)
+        self._closed = False
         self._lock = RLock()
 
     def update(self) -> bool:
         with self._lock:
+            if self._closed:
+                return False
+
             if not self._queue.empty():
                 event: BoboEvent = self._queue.get_nowait()
                 for run in self._process_event(event):
@@ -63,12 +67,23 @@ class BoboDecider(BoboEngineTask,
                             process_name=run.process_name,
                             pattern_name=run.pattern.name,
                             history=run.history())
-                # pytest doesn't recognise "return True" for some reason... :(
+                # TODO pytest "return True" issue
                 return event is not None
             return False
 
+    def close(self) -> None:
+        with self._lock:
+            self._closed = True
+
+    def is_closed(self) -> bool:
+        with self._lock:
+            return self._closed
+
     def on_receiver_event(self, event: BoboEvent):
         with self._lock:
+            if self._closed:
+                return
+
             if not self._queue.full():
                 self._queue.put(event)
             else:

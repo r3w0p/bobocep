@@ -95,6 +95,43 @@ class TestValid:
         receiver.on_forwarder_action_event(event=tc.event_action())
         assert receiver.size() == 1
 
+    def test_close_then_update(self):
+        receiver, subscriber = tc.receiver_sub()
+
+        receiver.close()
+        assert receiver.is_closed()
+        assert receiver.update() is False
+
+    def test_close_then_add_data(self):
+        receiver, subscriber = tc.receiver_sub()
+
+        receiver.close()
+        assert receiver.is_closed()
+        assert receiver.size() == 0
+
+        receiver.add_data(123)
+        assert receiver.size() == 0
+
+    def test_close_then_on_producer_complex_event(self):
+        receiver, subscriber = tc.receiver_sub()
+
+        receiver.close()
+        assert receiver.is_closed()
+        assert receiver.size() == 0
+
+        receiver.on_producer_complex_event(tc.event_complex())
+        assert receiver.size() == 0
+
+    def test_close_then_on_forwarder_action_event(self):
+        receiver, subscriber = tc.receiver_sub()
+
+        receiver.close()
+        assert receiver.is_closed()
+        assert receiver.size() == 0
+
+        receiver.on_forwarder_action_event(tc.event_action())
+        assert receiver.size() == 0
+
 
 class TestInvalid:
 

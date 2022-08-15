@@ -46,13 +46,25 @@ class BoboForwarder(BoboEngineTask,
         self._event_id_gen: BoboEventID = event_id_gen
         self._max_size: int = max_size
         self._queue: Queue[BoboEventComplex] = Queue(self._max_size)
+        self._closed = False
         self._lock: RLock = RLock()
 
     def update(self) -> bool:
         with self._lock:
+            if self._closed:
+                return False
+
             handle = self._update_handler()
             response = self._update_responses()
             return handle or response
+
+    def close(self) -> None:
+        with self._lock:
+            self._closed = True
+
+    def is_closed(self) -> bool:
+        with self._lock:
+            return self._closed
 
     def _update_handler(self) -> bool:
         if not self._queue.empty():
@@ -78,8 +90,15 @@ class BoboForwarder(BoboEngineTask,
 
     def on_producer_complex_event(self, event: BoboEventComplex):
         with self._lock:
+            if self._closed:
+                return False
+
             if not self._queue.full():
                 self._queue.put(event)
             else:
                 raise BoboForwarderError(
                     self._EXC_QUEUE_FULL.format(self._max_size))
+
+    def size(self) -> int:
+        with self._lock:
+            return self._queue.qsize()

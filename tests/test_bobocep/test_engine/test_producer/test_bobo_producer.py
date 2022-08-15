@@ -47,6 +47,26 @@ class TestValid:
 
         assert producer.size() == 1
 
+    def test_close_then_update(self):
+        producer, subscriber = tc.producer_sub([tc.process()])
+
+        producer.close()
+        assert producer.is_closed()
+        assert producer.update() is False
+
+    def test_close_then_on_decider_completed_run(self):
+        producer, subscriber = tc.producer_sub([tc.process()])
+
+        producer.close()
+        assert producer.is_closed()
+        assert producer.size() == 0
+
+        producer.on_decider_completed_run(
+            process_name="process",
+            pattern_name="pattern",
+            history=BoboHistory(events={}))
+        assert producer.size() == 0
+
 
 class TestInvalid:
 

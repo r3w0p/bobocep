@@ -326,6 +326,11 @@ def engine_subs(processes: List[BoboProcess],
                 event_gen: BoboEventGen = None,
                 run_id_gen: BoboEventID = None,
                 handler: BoboActionHandler = None,
+                times_receiver: int = 0,
+                times_decider: int = 0,
+                times_producer: int = 0,
+                times_forwarder: int = 0,
+                early_stop: bool = True,
                 max_size: int = 255):
     rec, rec_sub = receiver_sub(
         validator=validator,
@@ -354,6 +359,11 @@ def engine_subs(processes: List[BoboProcess],
         receiver=rec,
         decider=dec,
         producer=pro,
-        forwarder=fwd)
+        forwarder=fwd,
+        times_receiver=times_receiver,
+        times_decider=times_decider,
+        times_producer=times_producer,
+        times_forwarder=times_forwarder,
+        early_stop=early_stop)
 
     return engine, rec_sub, dec_sub, pro_sub, fwd_sub
