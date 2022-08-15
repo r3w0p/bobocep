@@ -56,13 +56,15 @@ class BoboDecider(BoboEngineTask,
     def update(self) -> bool:
         with self._lock:
             if not self._queue.empty():
-                for run in self._process_event(self._queue.get_nowait()):
+                event: BoboEvent = self._queue.get_nowait()
+                for run in self._process_event(event):
                     for subscriber in self._subscribers:
                         subscriber.on_decider_completed_run(
                             process_name=run.process_name,
                             pattern_name=run.pattern.name,
                             history=run.history())
-                return True
+                # pytest doesn't recognise "return True" for some reason... :(
+                return event is not None
             return False
 
     def on_receiver_event(self, event: BoboEvent):

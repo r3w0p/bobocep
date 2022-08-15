@@ -52,7 +52,8 @@ class TestValid:
             decider.on_receiver_event(event=event)
             assert decider.size() == 1
 
-            decider.update()
+            result_update = decider.update()
+            assert result_update is True
             assert decider.size() == 0
             assert len(decider.runs_from(process_name, pattern.name)) == 1
             assert decider.runs_from(process_name,
@@ -68,10 +69,11 @@ class TestValid:
         ])
 
         decider.on_receiver_event(event=tc.event_simple(data=1))
-        decider.update()
+        result_update = decider.update()
 
         process_name = decider.processes()[0].name
 
+        assert result_update is True
         assert decider.size() == 0
         assert len(decider.all_runs()) == 3
         assert len(decider.runs_from(process_name, pattern_123_1.name)) == 1
@@ -87,7 +89,8 @@ class TestValid:
 
         for i in range(3):
             decider.on_receiver_event(event=tc.event_simple(data=1))
-            decider.update()
+            result_update = decider.update()
+            assert result_update is True
             assert len(decider.runs_from(process_name,
                                          pattern_123.name)) == i + 1
 
@@ -103,10 +106,11 @@ class TestValid:
             (tc.event_simple(data=3), 0)
         ]:
             decider.on_receiver_event(event=event)
-            decider.update()
+            result_update = decider.update()
 
             process_name = decider.processes()[0].name
 
+            assert result_update is True
             assert len(decider.runs_from(
                 process_name, pattern_123.name)) == length
 
@@ -130,8 +134,9 @@ class TestValid:
         decider, subscriber = tc.decider_sub([tc.process(patterns=[pattern])])
 
         decider.on_receiver_event(tc.event_simple(data=1))
-        decider.update()
+        result_update = decider.update()
 
+        assert result_update is True
         assert len(subscriber.output) == 1
 
 
@@ -173,7 +178,8 @@ class TestInvalid:
             run_id_gen=tc.BoboEventIDSameEveryTime())
 
         decider.on_receiver_event(event=tc.event_simple(data=1))
-        decider.update()
+        result_update = decider.update()
+        assert result_update is True
 
         decider.on_receiver_event(event=tc.event_simple(data=1))
 

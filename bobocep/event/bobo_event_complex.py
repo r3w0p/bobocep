@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Any
 
 from bobocep.event.bobo_event import BoboEvent
-from bobocep.event.bobo_event_complex_error import BoboEventComplexError
+from bobocep.event.bobo_event_error import BoboEventError
 from bobocep.event.bobo_history import BoboHistory
 
 
@@ -29,10 +29,10 @@ class BoboEventComplex(BoboEvent):
             data=data)
 
         if len(process_name) == 0:
-            raise BoboEventComplexError(self._EXC_PRO_LEN)
+            raise BoboEventError(self._EXC_PRO_LEN)
 
         if len(pattern_name) == 0:
-            raise BoboEventComplexError(self._EXC_PAT_LEN)
+            raise BoboEventError(self._EXC_PAT_LEN)
 
         self.process_name = process_name
         self.pattern_name = pattern_name
