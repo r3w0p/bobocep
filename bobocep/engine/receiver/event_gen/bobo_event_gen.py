@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 
 from abc import ABC, abstractmethod
-from typing import Union
+from typing import Optional
 
 from bobocep.event.bobo_event import BoboEvent
 
@@ -15,5 +15,5 @@ class BoboEventGen(ABC):
         super().__init__()
 
     @abstractmethod
-    def maybe_generate(self, event_id: str) -> Union[BoboEvent, None]:
+    def maybe_generate(self, event_id: str) -> Optional[BoboEvent]:
         """"""

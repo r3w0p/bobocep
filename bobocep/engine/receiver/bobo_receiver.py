@@ -46,7 +46,7 @@ class BoboReceiver(BoboEngineTask,
         self._max_size = max_size
         self._queue: Queue[Any] = Queue(self._max_size)
         self._closed = False
-        self._lock = RLock()
+        self._lock: RLock = RLock()
 
     def update(self) -> bool:
         with self._lock:

@@ -31,6 +31,7 @@ class BoboProducer(BoboEngineTask,
                  event_id_gen: BoboEventID,
                  max_size: int):
         super().__init__()
+        self._lock: RLock = RLock()
 
         self._processes: Dict[str, BoboProcess] = {}
 
@@ -46,7 +47,6 @@ class BoboProducer(BoboEngineTask,
         self._queue: Queue[Tuple[str, str, BoboHistory]] = \
             Queue(self._max_size)
         self._closed = False
-        self._lock = RLock()
 
     def update(self) -> bool:
         with self._lock:
@@ -60,6 +60,7 @@ class BoboProducer(BoboEngineTask,
                 self._handle_completed_run(
                     process_name, pattern_name, history)
                 return True
+
             return False
 
     def close(self) -> None:

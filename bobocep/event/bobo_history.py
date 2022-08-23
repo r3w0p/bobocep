@@ -2,7 +2,8 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-from typing import Dict, List, Union, Tuple
+from json import dumps
+from typing import Dict, List, Tuple, Optional
 
 from bobocep.event.bobo_event import BoboEvent
 
@@ -14,8 +15,8 @@ class BoboHistory:
         super().__init__()
 
         self._events: Dict[str, List[BoboEvent]] = {}
-        self._first: Union[BoboEvent, None] = None
-        self._last: Union[BoboEvent, None] = None
+        self._first: Optional[BoboEvent] = None
+        self._last: Optional[BoboEvent] = None
 
         if events is not None:
             for name, event_list in events.items():
@@ -45,8 +46,20 @@ class BoboHistory:
         else:
             return tuple()
 
-    def first(self) -> Union[BoboEvent, None]:
+    def first(self) -> Optional[BoboEvent]:
         return self._first
 
-    def last(self) -> Union[BoboEvent, None]:
+    def last(self) -> Optional[BoboEvent]:
         return self._last
+
+    def __str__(self) -> str:
+        e: Dict[str, List[str]] = {}
+
+        for name, event_list in self._events.items():
+            for event in event_list:
+                if name not in e:
+                    e[name] = []
+
+                e[name].append(event.event_id)
+
+        return dumps(e)

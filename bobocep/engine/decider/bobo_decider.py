@@ -52,7 +52,7 @@ class BoboDecider(BoboEngineTask,
         self._history_stub = BoboHistory({})
         self._queue: Queue[BoboEvent] = Queue(self._max_size)
         self._closed = False
-        self._lock = RLock()
+        self._lock: RLock = RLock()
 
     def update(self) -> bool:
         with self._lock:

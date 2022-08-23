@@ -11,7 +11,7 @@ https://github.com/r3w0p/bobocep/blob/develop/LICENSE/)
 [![Issues](https://img.shields.io/github/issues-raw/r3w0p/bobocep?label=issues)](
 https://github.com/r3w0p/bobocep/issues)
 [![Dependencies](https://img.shields.io/librariesio/github/r3w0p/bobocep?label=dependencies)](
-https://github.com/r3w0p/bobocep/network/dependencies) \
+https://libraries.io/pypi/bobocep/) \
 [![PyPI](https://img.shields.io/pypi/v/bobocep?color=blue&label=pypi)](
 https://pypi.org/project/bobocep/)
 [![Python](https://img.shields.io/pypi/pyversions/bobocep?color=blue&label=python)](

@@ -16,5 +16,9 @@ class BoboEngineTask(ABC):
         """"""
 
     @abstractmethod
+    def size(self) -> int:
+        """"""
+
+    @abstractmethod
     def close(self) -> None:
         """"""

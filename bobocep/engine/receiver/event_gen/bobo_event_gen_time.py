@@ -5,7 +5,7 @@
 from datetime import datetime
 from time import time_ns
 from types import MethodType
-from typing import Union, Callable
+from typing import Callable, Optional
 
 from bobocep.engine.receiver.event_gen.bobo_event_gen import \
     BoboEventGen
@@ -33,7 +33,7 @@ class BoboEventGenTime(BoboEventGen):
         self._obj = datagen.__self__ \
             if isinstance(datagen, MethodType) else None
 
-    def maybe_generate(self, event_id: str) -> Union[BoboEvent, None]:
+    def maybe_generate(self, event_id: str) -> Optional[BoboEvent]:
         now = BoboEventGenTime._time_ms()
         if (now - self._last) > self._milliseconds:
             self._last = now

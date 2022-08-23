@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 from queue import Queue
 from threading import RLock
-from typing import Dict, List, Union
+from typing import Dict, List, Optional
 
 from bobocep.action.handler.bobo_action_handler import BoboActionHandler
 from bobocep.engine.bobo_engine_task import BoboEngineTask
@@ -79,7 +79,7 @@ class BoboForwarder(BoboEngineTask,
         return False
 
     def _update_responses(self) -> bool:
-        event: Union[BoboEventAction, None] = \
+        event: Optional[BoboEventAction] = \
             self.handler.get_action_event()
 
         if event is not None:

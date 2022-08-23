@@ -4,7 +4,7 @@
 from abc import ABC, abstractmethod
 from queue import Queue
 from threading import RLock
-from typing import Union, Any
+from typing import Any, Optional
 
 from bobocep.action.bobo_action import BoboAction
 from bobocep.event.bobo_event_action import BoboEventAction
@@ -20,7 +20,7 @@ class BoboActionHandler(ABC):
         super().__init__()
 
         self._max_size = max_size
-        self._lock = RLock()
+        self._lock: RLock = RLock()
 
     def handle(self,
                action: BoboAction,
@@ -38,7 +38,7 @@ class BoboActionHandler(ABC):
     def _get_queue(self) -> Queue:
         """"""
 
-    def get_action_event(self) -> Union[BoboEventAction, None]:
+    def get_action_event(self) -> Optional[BoboEventAction]:
         with self._lock:
             queue = self._get_queue()
             if not queue.empty():

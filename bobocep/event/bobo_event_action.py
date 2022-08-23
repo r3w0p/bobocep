@@ -3,6 +3,7 @@
 # modified under the terms of the MIT License.
 
 from datetime import datetime
+from json import dumps
 from typing import Any
 
 from bobocep.event.bobo_event import BoboEvent
@@ -42,3 +43,14 @@ class BoboEventAction(BoboEvent):
         self.pattern_name = pattern_name
         self.action_name = action_name
         self.success = success
+
+    def __str__(self) -> str:
+        return dumps({
+            "event_id": str(self.event_id),
+            "timestamp": str(self.timestamp),
+            "data": str(self.data),
+            "process_name": str(self.process_name),
+            "pattern_name": str(self.pattern_name),
+            "action_name": str(self.action_name),
+            "success": str(self.success)
+        })

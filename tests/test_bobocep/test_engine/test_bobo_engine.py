@@ -181,14 +181,6 @@ class TestValid:
         assert engine.is_closed()
         assert engine.run() is None
 
-    def test_close_then_set_times(self):
-        processes = [tc.process()]
-        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(processes)
-
-        engine.close()
-        assert engine.is_closed()
-        assert engine.set_times(1, 1, 1, 1, False) is False
-
     def test_run_then_close(self):
         processes = [tc.process()]
         engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(processes)

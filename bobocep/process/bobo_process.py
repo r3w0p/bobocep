@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 from inspect import signature
 from types import MethodType
-from typing import Callable, List, Tuple, Union
+from typing import Callable, List, Tuple, Optional
 
 from bobocep.action.bobo_action import BoboAction
 from bobocep.process.bobo_process_error import BoboProcessError
@@ -21,7 +21,7 @@ class BoboProcess:
                  name: str,
                  patterns: List[BoboPattern],
                  datagen: Callable,
-                 action: Union[BoboAction, None],
+                 action: Optional[BoboAction],
                  retain: bool = True):
         super().__init__()
 
@@ -39,7 +39,7 @@ class BoboProcess:
         self.name: str = name
         self.patterns: Tuple[BoboPattern, ...] = tuple(patterns)
         self.datagen: Callable = datagen
-        self.action: Union[BoboAction, None] = action
+        self.action: Optional[BoboAction] = action
 
         # Prevent garbage collection of object if callable is a method.
         self._obj = datagen.__self__ \

@@ -1,8 +1,7 @@
 # Copyright (c) 2019-2022 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
-
-from typing import Union
+from typing import Optional
 
 from bobocep.engine.receiver.event_gen.bobo_event_gen import \
     BoboEventGen
@@ -15,5 +14,5 @@ class BoboEventGenNone(BoboEventGen):
     def __init__(self):
         super().__init__()
 
-    def maybe_generate(self, event_id: str) -> Union[BoboEvent, None]:
+    def maybe_generate(self, event_id: str) -> Optional[BoboEvent]:
         return None

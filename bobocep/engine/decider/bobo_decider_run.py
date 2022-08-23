@@ -30,7 +30,7 @@ class BoboDeciderRun:
             self.pattern.blocks[0].group: [event]
         }
         self._block_index = 1
-        self._lock = RLock()
+        self._lock: RLock = RLock()
         self._halted = self.is_complete()
 
     def history(self) -> BoboHistory:
