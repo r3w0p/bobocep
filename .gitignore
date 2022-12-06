@@ -12,8 +12,8 @@
 
 !.github/
 !.github/**
-!bobocep/
-!bobocep/**
+!src/
+!src/**
 !media/
 !media/**
 !tests/

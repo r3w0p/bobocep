@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setup(
     author="r3w0p",
-    name='bobocep',
+    name='BoboCEP',
     version='0.6.0',
     description="A fault-tolerant complex event processing engine designed "
                 "for edge computing in IoT systems.",
@@ -29,7 +29,7 @@ setup(
         'Topic :: System :: Monitoring'
     ],
     install_requires=install_requires,
-    packages=find_packages(include=['bobocep', 'bobocep.*']),
+    packages=find_packages(include=['src', 'src.*']),
     test_suite='tests',
     zip_safe=False,
 )
