@@ -71,9 +71,7 @@ class BoboSetupSimple(BoboSetup):
         self._max_size: int = max_size
 
     def generate(self) -> BoboEngine:
-        # TODO validator list / 'chain'
-        # TODO if distributed, add Jsonable validator as standard
-        #  (unless something=False or it has been added already?)
+        # TODO if distributed, add JSONable validator as standard
         receiver = BoboReceiver(
             validator=self._validator,
             event_id_gen=self._event_id_gen,

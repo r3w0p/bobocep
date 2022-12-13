@@ -6,19 +6,15 @@ from typing import Tuple, List
 
 from src.cep.engine.receiver.validator.bobo_validator import BoboValidator
 from src.cep.event.bobo_event import BoboEvent
+import json
 
 
-class BoboValidatorType(BoboValidator):
-    """Validates whether the entity type matches any of the given data types.
+class BoboValidatorJSONable(BoboValidator):
+    """Validates whether the type of the entity is JSONable.
     If the entity is a BoboEvent, the event's data are checked instead."""
 
-    def __init__(self,
-                 types: List[type],
-                 subtype: bool = True):
+    def __init__(self):
         super().__init__()
-
-        self._types: Tuple[type, ...] = tuple(types)
-        self._subtype = subtype
 
     def is_valid(self, entity) -> bool:
         if isinstance(entity, BoboEvent):
@@ -26,7 +22,10 @@ class BoboValidatorType(BoboValidator):
         else:
             data = entity
 
-        if self._subtype:
-            return any(isinstance(data, t) for t in self._types)
-        else:
-            return any(type(data) == t for t in self._types)
+        try:
+            json.loads(data)
+
+        except ValueError:
+            return False
+
+        return True

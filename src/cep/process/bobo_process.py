@@ -13,8 +13,8 @@ from src.cep.process.pattern.bobo_pattern import BoboPattern
 class BoboProcess:
     """A process."""
 
-    _EXC_NAME_LEN = "'name' must have a length greater than 0"
-    _EXC_INVALID_CALL = "'datagen' must have 2 parameters, found {1}"
+    _EXC_NAME_LEN = "name must have a length greater than 0"
+    _EXC_INVALID_CALL = "datagen must have 2 parameters, found {}"
     _LEN_PARAM_DATAGEN = 2
 
     def __init__(self,

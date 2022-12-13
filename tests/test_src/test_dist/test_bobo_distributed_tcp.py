@@ -68,7 +68,7 @@ class TestValid:
             halted_incomplete=halted_incomplete,
             updated=updated)
 
-        sleep(1)
+        sleep(3)
 
         dist.close()
         dist.join()
@@ -76,5 +76,3 @@ class TestValid:
 
         assert dist.size_outgoing() == 0
         assert dist.size_incoming() == 1
-
-        print(dist._queue_incoming.get_nowait())

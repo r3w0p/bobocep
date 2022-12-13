@@ -16,7 +16,7 @@ from src.cep.process.pattern.predicate.bobo_predicate_error import \
 class BoboPredicateCall(BoboPredicate):
     """A predicate that evaluates using a custom function or method."""
 
-    _EXC_INVALID_PARAM = "'call' must have {0} parameters, found {1}"
+    _EXC_INVALID_PARAM = "call must have {0} parameters, found {1}"
     _LEN_PARAM_CALL = 2
 
     def __init__(self, call: Callable):

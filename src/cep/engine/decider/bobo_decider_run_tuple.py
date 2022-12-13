@@ -1,8 +1,8 @@
 from src.cep.event.bobo_history import BoboHistory
-from src.cep.misc.bobo_serializable import BoboSerializable
+from src.misc.bobo_jsonable import BoboJSONable
 
 
-class BoboDeciderRunTuple(BoboSerializable):
+class BoboDeciderRunTuple(BoboJSONable):
 
     PROCESS_NAME = "process_name"
     PATTERN_NAME = "pattern_name"
@@ -37,17 +37,17 @@ class BoboDeciderRunTuple(BoboSerializable):
     def history(self) -> BoboHistory:
         return self._history
 
-    def to_dict(self) -> dict:
+    def to_json_str(self) -> dict:
         return {
             self.PROCESS_NAME: self.process_name,
             self.PATTERN_NAME: self.pattern_name,
             self.BLOCK_INDEX: self.block_index,
-            self.HISTORY: self.history.to_dict()
+            self.HISTORY: self.history.to_json_str()
         }
 
     @staticmethod
-    def from_dict(d: dict) -> 'BoboDeciderRunTuple':
-        BoboDeciderRunTuple.validate_dict(d, [
+    def from_json_str(d: dict) -> 'BoboDeciderRunTuple':
+        BoboDeciderRunTuple._validate_dict(d, [
             (BoboDeciderRunTuple.PROCESS_NAME, str),
             (BoboDeciderRunTuple.PATTERN_NAME, str),
             (BoboDeciderRunTuple.BLOCK_INDEX, int),
@@ -58,5 +58,5 @@ class BoboDeciderRunTuple(BoboSerializable):
             process_name=d[BoboDeciderRunTuple.PROCESS_NAME],
             pattern_name=d[BoboDeciderRunTuple.PATTERN_NAME],
             block_index=d[BoboDeciderRunTuple.BLOCK_INDEX],
-            history=BoboHistory.from_dict(d[BoboDeciderRunTuple.HISTORY])
+            history=BoboHistory.from_json_str(d[BoboDeciderRunTuple.HISTORY])
         )

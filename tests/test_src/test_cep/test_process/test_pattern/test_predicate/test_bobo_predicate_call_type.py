@@ -6,7 +6,7 @@ from datetime import datetime
 
 from src.cep.event.bobo_event_simple import BoboEventSimple
 from src.cep.event.bobo_history import BoboHistory
-from src.cep.process.pattern.predicate.bobo_predicate_call_type import \
+from src.cep.process.pattern.predicate.bobo_predicate_call_type_cast import \
     BoboPredicateCallType
 
 

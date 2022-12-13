@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 
 from typing import Any
-
+from json import dumps, loads
 from src.cep.event.bobo_event import BoboEvent
 from src.cep.event.bobo_event_error import BoboEventError
 from src.cep.event.bobo_history import BoboHistory
@@ -11,6 +11,8 @@ from src.cep.event.bobo_history import BoboHistory
 
 class BoboEventComplex(BoboEvent):
     """A complex event."""
+
+    TYPE_COMPLEX = "complex"
 
     PROCESS_NAME = "process_name"
     PATTERN_NAME = "pattern_name"
@@ -53,37 +55,26 @@ class BoboEventComplex(BoboEvent):
     def history(self) -> BoboHistory:
         return self._history
 
-    def to_dict(self) -> dict:
-        return {
-            self.EVENT_TYPE: self.__class__.__name__,
+    def to_json_str(self) -> str:
+        return dumps({
+            self.EVENT_TYPE: self.TYPE_COMPLEX,
             self.EVENT_ID: self.event_id,
             self.TIMESTAMP: self.timestamp,
-            self.DATA: self.data,
-            self.DATA_TYPE: type(self.data).__name__,
+            self.DATA: str(self.data),
             self.PROCESS_NAME: self.process_name,
             self.PATTERN_NAME: self.pattern_name,
-            self.HISTORY: self.history.to_dict()
-        }
+            self.HISTORY: self.history
+        }, default=lambda o: o.to_json_str())
 
     @staticmethod
-    def from_dict(d: dict) -> 'BoboEventComplex':
-        BoboEventComplex.validate_dict(d, [
-            (BoboEventComplex.EVENT_ID, str),
-            (BoboEventComplex.TIMESTAMP, int),
-            (BoboEventComplex.DATA, None),
-            (BoboEventComplex.DATA_TYPE, str),
-            (BoboEventComplex.PROCESS_NAME, str),
-            (BoboEventComplex.PATTERN_NAME, str),
-            (BoboEventComplex.HISTORY, dict)
-        ])
-
-        t = getattr(__builtins__, d[BoboEventComplex.DATA_TYPE])
+    def from_json_str(j: str) -> 'BoboEventComplex':
+        d: dict = loads(j)
 
         return BoboEventComplex(
             event_id=d[BoboEventComplex.EVENT_ID],
             timestamp=d[BoboEventComplex.TIMESTAMP],
-            data=t(d[BoboEventComplex.DATA]),
+            data=d[BoboEventComplex.DATA],
             process_name=d[BoboEventComplex.PROCESS_NAME],
             pattern_name=d[BoboEventComplex.PATTERN_NAME],
-            history=BoboHistory.from_dict(d[BoboEventComplex.HISTORY])
+            history=BoboHistory.from_json_str(d[BoboEventComplex.HISTORY])
         )

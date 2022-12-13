@@ -10,26 +10,25 @@ from src.cep.process.pattern.predicate.bobo_predicate_call import \
     BoboPredicateCall
 
 
-class BoboPredicateCallNotType(BoboPredicateCall):
+class BoboPredicateCallInstanceOf(BoboPredicateCall):
     """A predicate that evaluates using a custom function or method after
-       first checking whether the event data type does not match given
-       types."""
+       first checking whether the event data is an instance of a given type."""
 
     def __init__(self,
                  call: Callable,
-                 types: List[type],
+                 dtype: type,
                  subtype: bool = True):
         super().__init__(call=call)
 
-        self._types: Tuple[type, ...] = tuple(types)
-        self._subtype = subtype
+        self._dtype: type = dtype
+        self._subtype: bool = subtype
 
     def evaluate(self, event: BoboEvent, history: BoboHistory) -> bool:
         if self._subtype:
-            if any(isinstance(event.data, t) for t in self._types):
+            if not isinstance(event.data, self._dtype):
                 return False
         else:
-            if any(type(event.data) == t for t in self._types):
+            if not type(event.data) == self._dtype:
                 return False
 
         return self._call(event, history)

@@ -3,6 +3,7 @@
 # modified under the terms of the MIT License.
 
 from typing import Any
+from json import dumps, loads
 from src.cep.event.bobo_event import BoboEvent
 from src.cep.event.bobo_event_error import BoboEventError
 
@@ -10,14 +11,16 @@ from src.cep.event.bobo_event_error import BoboEventError
 class BoboEventAction(BoboEvent):
     """An action event."""
 
+    TYPE_ACTION = "action"
+
     PROCESS_NAME = "process_name"
     PATTERN_NAME = "pattern_name"
     ACTION_NAME = "action_name"
     SUCCESS = "success"
 
-    _EXC_PRO_LEN = "'process_name' must have a length greater than 0"
-    _EXC_PAT_LEN = "'pattern_name' must have a length greater than 0"
-    _EXC_ACT_LEN = "'action_name' must have a length greater than 0"
+    _EXC_PRO_LEN = "process name must have a length greater than 0"
+    _EXC_PAT_LEN = "pattern name must have a length greater than 0"
+    _EXC_ACT_LEN = "action name must have a length greater than 0"
 
     def __init__(self,
                  event_id,
@@ -62,38 +65,26 @@ class BoboEventAction(BoboEvent):
     def success(self) -> bool:
         return self._success
 
-    def to_dict(self) -> dict:
-        return {
-            self.EVENT_TYPE: self.__class__.__name__,
+    def to_json_str(self) -> str:
+        return dumps({
+            self.EVENT_TYPE: self.TYPE_ACTION,
             self.EVENT_ID: self.event_id,
             self.TIMESTAMP: self.timestamp,
             self.DATA: self.data,
-            self.DATA_TYPE: type(self.data).__name__,
             self.PROCESS_NAME: self.process_name,
             self.PATTERN_NAME: self.pattern_name,
             self.ACTION_NAME: self.action_name,
             self.SUCCESS: self.success
-        }
+        }, default=lambda o: o.to_json_str())
 
     @staticmethod
-    def from_dict(d: dict) -> 'BoboEventAction':
-        BoboEventAction.validate_dict(d, [
-            (BoboEventAction.EVENT_ID, str),
-            (BoboEventAction.TIMESTAMP, int),
-            (BoboEventAction.DATA, None),
-            (BoboEventAction.DATA_TYPE, str),
-            (BoboEventAction.PROCESS_NAME, str),
-            (BoboEventAction.PATTERN_NAME, str),
-            (BoboEventAction.ACTION_NAME, str),
-            (BoboEventAction.SUCCESS, bool)
-        ])
-
-        t = getattr(__builtins__, d[BoboEventAction.DATA_TYPE])
+    def from_json_str(j: str) -> 'BoboEventAction':
+        d: dict = loads(j)
 
         return BoboEventAction(
             event_id=d[BoboEventAction.EVENT_ID],
             timestamp=d[BoboEventAction.TIMESTAMP],
-            data=t(d[BoboEventAction.DATA]),
+            data=d[BoboEventAction.DATA],
             process_name=d[BoboEventAction.PROCESS_NAME],
             pattern_name=d[BoboEventAction.PATTERN_NAME],
             action_name=d[BoboEventAction.ACTION_NAME],

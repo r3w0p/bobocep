@@ -24,6 +24,7 @@ from src.dist.bobo_distributed_system_error import \
     BoboDistributedSystemError
 from src.dist.bobo_distributed_timeout_error import \
     BoboDistributedTimeoutError
+from src.misc.bobo_jsonable_error import BoboJSONableError
 
 
 class BoboDistributedTCP(BoboDistributed):
@@ -114,8 +115,10 @@ class BoboDistributedTCP(BoboDistributed):
         self._thread_incoming: Thread = Thread(target=self._tcp_incoming)
         self._thread_outgoing: Thread = Thread(target=self._tcp_outgoing)
 
-        self._queue_incoming: Queue[Dict] = Queue(maxsize=max_size_incoming)
-        self._queue_outgoing: Queue[Dict] = Queue(maxsize=max_size_outgoing)
+        self._queue_incoming: Queue[Dict[str, List[BoboDeciderRunTuple]]] = \
+            Queue(maxsize=max_size_incoming)
+        self._queue_outgoing: Queue[Dict[str, List[BoboDeciderRunTuple]]] = \
+            Queue(maxsize=max_size_outgoing)
 
     def run(self):
         with self._lock:
@@ -168,15 +171,13 @@ class BoboDistributedTCP(BoboDistributed):
             if not self._running:
                 raise BoboDistributedError(self._EXC_NOT_RUNNING)
 
-            # TODO BoboJsonable error handling
-            self._queue_outgoing.put_nowait({
-                self._KEY_HALTED_COMPLETE: [
-                    hc.to_dict() for hc in halted_complete],
-                self._KEY_HALTED_INCOMPLETE: [
-                    hi.to_dict() for hi in halted_incomplete],
-                self._KEY_UPDATED: [
-                    upd.to_dict() for upd in updated]
-            })
+            outgoing: Dict[str, List[BoboDeciderRunTuple]] = {
+                self._KEY_HALTED_COMPLETE: halted_complete,
+                self._KEY_HALTED_INCOMPLETE: halted_incomplete,
+                self._KEY_UPDATED: updated
+            }
+
+            self._queue_outgoing.put_nowait(outgoing)  # TODO queue full?
 
     def size_incoming(self) -> int:
         with self._lock:
@@ -193,13 +194,9 @@ class BoboDistributedTCP(BoboDistributed):
     def _tcp_incoming(self):
         mydev = self._devices[self._urn]
 
-        print("Creating socket...")
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        print("Connecting to: {}:{}".format(mydev.addr, mydev.port))
         s.bind((mydev.addr, mydev.port))
 
-        print("Listening...")
         # queue up as many as 5 connect requests (the normal max)
         # before refusing outside connections
         s.listen(self._listen)
@@ -225,7 +222,8 @@ class BoboDistributedTCP(BoboDistributed):
 
                 except BoboDistributedTimeoutError as e:
                     # From _tcp_incoming_handle_client
-                    print("Incoming {}: {}".format(e.__class__.__name__, e))
+                    raise BoboDistributedSystemError(
+                        "Incoming {}: {}".format(e.__class__.__name__, e))
 
                 except TimeoutError:
                     # From accept
@@ -236,7 +234,8 @@ class BoboDistributedTCP(BoboDistributed):
 
                 except Exception as e:
                     # From other
-                    print("Incoming {}: {}".format(e.__class__.__name__, e))
+                    raise BoboDistributedSystemError(
+                        "Incoming {}: {}".format(e.__class__.__name__, e))
 
     def _tcp_outgoing(self):
         while True:
@@ -248,10 +247,12 @@ class BoboDistributedTCP(BoboDistributed):
                     continue
 
                 try:
-                    msg = json.dumps(self._queue_outgoing.get_nowait())
+                    msg: str = self._outgoing_to_json(
+                        self._queue_outgoing.get_nowait())
 
-                except TypeError as e:
-                    print("Outgoing {}: {}".format(e.__class__.__name__, e))
+                except (BoboJSONableError, TypeError) as e:
+                    raise BoboDistributedSystemError(
+                        "Outgoing {}: {}".format(e.__class__.__name__, e))
 
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -272,32 +273,26 @@ class BoboDistributedTCP(BoboDistributed):
                         s.connect((d.addr, d.port))
                         s.settimeout(None)
 
-                        # TODO handle wrap exception(s)
                         msg_bytes = self._msg_wrap(msg)
-                        # print(len(msg_bytes))
 
                         s.settimeout(self._TIMEOUT_SEND)
                         s.sendall(msg_bytes)
                         s.settimeout(None)
 
-                        # print("Sent: {}".format(msg))
-
                 except TimeoutError as e:
                     # Raised when a system function timed out at
                     # the system level
-                    print("Outgoing {}: {}".format(e.__class__.__name__, e))
-                    raise BoboDistributedTimeoutError(str(e))
+                    raise BoboDistributedTimeoutError(
+                        "Outgoing {}: {}".format(e.__class__.__name__, e))
 
                 except OSError as e:
                     # This exception is raised when a system function
                     # returns a system-related error.
-                    print("Outgoing {}: {}".format(e.__class__.__name__, e))
-                    raise BoboDistributedSystemError(str(e))
+                    raise BoboDistributedSystemError(
+                        "Outgoing {}: {}".format(e.__class__.__name__, e))
 
     def _tcp_incoming_handle_client(
             self, client_s, client_addr, client_accepted):
-        print("Connection from: {}".format(client_addr))
-
         with client_s:
             all_bytes = bytearray()
 
@@ -315,11 +310,13 @@ class BoboDistributedTCP(BoboDistributed):
 
                 if len(bytes_msg) >= self._msg_min_length and \
                         bytes_msg[-len(self._END_BYTES):] == self._END_BYTES:
-                    # TODO handle unwrap exception(s)
-                    #  e.g. "ValueError: MAC check failed"
-                    plaintext = self._msg_unwrap(all_bytes)
 
-                    # TODO handle split exception(s)
+                    try:
+                        plaintext = self._msg_unwrap(all_bytes)
+                    except ValueError as e:
+                        raise BoboDistributedTimeoutError(
+                            "Failed to unwrap incoming message bytes:", e)
+
                     pt_bobo, pt_urn, pt_id, pt_json = self._split_plaintext(
                         plaintext)
 
@@ -331,12 +328,49 @@ class BoboDistributedTCP(BoboDistributed):
                     # TODO if urn
                     # TODO if id
 
-                    # TODO json exception(s)
-                    ljsn = json.loads(pt_json)
+                    try:
+                        incoming = self._incoming_from_json(pt_json)
+                        # TODO queue full
+                        self._queue_incoming.put_nowait(incoming)
 
-                    # TODO exceptions for full queues...?
-                    #  i think i did this elsewhere...
-                    self._queue_incoming.put_nowait(ljsn)
+                    except (BoboJSONableError, TypeError) as e:
+                        raise BoboDistributedSystemError(
+                            "Unable to build incoming message from JSON:", e)
+
+    def _incoming_from_json(self, msg_str: str) \
+            -> Dict[str, List[BoboDeciderRunTuple]]:
+        msg_dict: Dict[str, List[Dict]] = json.loads(msg_str)
+
+        msg: Dict[str, List[BoboDeciderRunTuple]] = {
+            self._KEY_HALTED_COMPLETE: [
+                BoboDeciderRunTuple.from_json_str(d) for d in
+                msg_dict[self._KEY_HALTED_COMPLETE]],
+            self._KEY_HALTED_INCOMPLETE: [
+                BoboDeciderRunTuple.from_json_str(d) for d in
+                msg_dict[self._KEY_HALTED_INCOMPLETE]],
+            self._KEY_UPDATED: [
+                BoboDeciderRunTuple.from_json_str(d) for d in
+                msg_dict[self._KEY_UPDATED]]
+        }
+
+        return msg
+
+    def _outgoing_to_json(
+            self, msg: Dict[str, List[BoboDeciderRunTuple]]) -> str:
+        msg_dict: Dict[str, List[Dict]] = {
+            self._KEY_HALTED_COMPLETE: [
+                bdrt.to_json_str() for bdrt in
+                msg[self._KEY_HALTED_COMPLETE]],
+            self._KEY_HALTED_INCOMPLETE: [
+                bdrt.to_json_str() for bdrt in
+                msg[self._KEY_HALTED_INCOMPLETE]],
+            self._KEY_UPDATED: [
+                bdrt.to_json_str() for bdrt in
+                msg[self._KEY_UPDATED]]
+        }
+
+        msg_str: str = json.dumps(msg_dict)
+        return msg_str
 
     def _split_plaintext(self, plaintext: str) -> Tuple[str, str, str, str]:
         ix_delim = []
@@ -386,7 +420,8 @@ class BoboDistributedTCP(BoboDistributed):
                 -(self._LEN_END_BYTES + self._mac_length + self._nonce_length):
                 -(self._LEN_END_BYTES + self._mac_length)]
         mac = msg_bytes[
-              -(self._LEN_END_BYTES + self._nonce_length):-self._LEN_END_BYTES]
+              -(self._LEN_END_BYTES + self._nonce_length):
+              -self._LEN_END_BYTES]
 
         ciphertext = msg_bytes[:-(
                     self._LEN_END_BYTES +

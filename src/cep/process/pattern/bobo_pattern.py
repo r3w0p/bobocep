@@ -12,8 +12,8 @@ from src.cep.process.pattern.predicate.bobo_predicate import BoboPredicate
 class BoboPattern:
     """A pattern."""
 
-    _EXC_NAME_LEN = "'name' must have a length greater than 0"
-    _EXC_BLOCKS_LEN = "'blocks' must have a length greater than 0"
+    _EXC_NAME_LEN = "name must have a length greater than 0"
+    _EXC_BLOCKS_LEN = "blocks must have a length greater than 0"
     _EXC_BLOCK_FIRST_NOT_NEG = "first block cannot be negated"
     _EXC_BLOCK_FIRST_NOT_OPT = "first block cannot be optional"
     _EXC_BLOCK_FIRST_NOT_LOOP = "first block cannot loop"

@@ -3,20 +3,20 @@
 # modified under the terms of the MIT License.
 
 from abc import ABC
-from typing import Any
+from typing import Any, List, Tuple, Optional
 
 from src.cep.event.bobo_event_error import BoboEventError
-from src.cep.misc.bobo_serializable import BoboSerializable
+from src.misc.bobo_jsonable import BoboJSONable
+from src.misc.bobo_jsonable_error import BoboJSONableError
 
 
-class BoboEvent(BoboSerializable, ABC):
+class BoboEvent(BoboJSONable, ABC):
     """An event."""
 
     EVENT_TYPE = "event_type"
     EVENT_ID = "event_id"
     TIMESTAMP = "timestamp"
     DATA = "data"
-    DATA_TYPE = "data_type"
 
     _EXC_ID_LEN = "'event_id_gen' must have a length greater than 0"
 

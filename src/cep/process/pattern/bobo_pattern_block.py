@@ -12,13 +12,13 @@ from src.cep.process.pattern.predicate.bobo_predicate import BoboPredicate
 class BoboPatternBlock:
     """A pattern block."""
 
-    _EXC_GROUP_LEN = "'group' must have a length greater than 0"
-    _EXC_PREDICATES_LEN = "'predicates' must have a length greater than 0"
-    _EXC_STRICT_OPT_TRUE = "'strict' and 'optional' must not both be True"
-    _EXC_NEG_OR_OPT_LOOP_TRUE = "'negated' and 'optional' must " \
-                                "both be False if 'loop' is True"
-    _EXC_NEG_AND_OPT_LOOP_FALSE = "'negated' and 'optional' must not " \
-                                  "both be True if 'loop' is False"
+    _EXC_GROUP_LEN = "group must have a length greater than 0"
+    _EXC_PREDICATES_LEN = "predicates must have a length greater than 0"
+    _EXC_STRICT_OPT_TRUE = "strict and optional must not both be True"
+    _EXC_NEG_OR_OPT_LOOP_TRUE = "negated and optional must " \
+                                "both be False if loop is True"
+    _EXC_NEG_AND_OPT_LOOP_FALSE = "negated and optional must not " \
+                                  "both be True if loop is False"
 
     def __init__(self,
                  group: str,

@@ -5,10 +5,10 @@
 from typing import Dict, List, Tuple, Optional
 
 from src.cep.event.bobo_event import BoboEvent
-from src.cep.misc.bobo_serializable import BoboSerializable
+from src.misc.bobo_jsonable import BoboJSONable
 
 
-class BoboHistory(BoboSerializable):
+class BoboHistory(BoboJSONable):
     """A history of events."""
 
     def __init__(self, events: Dict[str, List[BoboEvent]]):
@@ -52,19 +52,22 @@ class BoboHistory(BoboSerializable):
     def last(self) -> Optional[BoboEvent]:
         return self._last
 
-    def to_dict(self) -> dict:
+    def to_json_str(self) -> dict:
         d: Dict[str, List[dict]] = {}
 
         for key in self._events:
-            d[key] = [e.to_dict() for e in self._events[key]]
+            d[key] = [e.to_json_str() for e in self._events[key]]
 
         return d
 
     @staticmethod
-    def from_dict(d: dict) -> 'BoboHistory':
+    def from_json_str(d: dict) -> 'BoboHistory':
+        from pprint import pprint
         from src.cep.event.bobo_event_factory import BoboEventFactory
 
         events: Dict[str, List[BoboEvent]] = {}
+
+        pprint(d)
 
         for key in d:
             events[key] = [BoboEventFactory.from_json(e) for e in d[key]]

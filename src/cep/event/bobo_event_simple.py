@@ -3,12 +3,14 @@
 # modified under the terms of the MIT License.
 
 from typing import Any
-
+from json import dumps, loads
 from src.cep.event.bobo_event import BoboEvent
 
 
 class BoboEventSimple(BoboEvent):
     """A simple event."""
+
+    TYPE_SIMPLE = "simple"
 
     def __init__(self,
                  event_id: str,
@@ -19,28 +21,20 @@ class BoboEventSimple(BoboEvent):
             timestamp=timestamp,
             data=data)
 
-    def to_dict(self) -> dict:
-        return {
-            self.EVENT_TYPE: self.__class__.__name__,
+    def to_json_str(self) -> str:
+        return dumps({
+            self.EVENT_TYPE: self.TYPE_SIMPLE,
             self.EVENT_ID: self.event_id,
             self.TIMESTAMP: self.timestamp,
-            self.DATA: self.data,
-            self.DATA_TYPE: type(self.data).__name__
-        }
+            self.DATA: self.data
+        }, default=lambda o: o.to_json_str())
 
     @staticmethod
-    def from_dict(d: dict) -> 'BoboEventSimple':
-        BoboEventSimple.validate_dict(d, [
-            (BoboEventSimple.EVENT_ID, str),
-            (BoboEventSimple.TIMESTAMP, int),
-            (BoboEventSimple.DATA, None),
-            (BoboEventSimple.DATA_TYPE, str),
-        ])
-
-        t = getattr(__builtins__, d[BoboEventSimple.DATA_TYPE])
+    def from_json_str(j: str) -> 'BoboEventSimple':
+        d: dict = loads(j)
 
         return BoboEventSimple(
             event_id=d[BoboEventSimple.EVENT_ID],
             timestamp=d[BoboEventSimple.TIMESTAMP],
-            data=t(d[BoboEventSimple.DATA])
+            data=d[BoboEventSimple.DATA]
         )

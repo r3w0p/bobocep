@@ -99,5 +99,5 @@ class BoboEngine:
                     for i in range(times):
                         if not task.update() and self._early_stop:
                             break
-            # TODO pytest "return True" issue
+
             return not self._closed
