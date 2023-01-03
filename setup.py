@@ -9,7 +9,7 @@ with open("requirements.txt") as f:
 setup(
     author="r3w0p",
     name="BoboCEP",
-    version="0.9.3",
+    version="0.9.4",
     description="A complex event processing engine designed for "
                 "fault-tolerant edge computing in IoT systems.",
     long_description=long_description,
