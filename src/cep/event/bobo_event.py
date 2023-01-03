@@ -1,13 +1,12 @@
-# Copyright (c) 2019-2022 r3w0p
+# Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-from abc import ABC
-from typing import Any, List, Tuple, Optional
+from abc import ABC, abstractmethod
+from typing import Any
 
 from src.cep.event.bobo_event_error import BoboEventError
 from src.misc.bobo_jsonable import BoboJSONable
-from src.misc.bobo_jsonable_error import BoboJSONableError
 
 
 class BoboEvent(BoboJSONable, ABC):
@@ -36,6 +35,11 @@ class BoboEvent(BoboJSONable, ABC):
         self._event_id: str = event_id
         self._timestamp: int = timestamp
         self._data: Any = data
+
+    @staticmethod
+    @abstractmethod
+    def from_dict(d: dict) -> 'BoboEvent':
+        """"""
 
     @property
     def event_id(self) -> str:

@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2022 r3w0p
+# Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -28,6 +28,7 @@ from src.setup.bobo_setup import BoboSetup
 
 
 class BoboSetupSimple(BoboSetup):
+    """A simple setup to make the configuration of BoboCEP easier."""
 
     def __init__(self,
                  processes: List[BoboProcess],
@@ -71,7 +72,7 @@ class BoboSetupSimple(BoboSetup):
         self._max_size: int = max_size
 
     def generate(self) -> BoboEngine:
-        # TODO if distributed, add JSONable validator as standard
+        # TODO if distributed, ensure validator is instanceof JSONableVal
         receiver = BoboReceiver(
             validator=self._validator,
             event_id_gen=self._event_id_gen,

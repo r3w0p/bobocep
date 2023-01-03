@@ -1,12 +1,13 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
-from datetime import datetime
 
 import pytest
 
 from src.cep.event.bobo_event_action import BoboEventAction
 from src.cep.event.bobo_event_error import BoboEventError
+from src.cep.event.timestamp_gen.bobo_timestamp_gen_epoch import \
+    BoboTimestampGenEpoch
 
 
 class TestInvalid:
@@ -15,7 +16,7 @@ class TestInvalid:
         with pytest.raises(BoboEventError):
             BoboEventAction(
                 event_id="",
-                timestamp=datetime.now(),
+                timestamp=BoboTimestampGenEpoch().generate(),
                 data=None,
                 process_name="process",
                 pattern_name="pattern",
@@ -26,7 +27,7 @@ class TestInvalid:
         with pytest.raises(BoboEventError):
             BoboEventAction(
                 event_id="event_id_gen",
-                timestamp=datetime.now(),
+                timestamp=BoboTimestampGenEpoch().generate(),
                 data=None,
                 process_name="",
                 pattern_name="pattern",
@@ -37,7 +38,7 @@ class TestInvalid:
         with pytest.raises(BoboEventError):
             BoboEventAction(
                 event_id="event_id_gen",
-                timestamp=datetime.now(),
+                timestamp=BoboTimestampGenEpoch().generate(),
                 data=None,
                 process_name="process",
                 pattern_name="",
@@ -48,7 +49,7 @@ class TestInvalid:
         with pytest.raises(BoboEventError):
             BoboEventAction(
                 event_id="event_id_gen",
-                timestamp=datetime.now(),
+                timestamp=BoboTimestampGenEpoch().generate(),
                 data=None,
                 process_name="process",
                 pattern_name="pattern",

@@ -1,8 +1,7 @@
-# Copyright (c) 2019-2022 r3w0p
+# Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-from datetime import datetime
 from threading import RLock
 from time import time
 from types import MethodType
@@ -32,6 +31,7 @@ class BoboEventGenTime(BoboEventGen):
         self._datagen = datagen
         self._tz = tz
         self._last = self._time_ms() if from_now else 0
+        self._timegen = BoboTimestampGenEpoch()
 
         # Prevent garbage collection of object if callable is a method.
         self._obj = datagen.__self__ \
@@ -44,7 +44,7 @@ class BoboEventGenTime(BoboEventGen):
                 self._last = now
                 return BoboEventSimple(
                     event_id=event_id,
-                    timestamp=BoboTimestampGenEpoch.generate(),
+                    timestamp=self._timegen.generate(),
                     data=self._datagen())
             else:
                 return None

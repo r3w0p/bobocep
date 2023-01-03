@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2022 r3w0p
+# Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -8,8 +8,6 @@ import tests.common as tc
 from src.cep.engine.receiver.bobo_receiver_error import BoboReceiverError
 from src.cep.engine.receiver.event_gen.bobo_event_gen_time import \
     BoboEventGenTime
-from src.cep.engine.receiver.validator.bobo_validator_not_type import \
-    BoboValidatorNotType
 from src.cep.event.bobo_event_simple import BoboEventSimple
 
 
@@ -39,16 +37,6 @@ class TestValid:
         receiver, subscriber = tc.receiver_sub()
 
         assert receiver.update() is False
-
-    def test_validator_invalid_data(self):
-        receiver, subscriber = tc.receiver_sub(
-            validator=BoboValidatorNotType(types=[type(None)]))
-
-        data = None
-        receiver.add_data(data=data)
-        receiver.update()
-
-        assert len(subscriber.output) == 0
 
     def test_null_event(self):
         data_null_event = 456

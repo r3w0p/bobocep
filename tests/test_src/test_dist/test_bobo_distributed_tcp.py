@@ -1,18 +1,16 @@
-# Copyright (c) 2019-2022 r3w0p
+# Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
-import json
 
-import pytest
 from threading import Thread
+from time import sleep
+
+import tests.common as tc
 from src.cep.engine.decider.bobo_decider_run_tuple import \
     BoboDeciderRunTuple
 from src.cep.event.bobo_history import BoboHistory
-import tests.common as tc
 from src.dist.bobo_device_tuple import BoboDeviceTuple
 from src.dist.bobo_distributed_tcp import BoboDistributedTCP
-from pprint import pprint
-from time import sleep
 
 
 def run_distributed_tcp(dist: BoboDistributedTCP):
@@ -44,17 +42,17 @@ class TestValid:
             BoboDeviceTuple(
                 addr="127.0.0.1",
                 port=8080,
-                urn="urn_dist",
-                id_key="1234567890"),
+                urn="urn:dist:1",
+                id_key="1111111111"),
             BoboDeviceTuple(
                 addr="127.0.0.1",
                 port=8080,
-                urn="urn_dist_2",
-                id_key="1234567890")
+                urn="urn:dist:2",
+                id_key="2222222222")
         ]
 
         dist = BoboDistributedTCP(
-            urn="urn_dist",
+            urn="urn:dist:1",
             devices=devices,
             aes_key="1234567890ABCDEF",
             max_size_incoming=255,

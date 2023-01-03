@@ -1,4 +1,4 @@
-# Copyright (c) 2022 r3w0p
+# Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -55,7 +55,7 @@ class BoboActionTrue(BoboAction):
     def execute(self, event: BoboEventComplex) -> BoboEventAction:
         return BoboEventAction(
             event_id=BoboEventIDGenUnique().generate(),
-            timestamp=BoboTimestampGenEpoch.generate(),
+            timestamp=BoboTimestampGenEpoch().generate(),
             data=True,
             process_name=event.process_name,
             pattern_name=event.pattern_name,
@@ -72,7 +72,7 @@ class BoboActionFalse(BoboAction):
     def execute(self, event: BoboEventComplex) -> BoboEventAction:
         return BoboEventAction(
             event_id=BoboEventIDGenUnique().generate(),
-            timestamp=BoboTimestampGenEpoch.generate(),
+            timestamp=BoboTimestampGenEpoch().generate(),
             data=False,
             process_name=event.process_name,
             pattern_name=event.pattern_name,
@@ -100,7 +100,7 @@ def event_simple(event_id: Optional[str] = None,
         event_id=event_id if event_id is not None else
         BoboEventIDGenUnique().generate(),
         timestamp=timestamp if timestamp is not None else
-        BoboTimestampGenEpoch.generate(),
+        BoboTimestampGenEpoch().generate(),
         data=data)
 
 
@@ -114,7 +114,7 @@ def event_complex(event_id: Optional[str] = None,
         event_id=event_id if event_id is not None else
         BoboEventIDGenUnique().generate(),
         timestamp=timestamp if timestamp is not None else
-        BoboTimestampGenEpoch.generate(),
+        BoboTimestampGenEpoch().generate(),
         data=data,
         process_name=process_name,
         pattern_name=pattern_name,
@@ -133,7 +133,7 @@ def event_action(event_id: Optional[str] = None,
         event_id=event_id if event_id is not None else
         BoboEventIDGenUnique().generate(),
         timestamp=timestamp if timestamp is not None else
-        BoboTimestampGenEpoch.generate(),
+        BoboTimestampGenEpoch().generate(),
         data=data,
         process_name=process_name,
         pattern_name=pattern_name,

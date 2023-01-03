@@ -5,12 +5,12 @@
 from abc import ABC, abstractmethod
 
 
-class BoboEventIDGen(ABC):
-    """An event ID generator."""
+class BoboTimestampGen(ABC):
+    """A timestamp generator."""
 
     def __init__(self):
         super().__init__()
 
     @abstractmethod
-    def generate(self) -> str:
+    def generate(self) -> int:
         """"""

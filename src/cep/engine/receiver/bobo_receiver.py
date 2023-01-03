@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2022 r3w0p
+# Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -47,6 +47,7 @@ class BoboReceiver(BoboEngineTask,
         self._validator = validator
         self._event_id_gen = event_id_gen
         self._event_gen = event_gen
+        self._timegen = BoboTimestampGenEpoch()
         self._max_size = max_size
         self._queue: Queue[Any] = Queue(self._max_size)
         self._closed = False
@@ -87,7 +88,7 @@ class BoboReceiver(BoboEngineTask,
         else:
             event = BoboEventSimple(
                 event_id=self._event_id_gen.generate(),
-                timestamp=BoboTimestampGenEpoch.generate(),
+                timestamp=self._timegen.generate(),
                 data=entity)
 
         for subscriber in self._subscribers:

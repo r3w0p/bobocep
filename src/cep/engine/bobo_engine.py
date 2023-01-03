@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2022 r3w0p
+# Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -12,10 +12,12 @@ from src.cep.engine.receiver.bobo_receiver import BoboReceiver
 
 
 class BoboEngine:
-    _EXC_TIMES_REC = "'times_receiver' must be greater than or equal to 0"
-    _EXC_TIMES_DEC = "'times_decider' must be greater than or equal to 0"
-    _EXC_TIMES_PRO = "'times_producer' must be greater than or equal to 0"
-    _EXC_TIMES_FOR = "'times_forwarder' must be greater than or equal to 0"
+    """An engine for complex event processing."""
+
+    _EXC_TIMES_REC = "receiver times must be greater than or equal to 0"
+    _EXC_TIMES_DEC = "decider times must be greater than or equal to 0"
+    _EXC_TIMES_PRO = "producer times must be greater than or equal to 0"
+    _EXC_TIMES_FOR = "forwarder times must be greater than or equal to 0"
 
     def __init__(self,
                  receiver: BoboReceiver,

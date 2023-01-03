@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2022 r3w0p
+# Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
@@ -23,8 +23,7 @@ def _pool_execute_action(
 
 
 class BoboActionHandlerPool(BoboActionHandler):
-    """A handler for the execution of actions that uses multiprocessing for
-    action execution."""
+    """An action handler that uses multiprocessing for action execution."""
 
     def __init__(self,
                  max_size: int,

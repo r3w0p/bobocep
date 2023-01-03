@@ -1,13 +1,13 @@
-# Copyright (c) 2019-2022 r3w0p
+# Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
-
-from datetime import datetime
 
 import pytest
 
 from src.cep.event.bobo_event_simple import BoboEventSimple
 from src.cep.event.bobo_history import BoboHistory
+from src.cep.event.timestamp_gen.bobo_timestamp_gen_epoch import \
+    BoboTimestampGenEpoch
 from src.cep.process.pattern.predicate.bobo_predicate_call import \
     BoboPredicateCall
 from src.cep.process.pattern.predicate.bobo_predicate_error import \
@@ -20,10 +20,12 @@ class TestValid:
         predicate = BoboPredicateCall(call=lambda e, h: e.data)
 
         event_1 = BoboEventSimple(
-            event_id="1", timestamp=datetime.now(), data=True)
+            event_id="1", timestamp=BoboTimestampGenEpoch().generate(),
+            data=True)
 
         event_2 = BoboEventSimple(
-            event_id="2", timestamp=datetime.now(), data=False)
+            event_id="2", timestamp=BoboTimestampGenEpoch().generate(),
+            data=False)
 
         history = BoboHistory(events={})
 

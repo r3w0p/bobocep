@@ -1,22 +1,22 @@
 from setuptools import setup, find_packages
 
-with open('README.md') as f:
+with open("README.md") as f:
     long_description = f.read()
 
-with open('requirements.txt') as f:
+with open("requirements.txt") as f:
     install_requires = f.read().splitlines()
 
 setup(
     author="r3w0p",
-    name='BoboCEP',
-    version='0.6.0',
-    description="A fault-tolerant complex event processing engine designed "
-                "for edge computing in IoT systems.",
+    name="BoboCEP",
+    version="0.9.0",
+    description="A complex event processing engine designed for "
+                "fault-tolerant edge computing in IoT systems.",
     long_description=long_description,
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     license="MIT",
-    keywords='bobocep',
-    url='https://github.com/r3w0p/bobocep',
+    keywords="bobocep",
+    url="https://github.com/r3w0p/bobocep",
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',

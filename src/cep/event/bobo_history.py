@@ -1,7 +1,8 @@
-# Copyright (c) 2019-2022 r3w0p
+# Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
+from json import dumps, loads
 from typing import Dict, List, Tuple, Optional
 
 from src.cep.event.bobo_event import BoboEvent
@@ -9,7 +10,7 @@ from src.misc.bobo_jsonable import BoboJSONable
 
 
 class BoboHistory(BoboJSONable):
-    """A history of events."""
+    """An event history."""
 
     def __init__(self, events: Dict[str, List[BoboEvent]]):
         super().__init__()
@@ -52,24 +53,25 @@ class BoboHistory(BoboJSONable):
     def last(self) -> Optional[BoboEvent]:
         return self._last
 
-    def to_json_str(self) -> dict:
-        d: Dict[str, List[dict]] = {}
+    def to_json_str(self) -> str:
+        d: Dict[str, List[BoboEvent]] = {}
 
         for key in self._events:
-            d[key] = [e.to_json_str() for e in self._events[key]]
+            d[key] = [e for e in self._events[key]]
 
-        return d
+        return dumps(d, default=lambda o: o.to_json_str())
 
     @staticmethod
-    def from_json_str(d: dict) -> 'BoboHistory':
-        from pprint import pprint
+    def from_json_str(j: str) -> 'BoboHistory':
+        return BoboHistory.from_dict(loads(j))
+
+    @staticmethod
+    def from_dict(d: dict) -> 'BoboHistory':
         from src.cep.event.bobo_event_factory import BoboEventFactory
 
         events: Dict[str, List[BoboEvent]] = {}
 
-        pprint(d)
-
         for key in d:
-            events[key] = [BoboEventFactory.from_json(e) for e in d[key]]
+            events[key] = [BoboEventFactory.from_json_str(e) for e in d[key]]
 
         return BoboHistory(events=events)

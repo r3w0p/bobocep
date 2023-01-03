@@ -1,7 +1,6 @@
-# Copyright (c) 2019-2022 r3w0p
+# Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
-from datetime import datetime
 from queue import Queue
 from threading import RLock
 from typing import Dict, List
@@ -45,6 +44,7 @@ class BoboProducer(BoboEngineTask,
                     self._EXC_PROCESS_NAME_DUP.format(process.name))
 
         self._event_id_gen = event_id_gen
+        self._timegen = BoboTimestampGenEpoch()
         self._max_size = max_size
         self._queue: Queue[BoboDeciderRunTuple] = Queue(self._max_size)
         self._closed = False
@@ -80,7 +80,7 @@ class BoboProducer(BoboEngineTask,
 
         event_complex = BoboEventComplex(
             event_id=self._event_id_gen.generate(),
-            timestamp=BoboTimestampGenEpoch.generate(),
+            timestamp=self._timegen.generate(),
             data=process.datagen(process, runtup.history),
             process_name=runtup.process_name,
             pattern_name=runtup.pattern_name,

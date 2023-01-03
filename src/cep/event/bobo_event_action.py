@@ -1,9 +1,10 @@
-# Copyright (c) 2019-2022 r3w0p
+# Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-from typing import Any
 from json import dumps, loads
+from typing import Any
+
 from src.cep.event.bobo_event import BoboEvent
 from src.cep.event.bobo_event_error import BoboEventError
 
@@ -79,8 +80,10 @@ class BoboEventAction(BoboEvent):
 
     @staticmethod
     def from_json_str(j: str) -> 'BoboEventAction':
-        d: dict = loads(j)
+        return BoboEventAction.from_dict(loads(j))
 
+    @staticmethod
+    def from_dict(d: dict) -> 'BoboEventAction':
         return BoboEventAction(
             event_id=d[BoboEventAction.EVENT_ID],
             timestamp=d[BoboEventAction.TIMESTAMP],
