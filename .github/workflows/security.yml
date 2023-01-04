@@ -2,15 +2,13 @@ name: Security
 
 on:
   push:
-    branches: [ develop ]
-  pull_request:
-    branches: [ develop ]
   schedule:
+    # “At 06:00 on Monday.”
     - cron: '0 6 * * 1'
 
 jobs:
-  analyze:
-    name: Analyze
+  analyse:
+    name: Analyse
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -20,7 +18,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: CodeQL initialize
+    - name: CodeQL initialise
       uses: github/codeql-action/init@v1
       with:
         languages: ${{ matrix.language }}
