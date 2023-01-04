@@ -3,7 +3,7 @@ name: Security
 on:
   push:
     tags:
-      - '*'
+      - '**'
   schedule:
     # “At 06:00 on Monday.”
     - cron: '0 6 * * 1'

@@ -3,7 +3,7 @@ name: CICD
 on:
   push:
     tags:
-      - '*'
+      - '**'
 
 jobs:
   ci:
