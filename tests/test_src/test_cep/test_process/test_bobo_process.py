@@ -5,8 +5,8 @@
 import pytest
 
 import tests.common as tc
-from src.cep.process.bobo_process import BoboProcess
-from src.cep.process.bobo_process_error import BoboProcessError
+from bobocep.cep.process.bobo_process import BoboProcess
+from bobocep.cep.process.bobo_process_error import BoboProcessError
 
 
 class TestInvalid:

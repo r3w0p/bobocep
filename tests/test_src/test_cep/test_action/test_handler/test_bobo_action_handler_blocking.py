@@ -5,9 +5,9 @@
 import pytest
 
 import tests.common as tc
-from src.cep.action.handler.bobo_action_handler_blocking import \
+from bobocep.cep.action.handler.bobo_action_handler_blocking import \
     BoboActionHandlerBlocking
-from src.cep.action.handler.bobo_action_handler_error import \
+from bobocep.cep.action.handler.bobo_action_handler_error import \
     BoboActionHandlerError
 
 

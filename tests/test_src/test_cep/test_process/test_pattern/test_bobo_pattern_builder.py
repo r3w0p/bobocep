@@ -3,11 +3,11 @@
 # modified under the terms of the MIT License.
 import pytest
 
-from src.cep.process.pattern.bobo_pattern_builder import BoboPatternBuilder
-from src.cep.process.pattern.bobo_pattern_builder_error import \
+from bobocep.cep.process.pattern.bobo_pattern_builder import BoboPatternBuilder
+from bobocep.cep.process.pattern.bobo_pattern_builder_error import \
     BoboPatternBuilderError
-from src.cep.process.pattern.bobo_pattern_error import BoboPatternError
-from src.cep.process.pattern.predicate.bobo_predicate_call import \
+from bobocep.cep.process.pattern.bobo_pattern_error import BoboPatternError
+from bobocep.cep.process.pattern.predicate.bobo_predicate_call import \
     BoboPredicateCall
 
 

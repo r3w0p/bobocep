@@ -5,7 +5,7 @@
 import pytest
 
 import tests.common as tc
-from src.cep.action.bobo_action_error import BoboActionError
+from bobocep.cep.action.bobo_action_error import BoboActionError
 
 
 class TestInvalid:

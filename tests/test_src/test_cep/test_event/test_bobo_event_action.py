@@ -4,10 +4,10 @@
 
 import pytest
 
-from src.cep.event.bobo_event_action import BoboEventAction
-from src.cep.event.bobo_event_error import BoboEventError
-from src.cep.event.timestamp_gen.bobo_timestamp_gen_epoch import \
-    BoboTimestampGenEpoch
+from bobocep.cep.event.bobo_event_action import BoboEventAction
+from bobocep.cep.event.bobo_event_error import BoboEventError
+from bobocep.cep.gen.timestamp.bobo_gen_timestamp_epoch import \
+    BoboGenTimestampEpoch
 
 
 class TestInvalid:
@@ -16,7 +16,7 @@ class TestInvalid:
         with pytest.raises(BoboEventError):
             BoboEventAction(
                 event_id="",
-                timestamp=BoboTimestampGenEpoch().generate(),
+                timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
                 process_name="process",
                 pattern_name="pattern",
@@ -26,8 +26,8 @@ class TestInvalid:
     def test_process_name_length_0(self):
         with pytest.raises(BoboEventError):
             BoboEventAction(
-                event_id="event_id_gen",
-                timestamp=BoboTimestampGenEpoch().generate(),
+                event_id="event_id",
+                timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
                 process_name="",
                 pattern_name="pattern",
@@ -37,8 +37,8 @@ class TestInvalid:
     def test_pattern_name_length_0(self):
         with pytest.raises(BoboEventError):
             BoboEventAction(
-                event_id="event_id_gen",
-                timestamp=BoboTimestampGenEpoch().generate(),
+                event_id="event_id",
+                timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
                 process_name="process",
                 pattern_name="",
@@ -48,8 +48,8 @@ class TestInvalid:
     def test_action_name_length_0(self):
         with pytest.raises(BoboEventError):
             BoboEventAction(
-                event_id="event_id_gen",
-                timestamp=BoboTimestampGenEpoch().generate(),
+                event_id="event_id",
+                timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
                 process_name="process",
                 pattern_name="pattern",

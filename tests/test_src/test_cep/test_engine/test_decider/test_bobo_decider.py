@@ -5,11 +5,11 @@
 import pytest
 
 import tests.common as tc
-from src.cep.engine.decider.bobo_decider import BoboDecider
-from src.cep.engine.decider.bobo_decider_error import \
+from bobocep.cep.engine.decider.bobo_decider import BoboDecider
+from bobocep.cep.engine.decider.bobo_decider_error import \
     BoboDeciderError
-from src.cep.event.event_id_gen.bobo_event_id_gen_unique import \
-    BoboEventIDGenUnique
+from bobocep.cep.gen.event_id.bobo_gen_event_id_unique import \
+    BoboGenEventIDUnique
 
 
 class TestValid:
@@ -184,8 +184,8 @@ class TestInvalid:
             BoboDecider(
                 processes=[tc.process(patterns=[tc.pattern()]),
                            tc.process(patterns=[tc.pattern()])],
-                event_id_gen=BoboEventIDGenUnique(),
-                run_id_gen=BoboEventIDGenUnique(),
+                event_id_gen=BoboGenEventIDUnique(),
+                run_id_gen=BoboGenEventIDUnique(),
                 max_size=255)
 
     def test_duplicate_run_id_for_pattern(self):
@@ -193,7 +193,7 @@ class TestInvalid:
 
         decider, subscriber = tc.decider_sub(
             [process],
-            run_id_gen=tc.BoboEventIDSameEveryTime())
+            run_id_gen=tc.BoboSameEveryTimeEventID())
 
         decider.on_receiver_update(event=tc.event_simple(data=1))
         result_update = decider.update()

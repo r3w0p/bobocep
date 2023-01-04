@@ -9,13 +9,13 @@ from queue import Queue
 import pytest
 
 import tests.common as tc
-from src.cep.action.handler.bobo_action_handler_error import \
+from bobocep.cep.action.handler.bobo_action_handler_error import \
     BoboActionHandlerError
-from src.cep.action.handler.bobo_action_handler_pool import \
+from bobocep.cep.action.handler.bobo_action_handler_pool import \
     BoboActionHandlerPool
-from src.cep.action.handler.bobo_action_handler_pool import \
+from bobocep.cep.action.handler.bobo_action_handler_pool import \
     _pool_execute_action
-from src.cep.event.bobo_event_action import BoboEventAction
+from bobocep.cep.event.bobo_event_action import BoboEventAction
 
 
 class TestValid:

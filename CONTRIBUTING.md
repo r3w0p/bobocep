@@ -1,6 +1,6 @@
 # Contributing
 
-> _Last updated: 1 May 2022_
+> _Last updated: 2023-01-04_
 
 ## Resources
 

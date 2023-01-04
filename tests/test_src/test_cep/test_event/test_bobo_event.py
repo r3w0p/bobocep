@@ -5,7 +5,7 @@
 import pytest
 
 import tests.common as tc
-from src.cep.event.bobo_event_error import BoboEventError
+from bobocep.cep.event.bobo_event_error import BoboEventError
 
 
 class TestInvalid:

@@ -4,11 +4,11 @@
 
 import pytest
 
-from src.cep.event.bobo_event_complex import BoboEventComplex
-from src.cep.event.bobo_event_error import BoboEventError
-from src.cep.event.bobo_history import BoboHistory
-from src.cep.event.timestamp_gen.bobo_timestamp_gen_epoch import \
-    BoboTimestampGenEpoch
+from bobocep.cep.event.bobo_event_complex import BoboEventComplex
+from bobocep.cep.event.bobo_event_error import BoboEventError
+from bobocep.cep.event.bobo_history import BoboHistory
+from bobocep.cep.gen.timestamp.bobo_gen_timestamp_epoch import \
+    BoboGenTimestampEpoch
 
 
 class TestValid:
@@ -21,7 +21,7 @@ class TestInvalid:
         with pytest.raises(BoboEventError):
             BoboEventComplex(
                 event_id="",
-                timestamp=BoboTimestampGenEpoch().generate(),
+                timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
                 process_name="process",
                 pattern_name="pattern",
@@ -30,8 +30,8 @@ class TestInvalid:
     def test_process_name_length_0(self):
         with pytest.raises(BoboEventError):
             BoboEventComplex(
-                event_id="event_id_gen",
-                timestamp=BoboTimestampGenEpoch().generate(),
+                event_id="event_id",
+                timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
                 process_name="",
                 pattern_name="pattern",
@@ -40,8 +40,8 @@ class TestInvalid:
     def test_pattern_name_length_0(self):
         with pytest.raises(BoboEventError):
             BoboEventComplex(
-                event_id="event_id_gen",
-                timestamp=BoboTimestampGenEpoch().generate(),
+                event_id="event_id",
+                timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
                 process_name="process",
                 pattern_name="",

@@ -1,6 +1,6 @@
 # Security Policy
 
-> _Last updated: 2 May 2022_
+> _Last updated: 2023-01-04_
 
 ## Supported Versions
 
@@ -22,7 +22,8 @@ Below are the versions that are tested for support.
 |  `macos-latest`  |  &check;  |
 | `ubuntu-latest`  |  &check;  |
 
-The `*-latest` version refers to the `*-latest` [available environments](https://github.com/actions/virtual-environments#available-environments)
+The `*-latest` version refers to the `*-latest`
+[available environments](https://github.com/actions/virtual-environments#available-environments)
 from GitHub Actions Virtual Environments.
 
 ## Reporting a Vulnerability

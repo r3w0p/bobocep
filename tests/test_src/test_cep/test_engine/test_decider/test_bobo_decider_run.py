@@ -2,12 +2,12 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-from src.cep.engine.decider.bobo_decider_run import BoboDeciderRun
-from src.cep.event.bobo_event_simple import BoboEventSimple
-from src.cep.event.timestamp_gen.bobo_timestamp_gen_epoch import \
-    BoboTimestampGenEpoch
-from src.cep.process.pattern.bobo_pattern_builder import BoboPatternBuilder
-from src.cep.process.pattern.predicate.bobo_predicate_call import \
+from bobocep.cep.engine.decider.bobo_decider_run import BoboDeciderRun
+from bobocep.cep.event.bobo_event_simple import BoboEventSimple
+from bobocep.cep.gen.timestamp.bobo_gen_timestamp_epoch import \
+    BoboGenTimestampEpoch
+from bobocep.cep.process.pattern.bobo_pattern_builder import BoboPatternBuilder
+from bobocep.cep.process.pattern.predicate.bobo_predicate_call import \
     BoboPredicateCall
 
 
@@ -18,8 +18,8 @@ class TestValid:
             .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
             .generate("pattern")
 
-        event = BoboEventSimple("event_id_gen",
-                                BoboTimestampGenEpoch().generate(), None)
+        event = BoboEventSimple("event_id",
+                                BoboGenTimestampEpoch().generate(), None)
         run = BoboDeciderRun("run_id", "process_name", pattern, event)
 
         assert run.is_halted()
@@ -32,8 +32,8 @@ class TestValid:
             .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
             .generate("pattern")
 
-        event = BoboEventSimple("event_id_gen",
-                                BoboTimestampGenEpoch().generate(), None)
+        event = BoboEventSimple("event_id",
+                                BoboGenTimestampEpoch().generate(), None)
         run = BoboDeciderRun("run_id", "process_name", pattern, event)
 
         assert not run.is_halted()
@@ -48,17 +48,17 @@ class TestValid:
 
         run = BoboDeciderRun("run_id", "process_name", pattern,
                              BoboEventSimple("event_a",
-                                             BoboTimestampGenEpoch().generate(),
+                                             BoboGenTimestampEpoch().generate(),
                                              None))
 
         run.process(
-            BoboEventSimple("event_b", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
                             None))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_c", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_c", BoboGenTimestampEpoch().generate(),
                             None))
         assert run.is_halted()
         assert run.is_complete()
@@ -72,7 +72,7 @@ class TestValid:
 
         run = BoboDeciderRun("run_id", "process_name", pattern,
                              BoboEventSimple("event_a",
-                                             BoboTimestampGenEpoch().generate(),
+                                             BoboGenTimestampEpoch().generate(),
                                              None))
 
         run.halt()
@@ -88,12 +88,12 @@ class TestValid:
 
         run = BoboDeciderRun("run_id", "process_name", pattern,
                              BoboEventSimple("event_a",
-                                             BoboTimestampGenEpoch().generate(),
+                                             BoboGenTimestampEpoch().generate(),
                                              None))
 
         run.halt()
         run.process(
-            BoboEventSimple("event_b", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
                             None))
         assert run.is_halted()
 
@@ -106,11 +106,11 @@ class TestValid:
 
         run = BoboDeciderRun("run_id", "process_name", pattern,
                              BoboEventSimple("event_a",
-                                             BoboTimestampGenEpoch().generate(),
+                                             BoboGenTimestampEpoch().generate(),
                                              None))
 
         run.process(
-            BoboEventSimple("event_b", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
                             None))
         assert run.is_halted()
         assert not run.is_complete()
@@ -124,17 +124,17 @@ class TestValid:
 
         run = BoboDeciderRun("run_id", "process_name", pattern,
                              BoboEventSimple("event_a",
-                                             BoboTimestampGenEpoch().generate(),
+                                             BoboGenTimestampEpoch().generate(),
                                              None))
 
         run.process(
-            BoboEventSimple("event_b", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
                             None))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_c", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_c", BoboGenTimestampEpoch().generate(),
                             None))
         assert run.is_halted()
         assert run.is_complete()
@@ -148,11 +148,11 @@ class TestValid:
 
         run = BoboDeciderRun("run_id", "process_name", pattern,
                              BoboEventSimple("event_a",
-                                             BoboTimestampGenEpoch().generate(),
+                                             BoboGenTimestampEpoch().generate(),
                                              None))
 
         run.process(
-            BoboEventSimple("event_b", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
                             None))
         assert run.is_halted()
         assert not run.is_complete()
@@ -169,11 +169,11 @@ class TestValid:
 
         run = BoboDeciderRun("run_id", "process_name", pattern,
                              BoboEventSimple("event_a",
-                                             BoboTimestampGenEpoch().generate(),
+                                             BoboGenTimestampEpoch().generate(),
                                              True))
 
         run.process(
-            BoboEventSimple("event_b", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
                             True))
         assert not run.is_halted()
         assert not run.is_complete()
@@ -189,17 +189,17 @@ class TestValid:
 
         run = BoboDeciderRun("run_id", "process_name", pattern,
                              BoboEventSimple("event_a",
-                                             BoboTimestampGenEpoch().generate(),
+                                             BoboGenTimestampEpoch().generate(),
                                              None))
 
         run.process(
-            BoboEventSimple("event_b", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
                             None))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_c", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_c", BoboGenTimestampEpoch().generate(),
                             None))
         assert run.is_halted()
         assert run.is_complete()
@@ -215,23 +215,23 @@ class TestValid:
 
         run = BoboDeciderRun("run_id", "process_name", pattern,
                              BoboEventSimple("event_a",
-                                             BoboTimestampGenEpoch().generate(),
+                                             BoboGenTimestampEpoch().generate(),
                                              None))
 
         run.process(
-            BoboEventSimple("event_b", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
                             None))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_c", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_c", BoboGenTimestampEpoch().generate(),
                             None))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_d", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_d", BoboGenTimestampEpoch().generate(),
                             None))
         assert run.is_halted()
         assert run.is_complete()
@@ -248,29 +248,29 @@ class TestValid:
 
         run = BoboDeciderRun("run_id", "process_name", pattern,
                              BoboEventSimple("event_a",
-                                             BoboTimestampGenEpoch().generate(),
+                                             BoboGenTimestampEpoch().generate(),
                                              None))
 
         run.process(
-            BoboEventSimple("event_b", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
                             None))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_c", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_c", BoboGenTimestampEpoch().generate(),
                             None))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_d", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_d", BoboGenTimestampEpoch().generate(),
                             None))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_e", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_e", BoboGenTimestampEpoch().generate(),
                             None))
         assert not run.is_halted()
         assert not run.is_complete()
@@ -287,29 +287,29 @@ class TestValid:
 
         run = BoboDeciderRun("run_id", "process_name", pattern,
                              BoboEventSimple("event_a",
-                                             BoboTimestampGenEpoch().generate(),
+                                             BoboGenTimestampEpoch().generate(),
                                              None))
 
         run.process(
-            BoboEventSimple("event_b", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
                             None))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_c", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_c", BoboGenTimestampEpoch().generate(),
                             None))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_d", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_d", BoboGenTimestampEpoch().generate(),
                             None))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_e", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_e", BoboGenTimestampEpoch().generate(),
                             None))
         assert not run.is_halted()
         assert not run.is_complete()
@@ -324,23 +324,23 @@ class TestValid:
 
         run = BoboDeciderRun("run_id", "process_name", pattern,
                              BoboEventSimple("event_a",
-                                             BoboTimestampGenEpoch().generate(),
+                                             BoboGenTimestampEpoch().generate(),
                                              True))
 
         run.process(
-            BoboEventSimple("event_b", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
                             True))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_c", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_c", BoboGenTimestampEpoch().generate(),
                             True))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_d", BoboTimestampGenEpoch().generate(),
+            BoboEventSimple("event_d", BoboGenTimestampEpoch().generate(),
                             False))
         assert run.is_halted()
         assert not run.is_complete()
@@ -358,21 +358,21 @@ class TestValid:
 
         run = BoboDeciderRun("run_id", "process_name", pattern,
                              BoboEventSimple("event_a",
-                                             BoboTimestampGenEpoch().generate(),
+                                             BoboGenTimestampEpoch().generate(),
                                              1))
 
         run.process(
-            BoboEventSimple("event_b", BoboTimestampGenEpoch().generate(), 2))
+            BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(), 2))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_c", BoboTimestampGenEpoch().generate(), 2))
+            BoboEventSimple("event_c", BoboGenTimestampEpoch().generate(), 2))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_d", BoboTimestampGenEpoch().generate(), 3))
+            BoboEventSimple("event_d", BoboGenTimestampEpoch().generate(), 3))
         assert run.is_halted()
         assert run.is_complete()
 
@@ -392,30 +392,30 @@ class TestValid:
 
         run = BoboDeciderRun("run_id", "process_name", pattern,
                              BoboEventSimple("event_a",
-                                             BoboTimestampGenEpoch().generate(),
+                                             BoboGenTimestampEpoch().generate(),
                                              1))
 
         run.process(
-            BoboEventSimple("event_b", BoboTimestampGenEpoch().generate(), 2))
+            BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(), 2))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_c", BoboTimestampGenEpoch().generate(), 2))
+            BoboEventSimple("event_c", BoboGenTimestampEpoch().generate(), 2))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_d", BoboTimestampGenEpoch().generate(), 3))
+            BoboEventSimple("event_d", BoboGenTimestampEpoch().generate(), 3))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_e", BoboTimestampGenEpoch().generate(), 3))
+            BoboEventSimple("event_e", BoboGenTimestampEpoch().generate(), 3))
         assert not run.is_halted()
         assert not run.is_complete()
 
         run.process(
-            BoboEventSimple("event_f", BoboTimestampGenEpoch().generate(), 4))
+            BoboEventSimple("event_f", BoboGenTimestampEpoch().generate(), 4))
         assert run.is_halted()
         assert run.is_complete()

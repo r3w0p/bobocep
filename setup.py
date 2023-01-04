@@ -7,29 +7,37 @@ with open("requirements.txt") as f:
     install_requires = f.read().splitlines()
 
 setup(
-    author="r3w0p",
     name="BoboCEP",
-    version="0.9.4",
-    description="A complex event processing engine designed for "
-                "fault-tolerant edge computing in IoT systems.",
+    version="0.9.6",
+    author="r3w0p",
+    author_email="rr33ww00pp@gmail.com",
+    description="A fault-tolerant Complex Event Processing engine "
+                "for edge computing in Internet of Things systems.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     license="MIT",
-    keywords="bobocep",
     url="https://github.com/r3w0p/bobocep",
+    keywords=[
+        "complex event processing",
+        "internet of things",
+        "web of things",
+        "fault tolerance",
+        "edge computing",
+        "distributed systems"
+    ],
     classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Intended Audience :: Developers',
-        'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: MIT License',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3.9',
-        'Programming Language :: Python :: 3.10',
-        'Topic :: Scientific/Engineering :: Information Analysis',
-        'Topic :: System :: Monitoring'
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
+        "Natural Language :: English",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Topic :: Scientific/Engineering :: Information Analysis",
+        "Topic :: System :: Monitoring"
     ],
     install_requires=install_requires,
-    packages=find_packages(include=['src', 'src.*']),
-    test_suite='tests',
-    zip_safe=False,
+    packages=find_packages(include=["bobocep", "bobocep.*"]),
+    test_suite="tests",
+    zip_safe=False
 )

@@ -5,10 +5,10 @@
 import pytest
 
 import tests.common as tc
-from src.cep.engine.receiver.bobo_receiver_error import BoboReceiverError
-from src.cep.engine.receiver.event_gen.bobo_event_gen_time import \
-    BoboEventGenTime
-from src.cep.event.bobo_event_simple import BoboEventSimple
+from bobocep.cep.engine.receiver.bobo_receiver_error import BoboReceiverError
+from bobocep.cep.gen.event.bobo_gen_event_time import \
+    BoboGenEventTime
+from bobocep.cep.event.bobo_event_simple import BoboEventSimple
 
 
 class TestValid:
@@ -42,7 +42,7 @@ class TestValid:
         data_null_event = 456
 
         receiver, subscriber = tc.receiver_sub(
-            event_gen=BoboEventGenTime(
+            event_gen=BoboGenEventTime(
                 milliseconds=1,
                 datagen=lambda: data_null_event,
                 from_now=False))

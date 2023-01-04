@@ -4,10 +4,10 @@
 
 import pytest
 
-from src.cep.process.pattern.bobo_pattern_block import BoboPatternBlock
-from src.cep.process.pattern.bobo_pattern_block_error import \
+from bobocep.cep.process.pattern.bobo_pattern_block import BoboPatternBlock
+from bobocep.cep.process.pattern.bobo_pattern_block_error import \
     BoboPatternBlockError
-from src.cep.process.pattern.predicate.bobo_predicate_call import \
+from bobocep.cep.process.pattern.predicate.bobo_predicate_call import \
     BoboPredicateCall
 
 

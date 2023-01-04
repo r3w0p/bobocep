@@ -9,11 +9,12 @@
 
 !requirements.txt
 !setup.py
+!setup.cfg
 
 !.github/
 !.github/**
-!src/
-!src/**
+!bobocep/
+!bobocep/**
 !media/
 !media/**
 !tests/

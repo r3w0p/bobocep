@@ -5,16 +5,16 @@
 import pytest
 
 import tests.common as tc
-from src.cep.action.handler.bobo_action_handler_blocking import \
+from bobocep.cep.action.handler.bobo_action_handler_blocking import \
     BoboActionHandlerBlocking
-from src.cep.action.handler.bobo_action_handler_pool import \
+from bobocep.cep.action.handler.bobo_action_handler_pool import \
     BoboActionHandlerPool
-from src.cep.engine.forwarder.bobo_forwarder import BoboForwarder
-from src.cep.engine.forwarder.bobo_forwarder_error import \
+from bobocep.cep.engine.forwarder.bobo_forwarder import BoboForwarder
+from bobocep.cep.engine.forwarder.bobo_forwarder_error import \
     BoboForwarderError
-from src.cep.event.event_id_gen.bobo_event_id_gen_unique import \
-    BoboEventIDGenUnique
-from src.cep.process.bobo_process import BoboProcess
+from bobocep.cep.gen.event_id.bobo_gen_event_id_unique import \
+    BoboGenEventIDUnique
+from bobocep.cep.process.bobo_process import BoboProcess
 
 
 class TestValid:
@@ -97,5 +97,5 @@ class TestInvalid:
             BoboForwarder(
                 processes=[process_1, process_2],
                 handler=BoboActionHandlerBlocking(max_size=255),
-                event_id_gen=BoboEventIDGenUnique(),
+                event_id_gen=BoboGenEventIDUnique(),
                 max_size=255)

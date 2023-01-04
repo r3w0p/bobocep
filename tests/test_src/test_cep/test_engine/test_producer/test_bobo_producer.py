@@ -5,12 +5,12 @@
 import pytest
 
 import tests.common as tc
-from src.cep.engine.decider.bobo_decider_run_tuple import BoboDeciderRunTuple
-from src.cep.engine.producer.bobo_producer import BoboProducer
-from src.cep.engine.producer.bobo_producer_error import BoboProducerError
-from src.cep.event.bobo_history import BoboHistory
-from src.cep.event.event_id_gen.bobo_event_id_gen_unique import \
-    BoboEventIDGenUnique
+from bobocep.cep.engine.decider.bobo_decider_run_tuple import BoboDeciderRunTuple
+from bobocep.cep.engine.producer.bobo_producer import BoboProducer
+from bobocep.cep.engine.producer.bobo_producer_error import BoboProducerError
+from bobocep.cep.event.bobo_history import BoboHistory
+from bobocep.cep.gen.event_id.bobo_gen_event_id_unique import \
+    BoboGenEventIDUnique
 
 
 class TestValid:
@@ -126,7 +126,7 @@ class TestInvalid:
         with pytest.raises(BoboProducerError):
             BoboProducer(
                 processes=[tc.process(), tc.process()],
-                event_id_gen=BoboEventIDGenUnique(),
+                event_id_gen=BoboGenEventIDUnique(),
                 max_size=255)
 
     def test_decider_run_process_does_not_exist(self):

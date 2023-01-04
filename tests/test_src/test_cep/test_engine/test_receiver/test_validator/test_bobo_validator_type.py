@@ -2,11 +2,11 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-from src.cep.engine.receiver.validator.bobo_validator_type import \
+from bobocep.cep.engine.receiver.validator.bobo_validator_type import \
     BoboValidatorType
-from src.cep.event.bobo_event_simple import BoboEventSimple
-from src.cep.event.timestamp_gen.bobo_timestamp_gen_epoch import \
-    BoboTimestampGenEpoch
+from bobocep.cep.event.bobo_event_simple import BoboEventSimple
+from bobocep.cep.gen.timestamp.bobo_gen_timestamp_epoch import \
+    BoboGenTimestampEpoch
 
 
 class StubClassType:
@@ -39,10 +39,10 @@ def test_1_type_str_event_data_valid_only():
     validator = BoboValidatorType(types=[str])
 
     assert validator.is_valid(data=BoboEventSimple(
-        event_id="id", timestamp=BoboTimestampGenEpoch().generate(), data=""))
+        event_id="id", timestamp=BoboGenTimestampEpoch().generate(), data=""))
 
     assert validator.is_valid(data=BoboEventSimple(
-        event_id="id", timestamp=BoboTimestampGenEpoch().generate(),
+        event_id="id", timestamp=BoboGenTimestampEpoch().generate(),
         data="abc"))
 
 
@@ -50,14 +50,14 @@ def test_1_type_str_event_data_invalid_only():
     validator = BoboValidatorType(types=[str])
 
     assert not validator.is_valid(data=BoboEventSimple(
-        event_id="id", timestamp=BoboTimestampGenEpoch().generate(),
+        event_id="id", timestamp=BoboGenTimestampEpoch().generate(),
         data=None))
 
     assert not validator.is_valid(data=BoboEventSimple(
-        event_id="id", timestamp=BoboTimestampGenEpoch().generate(), data=123))
+        event_id="id", timestamp=BoboGenTimestampEpoch().generate(), data=123))
 
     assert not validator.is_valid(data=BoboEventSimple(
-        event_id="id", timestamp=BoboTimestampGenEpoch().generate(),
+        event_id="id", timestamp=BoboGenTimestampEpoch().generate(),
         data={"key": 123}))
 
 

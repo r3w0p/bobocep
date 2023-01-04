@@ -4,13 +4,13 @@
 
 import pytest
 
-from src.cep.event.bobo_event_simple import BoboEventSimple
-from src.cep.event.bobo_history import BoboHistory
-from src.cep.event.timestamp_gen.bobo_timestamp_gen_epoch import \
-    BoboTimestampGenEpoch
-from src.cep.process.pattern.predicate.bobo_predicate_call import \
+from bobocep.cep.event.bobo_event_simple import BoboEventSimple
+from bobocep.cep.event.bobo_history import BoboHistory
+from bobocep.cep.gen.timestamp.bobo_gen_timestamp_epoch import \
+    BoboGenTimestampEpoch
+from bobocep.cep.process.pattern.predicate.bobo_predicate_call import \
     BoboPredicateCall
-from src.cep.process.pattern.predicate.bobo_predicate_error import \
+from bobocep.cep.process.pattern.predicate.bobo_predicate_error import \
     BoboPredicateError
 
 
@@ -20,11 +20,11 @@ class TestValid:
         predicate = BoboPredicateCall(call=lambda e, h: e.data)
 
         event_1 = BoboEventSimple(
-            event_id="1", timestamp=BoboTimestampGenEpoch().generate(),
+            event_id="1", timestamp=BoboGenTimestampEpoch().generate(),
             data=True)
 
         event_2 = BoboEventSimple(
-            event_id="2", timestamp=BoboTimestampGenEpoch().generate(),
+            event_id="2", timestamp=BoboGenTimestampEpoch().generate(),
             data=False)
 
         history = BoboHistory(events={})

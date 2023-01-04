@@ -6,11 +6,11 @@ from threading import Thread
 from time import sleep
 
 import tests.common as tc
-from src.cep.engine.decider.bobo_decider_run_tuple import \
+from bobocep.cep.engine.decider.bobo_decider_run_tuple import \
     BoboDeciderRunTuple
-from src.cep.event.bobo_history import BoboHistory
-from src.dist.bobo_device_tuple import BoboDeviceTuple
-from src.dist.bobo_distributed_tcp import BoboDistributedTCP
+from bobocep.cep.event.bobo_history import BoboHistory
+from bobocep.dist.bobo_device_tuple import BoboDeviceTuple
+from bobocep.dist.bobo_distributed_tcp import BoboDistributedTCP
 
 
 def run_distributed_tcp(dist: BoboDistributedTCP):

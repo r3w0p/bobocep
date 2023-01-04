@@ -7,12 +7,12 @@ from time import sleep
 import pytest
 
 import tests.common as tc
-from src.cep.engine.bobo_engine import BoboEngine
-from src.cep.engine.bobo_engine_error import BoboEngineError
-from src.cep.engine.decider.bobo_decider_run_tuple import BoboDeciderRunTuple
-from src.cep.event.bobo_event_action import BoboEventAction
-from src.cep.event.bobo_event_complex import BoboEventComplex
-from src.cep.event.bobo_event_simple import BoboEventSimple
+from bobocep.cep.engine.bobo_engine import BoboEngine
+from bobocep.cep.engine.bobo_engine_error import BoboEngineError
+from bobocep.cep.engine.decider.bobo_decider_run_tuple import BoboDeciderRunTuple
+from bobocep.cep.event.bobo_event_action import BoboEventAction
+from bobocep.cep.event.bobo_event_complex import BoboEventComplex
+from bobocep.cep.event.bobo_event_simple import BoboEventSimple
 
 
 def run_engine(engine: BoboEngine):

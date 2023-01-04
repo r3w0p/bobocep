@@ -3,10 +3,10 @@
 # modified under the terms of the MIT License.
 from time import sleep
 
-from src.cep.event.bobo_event_simple import BoboEventSimple
-from src.cep.event.bobo_history import BoboHistory
-from src.cep.event.timestamp_gen.bobo_timestamp_gen_epoch import \
-    BoboTimestampGenEpoch
+from bobocep.cep.event.bobo_event_simple import BoboEventSimple
+from bobocep.cep.event.bobo_history import BoboHistory
+from bobocep.cep.gen.timestamp.bobo_gen_timestamp_epoch import \
+    BoboGenTimestampEpoch
 
 
 class TestValid:
@@ -21,7 +21,7 @@ class TestValid:
     def test_1_group_1_event(self):
         group = "group"
         event = BoboEventSimple(
-            event_id="1", timestamp=BoboTimestampGenEpoch().generate(),
+            event_id="1", timestamp=BoboGenTimestampEpoch().generate(),
             data=True)
 
         history = BoboHistory(events={group: [event]})
@@ -32,7 +32,7 @@ class TestValid:
         assert history.last() == event
 
     def test_first_last_2_groups_2_events(self):
-        timegen = BoboTimestampGenEpoch()
+        timegen = BoboGenTimestampEpoch()
 
         group_low = "low"
         group_high = "high"
