@@ -2,6 +2,9 @@ name: Security
 
 on:
   push:
+    branches:
+      - '**'
+      - '!master'
     tags:
       - '**'
   schedule:

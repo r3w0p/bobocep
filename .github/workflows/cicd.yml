@@ -2,6 +2,9 @@ name: CICD
 
 on:
   push:
+    branches:
+      - '**'
+      - '!master'
     tags:
       - '**'
 
