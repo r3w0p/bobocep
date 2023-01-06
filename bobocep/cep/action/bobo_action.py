@@ -11,15 +11,21 @@ from bobocep.cep.event.bobo_event_complex import BoboEventComplex
 class BoboAction(ABC):
     """An action."""
 
-    _EXC_NAME_LEN = "'name' must have a length greater than 0"
+    _EXC_NAME_LEN = "name must have a length greater than 0"
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, *args, **kwargs):
         super().__init__()
 
         if len(name) == 0:
             raise BoboActionError(self._EXC_NAME_LEN)
 
-        self.name = name
+        self._name = name
+        self._args = args
+        self._kwargs = kwargs
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     @abstractmethod
     def execute(self, event: BoboEventComplex) -> BoboEventAction:

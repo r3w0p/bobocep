@@ -5,12 +5,14 @@
 import pytest
 
 import tests.common as tc
-from bobocep.cep.engine.decider.bobo_decider_run_tuple import BoboDeciderRunTuple
+from bobocep.cep.engine.decider.bobo_decider_run_state import BoboDeciderRunState
 from bobocep.cep.engine.producer.bobo_producer import BoboProducer
 from bobocep.cep.engine.producer.bobo_producer_error import BoboProducerError
 from bobocep.cep.event.bobo_history import BoboHistory
 from bobocep.cep.gen.event_id.bobo_gen_event_id_unique import \
     BoboGenEventIDUnique
+from bobocep.cep.gen.timestamp.bobo_gen_timestamp_epoch import \
+    BoboGenTimestampEpoch
 
 
 class TestValid:
@@ -25,7 +27,7 @@ class TestValid:
         history = BoboHistory(events={})
 
         producer.on_decider_update(
-            halted_complete=[BoboDeciderRunTuple(
+            halted_complete=[BoboDeciderRunState(
                 process_name="process",
                 pattern_name="pattern",
                 history=history,
@@ -51,7 +53,7 @@ class TestValid:
         assert producer.size() == 0
 
         producer.on_decider_update(
-            halted_complete=[BoboDeciderRunTuple(
+            halted_complete=[BoboDeciderRunState(
                 process_name="process",
                 pattern_name="pattern",
                 history=BoboHistory(events={}),
@@ -78,7 +80,7 @@ class TestValid:
         assert producer.size() == 0
 
         producer.on_decider_update(
-            halted_complete=[BoboDeciderRunTuple(
+            halted_complete=[BoboDeciderRunState(
                 process_name="process",
                 pattern_name="pattern",
                 history=BoboHistory(events={}),
@@ -100,7 +102,7 @@ class TestInvalid:
             [process_1, process_2], max_size=1)
 
         producer.on_decider_update(
-            halted_complete=[BoboDeciderRunTuple(
+            halted_complete=[BoboDeciderRunState(
                 process_name="process_1",
                 pattern_name="pattern",
                 history=BoboHistory(events={}),
@@ -112,7 +114,7 @@ class TestInvalid:
 
         with pytest.raises(BoboProducerError):
             producer.on_decider_update(
-                halted_complete=[BoboDeciderRunTuple(
+                halted_complete=[BoboDeciderRunState(
                     process_name="process_2",
                     pattern_name="pattern",
                     history=BoboHistory(events={}),
@@ -126,14 +128,15 @@ class TestInvalid:
         with pytest.raises(BoboProducerError):
             BoboProducer(
                 processes=[tc.process(), tc.process()],
-                event_id_gen=BoboGenEventIDUnique(),
+                gen_event_id=BoboGenEventIDUnique(),
+                gen_timestamp=BoboGenTimestampEpoch(),
                 max_size=255)
 
     def test_decider_run_process_does_not_exist(self):
         producer, subscriber = tc.producer_sub([tc.process()], max_size=255)
 
         producer.on_decider_update(
-            halted_complete=[BoboDeciderRunTuple(
+            halted_complete=[BoboDeciderRunState(
                 process_name="process_invalid",
                 pattern_name="pattern",
                 history=BoboHistory(events={}),
@@ -150,7 +153,7 @@ class TestInvalid:
         producer, subscriber = tc.producer_sub([tc.process()], max_size=255)
 
         producer.on_decider_update(
-            halted_complete=[BoboDeciderRunTuple(
+            halted_complete=[BoboDeciderRunState(
                 process_name="process",
                 pattern_name="pattern_invalid",
                 history=BoboHistory(events={}),

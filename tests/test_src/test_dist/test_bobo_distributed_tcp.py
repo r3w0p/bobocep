@@ -6,8 +6,8 @@ from threading import Thread
 from time import sleep
 
 import tests.common as tc
-from bobocep.cep.engine.decider.bobo_decider_run_tuple import \
-    BoboDeciderRunTuple
+from bobocep.cep.engine.decider.bobo_decider_run_state import \
+    BoboDeciderRunState
 from bobocep.cep.event.bobo_history import BoboHistory
 from bobocep.dist.bobo_device_tuple import BoboDeviceTuple
 from bobocep.dist.bobo_distributed_tcp import BoboDistributedTCP
@@ -20,19 +20,19 @@ def run_distributed_tcp(dist: BoboDistributedTCP):
 class TestValid:
 
     def test_queues_on_decider_update(self):
-        halted_complete = [BoboDeciderRunTuple(
+        halted_complete = [BoboDeciderRunState(
             process_name="process_hc",
             pattern_name="pattern_hc",
             block_index=1,
             history=BoboHistory(events={"group_hc": [tc.event_simple()]}))]
 
-        halted_incomplete = [BoboDeciderRunTuple(
+        halted_incomplete = [BoboDeciderRunState(
             process_name="process_hi",
             pattern_name="pattern_hi",
             block_index=2,
             history=BoboHistory(events={"group_hi": [tc.event_simple()]}))]
 
-        updated = [BoboDeciderRunTuple(
+        updated = [BoboDeciderRunState(
             process_name="process_up",
             pattern_name="pattern_up",
             block_index=3,

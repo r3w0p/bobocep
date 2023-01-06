@@ -5,7 +5,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from bobocep.cep.engine.decider.bobo_decider_run_tuple import BoboDeciderRunTuple
+from bobocep.cep.engine.decider.bobo_decider_run_state import BoboDeciderRunState
 from bobocep.cep.event.bobo_event import BoboEvent
 from bobocep.cep.event.bobo_event_action import BoboEventAction
 from bobocep.cep.event.bobo_event_complex import BoboEventComplex
@@ -24,9 +24,9 @@ class BoboDistributedSubscriber(ABC):
     @abstractmethod
     def on_distributed_decider_update(
             self,
-            halted_complete: List[BoboDeciderRunTuple],
-            halted_incomplete: List[BoboDeciderRunTuple],
-            updated: List[BoboDeciderRunTuple]):
+            halted_complete: List[BoboDeciderRunState],
+            halted_incomplete: List[BoboDeciderRunState],
+            updated: List[BoboDeciderRunState]):
         """"""
 
     @abstractmethod

@@ -5,8 +5,8 @@
 from threading import RLock
 from typing import Tuple, Dict, List
 
-from bobocep.cep.engine.decider.bobo_decider_run_tuple import \
-    BoboDeciderRunTuple
+from bobocep.cep.engine.decider.bobo_decider_run_state import \
+    BoboDeciderRunState
 from bobocep.cep.event.bobo_event import BoboEvent
 from bobocep.cep.event.bobo_history import BoboHistory
 from bobocep.cep.process.pattern.bobo_pattern import BoboPattern
@@ -24,6 +24,7 @@ class BoboDeciderRun:
                  pattern: BoboPattern,
                  event: BoboEvent):
         super().__init__()
+        self._lock: RLock = RLock()
 
         self.run_id = run_id
         self.process_name = process_name
@@ -32,12 +33,11 @@ class BoboDeciderRun:
             self.pattern.blocks[0].group: [event]
         }
         self._block_index = 1
-        self._lock: RLock = RLock()
         self._halted = self.is_complete()
 
-    def to_tuple(self) -> BoboDeciderRunTuple:
+    def to_tuple(self) -> BoboDeciderRunState:
         with self._lock:
-            return BoboDeciderRunTuple(
+            return BoboDeciderRunState(
                 process_name=self.process_name,
                 pattern_name=self.pattern.name,
                 block_index=self._block_index,

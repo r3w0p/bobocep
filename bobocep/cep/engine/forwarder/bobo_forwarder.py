@@ -24,15 +24,18 @@ class BoboForwarder(BoboEngineTask,
                     BoboProducerSubscriber):
     """A forwarder task."""
 
-    _EXC_PROCESS_NAME_DUP = "duplicate name in processes: {0}"
-    _EXC_QUEUE_FULL = "queue is full (max size: {0})"
+    _EXC_PROCESS_NAME_DUP = "duplicate name in processes: {}"
+    _EXC_QUEUE_FULL = "queue is full (max size: {})"
 
     def __init__(self,
                  processes: List[BoboProcess],
                  handler: BoboActionHandler,
-                 event_id_gen: BoboGenEventID,
-                 max_size: int):
+                 gen_event_id: BoboGenEventID,
+                 max_size: int = 0):
         super().__init__()
+
+        self._lock: RLock = RLock()
+        self._closed: bool = False
 
         self._processes: Dict[str, BoboProcess] = {}
 
@@ -43,12 +46,10 @@ class BoboForwarder(BoboEngineTask,
                 raise BoboForwarderError(
                     self._EXC_PROCESS_NAME_DUP.format(process.name))
 
-        self.handler: BoboActionHandler = handler
-        self._event_id_gen: BoboGenEventID = event_id_gen
-        self._max_size: int = max_size
+        self._handler: BoboActionHandler = handler
+        self._gen_event_id: BoboGenEventID = gen_event_id
+        self._max_size: int = max(0, max_size)
         self._queue: Queue[BoboEventComplex] = Queue(self._max_size)
-        self._closed = False
-        self._lock: RLock = RLock()
 
     def update(self) -> bool:
         with self._lock:
@@ -75,13 +76,13 @@ class BoboForwarder(BoboEngineTask,
                 process: BoboProcess = self._processes[event.process_name]
 
                 if process.action is not None:
-                    self.handler.handle(action=process.action, event=event)
+                    self._handler.handle(action=process.action, event=event)
             return True
         return False
 
     def _update_responses(self) -> bool:
         event: Optional[BoboEventAction] = \
-            self.handler.get_action_event()
+            self._handler.get_action_event()
 
         if event is not None:
             for subscriber in self._subscribers:
@@ -89,10 +90,10 @@ class BoboForwarder(BoboEngineTask,
             return True
         return False
 
-    def on_producer_update(self, event: BoboEventComplex):
+    def on_producer_update(self, event: BoboEventComplex) -> None:
         with self._lock:
             if self._closed:
-                return False
+                return
 
             if not self._queue.full():
                 self._queue.put(event)

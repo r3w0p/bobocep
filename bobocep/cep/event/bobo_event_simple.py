@@ -41,3 +41,6 @@ class BoboEventSimple(BoboEvent):
             timestamp=d[BoboEventSimple.TIMESTAMP],
             data=d[BoboEventSimple.DATA]
         )
+
+    def __str__(self) -> str:
+        return self.to_json_str()

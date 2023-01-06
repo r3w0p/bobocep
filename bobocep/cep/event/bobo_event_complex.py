@@ -61,7 +61,7 @@ class BoboEventComplex(BoboEvent):
             self.EVENT_TYPE: self.TYPE_COMPLEX,
             self.EVENT_ID: self.event_id,
             self.TIMESTAMP: self.timestamp,
-            self.DATA: str(self.data),
+            self.DATA: self.data,
             self.PROCESS_NAME: self.process_name,
             self.PATTERN_NAME: self.pattern_name,
             self.HISTORY: self.history
@@ -81,3 +81,6 @@ class BoboEventComplex(BoboEvent):
             pattern_name=d[BoboEventComplex.PATTERN_NAME],
             history=BoboHistory.from_json_str(d[BoboEventComplex.HISTORY])
         )
+
+    def __str__(self) -> str:
+        return self.to_json_str()

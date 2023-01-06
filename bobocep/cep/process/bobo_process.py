@@ -20,7 +20,7 @@ class BoboProcess:
     def __init__(self,
                  name: str,
                  patterns: List[BoboPattern],
-                 action: Optional[BoboAction],
+                 action: Optional[BoboAction] = None,
                  datagen: Optional[Callable] = None,
                  retain: bool = True):
         super().__init__()

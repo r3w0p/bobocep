@@ -25,9 +25,7 @@ def _pool_execute_action(
 class BoboActionHandlerPool(BoboActionHandler):
     """An action handler that uses multiprocessing for action execution."""
 
-    def __init__(self,
-                 max_size: int,
-                 processes: int):
+    def __init__(self, processes: int, max_size: int = 0):
         super().__init__(max_size)
 
         self._processes = processes
@@ -41,7 +39,7 @@ class BoboActionHandlerPool(BoboActionHandler):
         # The queue size is checked manually before action execution because
         # a 'queue full' error within a running process would not be visible
         # outside of the process itself. Also, a 'maxsize' parameter for the
-        # Manager queue does not appear to work correctly e.g. a maxsize of 1
+        # Manager queue does not appear to work correctly e.g. a max_size of 1
         # causes unit tests to 'hang'.
         if self._queue.qsize() >= self._max_size:
             raise BoboActionHandlerError(

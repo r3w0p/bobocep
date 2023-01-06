@@ -43,7 +43,7 @@ class TestValid:
 
         receiver, subscriber = tc.receiver_sub(
             event_gen=BoboGenEventTime(
-                milliseconds=1,
+                millis=1,
                 datagen=lambda: data_null_event,
                 from_now=False))
 

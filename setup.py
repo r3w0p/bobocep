@@ -12,7 +12,7 @@ setup(
     author="r3w0p",
     author_email="rr33ww00pp@gmail.com",
     description="A fault-tolerant Complex Event Processing engine "
-                "for edge computing in Internet of Things systems.",
+                "designed for edge computing in Internet of Things systems.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     license="MIT",

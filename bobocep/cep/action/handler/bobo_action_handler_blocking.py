@@ -16,7 +16,7 @@ class BoboActionHandlerBlocking(BoboActionHandler):
     """An action handler that executes without multithreading or
     multiprocessing."""
 
-    def __init__(self, max_size: int):
+    def __init__(self, max_size: int = 0):
         super().__init__(max_size)
 
         self._queue: "Queue[BoboEventAction]" = Queue(self._max_size)

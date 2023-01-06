@@ -12,8 +12,8 @@ from bobocep.misc.bobo_jsonable_error import BoboJSONableError
 
 
 class BoboEventFactory:
-    """An event factory that instantiates a BoboEvent from a JSON
-    representation."""
+    """An event factory that instantiates a BoboEvent from a JSON string
+    representation of one."""
 
     @staticmethod
     def from_json_str(j: str) -> BoboEvent:

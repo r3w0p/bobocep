@@ -12,7 +12,7 @@ from bobocep.cep.engine.decider.bobo_decider_error import \
 from bobocep.cep.engine.decider.bobo_decider_publisher import \
     BoboDeciderPublisher
 from bobocep.cep.engine.decider.bobo_decider_run import BoboDeciderRun, \
-    BoboDeciderRunTuple
+    BoboDeciderRunState
 from bobocep.cep.engine.receiver.bobo_receiver_subscriber import \
     BoboReceiverSubscriber
 from bobocep.cep.event.bobo_event import BoboEvent
@@ -26,17 +26,20 @@ class BoboDecider(BoboEngineTask,
                   BoboReceiverSubscriber):
     """A decider task."""
 
-    _EXC_PROCESS_NAME_DUP = "duplicate name in processes: {0}"
-    _EXC_QUEUE_FULL = "queue is full (max size: {0})"
-    _EXC_RUN_NOT_FOUND = "run {2} not found for process {0}, pattern {1}"
-    _EXC_RUN_EXISTS = "run {2} already exists for process {0}, pattern {1}"
+    _EXC_PROCESS_NAME_DUP = "duplicate name in processes: {}"
+    _EXC_QUEUE_FULL = "queue is full (max size: {})"
+    _EXC_RUN_NOT_FOUND = "run {} not found for process {}, pattern {}"
+    _EXC_RUN_EXISTS = "run {} already exists for process {}, pattern {}"
 
     def __init__(self,
                  processes: List[BoboProcess],
-                 event_id_gen: BoboGenEventID,
-                 run_id_gen: BoboGenEventID,
-                 max_size: int):
+                 gen_event_id: BoboGenEventID,
+                 gen_run_id: BoboGenEventID,
+                 max_size: int = 0):
         super().__init__()
+
+        self._lock: RLock = RLock()
+        self._closed: bool = False
 
         self._processes: Dict[str, BoboProcess] = {}
 
@@ -47,14 +50,12 @@ class BoboDecider(BoboEngineTask,
                 raise BoboDeciderError(
                     self._EXC_PROCESS_NAME_DUP.format(process.name))
 
-        self._event_id_gen = event_id_gen
-        self._run_id_gen = run_id_gen
-        self._max_size = max_size
+        self._gen_event_id: BoboGenEventID = gen_event_id
+        self._gen_run_id: BoboGenEventID = gen_run_id
         self._runs: Dict[str, Dict[str, Dict[str, BoboDeciderRun]]] = {}
-        self._history_stub = BoboHistory({})
+        self._stub_history: BoboHistory = BoboHistory({})
+        self._max_size: int = max(0, max_size)
         self._queue: Queue[BoboEvent] = Queue(self._max_size)
-        self._closed = False
-        self._lock: RLock = RLock()
 
     def update(self) -> bool:
         with self._lock:
@@ -65,23 +66,26 @@ class BoboDecider(BoboEngineTask,
                 event: BoboEvent = self._queue.get_nowait()
                 halt_com, halt_incom, upd = self._process_event(event)
 
-                serial_halt_com: List[BoboDeciderRunTuple] = \
+                serial_halt_com: List[BoboDeciderRunState] = \
                     [run.to_tuple() for run in halt_com]
 
-                serial_halt_incom: List[BoboDeciderRunTuple] = \
+                serial_halt_incom: List[BoboDeciderRunState] = \
                     [run.to_tuple() for run in halt_incom]
 
-                serial_upd: List[BoboDeciderRunTuple] = \
+                serial_upd: List[BoboDeciderRunState] = \
                     [run.to_tuple() for run in upd]
 
-                for subscriber in self._subscribers:
-                    subscriber.on_decider_update(
-                        halted_complete=serial_halt_com,
-                        halted_incomplete=serial_halt_incom,
-                        updated=serial_upd)
+                if any(len(s) > 0 for s in [serial_halt_com,
+                                            serial_halt_incom,
+                                            serial_upd]):
+                    for subscriber in self._subscribers:
+                        subscriber.on_decider_update(
+                            halted_complete=serial_halt_com,
+                            halted_incomplete=serial_halt_incom,
+                            updated=serial_upd)
 
-                # pytest "return True" issue - workaround...
                 return event is not None
+
             return False
 
     def close(self) -> None:
@@ -92,7 +96,7 @@ class BoboDecider(BoboEngineTask,
         with self._lock:
             return self._closed
 
-    def on_receiver_update(self, event: BoboEvent):
+    def on_receiver_update(self, event: BoboEvent) -> None:
         with self._lock:
             if self._closed:
                 return
@@ -176,10 +180,10 @@ class BoboDecider(BoboEngineTask,
         for process in self._processes.values():
             for pattern in process.patterns:
                 if any(predicate.evaluate(event=event,
-                                          history=self._history_stub)
+                                          history=self._stub_history)
                        for predicate in pattern.blocks[0].predicates):
                     run = BoboDeciderRun(
-                        run_id=self._run_id_gen.generate(),
+                        run_id=self._gen_run_id.generate(),
                         process_name=process.name,
                         pattern=pattern,
                         event=event)
@@ -206,7 +210,7 @@ class BoboDecider(BoboEngineTask,
             self._runs[process_name][pattern_name][run.run_id] = run
         else:
             raise BoboDeciderError(self._EXC_RUN_EXISTS.format(
-                process_name, pattern_name, run.run_id))
+                run.run_id, process_name, pattern_name))
 
     def _remove_run(self,
                     process_name: str,
@@ -219,4 +223,4 @@ class BoboDecider(BoboEngineTask,
             del self._runs[process_name][pattern_name][run_id]
         else:
             raise BoboDeciderError(self._EXC_RUN_NOT_FOUND.format(
-                process_name, pattern_name, run_id))
+                run_id, process_name, pattern_name))

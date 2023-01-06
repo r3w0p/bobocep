@@ -75,3 +75,6 @@ class BoboHistory(BoboJSONable):
             events[key] = [BoboEventFactory.from_json_str(e) for e in d[key]]
 
         return BoboHistory(events=events)
+
+    def __str__(self) -> str:
+        return self.to_json_str()

@@ -4,8 +4,8 @@ from bobocep.cep.event.bobo_history import BoboHistory
 from bobocep.misc.bobo_jsonable import BoboJSONable
 
 
-class BoboDeciderRunTuple(BoboJSONable):
-    """A tuple representing the current state of a decider run."""
+class BoboDeciderRunState(BoboJSONable):
+    """A class that represents the current state of a run."""
 
     PROCESS_NAME = "process_name"
     PATTERN_NAME = "pattern_name"
@@ -49,14 +49,14 @@ class BoboDeciderRunTuple(BoboJSONable):
         }, default=lambda o: o.to_json_str())
 
     @staticmethod
-    def from_json_str(j: str) -> 'BoboDeciderRunTuple':
-        return BoboDeciderRunTuple.from_dict(loads(j))
+    def from_json_str(j: str) -> 'BoboDeciderRunState':
+        return BoboDeciderRunState.from_dict(loads(j))
 
     @staticmethod
-    def from_dict(d: dict) -> 'BoboDeciderRunTuple':
-        return BoboDeciderRunTuple(
-            process_name=d[BoboDeciderRunTuple.PROCESS_NAME],
-            pattern_name=d[BoboDeciderRunTuple.PATTERN_NAME],
-            block_index=d[BoboDeciderRunTuple.BLOCK_INDEX],
-            history=BoboHistory.from_json_str(d[BoboDeciderRunTuple.HISTORY])
+    def from_dict(d: dict) -> 'BoboDeciderRunState':
+        return BoboDeciderRunState(
+            process_name=d[BoboDeciderRunState.PROCESS_NAME],
+            pattern_name=d[BoboDeciderRunState.PATTERN_NAME],
+            block_index=d[BoboDeciderRunState.BLOCK_INDEX],
+            history=BoboHistory.from_json_str(d[BoboDeciderRunState.HISTORY])
         )

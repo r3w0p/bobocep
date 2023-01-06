@@ -14,12 +14,12 @@ from bobocep.cep.event.bobo_event_complex import BoboEventComplex
 class BoboActionHandler(ABC):
     """A handler for the execution of actions."""
 
-    _EXC_QUEUE_FULL = "queue is full (max size: {0})"
+    _EXC_QUEUE_FULL = "queue is full (max size: {})"
 
-    def __init__(self, max_size: int):
+    def __init__(self, max_size: int = 0):
         super().__init__()
         self._lock: RLock = RLock()
-        self._max_size = max_size
+        self._max_size = max(0, max_size)
 
     def handle(self,
                action: BoboAction,

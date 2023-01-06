@@ -25,10 +25,6 @@ class BoboEvent(BoboJSONable, ABC):
                  data: Any):
         super().__init__()
 
-        # TODO Note: timestamp = milliseconds from epoch is the point where
-        #  the time starts, the return value of time.gmtime(0). It is
-        #  January 1, 1970, 00:00:00 (UTC) on all platforms.
-
         if len(event_id) == 0:
             raise BoboEventError(self._EXC_ID_LEN)
 

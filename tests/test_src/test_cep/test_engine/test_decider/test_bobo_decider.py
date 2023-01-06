@@ -184,8 +184,8 @@ class TestInvalid:
             BoboDecider(
                 processes=[tc.process(patterns=[tc.pattern()]),
                            tc.process(patterns=[tc.pattern()])],
-                event_id_gen=BoboGenEventIDUnique(),
-                run_id_gen=BoboGenEventIDUnique(),
+                gen_event_id=BoboGenEventIDUnique(),
+                gen_run_id=BoboGenEventIDUnique(),
                 max_size=255)
 
     def test_duplicate_run_id_for_pattern(self):

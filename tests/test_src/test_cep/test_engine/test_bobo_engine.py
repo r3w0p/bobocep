@@ -9,7 +9,7 @@ import pytest
 import tests.common as tc
 from bobocep.cep.engine.bobo_engine import BoboEngine
 from bobocep.cep.engine.bobo_engine_error import BoboEngineError
-from bobocep.cep.engine.decider.bobo_decider_run_tuple import BoboDeciderRunTuple
+from bobocep.cep.engine.decider.bobo_decider_run_state import BoboDeciderRunState
 from bobocep.cep.event.bobo_event_action import BoboEventAction
 from bobocep.cep.event.bobo_event_complex import BoboEventComplex
 from bobocep.cep.event.bobo_event_simple import BoboEventSimple
@@ -140,7 +140,7 @@ class TestValid:
 
         # Decider output: full history of events that caused run to complete
         assert len(dec_sub.halted_complete) == 1
-        assert isinstance(dec_sub.halted_complete[0], BoboDeciderRunTuple)
+        assert isinstance(dec_sub.halted_complete[0], BoboDeciderRunState)
         assert dec_sub.halted_complete[0].process_name == "process_a"
         assert dec_sub.halted_complete[0].pattern_name == "pattern_123"
         dec_history = dec_sub.halted_complete[0].history

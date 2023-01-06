@@ -93,3 +93,6 @@ class BoboEventAction(BoboEvent):
             action_name=d[BoboEventAction.ACTION_NAME],
             success=d[BoboEventAction.SUCCESS]
         )
+
+    def __str__(self) -> str:
+        return self.to_json_str()

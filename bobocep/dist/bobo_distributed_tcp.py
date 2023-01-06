@@ -12,7 +12,7 @@ from typing import List, Dict, Tuple
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 
-from bobocep.cep.engine.decider.bobo_decider_run_tuple import BoboDeciderRunTuple
+from bobocep.cep.engine.decider.bobo_decider_run_state import BoboDeciderRunState
 from bobocep.cep.event.bobo_event import BoboEvent
 from bobocep.cep.event.bobo_event_action import BoboEventAction
 from bobocep.cep.event.bobo_event_complex import BoboEventComplex
@@ -43,17 +43,17 @@ class _IncomingDecoder(json.JSONDecoder):
     def __init__(self):
         json.JSONDecoder.__init__(self, object_hook=self.object_hook)
 
-    def object_hook(self, d: dict) -> Dict[str, List[BoboDeciderRunTuple]]:
+    def object_hook(self, d: dict) -> Dict[str, List[BoboDeciderRunState]]:
         if _KEY_HALTED_COMPLETE in d:
-            d[_KEY_HALTED_COMPLETE] = [BoboDeciderRunTuple.from_json_str(rt)
+            d[_KEY_HALTED_COMPLETE] = [BoboDeciderRunState.from_json_str(rt)
                                        for rt in d[_KEY_HALTED_COMPLETE]]
 
         if _KEY_HALTED_INCOMPLETE in d:
-            d[_KEY_HALTED_INCOMPLETE] = [BoboDeciderRunTuple.from_json_str(rt)
+            d[_KEY_HALTED_INCOMPLETE] = [BoboDeciderRunState.from_json_str(rt)
                                          for rt in d[_KEY_HALTED_INCOMPLETE]]
 
         if _KEY_UPDATED in d:
-            d[_KEY_UPDATED] = [BoboDeciderRunTuple.from_json_str(rt) for rt in
+            d[_KEY_UPDATED] = [BoboDeciderRunState.from_json_str(rt) for rt in
                                d[_KEY_UPDATED]]
 
         return d
@@ -154,9 +154,9 @@ class BoboDistributedTCP(BoboDistributed):
         self._thread_incoming: Thread = Thread(target=self._tcp_incoming)
         self._thread_outgoing: Thread = Thread(target=self._tcp_outgoing)
 
-        self._queue_incoming: Queue[Dict[str, List[BoboDeciderRunTuple]]] = \
+        self._queue_incoming: Queue[Dict[str, List[BoboDeciderRunState]]] = \
             Queue(maxsize=max_size_incoming)
-        self._queue_outgoing: Queue[Dict[str, List[BoboDeciderRunTuple]]] = \
+        self._queue_outgoing: Queue[Dict[str, List[BoboDeciderRunState]]] = \
             Queue(maxsize=max_size_outgoing)
 
     def run(self):
@@ -200,9 +200,9 @@ class BoboDistributedTCP(BoboDistributed):
 
     def on_decider_update(
             self,
-            halted_complete: List[BoboDeciderRunTuple],
-            halted_incomplete: List[BoboDeciderRunTuple],
-            updated: List[BoboDeciderRunTuple]):
+            halted_complete: List[BoboDeciderRunState],
+            halted_incomplete: List[BoboDeciderRunState],
+            updated: List[BoboDeciderRunState]):
         with self._lock:
             if self._closed:
                 raise BoboDistributedError(self._EXC_CLOSED)
@@ -210,7 +210,7 @@ class BoboDistributedTCP(BoboDistributed):
             if not self._running:
                 raise BoboDistributedError(self._EXC_NOT_RUNNING)
 
-            outgoing: Dict[str, List[BoboDeciderRunTuple]] = {
+            outgoing: Dict[str, List[BoboDeciderRunState]] = {
                 _KEY_HALTED_COMPLETE: halted_complete,
                 _KEY_HALTED_INCOMPLETE: halted_incomplete,
                 _KEY_UPDATED: updated
@@ -269,7 +269,7 @@ class BoboDistributedTCP(BoboDistributed):
                     raise BoboDistributedSystemError(
                         "Incoming {}: {}".format(e.__class__.__name__, e))
 
-                except TimeoutError:
+                except socket.timeout:
                     # From accept
                     # Timeout is added here so that the thread can react to
                     # _thread_closed=True when no data has been received
@@ -412,12 +412,12 @@ class BoboDistributedTCP(BoboDistributed):
                     break
 
     def _incoming_from_json(
-            self, msg_str: str) -> Dict[str, List[BoboDeciderRunTuple]]:
+            self, msg_str: str) -> Dict[str, List[BoboDeciderRunState]]:
         msg = json.loads(msg_str, cls=_IncomingDecoder)
         return msg
 
     def _outgoing_to_json(
-            self, msg: Dict[str, List[BoboDeciderRunTuple]]) -> str:
+            self, msg: Dict[str, List[BoboDeciderRunState]]) -> str:
         return json.dumps(msg, cls=_OutgoingEncoder)
 
     def _split_plaintext(self, plaintext: str) -> Tuple[str, str, str, str]:

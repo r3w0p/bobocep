@@ -10,7 +10,7 @@ from bobocep.cep.action.handler.bobo_action_handler_blocking import \
     BoboActionHandlerBlocking
 from bobocep.cep.engine.bobo_engine import BoboEngine
 from bobocep.cep.engine.decider.bobo_decider import BoboDecider
-from bobocep.cep.engine.decider.bobo_decider_run_tuple import BoboDeciderRunTuple
+from bobocep.cep.engine.decider.bobo_decider_run_state import BoboDeciderRunState
 from bobocep.cep.engine.decider.bobo_decider_subscriber import \
     BoboDeciderSubscriber
 from bobocep.cep.engine.forwarder.bobo_forwarder import BoboForwarder
@@ -220,9 +220,10 @@ def receiver_sub(validator: Optional[BoboValidator] = None,
     receiver = BoboReceiver(
         validator=validator if validator is not None else
         BoboValidatorAll(),
-        event_id_gen=event_id_gen if event_id_gen is not None else
+        gen_event_id=event_id_gen if event_id_gen is not None else
         BoboGenEventIDUnique(),
-        event_gen=event_gen if event_gen is not None else
+        gen_timestamp=BoboGenTimestampEpoch(),
+        gen_event=event_gen if event_gen is not None else
         BoboGenEventNone(),
         max_size=max_size)
 
@@ -247,9 +248,9 @@ def decider_sub(processes: List[BoboProcess],
                 max_size: int = 255):
     decider = BoboDecider(
         processes=processes,
-        event_id_gen=event_id_gen if event_id_gen is not None else
+        gen_event_id=event_id_gen if event_id_gen is not None else
         BoboGenEventIDUnique(),
-        run_id_gen=run_id_gen if run_id_gen is not None else
+        gen_run_id=run_id_gen if run_id_gen is not None else
         BoboGenEventIDUnique(),
         max_size=max_size)
 
@@ -262,14 +263,14 @@ def decider_sub(processes: List[BoboProcess],
 class StubDeciderSubscriber(BoboDeciderSubscriber):
     def __init__(self):
         super().__init__()
-        self.halted_complete: List[BoboDeciderRunTuple] = []
-        self.halted_incomplete: List[BoboDeciderRunTuple] = []
-        self.updated: List[BoboDeciderRunTuple] = []
+        self.halted_complete: List[BoboDeciderRunState] = []
+        self.halted_incomplete: List[BoboDeciderRunState] = []
+        self.updated: List[BoboDeciderRunState] = []
 
     def on_decider_update(self,
-                          halted_complete: List[BoboDeciderRunTuple],
-                          halted_incomplete: List[BoboDeciderRunTuple],
-                          updated: List[BoboDeciderRunTuple]):
+                          halted_complete: List[BoboDeciderRunState],
+                          halted_incomplete: List[BoboDeciderRunState],
+                          updated: List[BoboDeciderRunState]):
         self.halted_complete += halted_complete
         self.halted_incomplete += halted_incomplete
         self.updated += updated
@@ -280,8 +281,9 @@ def producer_sub(processes: List[BoboProcess],
                  max_size: int = 255):
     producer = BoboProducer(
         processes=processes,
-        event_id_gen=event_id_gen if event_id_gen is not None else
+        gen_event_id=event_id_gen if event_id_gen is not None else
         BoboGenEventIDUnique(),
+        gen_timestamp=BoboGenTimestampEpoch(),
         max_size=max_size)
 
     subscriber = StubProducerSubscriber()
@@ -308,7 +310,7 @@ def forwarder_sub(processes: List[BoboProcess],
         processes=processes,
         handler=handler if handler is not None else
         BoboActionHandlerBlocking(max_size=max_size),
-        event_id_gen=event_id_gen if event_id_gen is not None else
+        gen_event_id=event_id_gen if event_id_gen is not None else
         BoboGenEventIDUnique(),
         max_size=max_size)
 

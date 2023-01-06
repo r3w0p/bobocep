@@ -38,17 +38,15 @@ class TestValid:
 
         forwarder, subscriber = tc.forwarder_sub(
             processes=[process],
-            handler=BoboActionHandlerPool(
-                max_size=255,
-                processes=1),
+            handler=BoboActionHandlerPool(processes=1, max_size=255),
             max_size=255)
         assert len(subscriber.output) == 0
 
         forwarder.on_producer_update(event)
         forwarder.update()
 
-        forwarder.handler.close()
-        forwarder.handler.join()
+        forwarder._handler.close()
+        forwarder._handler.join()
         forwarder.update()
         assert len(subscriber.output) == 1
 
@@ -97,5 +95,5 @@ class TestInvalid:
             BoboForwarder(
                 processes=[process_1, process_2],
                 handler=BoboActionHandlerBlocking(max_size=255),
-                event_id_gen=BoboGenEventIDUnique(),
+                gen_event_id=BoboGenEventIDUnique(),
                 max_size=255)
