@@ -2,7 +2,7 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-import json
+from json import dumps
 from typing import Any
 
 from bobocep.cep.engine.receiver.validator.bobo_validator import BoboValidator
@@ -21,9 +21,9 @@ class BoboValidatorJSONable(BoboValidator):
             data = data.data
 
         try:
-            json.loads(data)
+            dumps(data)
 
-        except ValueError:
+        except (RecursionError, TypeError, ValueError):
             return False
 
         return True

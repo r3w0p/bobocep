@@ -59,20 +59,21 @@ class BoboReceiver(BoboEngineTask,
             if self._closed:
                 return False
 
-            entity: Any = None
+            data: Any = None
+            event_gen: Optional[BoboEvent] = None
+
             if not self._queue.empty():
-                entity = self._queue.get_nowait()
-                self._process_data(entity)
+                data = self._queue.get_nowait()
+                self._process_data(data)
 
             if self._gen_event is not None:
-                event_gen: Optional[BoboEvent] = \
-                    self._gen_event.maybe_generate(
-                        self._gen_event_id.generate())
+                event_gen = self._gen_event.maybe_generate(
+                    self._gen_event_id.generate())
 
                 if event_gen is not None:
                     self._process_data(event_gen)
 
-            return entity is not None or event_gen is not None
+            return data is not None or event_gen is not None
 
     def close(self) -> None:
         with self._lock:
