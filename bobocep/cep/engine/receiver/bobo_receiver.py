@@ -39,7 +39,7 @@ class BoboReceiver(BoboEngineTask,
                  validator: BoboValidator,
                  gen_event_id: BoboGenEventID,
                  gen_timestamp: BoboGenTimestamp,
-                 gen_event: Optional[BoboGenEvent],
+                 gen_event: Optional[BoboGenEvent] = None,
                  max_size: int = 0):
         super().__init__()
 

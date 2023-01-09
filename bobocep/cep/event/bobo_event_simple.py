@@ -22,6 +22,13 @@ class BoboEventSimple(BoboEvent):
             timestamp=timestamp,
             data=data)
 
+    def cast(self, dtype: type) -> 'BoboEventSimple':
+        return BoboEventSimple(
+            event_id=self._event_id,
+            timestamp=self._timestamp,
+            data=dtype(self._data)
+        )
+
     def to_json_str(self) -> str:
         return dumps({
             self.EVENT_TYPE: self.TYPE_SIMPLE,

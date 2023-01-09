@@ -44,6 +44,16 @@ class BoboEventComplex(BoboEvent):
         self._pattern_name: str = pattern_name
         self._history: BoboHistory = history
 
+    def cast(self, dtype: type) -> 'BoboEventComplex':
+        return BoboEventComplex(
+            event_id=self._event_id,
+            timestamp=self._timestamp,
+            data=dtype(self._data),
+            process_name=self._process_name,
+            pattern_name=self._pattern_name,
+            history=self._history
+        )
+
     @property
     def process_name(self) -> str:
         return self._process_name

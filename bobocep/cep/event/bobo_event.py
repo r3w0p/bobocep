@@ -32,6 +32,10 @@ class BoboEvent(BoboJSONable, ABC):
         self._timestamp: int = timestamp
         self._data: Any = data
 
+    @abstractmethod
+    def cast(self, dtype: type) -> 'BoboEvent':
+        """"""
+
     @staticmethod
     @abstractmethod
     def from_dict(d: dict) -> 'BoboEvent':

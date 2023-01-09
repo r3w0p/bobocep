@@ -50,6 +50,17 @@ class BoboEventAction(BoboEvent):
         self._action_name: str = action_name
         self._success: bool = success
 
+    def cast(self, dtype: type) -> 'BoboEventAction':
+        return BoboEventAction(
+            event_id=self._event_id,
+            timestamp=self._timestamp,
+            data=dtype(self._data),
+            process_name=self._process_name,
+            pattern_name=self._pattern_name,
+            action_name=self._action_name,
+            success=self._success
+        )
+
     @property
     def process_name(self) -> str:
         return self._process_name
