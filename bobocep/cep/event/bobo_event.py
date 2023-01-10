@@ -10,7 +10,7 @@ from bobocep.misc.bobo_jsonable import BoboJSONable
 
 
 class BoboEvent(BoboJSONable, ABC):
-    """An event."""
+    """An abstract event."""
 
     EVENT_TYPE = "event_type"
     EVENT_ID = "event_id"
@@ -23,6 +23,13 @@ class BoboEvent(BoboJSONable, ABC):
                  event_id: str,
                  timestamp: int,
                  data: Any):
+        """
+        :param event_id: The event ID.
+        :param timestamp: The event timestamp.
+        :param data: The event data.
+
+        :raises BoboEventError: If `event_id` length is equal to 0.
+        """
         super().__init__()
 
         if len(event_id) == 0:
@@ -34,21 +41,31 @@ class BoboEvent(BoboJSONable, ABC):
 
     @abstractmethod
     def cast(self, dtype: type) -> 'BoboEvent':
-        """"""
+        """
+        :param dtype: The type to which the data is cast.
+        :return: A new instance of the BoboEvent with its data cast to `dtype`
+            and all other properties identical to the original BoboEvent.
+        """
 
     @staticmethod
     @abstractmethod
     def from_dict(d: dict) -> 'BoboEvent':
-        """"""
+        """
+        :param d: A BoboEvent in `dict` format.
+        :return: A BoboEvent instance with the properties defined in `d`.
+        """
 
     @property
     def event_id(self) -> str:
+        """Get event ID."""
         return self._event_id
 
     @property
     def timestamp(self) -> int:
+        """Get event timestamp."""
         return self._timestamp
 
     @property
-    def data(self):
+    def data(self) -> Any:
+        """Get event data."""
         return self._data

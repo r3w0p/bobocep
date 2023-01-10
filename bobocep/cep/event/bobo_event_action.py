@@ -31,6 +31,20 @@ class BoboEventAction(BoboEvent):
                  pattern_name: str,
                  action_name: str,
                  success: bool):
+        """
+        :param event_id: The event ID.
+        :param timestamp: The event timestamp.
+        :param data: The event data.
+        :param process_name: The process name.
+        :param pattern_name: The pattern name.
+        :param action_name: The action name.
+        :param success: `True` if the action was successful; `False` otherwise.
+
+        :raises BoboEventError: If `event_id` length is equal to 0.
+        :raises BoboEventError: If `process_name` length is equal to 0.
+        :raises BoboEventError: If `pattern_name` length is equal to 0.
+        :raises BoboEventError: If `action_name` length is equal to 0.
+        """
         super().__init__(
             event_id=event_id,
             timestamp=timestamp,

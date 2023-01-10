@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Top-level package for bobocep."""
+"""Top-level package for BoboCEP."""
 
 __author__ = """r3w0p"""
 __email__ = "rr33ww00pp@gmail.com"
