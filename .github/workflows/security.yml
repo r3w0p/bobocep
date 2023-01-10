@@ -2,7 +2,8 @@ name: Security
 
 on:
   push:
-    - 'master'
+    branches:
+      - 'master'
   schedule:
     # At 06:00 every day.
     - cron: '0 6 * * *'
