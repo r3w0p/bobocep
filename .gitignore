@@ -15,6 +15,8 @@
 !.github/**
 !bobocep/
 !bobocep/**
+!docs/
+!docs/**
 !media/
 !media/**
 !tests/
@@ -22,3 +24,5 @@
 
 __pycache__
 *.pyc
+docs/_build/
+docs/source
