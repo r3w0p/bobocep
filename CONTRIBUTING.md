@@ -21,7 +21,8 @@ Add sufficient comments to your code.
 ### Testing
 
 When testing your code, use the same packages that are provided in 
-[requirements.txt](https://github.com/r3w0p/bobocep/blob/master/requirements.txt), namely: pytest, coverage.
+[Pipfile](https://github.com/r3w0p/bobocep/blob/master/Pipfile), namely:
+pytest, coverage.
 
 ### Coding Conventions
 

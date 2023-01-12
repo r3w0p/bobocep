@@ -24,8 +24,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
+          pip install --upgrade pip
+          pip install pipenv
+          pipenv shell
+          pipenv install --dev --skip-lock
+          pipenv lock
 
       - name: Lint with Flake8
         run: |
