@@ -2,8 +2,8 @@ name: CICD
 
 on:
   push:
-    tags:
-      - '**'
+    # tags:
+    #   - '**'
 
 jobs:
   ci:
