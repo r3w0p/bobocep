@@ -26,31 +26,29 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install pipenv
-          pipenv shell
           pipenv install --dev --skip-lock
-          pipenv lock
 
       - name: Lint with Flake8
         run: |
           # Stop the build if there are Python syntax errors or undefined names
-          flake8 ./bobocep --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 ./tests --count --select=E9,F63,F7,F82 --show-source --statistics
+          pipenv run flake8 ./bobocep --count --select=E9,F63,F7,F82 --show-source --statistics
+          pipenv run flake8 ./tests --count --select=E9,F63,F7,F82 --show-source --statistics
 
       - name: Type check with mypy
         run: |
-          mypy ./bobocep
-          mypy ./tests
+          pipenv run mypy ./bobocep
+          pipenv run mypy ./tests
 
       - name: Test with pytest
         run: |
-          coverage run --source=bobocep -m pytest tests
+          pipenv run coverage run --source=bobocep -m pytest tests
 
       - name: Upload coverage to Code Climate
         uses: paambaati/codeclimate-action@v2.5.3
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_TEST_REPORTER_ID }}
         with:
-          coverageCommand: coverage xml
+          coverageCommand: pipenv run coverage xml
   cd:
     name: CD
     needs: ci
