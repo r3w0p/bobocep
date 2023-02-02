@@ -27,8 +27,6 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.coverage',
     'sphinx.ext.doctest',
-    'sphinx.ext.githubpages',
-    'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
 
     'sphinx_mdinclude',
@@ -47,7 +45,8 @@ html_theme = 'sphinx_rtd_theme'
 
 html_theme_options = {
     'prev_next_buttons_location': 'None',
-    'navigation_depth': 4
+    'navigation_depth': 4,
+    'collapse_navigation': False
 }
 
 html_static_path = ['_static']

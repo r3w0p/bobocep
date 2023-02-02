@@ -1,0 +1,21 @@
+version: 2
+
+formats:
+  - epub
+  - pdf
+
+python:
+  install:
+    - requirements: requirements.txt
+    - requirements: requirements_dev.txt
+    - method: pip
+      path: .
+
+build:
+  os: ubuntu-22.04
+  tools:
+    python: "3.9"
+
+sphinx:
+  builder: html
+  configuration: docs/conf.py

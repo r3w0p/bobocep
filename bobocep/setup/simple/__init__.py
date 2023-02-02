@@ -107,3 +107,6 @@ class BoboSetupSimple(BoboSetup):
         #    forwarder.subscribe(self._distributed)
 
         return engine
+
+
+# TODO BoboSetupSimpleDistributed, extends BoboSetupSimple

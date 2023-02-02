@@ -1,5 +1,5 @@
 Source Code
-===========
+***********
 
 .. rubric:: Modules
 

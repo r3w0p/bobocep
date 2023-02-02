@@ -1,5 +1,6 @@
 *
 !.gitignore
+!.readthedocs.yaml
 
 !CODE_OF_CONDUCT.md
 !CONTRIBUTING.md
@@ -7,7 +8,8 @@
 !README.md
 !SECURITY.md
 
-!Pipfile
+!requirements.txt
+!requirements-dev.txt
 !setup.py
 !setup.cfg
 
@@ -24,5 +26,5 @@
 
 __pycache__
 *.pyc
-docs/_build/
+docs/_build
 docs/source

@@ -3,6 +3,9 @@ from setuptools import setup, find_packages
 with open("README.md") as f:
     long_description = f.read()
 
+with open("requirements.txt") as f:
+    install_requires = f.read().splitlines()
+
 setup(
     name="BoboCEP",
     version="0.9.18",
@@ -33,13 +36,8 @@ setup(
         "Topic :: Scientific/Engineering :: Information Analysis",
         "Topic :: System :: Monitoring"
     ],
-    install_requires=[
-        "pycryptodome==3.16.0"
-    ],
-    packages=find_packages(include=[
-        "bobocep",
-        "bobocep.*"
-    ]),
+    install_requires=install_requires,
+    packages=find_packages(include=["bobocep", "bobocep.*"]),
     test_suite="tests",
     zip_safe=False
 )
