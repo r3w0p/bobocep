@@ -63,7 +63,6 @@ class BoboSetupSimple(BoboSetup):
         self._early_stop: bool = early_stop
 
     def generate(self) -> BoboEngine:
-        # TODO if distributed, ensure validator is instanceof JSONableVal
         receiver = BoboReceiver(
             validator=self._validator,
             gen_event=self._gen_event,
@@ -100,13 +99,18 @@ class BoboSetupSimple(BoboSetup):
             times_forwarder=self._times_forwarder,
             early_stop=self._early_stop)
 
-        # TODO move if self._distributed is not None:
-        #    receiver.subscribe(self._distributed)
-        #    decider.subscribe(self._distributed)
-        #    producer.subscribe(self._distributed)
-        #    forwarder.subscribe(self._distributed)
-
         return engine
 
-
 # TODO BoboSetupSimpleDistributed, extends BoboSetupSimple
+
+# TODO if distributed, ensure validator is (instance of) JSONableVal
+
+# TODO move if self._distributed is not None:
+#    receiver.subscribe(self._distributed)
+#    decider.subscribe(self._distributed)
+#    producer.subscribe(self._distributed)
+#    forwarder.subscribe(self._distributed)
+
+# TODO BoboGenEventIDUnique urn MUST be set to something unique to avoid event
+#  ID conflicts when message passing
+#  - setup needs to check that all devices in the device list have unique urns

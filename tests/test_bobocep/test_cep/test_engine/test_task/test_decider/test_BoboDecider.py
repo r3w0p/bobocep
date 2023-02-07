@@ -5,7 +5,7 @@
 import pytest
 
 import tests.common as tc
-from bobocep.cep.engine.task.decider import BoboDeciderError, BoboDecider
+from bobocep.cep.engine.task.decider import BoboError, BoboDecider
 from bobocep.cep.gen.event_id import BoboGenEventIDUnique
 from bobocep.cep.process.pattern.builder import BoboPatternBuilder
 from bobocep.cep.process.pattern.predicate import BoboPredicateCall
@@ -114,7 +114,7 @@ class TestValid:
             assert len(decider.runs_from(
                 process_name, pattern_123.name)) == length
 
-        assert len(subscriber.halted_complete) == 1
+        assert len(subscriber.completed) == 1
 
     def test_get_run_from_non_existent_pattern(self):
         pattern_123 = tc.pattern(data_blocks=[1, 2, 3])
@@ -137,7 +137,7 @@ class TestValid:
         result_update = decider.update()
 
         assert result_update is True
-        assert len(subscriber.halted_complete) == 1
+        assert len(subscriber.completed) == 1
 
     def test_3_block_pattern_halt_incomplete_triggered_haltcondition(self):
         pattern = tc.pattern(
@@ -149,15 +149,15 @@ class TestValid:
 
         decider.on_receiver_update(tc.event_simple(data=1))
         decider.update()
-        assert len(subscriber.halted_incomplete) == 0
+        assert len(subscriber.halted) == 0
 
         decider.on_receiver_update(tc.event_simple(data=2))
         decider.update()
-        assert len(subscriber.halted_incomplete) == 0
+        assert len(subscriber.halted) == 0
 
         decider.on_receiver_update(tc.event_simple(data=5))
         decider.update()
-        assert len(subscriber.halted_incomplete) == 1
+        assert len(subscriber.halted) == 1
 
     def test_3_block_pattern_halt_incomplete_failed_precondition(self):
         pattern = BoboPatternBuilder() \
@@ -171,15 +171,15 @@ class TestValid:
 
         decider.on_receiver_update(tc.event_simple(data=10))
         decider.update()
-        assert len(subscriber.halted_incomplete) == 0
+        assert len(subscriber.halted) == 0
 
         decider.on_receiver_update(tc.event_simple(data=11))
         decider.update()
-        assert len(subscriber.halted_incomplete) == 0
+        assert len(subscriber.halted) == 0
 
         decider.on_receiver_update(tc.event_simple(data=5))
         decider.update()
-        assert len(subscriber.halted_incomplete) == 1
+        assert len(subscriber.halted) == 1
 
     def test_close_then_update(self):
         decider, subscriber = tc.decider_sub([tc.process()])
@@ -207,7 +207,7 @@ class TestInvalid:
 
         decider.on_receiver_update(tc.event_simple(data=1))
 
-        with pytest.raises(BoboDeciderError):
+        with pytest.raises(BoboError):
             decider.on_receiver_update(tc.event_simple(data=2))
 
     def test_try_to_remove_run_that_does_not_exist(self):
@@ -215,13 +215,13 @@ class TestInvalid:
         decider, subscriber = tc.decider_sub([process])
         process_name = decider.processes()[0].name
 
-        with pytest.raises(BoboDeciderError):
+        with pytest.raises(BoboError):
             decider._remove_run(process_name=process_name,
                                 pattern_name="a",
                                 run_id="b")
 
     def test_duplicate_process_names(self):
-        with pytest.raises(BoboDeciderError):
+        with pytest.raises(BoboError):
             BoboDecider(
                 processes=[tc.process(patterns=[tc.pattern()]),
                            tc.process(patterns=[tc.pattern()])],
@@ -242,5 +242,5 @@ class TestInvalid:
 
         decider.on_receiver_update(event=tc.event_simple(data=1))
 
-        with pytest.raises(BoboDeciderError):
+        with pytest.raises(BoboError):
             decider.update()

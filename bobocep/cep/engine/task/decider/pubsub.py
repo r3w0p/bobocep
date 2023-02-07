@@ -4,7 +4,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from bobocep.cep.engine.task.decider.run import BoboDeciderRunTuple
+from bobocep.cep.engine.task.decider.run import BoboRunTuple
 
 
 class BoboDeciderSubscriber(ABC):
@@ -16,9 +16,9 @@ class BoboDeciderSubscriber(ABC):
     @abstractmethod
     def on_decider_update(
             self,
-            halted_complete: List[BoboDeciderRunTuple],
-            halted_incomplete: List[BoboDeciderRunTuple],
-            updated: List[BoboDeciderRunTuple]):
+            completed: List[BoboRunTuple],
+            halted: List[BoboRunTuple],
+            updated: List[BoboRunTuple]):
         """"""
 
 

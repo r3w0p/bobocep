@@ -7,10 +7,6 @@
 from abc import ABC, abstractmethod
 
 from bobocep import BoboError
-from bobocep.cep.engine.task.decider.pubsub import BoboDeciderSubscriber
-from bobocep.cep.engine.task.forwarder.pubsub import BoboForwarderSubscriber
-from bobocep.cep.engine.task.producer.pubsub import BoboProducerSubscriber
-from bobocep.cep.engine.task.receiver.pubsub import BoboReceiverSubscriber
 from bobocep.dist.pubsub import BoboDistributedPublisher
 
 
@@ -27,8 +23,14 @@ class BoboDistributedTimeoutError(BoboDistributedError):
 
 
 class BoboDeviceTuple:
-    """A tuple that contains information about a BoboCEP instance on the
-    network."""
+    """
+    A tuple that contains information about a BoboCEP instance on the
+    network.
+    """
+
+    _EXC_ADDR_LEN = "addr must have a length greater than 0"
+    _EXC_URN_LEN = "urn must have a length greater than 0"
+    _EXC_KEY_LEN = "ID key must have a length greater than 0"
 
     def __init__(self,
                  addr: str,
@@ -37,7 +39,14 @@ class BoboDeviceTuple:
                  id_key: str):
         super().__init__()
 
-        # TODO validation + setters
+        if len(addr) == 0:
+            raise BoboDistributedError(self._EXC_ADDR_LEN)
+
+        if len(urn) == 0:
+            raise BoboDistributedError(self._EXC_URN_LEN)
+
+        if len(id_key) == 0:
+            raise BoboDistributedError(self._EXC_KEY_LEN)
 
         self._addr: str = addr
         self._port: int = port
@@ -49,7 +58,10 @@ class BoboDeviceTuple:
         return self._addr
 
     @addr.setter
-    def addr(self, addr: str) -> None:
+    def addr(self, addr: str):
+        if len(addr) == 0:
+            raise BoboDistributedError(self._EXC_ADDR_LEN)
+
         self._addr = addr
 
     @property
@@ -65,12 +77,7 @@ class BoboDeviceTuple:
         return self._id_key
 
 
-class BoboDistributed(BoboDistributedPublisher,
-                      BoboReceiverSubscriber,
-                      BoboDeciderSubscriber,
-                      BoboProducerSubscriber,
-                      BoboForwarderSubscriber,
-                      ABC):
+class BoboDistributed(BoboDistributedPublisher, ABC):
     """A class for enabling `BoboCEP` to be distributed over the network."""
 
     @abstractmethod

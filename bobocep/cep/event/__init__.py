@@ -229,13 +229,39 @@ class BoboHistory(BoboJSONable):
                             event.timestamp > self._last.timestamp:
                         self._last = event
 
+    @property
+    def events(self) -> Dict[str, List[BoboEvent]]:
+        """
+        :return: All history events, indexed by group.
+        """
+        eventscopy: Dict[str, List[BoboEvent]] = {}
+
+        for grp in self._events.keys():
+            if grp not in eventscopy:
+                eventscopy[grp] = []
+
+            eventscopy[grp] = [eve for eve in self._events[grp]]
+
+        return eventscopy
+
+    def size(self) -> int:
+        """
+        :return: The total number of history events across all groups.
+        """
+        count = 0
+
+        for grp in self._events.keys():
+            count += len(self._events[grp])
+
+        return count
+
     def all(self) -> Tuple[BoboEvent, ...]:
         """
-        :return: All BoboEvent instances in the history.
+        :return: All history events in a tuple.
         """
         all_events = []
-        for key in self._events:
-            all_events += self._events[key]
+        for grp in self._events.keys():
+            all_events += self._events[grp]
         return tuple(all_events)
 
     def group(self, group: str) -> Tuple[BoboEvent, ...]:
@@ -314,8 +340,8 @@ class BoboEventComplex(BoboEvent):
         :param pattern_name: The pattern name.
         :param history: The history of events.
 
-        :raises BoboEventError: If `process_name` length is equal to 0.
-        :raises BoboEventError: If `pattern_name` length is equal to 0.
+        :raises BoboEventError: If process name length is equal to 0.
+        :raises BoboEventError: If pattern name length is equal to 0.
         """
         super().__init__(
             event_id=event_id,
@@ -444,7 +470,7 @@ class BoboEventFactory:
     @staticmethod
     def from_json_str(j: str) -> BoboEvent:
         """
-        :param j: A JSON `str` representation of object of this type.
+        :param j: A JSON string representation of an object of this type.
         :return: A new BoboEvent instance of its type.
 
         :raises BoboEventFactoryError: If `EVENT_TYPE` key is missing

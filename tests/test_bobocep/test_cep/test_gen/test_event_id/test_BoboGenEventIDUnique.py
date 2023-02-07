@@ -19,3 +19,11 @@ class TestValid:
         event_id_2 = generator.generate()
 
         assert event_id_1 != event_id_2
+
+    def test_urn(self):
+        urn = "test_urn"
+        generator = BoboGenEventIDUnique(urn=urn)
+
+        event_id_1 = generator.generate()
+
+        assert event_id_1.startswith(urn)

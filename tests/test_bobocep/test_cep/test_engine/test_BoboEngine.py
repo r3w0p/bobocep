@@ -10,7 +10,7 @@ import pytest
 import tests.common as tc
 from bobocep.cep.engine import BoboEngine, BoboEngineError, BoboReceiver, \
     BoboProducer, BoboForwarder
-from bobocep.cep.engine.task.decider import BoboDeciderRunTuple, BoboDecider
+from bobocep.cep.engine.task.decider import BoboRunTuple, BoboDecider
 from bobocep.cep.event import BoboEventSimple, BoboEventComplex, \
     BoboEventAction
 
@@ -66,10 +66,10 @@ class TestValid:
         assert engine.receiver.size() == 2
 
         # Decider output: full history of events that caused run to complete
-        assert len(dec_sub.halted_complete) == 1
-        assert dec_sub.halted_complete[0].process_name == "process_a"
-        assert dec_sub.halted_complete[0].pattern_name == "pattern_123"
-        dec_history = dec_sub.halted_complete[0].history
+        assert len(dec_sub.completed) == 1
+        assert dec_sub.completed[0].process_name == "process_a"
+        assert dec_sub.completed[0].pattern_name == "pattern_123"
+        dec_history = dec_sub.completed[0].history
         assert dec_history.group("g1")[0].data == 1
         assert dec_history.group("g2")[0].data == 2
         assert dec_history.group("g3")[0].data == 3
@@ -123,7 +123,7 @@ class TestValid:
         assert engine.receiver.size() == 2
 
         # Other output: nothing
-        assert len(dec_sub.halted_complete) == 0
+        assert len(dec_sub.completed) == 0
         assert len(pro_sub.output) == 0
         assert len(fwd_sub.output) == 0
 
@@ -137,7 +137,7 @@ class TestValid:
         assert engine.receiver.size() == 1
 
         # Other output: nothing
-        assert len(dec_sub.halted_complete) == 0
+        assert len(dec_sub.completed) == 0
         assert len(pro_sub.output) == 0
         assert len(fwd_sub.output) == 0
 
@@ -155,11 +155,11 @@ class TestValid:
         assert engine.receiver.size() == 2
 
         # Decider output: full history of events that caused run to complete
-        assert len(dec_sub.halted_complete) == 1
-        assert isinstance(dec_sub.halted_complete[0], BoboDeciderRunTuple)
-        assert dec_sub.halted_complete[0].process_name == "process_a"
-        assert dec_sub.halted_complete[0].pattern_name == "pattern_123"
-        dec_history = dec_sub.halted_complete[0].history
+        assert len(dec_sub.completed) == 1
+        assert isinstance(dec_sub.completed[0], BoboRunTuple)
+        assert dec_sub.completed[0].process_name == "process_a"
+        assert dec_sub.completed[0].pattern_name == "pattern_123"
+        dec_history = dec_sub.completed[0].history
         assert dec_history.group("g1")[0].data == 1
         assert dec_history.group("g2")[0].data == 2
         assert dec_history.group("g3")[0].data == 3
@@ -235,7 +235,7 @@ class TestValid:
 
         # Receiver outputs 5 events: 3 simple + 1 complex + 1 action
         assert len(rec_sub.output) == 5
-        assert len(dec_sub.halted_complete) == 1
+        assert len(dec_sub.completed) == 1
         assert len(pro_sub.output) == 1
         assert len(fwd_sub.output) == 1
 

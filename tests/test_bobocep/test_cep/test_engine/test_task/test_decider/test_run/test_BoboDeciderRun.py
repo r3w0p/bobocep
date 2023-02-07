@@ -1,10 +1,11 @@
 # Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
+import pytest
 
 import tests.common as tc
-from bobocep.cep.engine.task.decider import BoboDeciderRun
-from bobocep.cep.event import BoboEventSimple
+from bobocep.cep.engine.task.decider.run import BoboRunError
+from bobocep.cep.event import BoboEventSimple, BoboHistory
 from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
 from bobocep.cep.process.pattern.builder import BoboPatternBuilder
 from bobocep.cep.process.pattern.predicate import BoboPredicateCall
@@ -12,14 +13,57 @@ from bobocep.cep.process.pattern.predicate import BoboPredicateCall
 
 class TestValid:
 
+    def test_properties(self):
+        pattern = tc.pattern(name="pattern_name", data_blocks=[1, 2, 3])
+        event = tc.event_simple(event_id="event_id")
+        run = tc.run_simple(
+            pattern,
+            event,
+            run_id="run_id",
+            process_name="process_name",
+            block_index=1)
+
+        assert run.run_id == "run_id"
+        assert run.process_name == "process_name"
+        assert run.pattern == pattern
+        assert run.block_index == 1
+        assert run.history().size() == 1
+        assert run.history().all()[0].event_id == "event_id"
+        assert run.is_halted() is False
+
+    def test_set_block(self):
+        pattern = tc.pattern(name="pattern_name", data_blocks=[1, 2, 3])
+        event_a = tc.event_simple(event_id="event_a")
+        event_b = tc.event_simple(event_id="event_b")
+        run = tc.run_simple(
+            pattern,
+            event_a,
+            run_id="run_id",
+            process_name="process_name",
+            block_index=1)
+
+        assert run.block_index == 1
+        assert run.history().size() == 1
+        assert run.history().all()[0].event_id == event_a.event_id
+        assert run.is_halted() is False
+
+        run.set_block(2, BoboHistory({
+            pattern.blocks[0].group: [event_a],
+            pattern.blocks[1].group: [event_b],
+        }))
+
+        assert run.block_index == 2
+        assert run.history().size() == 2
+        assert run.history().all()[0].event_id == event_a.event_id
+        assert run.history().all()[1].event_id == event_b.event_id
+        assert run.is_halted() is False
+
     def test_pattern_1_block_halt_complete_on_init(self):
         pattern = BoboPatternBuilder() \
             .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a"))
+        run = tc.run_simple(pattern, tc.event_simple("event_a"))
 
         assert run.is_halted()
         assert run.is_complete()
@@ -31,9 +75,7 @@ class TestValid:
             .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a"))
+        run = tc.run_simple(pattern, tc.event_simple("event_a"))
 
         assert not run.is_halted()
         assert not run.is_complete()
@@ -45,9 +87,7 @@ class TestValid:
             .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a"))
+        run = tc.run_simple(pattern, tc.event_simple("event_a"))
 
         run.process(
             BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
@@ -68,9 +108,7 @@ class TestValid:
             .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a"))
+        run = tc.run_simple(pattern, tc.event_simple("event_a"))
 
         run.halt()
         assert run.is_halted()
@@ -83,9 +121,7 @@ class TestValid:
             .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a"))
+        run = tc.run_simple(pattern, tc.event_simple("event_a"))
 
         run.halt()
         run.process(
@@ -100,9 +136,7 @@ class TestValid:
             .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a"))
+        run = tc.run_simple(pattern, tc.event_simple("event_a"))
 
         run.process(
             BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
@@ -117,9 +151,7 @@ class TestValid:
             .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a"))
+        run = tc.run_simple(pattern, tc.event_simple("event_a"))
 
         run.process(
             BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
@@ -140,9 +172,7 @@ class TestValid:
             .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a"))
+        run = tc.run_simple(pattern, tc.event_simple("event_a"))
 
         run.process(
             BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
@@ -160,9 +190,7 @@ class TestValid:
                          BoboPredicateCall(lambda e, h: e.data)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a", data=True))
+        run = tc.run_simple(pattern, tc.event_simple("event_a", data=True))
 
         run.process(
             BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
@@ -179,9 +207,7 @@ class TestValid:
             .followed_by("group_d", BoboPredicateCall(lambda e, h: True)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a"))
+        run = tc.run_simple(pattern, tc.event_simple("event_a"))
 
         run.process(
             BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
@@ -204,9 +230,7 @@ class TestValid:
             .followed_by("group_d", BoboPredicateCall(lambda e, h: True)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a"))
+        run = tc.run_simple(pattern, tc.event_simple("event_a"))
 
         run.process(
             BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
@@ -236,9 +260,7 @@ class TestValid:
             .followed_by("group_d", BoboPredicateCall(lambda e, h: True)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a"))
+        run = tc.run_simple(pattern, tc.event_simple("event_a"))
 
         run.process(
             BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
@@ -274,9 +296,7 @@ class TestValid:
             .followed_by("group_d", BoboPredicateCall(lambda e, h: True)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a"))
+        run = tc.run_simple(pattern, tc.event_simple("event_a"))
 
         run.process(
             BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
@@ -310,9 +330,7 @@ class TestValid:
             .followed_by("group_c", BoboPredicateCall(lambda e, h: e.data)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a", data=True))
+        run = tc.run_simple(pattern, tc.event_simple("event_a", data=True))
 
         run.process(
             BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(),
@@ -343,9 +361,7 @@ class TestValid:
                          BoboPredicateCall(lambda e, h: e.data == 3)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a", data=1))
+        run = tc.run_simple(pattern, tc.event_simple("event_a", data=1))
 
         run.process(
             BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(), 2))
@@ -376,9 +392,7 @@ class TestValid:
                          BoboPredicateCall(lambda e, h: e.data == 4)) \
             .generate("pattern")
 
-        run = BoboDeciderRun(
-            "run_id", "process_name", pattern,
-            tc.event_simple("event_a", data=1))
+        run = tc.run_simple(pattern, tc.event_simple("event_a", data=1))
 
         run.process(
             BoboEventSimple("event_b", BoboGenTimestampEpoch().generate(), 2))
@@ -415,7 +429,7 @@ class TestValid:
         event_a = tc.event_simple("event_a")
         event_b = tc.event_simple("event_b")
 
-        run = BoboDeciderRun("run_id", "process_name", pattern, event_a)
+        run = tc.run_simple(pattern, event_a)
         run.process(event_b)
 
         history = run.history()
@@ -427,3 +441,56 @@ class TestValid:
         group_b = history.group("group_b")
         assert len(group_b) == 1
         assert group_b[0].event_id == event_b.event_id
+
+
+class TestInvalid:
+
+    def test_length_0_run_id(self):
+        with pytest.raises(BoboRunError):
+            tc.run_simple(tc.pattern(), tc.event_simple(), run_id="")
+
+    def test_length_0_process_name(self):
+        with pytest.raises(BoboRunError):
+            tc.run_simple(tc.pattern(), tc.event_simple(), process_name="")
+
+    def test_block_index_zero(self):
+        with pytest.raises(BoboRunError):
+            tc.run_simple(tc.pattern(), tc.event_simple(), block_index=0)
+
+    def test_block_index_negative(self):
+        with pytest.raises(BoboRunError):
+            tc.run_simple(tc.pattern(), tc.event_simple(), block_index=-1)
+
+    def test_set_block_block_index_zero(self):
+        pattern = tc.pattern(name="pattern_name", data_blocks=[1, 2, 3])
+        event_a = tc.event_simple(event_id="event_a")
+        event_b = tc.event_simple(event_id="event_b")
+        run = tc.run_simple(
+            tc.pattern(),
+            tc.event_simple(),
+            run_id="run_id",
+            process_name="process_name",
+            block_index=1)
+
+        with pytest.raises(BoboRunError):
+            run.set_block(0, BoboHistory({
+                pattern.blocks[0].group: [event_a],
+                pattern.blocks[1].group: [event_b],
+            }))
+
+    def test_set_block_block_index_negative(self):
+        pattern = tc.pattern(name="pattern_name", data_blocks=[1, 2, 3])
+        event_a = tc.event_simple(event_id="event_a")
+        event_b = tc.event_simple(event_id="event_b")
+        run = tc.run_simple(
+            tc.pattern(),
+            tc.event_simple(),
+            run_id="run_id",
+            process_name="process_name",
+            block_index=1)
+
+        with pytest.raises(BoboRunError):
+            run.set_block(-1, BoboHistory({
+                pattern.blocks[0].group: [event_a],
+                pattern.blocks[1].group: [event_b],
+            }))

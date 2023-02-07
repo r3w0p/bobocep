@@ -5,7 +5,7 @@
 import pytest
 
 import tests.common as tc
-from bobocep.cep.engine.task.decider import BoboDeciderRunTuple
+from bobocep.cep.engine.task.decider import BoboRunTuple
 from bobocep.cep.engine.task.producer import BoboProducerError, BoboProducer
 from bobocep.cep.event import BoboHistory
 from bobocep.cep.gen.event_id import BoboGenEventIDUnique
@@ -24,13 +24,14 @@ class TestValid:
         history = BoboHistory(events={})
 
         producer.on_decider_update(
-            halted_complete=[BoboDeciderRunTuple(
+            completed=[BoboRunTuple(
+                run_id="run_id",
                 process_name="process",
                 pattern_name="pattern",
-                history=history,
-                block_index=3
+                block_index=3,
+                history=history
             )],
-            halted_incomplete=[],
+            halted=[],
             updated=[]
         )
 
@@ -50,13 +51,14 @@ class TestValid:
         assert producer.size() == 0
 
         producer.on_decider_update(
-            halted_complete=[BoboDeciderRunTuple(
+            completed=[BoboRunTuple(
+                run_id="run_id",
                 process_name="process",
                 pattern_name="pattern",
-                history=BoboHistory(events={}),
-                block_index=3
+                block_index=3,
+                history=BoboHistory({})
             )],
-            halted_incomplete=[],
+            halted=[],
             updated=[]
         )
 
@@ -77,13 +79,14 @@ class TestValid:
         assert producer.size() == 0
 
         producer.on_decider_update(
-            halted_complete=[BoboDeciderRunTuple(
+            completed=[BoboRunTuple(
+                run_id="run_id",
                 process_name="process",
                 pattern_name="pattern",
-                history=BoboHistory(events={}),
-                block_index=3
+                block_index=3,
+                history=BoboHistory({})
             )],
-            halted_incomplete=[],
+            halted=[],
             updated=[]
         )
 
@@ -99,25 +102,27 @@ class TestInvalid:
             [process_1, process_2], max_size=1)
 
         producer.on_decider_update(
-            halted_complete=[BoboDeciderRunTuple(
+            completed=[BoboRunTuple(
+                run_id="run_id",
                 process_name="process_1",
                 pattern_name="pattern",
-                history=BoboHistory(events={}),
-                block_index=3
+                block_index=3,
+                history=BoboHistory({})
             )],
-            halted_incomplete=[],
+            halted=[],
             updated=[]
         )
 
         with pytest.raises(BoboProducerError):
             producer.on_decider_update(
-                halted_complete=[BoboDeciderRunTuple(
+                completed=[BoboRunTuple(
+                    run_id="run_id",
                     process_name="process_2",
                     pattern_name="pattern",
-                    history=BoboHistory(events={}),
-                    block_index=3
+                    block_index=3,
+                    history=BoboHistory({})
                 )],
-                halted_incomplete=[],
+                halted=[],
                 updated=[]
             )
 
@@ -133,13 +138,14 @@ class TestInvalid:
         producer, subscriber = tc.producer_sub([tc.process()], max_size=255)
 
         producer.on_decider_update(
-            halted_complete=[BoboDeciderRunTuple(
+            completed=[BoboRunTuple(
+                run_id="run_id",
                 process_name="process_invalid",
                 pattern_name="pattern",
-                history=BoboHistory(events={}),
-                block_index=3
+                block_index=3,
+                history=BoboHistory({})
             )],
-            halted_incomplete=[],
+            halted=[],
             updated=[]
         )
 
@@ -150,13 +156,14 @@ class TestInvalid:
         producer, subscriber = tc.producer_sub([tc.process()], max_size=255)
 
         producer.on_decider_update(
-            halted_complete=[BoboDeciderRunTuple(
-                process_name="process",
-                pattern_name="pattern_invalid",
-                history=BoboHistory(events={}),
-                block_index=3
+            completed=[BoboRunTuple(
+                run_id="run_id",
+                process_name="process_invalid",
+                pattern_name="pattern",
+                block_index=3,
+                history=BoboHistory({})
             )],
-            halted_incomplete=[],
+            halted=[],
             updated=[]
         )
 

@@ -1,7 +1,7 @@
 # Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
-
+from threading import RLock
 from typing import Callable, List, Any, Optional
 
 from bobocep.cep.action import BoboAction
@@ -9,7 +9,7 @@ from bobocep.cep.action.handler import BoboActionHandler, \
     BoboActionHandlerBlocking
 from bobocep.cep.engine import BoboDecider, BoboProducer, BoboForwarder, \
     BoboEngine, BoboReceiver
-from bobocep.cep.engine.task.decider import BoboDeciderRunTuple
+from bobocep.cep.engine.task.decider import BoboRunTuple, BoboRun
 from bobocep.cep.engine.task.decider.pubsub import BoboDeciderSubscriber
 from bobocep.cep.engine.task.forwarder.pubsub import BoboForwarderSubscriber
 from bobocep.cep.engine.task.producer.pubsub import BoboProducerSubscriber
@@ -25,6 +25,7 @@ from bobocep.cep.process import BoboProcess
 from bobocep.cep.process.pattern import BoboPatternBlock, BoboPattern
 from bobocep.cep.process.pattern.predicate import BoboPredicateCall, \
     BoboPredicate
+from bobocep.dist.pubsub import BoboDistributedSubscriber
 
 
 class BoboActionTrue(BoboAction):
@@ -62,16 +63,18 @@ class BoboActionFalse(BoboAction):
 
 
 class BoboSameEveryTimeEventID(BoboGenEventID):
-    """Produces the same ID string every time. Useful for testing whether
-       an error is raised on duplicate IDs."""
+    """
+    Produces the same ID string every time.
+    Useful for testing whether an error is raised on duplicate IDs.
+    """
 
     def __init__(self, id_str: str = "id_str"):
         super().__init__()
 
-        self.id_str = id_str
+        self._id_str = id_str
 
     def generate(self) -> str:
-        return self.id_str
+        return self._id_str
 
 
 class StubReceiverSubscriber(BoboReceiverSubscriber):
@@ -86,16 +89,16 @@ class StubReceiverSubscriber(BoboReceiverSubscriber):
 class StubDeciderSubscriber(BoboDeciderSubscriber):
     def __init__(self):
         super().__init__()
-        self.halted_complete: List[BoboDeciderRunTuple] = []
-        self.halted_incomplete: List[BoboDeciderRunTuple] = []
-        self.updated: List[BoboDeciderRunTuple] = []
+        self.completed: List[BoboRunTuple] = []
+        self.halted: List[BoboRunTuple] = []
+        self.updated: List[BoboRunTuple] = []
 
     def on_decider_update(self,
-                          halted_complete: List[BoboDeciderRunTuple],
-                          halted_incomplete: List[BoboDeciderRunTuple],
-                          updated: List[BoboDeciderRunTuple]):
-        self.halted_complete += halted_complete
-        self.halted_incomplete += halted_incomplete
+                          completed: List[BoboRunTuple],
+                          halted: List[BoboRunTuple],
+                          updated: List[BoboRunTuple]):
+        self.completed += completed
+        self.halted += halted
         self.updated += updated
 
 
@@ -117,6 +120,41 @@ class StubForwarderSubscriber(BoboForwarderSubscriber):
 
     def on_forwarder_update(self, event: BoboEventAction):
         self.output.append(event)
+
+
+class StubDistributedSubscriber(BoboDistributedSubscriber):
+
+    def __init__(self):
+        super().__init__()
+        self._lock: RLock = RLock()
+
+        self._completed: List[BoboRunTuple] = []
+        self._halted: List[BoboRunTuple] = []
+        self._updated: List[BoboRunTuple] = []
+
+    def on_distributed_update(self,
+                              completed: List[BoboRunTuple],
+                              halted: List[BoboRunTuple],
+                              updated: List[BoboRunTuple]):
+        with self._lock:
+            self._completed += completed
+            self._halted += halted
+            self._updated += updated
+
+    @property
+    def completed(self):
+        with self._lock:
+            return self._completed
+
+    @property
+    def halted(self):
+        with self._lock:
+            return self._halted
+
+    @property
+    def updated(self):
+        with self._lock:
+            return self._updated
 
 
 class BoboValidatorRejectAll(BoboValidator):
@@ -319,6 +357,23 @@ def forwarder_sub(processes: List[BoboProcess],
     forwarder.subscribe(subscriber=subscriber)
 
     return forwarder, subscriber
+
+
+def run_simple(
+        pattern: BoboPattern,
+        event: BoboEvent,
+        run_id: str = "run_id",
+        process_name: str = "process_name",
+        block_index: int = 1):
+    return BoboRun(
+        run_id=run_id,
+        process_name=process_name,
+        pattern=pattern,
+        block_index=block_index,
+        history=BoboHistory({
+            pattern.blocks[0].group: [event]
+        })
+    )
 
 
 def engine_subs(processes: List[BoboProcess],

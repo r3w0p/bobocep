@@ -7,6 +7,7 @@
 from abc import ABC, abstractmethod
 from threading import RLock
 from time import time
+from typing import Optional
 
 
 class BoboGenEventID(ABC):
@@ -24,12 +25,13 @@ class BoboGenEventIDUnique(BoboGenEventID):
     """An event ID generator that always generates a unique,
     non-repeating ID."""
 
-    def __init__(self):
+    def __init__(self, urn: Optional[str] = None):
         super().__init__()
         self._lock: RLock = RLock()
 
         self._last: int = 0
         self._count: int = 0
+        self._urn: Optional[str] = urn
 
     def generate(self) -> str:
         with self._lock:
@@ -41,4 +43,7 @@ class BoboGenEventIDUnique(BoboGenEventID):
                 self._count = 0
                 self._last = now
 
-            return "{}_{}".format(now, self._count)
+            if self._urn is not None:
+                return "{}_{}_{}".format(self._urn, now, self._count)
+            else:
+                return "{}_{}".format(now, self._count)

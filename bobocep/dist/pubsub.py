@@ -4,31 +4,18 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from bobocep.cep.engine.task.decider import BoboDeciderRunTuple
-from bobocep.cep.event import BoboEvent, BoboEventComplex, BoboEventAction
+from bobocep.cep.engine.task.decider import BoboRunTuple
 
 
 class BoboDistributedSubscriber(ABC):
     """A distributed subscriber interface."""
 
     @abstractmethod
-    def on_distributed_receiver_update(self, event: BoboEvent):
-        """"""
-
-    @abstractmethod
-    def on_distributed_decider_update(
+    def on_distributed_update(
             self,
-            halted_complete: List[BoboDeciderRunTuple],
-            halted_incomplete: List[BoboDeciderRunTuple],
-            updated: List[BoboDeciderRunTuple]):
-        """"""
-
-    @abstractmethod
-    def on_distributed_producer_update(self, event: BoboEventComplex):
-        """"""
-
-    @abstractmethod
-    def on_distributed_forwarder_update(self, event: BoboEventAction):
+            completed: List[BoboRunTuple],
+            halted: List[BoboRunTuple],
+            updated: List[BoboRunTuple]):
         """"""
 
 

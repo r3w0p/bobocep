@@ -2,9 +2,12 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-"""Distributed complex event processing via TCP."""
+"""
+Distributed complex event processing via TCP.
+"""
 
 import json
+import logging
 import socket
 import time
 from queue import Queue
@@ -15,20 +18,21 @@ from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 
 from bobocep.cep import BoboJSONableError, BoboJSONable
-from bobocep.cep.engine.task.decider import BoboDeciderRunTuple
-from bobocep.cep.event import BoboEvent, BoboEventAction, BoboEventComplex
+from bobocep.cep.engine.task.decider import BoboRunTuple
+from bobocep.cep.engine.task.decider.pubsub import BoboDeciderSubscriber
 from bobocep.dist import BoboDistributed, BoboDeviceTuple, \
     BoboDistributedError, BoboDistributedSystemError, \
     BoboDistributedTimeoutError
 
-
-_KEY_HALTED_COMPLETE = "halted_complete"
-_KEY_HALTED_INCOMPLETE = "halted_incomplete"
+_KEY_COMPLETED = "completed"
+_KEY_HALTED = "halted"
 _KEY_UPDATED = "updated"
 
 
 class _OutgoingJSONEncoder(json.JSONEncoder):
-    """JSON encoder for outgoing messages."""
+    """
+    JSON encoder for outgoing messages.
+    """
 
     def __init__(self, *args, **kwargs):
         json.JSONEncoder.__init__(self, *args, **kwargs)
@@ -42,41 +46,45 @@ class _OutgoingJSONEncoder(json.JSONEncoder):
 
 
 class _IncomingJSONDecoder(json.JSONDecoder):
-    """A JSON decoder for incoming messages."""
+    """
+    A JSON decoder for incoming messages.
+    """
 
     def __init__(self):
         json.JSONDecoder.__init__(self, object_hook=self.object_hook)
 
-    def object_hook(self, d: dict) -> Dict[str, List[BoboDeciderRunTuple]]:
+    def object_hook(self, d: dict) -> Dict[str, List[BoboRunTuple]]:
         """
         :param d: An object dict.
         :return: Incoming Decider update information.
         """
-        if _KEY_HALTED_COMPLETE in d:
-            d[_KEY_HALTED_COMPLETE] = [
-                BoboDeciderRunTuple.from_json_str(rt)
-                for rt in d[_KEY_HALTED_COMPLETE]]
+        if _KEY_COMPLETED in d:
+            d[_KEY_COMPLETED] = [
+                BoboRunTuple.from_json_str(rt)
+                for rt in d[_KEY_COMPLETED]]
 
-        if _KEY_HALTED_INCOMPLETE in d:
-            d[_KEY_HALTED_INCOMPLETE] = [
-                BoboDeciderRunTuple.from_json_str(rt)
-                for rt in d[_KEY_HALTED_INCOMPLETE]]
+        if _KEY_HALTED in d:
+            d[_KEY_HALTED] = [
+                BoboRunTuple.from_json_str(rt)
+                for rt in d[_KEY_HALTED]]
 
         if _KEY_UPDATED in d:
             d[_KEY_UPDATED] = [
-                BoboDeciderRunTuple.from_json_str(rt)
+                BoboRunTuple.from_json_str(rt)
                 for rt in d[_KEY_UPDATED]]
 
         return d
 
 
-class BoboDistributedTCP(BoboDistributed):
-    """An implementation of distributed BoboCEP that uses TCP for data
-    transmission across the network. Data are encrypted using
-    AES-128, AES-192, or AES-256 encryption."""
+class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
+    """
+    An implementation of distributed BoboCEP that uses TCP for data
+    transmission across the network.
+    Data are encrypted using AES-128, 192, or 256 encryption.
+    """
 
     _EXC_CLOSED = "distributed is closed"
-    _EXC_RUNNING = "distributed is running"
+    _EXC_RUNNING = "distributed is already running"
     _EXC_NOT_RUNNING = "distributed is not running"
 
     _UTF_8 = "UTF-8"
@@ -95,7 +103,6 @@ class BoboDistributedTCP(BoboDistributed):
                  aes_key: str,
                  max_size_incoming: int,
                  max_size_outgoing: int,
-                 static_addr: bool = False,
                  listen_queue: int = 5,
                  timeout_accept: int = 5,
                  timeout_connect: int = 5,
@@ -147,7 +154,6 @@ class BoboDistributedTCP(BoboDistributed):
                 "'{}' has {} bytes.".format(aes_key, len(aes_key)))
 
         self._aes_key: bytes = aes_key.encode(self._UTF_8)
-        self._static_addr: bool = static_addr
         self._listen_queue: int = listen_queue
         self._timeout_accept: int = timeout_accept
         self._timeout_connect: int = timeout_connect
@@ -165,9 +171,9 @@ class BoboDistributedTCP(BoboDistributed):
         self._thread_incoming: Thread = Thread(target=self._tcp_incoming)
         self._thread_outgoing: Thread = Thread(target=self._tcp_outgoing)
 
-        self._queue_incoming: Queue[Dict[str, List[BoboDeciderRunTuple]]] = \
+        self._queue_incoming: Queue[Dict[str, List[BoboRunTuple]]] = \
             Queue(maxsize=max_size_incoming)
-        self._queue_outgoing: Queue[Dict[str, List[BoboDeciderRunTuple]]] = \
+        self._queue_outgoing: Queue[Dict[str, List[BoboRunTuple]]] = \
             Queue(maxsize=max_size_outgoing)
 
     def run(self) -> None:
@@ -188,17 +194,34 @@ class BoboDistributedTCP(BoboDistributed):
                 if self._closed:
                     self._running = False
                     break
-            self._update()
+                self._update()
+                time.sleep(0.1)
 
     def _update(self):
-        # TODO
-        pass
+        # Take incoming data and pass to decider
+        while not self._queue_incoming.empty():
+            incoming: Dict[str, List[BoboRunTuple]] = \
+                self._queue_incoming.get_nowait()
+
+            logging.debug("_update: processing incoming")
+
+            completed: List[BoboRunTuple] = incoming[_KEY_COMPLETED]
+            halted: List[BoboRunTuple] = incoming[_KEY_HALTED]
+            updated: List[BoboRunTuple] = incoming[_KEY_UPDATED]
+
+            logging.debug("_update: sending to subscribers")
+
+            for subscriber in self._subscribers:
+                subscriber.on_distributed_update(
+                    completed=completed,
+                    halted=halted,
+                    updated=updated)
 
     def on_decider_update(
             self,
-            halted_complete: List[BoboDeciderRunTuple],
-            halted_incomplete: List[BoboDeciderRunTuple],
-            updated: List[BoboDeciderRunTuple]):
+            completed: List[BoboRunTuple],
+            halted: List[BoboRunTuple],
+            updated: List[BoboRunTuple]):
         with self._lock:
             if self._closed:
                 raise BoboDistributedError(self._EXC_CLOSED)
@@ -206,14 +229,18 @@ class BoboDistributedTCP(BoboDistributed):
             if not self._running:
                 raise BoboDistributedError(self._EXC_NOT_RUNNING)
 
-            outgoing: Dict[str, List[BoboDeciderRunTuple]] = {
-                _KEY_HALTED_COMPLETE: halted_complete,
-                _KEY_HALTED_INCOMPLETE: halted_incomplete,
+            logging.debug("on_decider_update: packaging")
+
+            outgoing: Dict[str, List[BoboRunTuple]] = {
+                _KEY_COMPLETED: completed,
+                _KEY_HALTED: halted,
                 _KEY_UPDATED: updated
             }
 
             if not self._queue_outgoing.full():
+                logging.debug("on_decider_update: adding to queue")
                 self._queue_outgoing.put_nowait(outgoing)
+
             else:
                 raise BoboDistributedSystemError(
                     "Outgoing queue is full.")
@@ -221,7 +248,7 @@ class BoboDistributedTCP(BoboDistributed):
     def _tcp_incoming(self) -> None:
         """
         Executed within a thread. It accepts outside connections and stores
-        their data in the incoming qyeue, if valid.
+        their data in the incoming queue, if valid.
         """
 
         mydev = self._devices[self._urn]
@@ -229,8 +256,7 @@ class BoboDistributedTCP(BoboDistributed):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind((mydev.addr, mydev.port))
 
-        # queue up as many as 5 connect requests (the normal max)
-        # before refusing outside connections
+        # queue requests before refusing outside connections
         s.listen(self._listen_queue)
 
         with s:
@@ -241,40 +267,48 @@ class BoboDistributedTCP(BoboDistributed):
 
                 try:
                     s.settimeout(self._timeout_accept)
-                    client_s, client_origin = s.accept()
+                    client_s, client_addr = s.accept()
                     s.settimeout(None)
                     client_accepted = int(time.time())
 
-                    addr_known = any(client_origin[0] == d.addr
+                    logging.debug("New client: {} ({})"
+                                  .format(client_addr, client_accepted))
+
+                    addr_known = any(client_addr[0] == d.addr
                                      for d in self._devices.values())
 
                     if addr_known:
                         self._tcp_incoming_handle_client(
-                            client_s, client_origin, client_accepted)
+                            client_s, client_addr, client_accepted)
 
                 except (BoboDistributedSystemError,
                         BoboDistributedTimeoutError) as e:
                     # From _tcp_incoming_handle_client
-                    raise BoboDistributedSystemError(
-                        "Incoming {}: {}".format(e.__class__.__name__, e))
+                    msg = "Incoming {}: {}".format(e.__class__.__name__, e)
+                    logging.error(msg)
+                    raise BoboDistributedSystemError(msg)
 
                 except socket.timeout:
-                    # From accept
+                    # From s.accept()
                     # Timeout is added here so that the thread can react to
-                    # _thread_closed=True when no data has been received
-                    # in a while
-                    pass
+                    # _thread_closed=True when no data received for a while
+                    logging.debug("Incoming socket timeout (ignoring)")
 
                 except Exception as e:
                     # From other
-                    raise BoboDistributedSystemError(
-                        "Incoming {}: {}".format(e.__class__.__name__, e))
+                    msg = "Incoming {}: {}".format(e.__class__.__name__, e)
+                    logging.error(msg)
+                    raise BoboDistributedSystemError(msg)
 
     def _tcp_outgoing(self):
         """
         Executed within a thread. It sends internal Decider state updates,
         stored in the outgoing queue, to external `BoboCEP` instances.
         """
+
+        # TODO handling failures to send data
+        #  - invalid device data e.g. (static) addr, urn, key
+        #  - inability to connect to external device (n times)
 
         while True:
             with self._thread_lock:
@@ -307,6 +341,9 @@ class BoboDistributedTCP(BoboDistributed):
 
                         d = self._devices[d_urn]
 
+                        logging.debug("Outgoing: {} ({}:{})",
+                                      d.urn, d.addr, d.port)
+
                         s.settimeout(self._timeout_connect)
                         s.connect((d.addr, d.port))
                         s.settimeout(None)
@@ -330,11 +367,11 @@ class BoboDistributedTCP(BoboDistributed):
                         "Outgoing {}: {}".format(e.__class__.__name__, e))
 
     def _tcp_incoming_handle_client(
-            self, client_s, client_origin, client_accepted) -> None:
+            self, client_s, client_addr, client_accepted) -> None:
         """
         Handles an incoming client request.
         :param client_s: The client socket.
-        :param client_origin: The client address of origin.
+        :param client_addr: The client address of origin.
         :param client_accepted: The time when the client request was accepted.
         """
         with client_s:
@@ -364,37 +401,31 @@ class BoboDistributedTCP(BoboDistributed):
                     pt_bobo, pt_urn, pt_id, pt_json = self._split_plaintext(
                         plaintext)
 
+                    # Check if message has expected starting string
                     if pt_bobo != self._START_STR:
                         raise BoboDistributedSystemError(
                             "Invalid start message '{}': expected '{}'."
                             .format(pt_bobo, self._START_STR))
 
+                    # Check if URN is a recognised device
                     if pt_urn not in self._devices:
                         raise BoboDistributedSystemError(
                             "Unknown device URN '{}'.".format(pt_urn))
 
                     device: BoboDeviceTuple = self._devices[pt_urn]
 
-                    if client_origin[0] != device.addr:
-                        if self._static_addr:
-                            raise BoboDistributedSystemError(
-                                "Unknown addr '{}' for URN '{}': "
-                                "expected '{}'.".format(
-                                    client_origin[0],
-                                    device.urn,
-                                    device.addr))
-
-                        self._devices[pt_urn].addr = client_origin[0]
-
-                    # TODO remove "expected ... found" from exception msg
-                    #  (keeping in for debugging atm...)
+                    # Check if ID key matches expected key for URN
                     if pt_id != device.id_key:
                         raise BoboDistributedSystemError(
-                            "Invalid ID key for URN '{}': "
-                            "expected '{}', found '{}'.".format(
-                                device.urn,
-                                device.id_key,
-                                pt_id))
+                            "Invalid ID key for URN '{}'".format(device.urn))
+
+                    # Update address if remote address has changed
+                    if client_addr[0] != device.addr:
+                        self._devices[pt_urn].addr = client_addr[0]
+
+                    # TODO change pt_json to pt_str, where pt_str could be
+                    #  "PING" for heartbeat messages?
+                    #  if so, do not add message to incoming queue
 
                     try:
                         incoming = self._incoming_from_json(pt_json)
@@ -403,6 +434,7 @@ class BoboDistributedTCP(BoboDistributed):
                         raise BoboDistributedSystemError(
                             "Unable to build incoming message from JSON:", e)
 
+                    # Add incoming data to queue
                     if not self._queue_incoming.full():
                         self._queue_incoming.put_nowait(incoming)
                     else:
@@ -412,7 +444,7 @@ class BoboDistributedTCP(BoboDistributed):
                     break
 
     def _incoming_from_json(
-            self, msg_str: str) -> Dict[str, List[BoboDeciderRunTuple]]:
+            self, msg_str: str) -> Dict[str, List[BoboRunTuple]]:
         """
         :param msg_str: Incoming JSON string.
         :return: Incoming Decider update information.
@@ -421,7 +453,7 @@ class BoboDistributedTCP(BoboDistributed):
         return msg
 
     def _outgoing_to_json(
-            self, msg: Dict[str, List[BoboDeciderRunTuple]]) -> str:
+            self, msg: Dict[str, List[BoboRunTuple]]) -> str:
         """
         :param msg: Outgoing Decider update information.
         :return: Outgoing JSON string.
@@ -514,6 +546,7 @@ class BoboDistributedTCP(BoboDistributed):
             if self._closed:
                 raise BoboDistributedError(self._EXC_CLOSED)
 
+            logging.debug("Closing distributed: {}".format(self._urn))
             self._closed = True
 
             with self._thread_lock:
@@ -530,12 +563,3 @@ class BoboDistributedTCP(BoboDistributed):
     def size_outgoing(self) -> int:
         with self._lock:
             return self._queue_outgoing.qsize()
-
-    def on_receiver_update(self, event: BoboEvent):
-        """"""
-
-    def on_producer_update(self, event: BoboEventComplex):
-        """"""
-
-    def on_forwarder_update(self, event: BoboEventAction):
-        """"""

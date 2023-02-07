@@ -1,14 +1,13 @@
 # Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
-
 from threading import Thread
 from time import sleep
+from typing import List
 
 import tests.common as tc
 from bobocep.cep.engine.task.decider import \
-    BoboDeciderRunTuple
-from bobocep.cep.event import BoboHistory
+    BoboRunTuple
 from bobocep.dist import BoboDeviceTuple
 from bobocep.dist.tcp import BoboDistributedTCP
 
@@ -19,24 +18,33 @@ def run_distributed_tcp(dist: BoboDistributedTCP):
 
 class TestValid:
 
-    def test_queues_on_decider_update(self):
-        halted_complete = [BoboDeciderRunTuple(
-            process_name="process_hc",
-            pattern_name="pattern_hc",
-            block_index=1,
-            history=BoboHistory(events={"group_hc": [tc.event_simple()]}))]
+    def test_send_completed_halted_updated(self):
+        completed: List[BoboRunTuple] = [
+            tc.run_simple(
+                tc.pattern(name="pattern_completed"),
+                tc.event_simple(event_id="event_id_completed"),
+                run_id="run_id_completed",
+                process_name="process_name_completed",
+                block_index=1
+            ).to_tuple()]
 
-        halted_incomplete = [BoboDeciderRunTuple(
-            process_name="process_hi",
-            pattern_name="pattern_hi",
-            block_index=2,
-            history=BoboHistory(events={"group_hi": [tc.event_simple()]}))]
+        halted: List[BoboRunTuple] = [
+            tc.run_simple(
+                tc.pattern(name="pattern_halted"),
+                tc.event_simple(event_id="event_id_halted"),
+                run_id="run_id_halted",
+                process_name="process_name_halted",
+                block_index=1
+            ).to_tuple()]
 
-        updated = [BoboDeciderRunTuple(
-            process_name="process_up",
-            pattern_name="pattern_up",
-            block_index=3,
-            history=BoboHistory(events={"group_up": [tc.event_simple()]}))]
+        updated: List[BoboRunTuple] = [
+            tc.run_simple(
+                tc.pattern(name="pattern_updated"),
+                tc.event_simple(event_id="event_id_updated"),
+                run_id="run_id_updated",
+                process_name="process_name_updated",
+                block_index=1
+            ).to_tuple()]
 
         devices = [
             BoboDeviceTuple(
@@ -58,12 +66,17 @@ class TestValid:
             max_size_incoming=255,
             max_size_outgoing=255)
 
+        dist_sub = tc.StubDistributedSubscriber()
+        dist.subscribe(dist_sub)
+
         t = Thread(target=run_distributed_tcp, args=[dist])
         t.start()
 
+        sleep(1)
+
         dist.on_decider_update(
-            halted_complete=halted_complete,
-            halted_incomplete=halted_incomplete,
+            completed=completed,
+            halted=halted,
             updated=updated)
 
         sleep(3)
@@ -73,4 +86,22 @@ class TestValid:
         t.join()
 
         assert dist.size_outgoing() == 0
-        assert dist.size_incoming() == 1
+        assert dist.size_incoming() == 0
+
+        assert len(dist_sub.completed) == 1
+        assert len(dist_sub.halted) == 1
+        assert len(dist_sub.updated) == 1
+
+        for idistsub, irun in [
+            (dist_sub.completed, completed),
+            (dist_sub.halted, halted),
+            (dist_sub.updated, updated),
+        ]:
+            assert idistsub[0].run_id == irun[0].run_id
+            assert idistsub[0].process_name == irun[0].process_name
+            assert idistsub[0].pattern_name == irun[0].pattern_name
+            assert idistsub[0].block_index == irun[0].block_index
+            assert idistsub[0].history.size() == 1 and \
+                   irun[0].history.size() == 1
+            assert idistsub[0].history.all()[0].event_id == \
+                   irun[0].history.all()[0].event_id

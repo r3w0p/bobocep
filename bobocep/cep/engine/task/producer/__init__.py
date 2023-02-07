@@ -9,7 +9,7 @@ from threading import RLock
 from typing import List, Dict
 
 from bobocep.cep.engine.task import BoboEngineTaskError, BoboEngineTask
-from bobocep.cep.engine.task.decider import BoboDeciderRunTuple
+from bobocep.cep.engine.task.decider import BoboRunTuple
 from bobocep.cep.engine.task.decider.pubsub import BoboDeciderSubscriber
 from bobocep.cep.engine.task.producer.pubsub import BoboProducerPublisher
 from bobocep.cep.event import BoboEventComplex
@@ -51,7 +51,7 @@ class BoboProducer(BoboEngineTask,
         self._gen_event_id: BoboGenEventID = gen_event_id
         self._gen_timestamp: BoboGenTimestamp = gen_timestamp
         self._max_size: int = max(0, max_size)
-        self._queue: Queue[BoboDeciderRunTuple] = Queue(self._max_size)
+        self._queue: Queue[BoboRunTuple] = Queue(self._max_size)
 
     def update(self) -> bool:
         with self._lock:
@@ -72,15 +72,11 @@ class BoboProducer(BoboEngineTask,
         with self._lock:
             return self._closed
 
-    def _handle_completed_run(self, run_state: BoboDeciderRunTuple) -> None:
+    def _handle_completed_run(self, run_state: BoboRunTuple) -> None:
         if run_state.process_name not in self._processes:
             raise BoboProducerError(run_state.process_name)
 
         process: BoboProcess = self._processes[run_state.process_name]
-
-        if not any(run_state.pattern_name == pattern.name
-                   for pattern in process.patterns):
-            raise BoboProducerError(run_state.pattern_name)
 
         event_complex = BoboEventComplex(
             event_id=self._gen_event_id.generate(),
@@ -95,14 +91,14 @@ class BoboProducer(BoboEngineTask,
             subscriber.on_producer_update(event_complex)
 
     def on_decider_update(self,
-                          halted_complete: List[BoboDeciderRunTuple],
-                          halted_incomplete: List[BoboDeciderRunTuple],
-                          updated: List[BoboDeciderRunTuple]) -> None:
+                          completed: List[BoboRunTuple],
+                          halted: List[BoboRunTuple],
+                          updated: List[BoboRunTuple]) -> None:
         with self._lock:
             if self._closed:
                 return
 
-            for run in halted_complete:
+            for run in completed:
                 if not self._queue.full():
                     self._queue.put(run)
                 else:
