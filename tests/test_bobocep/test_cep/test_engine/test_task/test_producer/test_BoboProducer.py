@@ -15,18 +15,19 @@ from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
 class TestValid:
 
     def test_produce_complex_event_on_run(self):
-        process = tc.process(
+        phenom = tc.phenomenon(
+            name="phenom",
             datagen=lambda p, h: True,
             action=tc.BoboActionTrue())
 
-        producer, subscriber = tc.producer_sub([process])
+        producer, subscriber = tc.producer_sub([phenom])
 
         history = BoboHistory(events={})
 
         producer.on_decider_update(
             completed=[BoboRunTuple(
                 run_id="run_id",
-                process_name="process",
+                phenomenon_name="phenom",
                 pattern_name="pattern",
                 block_index=3,
                 history=history
@@ -42,18 +43,18 @@ class TestValid:
         assert len(subscriber.output) == 1
 
         assert subscriber.output[0].data is True
-        assert subscriber.output[0].process_name == "process"
+        assert subscriber.output[0].phenomenon_name == "phenom"
         assert subscriber.output[0].pattern_name == "pattern"
         assert subscriber.output[0].history == history
 
     def test_on_decider_update_1_complete(self):
-        producer, subscriber = tc.producer_sub([tc.process()])
+        producer, subscriber = tc.producer_sub([tc.phenomenon()])
         assert producer.size() == 0
 
         producer.on_decider_update(
             completed=[BoboRunTuple(
                 run_id="run_id",
-                process_name="process",
+                phenomenon_name="phenom",
                 pattern_name="pattern",
                 block_index=3,
                 history=BoboHistory({})
@@ -65,14 +66,14 @@ class TestValid:
         assert producer.size() == 1
 
     def test_close_then_update(self):
-        producer, subscriber = tc.producer_sub([tc.process()])
+        producer, subscriber = tc.producer_sub([tc.phenomenon()])
 
         producer.close()
         assert producer.is_closed()
         assert producer.update() is False
 
     def test_close_then_on_decider_update_1_complete(self):
-        producer, subscriber = tc.producer_sub([tc.process()])
+        producer, subscriber = tc.producer_sub([tc.phenomenon()])
 
         producer.close()
         assert producer.is_closed()
@@ -81,7 +82,7 @@ class TestValid:
         producer.on_decider_update(
             completed=[BoboRunTuple(
                 run_id="run_id",
-                process_name="process",
+                phenomenon_name="phenom",
                 pattern_name="pattern",
                 block_index=3,
                 history=BoboHistory({})
@@ -96,15 +97,15 @@ class TestValid:
 class TestInvalid:
 
     def test_add_run_on_queue_full(self):
-        process_1 = tc.process("process_1")
-        process_2 = tc.process("process_2")
+        phenom_1 = tc.phenomenon("phenom_1")
+        phenom_2 = tc.phenomenon("phenom_2")
         producer, subscriber = tc.producer_sub(
-            [process_1, process_2], max_size=1)
+            [phenom_1, phenom_2], max_size=1)
 
         producer.on_decider_update(
             completed=[BoboRunTuple(
                 run_id="run_id",
-                process_name="process_1",
+                phenomenon_name="phenom_1",
                 pattern_name="pattern",
                 block_index=3,
                 history=BoboHistory({})
@@ -117,7 +118,7 @@ class TestInvalid:
             producer.on_decider_update(
                 completed=[BoboRunTuple(
                     run_id="run_id",
-                    process_name="process_2",
+                    phenomenon_name="phenom_2",
                     pattern_name="pattern",
                     block_index=3,
                     history=BoboHistory({})
@@ -126,21 +127,21 @@ class TestInvalid:
                 updated=[]
             )
 
-    def test_duplicate_process_names(self):
+    def test_duplicate_phenomena_names(self):
         with pytest.raises(BoboProducerError):
             BoboProducer(
-                processes=[tc.process(), tc.process()],
+                phenomena=[tc.phenomenon(), tc.phenomenon()],
                 gen_event_id=BoboGenEventIDUnique(),
                 gen_timestamp=BoboGenTimestampEpoch(),
                 max_size=255)
 
-    def test_decider_run_process_does_not_exist(self):
-        producer, subscriber = tc.producer_sub([tc.process()], max_size=255)
+    def test_decider_run_phenomenon_does_not_exist(self):
+        producer, subscriber = tc.producer_sub([tc.phenomenon()], max_size=255)
 
         producer.on_decider_update(
             completed=[BoboRunTuple(
                 run_id="run_id",
-                process_name="process_invalid",
+                phenomenon_name="phenom_invalid",
                 pattern_name="pattern",
                 block_index=3,
                 history=BoboHistory({})
@@ -153,12 +154,12 @@ class TestInvalid:
             producer.update()
 
     def test_decider_run_pattern_does_not_exist(self):
-        producer, subscriber = tc.producer_sub([tc.process()], max_size=255)
+        producer, subscriber = tc.producer_sub([tc.phenomenon()], max_size=255)
 
         producer.on_decider_update(
             completed=[BoboRunTuple(
                 run_id="run_id",
-                process_name="process_invalid",
+                phenomenon_name="phenom_invalid",
                 pattern_name="pattern",
                 block_index=3,
                 history=BoboHistory({})

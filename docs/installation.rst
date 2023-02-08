@@ -48,14 +48,23 @@ TODO change apt install below
         libexpat1-dev liblzma-dev zlib1g-dev libffi-dev -y
     sudo apt-get -f install -y
 
-Python 3.9
-----------
+Python
+------
 
-Raspberry Pi OS should come with :code:`Python 3.9` as standard.
-However, if it is not installed, then read the following.
+:code:`BoboCEP` requires :code:`Python 3.9` or later.
+Raspberry Pi OS should come with this as standard, and you can check using:
 
-Download :code:`Python 3.9`, unpack it, and then enter the directory
-containing its files.
+.. code:: console
+
+    python --version
+
+However, if a suitable version is not installed, then you will need to install
+it yourself.
+See `here <https://www.python.org/ftp/python/>`_ for available Python versions.
+The following instructions will focus on :code:`Python 3.9.16`.
+
+Download :code:`Python 3.9.16`, unpack it, and then enter the
+directory containing its files.
 
 .. code:: console
 
@@ -63,7 +72,7 @@ containing its files.
     tar -xf Python-3.9.16.tar.xz
     cd Python-3.9.16
 
-Next, configure and install :code:`Python 3.9`.
+Next, configure and install.
 
 .. code:: console
 
@@ -78,4 +87,4 @@ Update :code:`pip` to the latest version.
     python3.9 -m pip install --upgrade pip
 
 
-Once this is done, follow :ref:`installation:Instructions`.
+Once this is done, follow :ref:`installation:Instructions` above.

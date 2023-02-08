@@ -27,4 +27,5 @@
    :hidden:
 
    source_code
+   publications
    contributing

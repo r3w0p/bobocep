@@ -18,13 +18,13 @@ from bobocep.cep.engine.task.decider.run import BoboRunTuple, \
 from bobocep.cep.engine.task.receiver.pubsub import BoboReceiverSubscriber
 from bobocep.cep.event import BoboHistory, BoboEvent
 from bobocep.cep.gen.event_id import BoboGenEventID
-from bobocep.cep.process import BoboProcess, BoboPattern
+from bobocep.cep.phenomenon import BoboPhenomenon, BoboPattern
 from bobocep.dist.pubsub import BoboDistributedSubscriber
 
-_EXC_PROCESS_NAME_DUP = "duplicate name in processes: {}"
+_EXC_PHENOM_NAME_DUP = "duplicate name in phenomena: {}"
 _EXC_QUEUE_FULL = "queue is full (max size: {})"
-_EXC_RUN_NOT_FOUND = "run {} not found for process {}, pattern {}"
-_EXC_RUN_EXISTS = "run {} already exists for process {}, pattern {}"
+_EXC_RUN_NOT_FOUND = "run {} not found for phenomenon {}, pattern {}"
+_EXC_RUN_EXISTS = "run {} already exists for phenomenon {}, pattern {}"
 
 
 class BoboError(BoboEngineTaskError):
@@ -42,7 +42,7 @@ class BoboDecider(BoboEngineTask,
     """
 
     def __init__(self,
-                 processes: List[BoboProcess],
+                 phenomena: List[BoboPhenomenon],
                  gen_event_id: BoboGenEventID,
                  gen_run_id: BoboGenEventID,
                  max_cache: int = 0,
@@ -52,18 +52,18 @@ class BoboDecider(BoboEngineTask,
         self._lock: RLock = RLock()
         self._closed: bool = False
 
-        self._processes: Dict[str, BoboProcess] = {}
+        self._phenomena: Dict[str, BoboPhenomenon] = {}
 
-        for process in processes:
-            if process.name not in self._processes:
-                self._processes[process.name] = process
+        for phenom in phenomena:
+            if phenom.name not in self._phenomena:
+                self._phenomena[phenom.name] = phenom
             else:
                 raise BoboError(
-                    _EXC_PROCESS_NAME_DUP.format(process.name))
+                    _EXC_PHENOM_NAME_DUP.format(phenom.name))
 
         self._gen_event_id: BoboGenEventID = gen_event_id
         self._gen_run_id: BoboGenEventID = gen_run_id
-        # Process Name => Pattern Name => Run ID => Run
+        # Phenomenon Name => Pattern Name => Run ID => Run
         self._runs: Dict[str, Dict[str, Dict[str, BoboRun]]] = {}
         self._stub_history: BoboHistory = BoboHistory({})
         self._max_size: int = max(0, max_size)
@@ -78,7 +78,7 @@ class BoboDecider(BoboEngineTask,
     def update(self) -> bool:
         """
         Performs an update cycle of the decider that takes an event from its
-        queue and checks it against processes and existing runs.
+        queue and checks it against phenomena and existing runs.
 
         :return: True if an internal state change occurred during the update;
             False otherwise.
@@ -169,7 +169,7 @@ class BoboDecider(BoboEngineTask,
             # Remove runs that were completed remotely
             for rc in completed:
                 self._remove_run(
-                    rc.process_name,
+                    rc.phenomenon_name,
                     rc.pattern_name,
                     rc.run_id,
                     quiet=True)
@@ -177,7 +177,7 @@ class BoboDecider(BoboEngineTask,
             # Remove runs that were halted remotely
             for rh in halted:
                 self._remove_run(
-                    rh.process_name,
+                    rh.phenomenon_name,
                     rh.pattern_name,
                     rh.run_id,
                     quiet=True)
@@ -186,7 +186,7 @@ class BoboDecider(BoboEngineTask,
             update_remove_indices = []
             for i, ru in enumerate(updated):
                 urun: Optional[BoboRun] = self.run_at(
-                    ru.process_name,
+                    ru.phenomenon_name,
                     ru.pattern_name,
                     ru.run_id)
 
@@ -200,7 +200,7 @@ class BoboDecider(BoboEngineTask,
 
                 else:
                     pattern: Optional[BoboPattern] = self._get_pattern(
-                        ru.process_name, ru.pattern_name)
+                        ru.phenomenon_name, ru.pattern_name)
 
                     # Ignore if pattern does not exist - it may have been
                     # removed from the decider
@@ -211,12 +211,12 @@ class BoboDecider(BoboEngineTask,
                     # Add new run that was started remotely
                     newrun = BoboRun(
                         run_id=ru.run_id,
-                        process_name=ru.process_name,
+                        phenomenon_name=ru.phenomenon_name,
                         pattern=pattern,
                         block_index=ru.block_index,
                         history=ru.history)
 
-                    self._add_run(ru.process_name, ru.pattern_name, newrun)
+                    self._add_run(ru.phenomenon_name, ru.pattern_name, newrun)
 
             # Remove any updates for which a pattern could not be found
             for i in sorted(update_remove_indices, reverse=True):
@@ -229,25 +229,25 @@ class BoboDecider(BoboEngineTask,
                 updated=updated)
 
     def _get_pattern(self,
-                     process_name: str,
+                     phenomenon_name: str,
                      pattern_name: str) -> Optional[BoboPattern]:
         """
-        :param process_name: A process name.
+        :param phenomenon_name: A phenomenon name.
         :param pattern_name: A pattern name.
-        :return: A BoboPattern instance corresponding to the process and
-            pattern name.
+        :return: A BoboPattern instance corresponding to the
+            phenomenon and pattern name.
         """
-        for pattern in self._processes[process_name].patterns:
+        for pattern in self._phenomena[phenomenon_name].patterns:
             if pattern.name == pattern_name:
                 return pattern
         return None
 
-    def processes(self) -> Tuple[BoboProcess, ...]:
+    def phenomena(self) -> Tuple[BoboPhenomenon, ...]:
         """
-        :return: All processes under consideration by the decider.
+        :return: All phenomena under consideration by the decider.
         """
         with self._lock:
-            return tuple(self._processes.values())
+            return tuple(self._phenomena.values())
 
     def all_runs(self) -> Tuple[BoboRun, ...]:
         """
@@ -255,46 +255,48 @@ class BoboDecider(BoboEngineTask,
         """
         with self._lock:
             runs: List[BoboRun] = []
-            for process_name, dict_patterns in self._runs.items():
+            for phenomenon_name, dict_patterns in self._runs.items():
                 for pattern_name, dict_runs in dict_patterns.items():
-                    for _, run in dict_runs.items():
-                        runs.append(run)
+                    for _, drun in dict_runs.items():
+                        runs.append(drun)
             return tuple(runs)
 
     def runs_from(self,
-                  process_name: str,
+                  phenomenon_name: str,
                   pattern_name: str) -> Tuple[BoboRun, ...]:
         """
-        :param process_name: A process name.
+        :param phenomenon_name: A phenomenon name.
         :param pattern_name: A pattern name.
-        :return: The runs associated with the given process and pattern name.
+        :return: The runs associated with the given
+            phenomenon and pattern name.
         """
         with self._lock:
             if (
-                    process_name in self._runs and
-                    pattern_name in self._runs[process_name]
+                    phenomenon_name in self._runs and
+                    pattern_name in self._runs[phenomenon_name]
             ):
-                return tuple(self._runs[process_name][pattern_name].values())
+                return tuple(
+                    self._runs[phenomenon_name][pattern_name].values())
             return tuple()
 
     def run_at(self,
-               process_name: str,
+               phenomenon_name: str,
                pattern_name: str,
                run_id: str) -> Optional[BoboRun]:
         """
-        :param process_name: A process name.
+        :param phenomenon_name: A phenomenon name.
         :param pattern_name: A pattern name.
         :param run_id: A run ID.
-        :return: A run associated with the given process and pattern name;
+        :return: A run associated with the given phenomenon and pattern name;
             or None if no such run exists.
         """
         with self._lock:
             if (
-                    process_name in self._runs and
-                    pattern_name in self._runs[process_name] and
-                    run_id in self._runs[process_name][pattern_name]
+                    phenomenon_name in self._runs and
+                    pattern_name in self._runs[phenomenon_name] and
+                    run_id in self._runs[phenomenon_name][pattern_name]
             ):
-                return self._runs[process_name][pattern_name][run_id]
+                return self._runs[phenomenon_name][pattern_name][run_id]
             return None
 
     def size(self) -> int:
@@ -349,13 +351,13 @@ class BoboDecider(BoboEngineTask,
 
         runs_to_remove: List[Tuple[str, str, str]] = []
 
-        for process_name, dict_patterns in self._runs.items():
+        for phenomenon_name, dict_patterns in self._runs.items():
             for pattern_name, dict_runs in dict_patterns.items():
                 for _, run in dict_runs.items():
                     if run.process(event):
                         if run.is_halted():
                             runs_to_remove.append((
-                                process_name, pattern_name, run.run_id))
+                                phenomenon_name, pattern_name, run.run_id))
                             if run.is_complete():
                                 runs_halted_complete.append(run)
                             else:
@@ -363,8 +365,8 @@ class BoboDecider(BoboEngineTask,
                         else:
                             runs_updated.append(run)
 
-        for process_name, pattern_name, run_id in runs_to_remove:
-            self._remove_run(process_name, pattern_name, run_id)
+        for phenomenon_name, pattern_name, run_id in runs_to_remove:
+            self._remove_run(phenomenon_name, pattern_name, run_id)
 
         return runs_halted_complete, runs_halted_incomplete, runs_updated
 
@@ -374,14 +376,14 @@ class BoboDecider(BoboEngineTask,
         runs_halted_complete: List[BoboRun] = []
         runs_updated: List[BoboRun] = []
 
-        for process in self._processes.values():
-            for pattern in process.patterns:
+        for phenomenon in self._phenomena.values():
+            for pattern in phenomenon.patterns:
                 if any(predicate.evaluate(event=event,
                                           history=self._stub_history)
                        for predicate in pattern.blocks[0].predicates):
                     newrun = BoboRun(
                         run_id=self._gen_run_id.generate(),
-                        process_name=process.name,
+                        phenomenon_name=phenomenon.name,
                         pattern=pattern,
                         block_index=1,
                         history=BoboHistory({
@@ -391,34 +393,34 @@ class BoboDecider(BoboEngineTask,
                     if newrun.is_halted() and newrun.is_complete():
                         runs_halted_complete.append(newrun)
                     else:
-                        self._add_run(process.name, pattern.name, newrun)
+                        self._add_run(phenomenon.name, pattern.name, newrun)
                         runs_updated.append(newrun)
 
         return runs_halted_complete, runs_updated
 
     def _add_run(self,
-                 process_name: str,
+                 phenomenon_name: str,
                  pattern_name: str,
                  newrun: BoboRun) -> None:
-        if process_name not in self._runs:
-            self._runs[process_name] = {}
+        if phenomenon_name not in self._runs:
+            self._runs[phenomenon_name] = {}
 
-        if pattern_name not in self._runs[process_name]:
-            self._runs[process_name][pattern_name] = {}
+        if pattern_name not in self._runs[phenomenon_name]:
+            self._runs[phenomenon_name][pattern_name] = {}
 
-        if newrun.run_id not in self._runs[process_name][pattern_name]:
-            self._runs[process_name][pattern_name][newrun.run_id] = newrun
+        if newrun.run_id not in self._runs[phenomenon_name][pattern_name]:
+            self._runs[phenomenon_name][pattern_name][newrun.run_id] = newrun
         else:
             raise BoboError(_EXC_RUN_EXISTS.format(
-                newrun.run_id, process_name, pattern_name))
+                newrun.run_id, phenomenon_name, pattern_name))
 
     def _remove_run(self,
-                    process_name: str,
+                    phenomenon_name: str,
                     pattern_name: str,
                     run_id: str,
                     quiet: bool = False) -> None:
         """
-        :param process_name: The process name.
+        :param phenomenon_name: The phenomenon name.
         :param pattern_name: The pattern name.
         :param run_id: The run ID.
         :param quiet: If True, do not raise exceptions; False to raise them.
@@ -427,12 +429,12 @@ class BoboDecider(BoboEngineTask,
         """
 
         if (
-                process_name in self._runs and
-                pattern_name in self._runs[process_name] and
-                run_id in self._runs[process_name][pattern_name]
+                phenomenon_name in self._runs and
+                pattern_name in self._runs[phenomenon_name] and
+                run_id in self._runs[phenomenon_name][pattern_name]
         ):
-            del self._runs[process_name][pattern_name][run_id]
+            del self._runs[phenomenon_name][pattern_name][run_id]
         else:
             if not quiet:
                 raise BoboError(_EXC_RUN_NOT_FOUND.format(
-                    run_id, process_name, pattern_name))
+                    run_id, phenomenon_name, pattern_name))

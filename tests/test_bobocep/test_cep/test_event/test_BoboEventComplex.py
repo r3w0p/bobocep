@@ -24,7 +24,7 @@ class TestValid:
         assert event_original.event_id == event_new.event_id
         assert event_original.timestamp == event_new.timestamp
         assert event_original.data == event_new.data
-        assert event_original.process_name == event_new.process_name
+        assert event_original.phenomenon_name == event_new.phenomenon_name
         assert event_original.pattern_name == event_new.pattern_name
         assert isinstance(event_original.history, BoboHistory)
         assert event_original.history.all() == event_new.history.all()
@@ -45,17 +45,17 @@ class TestInvalid:
                 event_id="",
                 timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
-                process_name="process",
+                phenomenon_name="phenom",
                 pattern_name="pattern",
                 history=BoboHistory(events={}))
 
-    def test_process_name_length_0(self):
+    def test_phenomenon_name_length_0(self):
         with pytest.raises(BoboEventError):
             BoboEventComplex(
                 event_id="event_id",
                 timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
-                process_name="",
+                phenomenon_name="",
                 pattern_name="pattern",
                 history=BoboHistory(events={}))
 
@@ -65,6 +65,6 @@ class TestInvalid:
                 event_id="event_id",
                 timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
-                process_name="process",
+                phenomenon_name="phenom",
                 pattern_name="",
                 history=BoboHistory(events={}))

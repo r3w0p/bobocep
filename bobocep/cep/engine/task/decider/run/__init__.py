@@ -13,8 +13,8 @@ from typing import Tuple, Dict, List
 from bobocep import BoboError
 from bobocep.cep import BoboJSONable
 from bobocep.cep.event import BoboHistory, BoboEvent
-from bobocep.cep.process import BoboPattern
-from bobocep.cep.process.pattern import BoboPatternBlock, BoboPredicate
+from bobocep.cep.phenomenon import BoboPattern
+from bobocep.cep.phenomenon.pattern import BoboPatternBlock, BoboPredicate
 
 
 class BoboRunError(BoboError):
@@ -29,21 +29,21 @@ class BoboRunTuple(BoboJSONable):
     """
 
     RUN_ID = "run_id"
-    PROCESS_NAME = "process_name"
+    PHENOMENON_NAME = "phenomenon_name"
     PATTERN_NAME = "pattern_name"
     BLOCK_INDEX = "block_index"
     HISTORY = "history"
 
     def __init__(self,
                  run_id: str,
-                 process_name: str,
+                 phenomenon_name: str,
                  pattern_name: str,
                  block_index: int,
                  history: BoboHistory):
         super().__init__()
 
         self._run_id: str = run_id
-        self._process_name: str = process_name
+        self._phenomenon_name: str = phenomenon_name
         self._pattern_name: str = pattern_name
         self._block_index: int = block_index
         self._history: BoboHistory = history
@@ -53,8 +53,8 @@ class BoboRunTuple(BoboJSONable):
         return self._run_id
 
     @property
-    def process_name(self) -> str:
-        return self._process_name
+    def phenomenon_name(self) -> str:
+        return self._phenomenon_name
 
     @property
     def pattern_name(self) -> str:
@@ -71,7 +71,7 @@ class BoboRunTuple(BoboJSONable):
     def to_json_str(self) -> str:
         return dumps({
             self.RUN_ID: self.run_id,
-            self.PROCESS_NAME: self.process_name,
+            self.PHENOMENON_NAME: self.phenomenon_name,
             self.PATTERN_NAME: self.pattern_name,
             self.BLOCK_INDEX: self.block_index,
             self.HISTORY: self.history
@@ -85,7 +85,7 @@ class BoboRunTuple(BoboJSONable):
     def from_dict(d: dict) -> 'BoboRunTuple':
         return BoboRunTuple(
             run_id=d[BoboRunTuple.RUN_ID],
-            process_name=d[BoboRunTuple.PROCESS_NAME],
+            phenomenon_name=d[BoboRunTuple.PHENOMENON_NAME],
             pattern_name=d[BoboRunTuple.PATTERN_NAME],
             block_index=d[BoboRunTuple.BLOCK_INDEX],
             history=BoboHistory.from_json_str(d[BoboRunTuple.HISTORY])
@@ -98,18 +98,18 @@ class BoboRun:
     """
 
     _EXC_RUN_ID_LEN = "run ID must have a length greater than 0"
-    _EXC_PROCESS_LEN = "process name must have a length greater than 0"
+    _EXC_PHENOM_LEN = "phenomenon name must have a length greater than 0"
     _EXC_INDEX = "block index must be greater than 1"
 
     def __init__(self,
                  run_id: str,
-                 process_name: str,
+                 phenomenon_name: str,
                  pattern: BoboPattern,
                  block_index: int,
                  history: BoboHistory):
         """
         :param run_id: An ID for the run.
-        :param process_name: A process name associated with the run.
+        :param phenomenon_name: A phenomenon name associated with the run.
         :param pattern: A pattern associated with the run.
         :param block_index: An index which indicates where in the pattern
             to start the run.
@@ -127,11 +127,13 @@ class BoboRun:
         if len(run_id) == 0:
             raise BoboRunError(self._EXC_RUN_ID_LEN)
 
-        if len(process_name) == 0:
-            raise BoboRunError(self._EXC_PROCESS_LEN)
+        if len(phenomenon_name) == 0:
+            raise BoboRunError(self._EXC_PHENOM_LEN)
 
         if block_index < 1:
             raise BoboRunError(self._EXC_INDEX.format)
+
+
 
         # TODO Exception to check that all of the necessary groups in the
         #  new history have at least one event each in them,
@@ -139,7 +141,7 @@ class BoboRun:
         #  Do this for set_block also.
 
         self._run_id: str = run_id
-        self._process_name: str = process_name
+        self._phenomenon_name: str = phenomenon_name
         self._pattern: BoboPattern = pattern
         self._block_index: int = block_index
         self._history: BoboHistory = history
@@ -153,11 +155,11 @@ class BoboRun:
         return self._run_id
 
     @property
-    def process_name(self) -> str:
+    def phenomenon_name(self) -> str:
         """
-        :return: The process name associated with the run.
+        :return: The phenomenon name associated with the run.
         """
-        return self._process_name
+        return self._phenomenon_name
 
     @property
     def pattern(self) -> BoboPattern:
@@ -220,7 +222,7 @@ class BoboRun:
         with self._lock:
             return BoboRunTuple(
                 run_id=self.run_id,
-                process_name=self.process_name,
+                phenomenon_name=self.phenomenon_name,
                 pattern_name=self.pattern.name,
                 block_index=self._block_index,
                 history=self._history)

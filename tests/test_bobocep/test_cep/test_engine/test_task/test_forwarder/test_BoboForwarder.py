@@ -9,30 +9,30 @@ from bobocep.cep.action.handler import BoboActionHandlerPool, \
     BoboActionHandlerBlocking
 from bobocep.cep.engine.task.forwarder import BoboForwarderError, BoboForwarder
 from bobocep.cep.gen.event_id import BoboGenEventIDUnique
-from bobocep.cep.process import BoboProcess
+from bobocep.cep.phenomenon import BoboPhenomenon
 
 
 class TestValid:
 
-    def test_process_complex_event_blocking(self):
+    def test_phenomenon_complex_event_blocking(self):
         event = tc.event_complex()
-        process = tc.process(datagen=lambda p, h: True,
-                             action=tc.BoboActionTrue())
+        phenom = tc.phenomenon(datagen=lambda p, h: True,
+                                action=tc.BoboActionTrue())
 
-        forwarder, subscriber = tc.forwarder_sub([process], max_size=255)
+        forwarder, subscriber = tc.forwarder_sub([phenom], max_size=255)
         assert len(subscriber.output) == 0
 
         forwarder.on_producer_update(event)
         forwarder.update()
         assert len(subscriber.output) == 1
 
-    def test_process_complex_event_pool(self):
+    def test_phenomenon_complex_event_pool(self):
         event = tc.event_complex()
-        process = tc.process(datagen=lambda p, h: True,
-                             action=tc.BoboActionTrue())
+        phenom = tc.phenomenon(datagen=lambda p, h: True,
+                               action=tc.BoboActionTrue())
 
         forwarder, subscriber = tc.forwarder_sub(
-            processes=[process],
+            phenomena=[phenom],
             handler=BoboActionHandlerPool(processes=1, max_size=255),
             max_size=255)
         assert len(subscriber.output) == 0
@@ -46,14 +46,14 @@ class TestValid:
         assert len(subscriber.output) == 1
 
     def test_close_then_update(self):
-        forwarder, subscriber = tc.forwarder_sub([tc.process()])
+        forwarder, subscriber = tc.forwarder_sub([tc.phenomenon()])
 
         forwarder.close()
         assert forwarder.is_closed()
         assert forwarder.update() is False
 
     def test_close_then_on_producer_update(self):
-        forwarder, subscriber = tc.forwarder_sub([tc.process()])
+        forwarder, subscriber = tc.forwarder_sub([tc.phenomenon()])
 
         forwarder.close()
         assert forwarder.is_closed()
@@ -66,29 +66,29 @@ class TestValid:
 class TestInvalid:
 
     def test_add_on_queue_full(self):
-        forwarder, subscriber = tc.forwarder_sub([tc.process()], max_size=1)
+        forwarder, subscriber = tc.forwarder_sub([tc.phenomenon()], max_size=1)
 
         forwarder.on_producer_update(tc.event_complex())
 
         with pytest.raises(BoboForwarderError):
             forwarder.on_producer_update(tc.event_complex())
 
-    def test_duplicate_process_names(self):
-        process_1 = BoboProcess(
-            name="process",
+    def test_duplicate_phenomena_names(self):
+        phenom_1 = BoboPhenomenon(
+            name="phenom",
             datagen=lambda p, h: True,
             patterns=[tc.pattern()],
             action=None)
 
-        process_2 = BoboProcess(
-            name="process",
+        phenom_2 = BoboPhenomenon(
+            name="phenom",
             datagen=lambda p, h: True,
             patterns=[tc.pattern()],
             action=None)
 
         with pytest.raises(BoboForwarderError):
             BoboForwarder(
-                processes=[process_1, process_2],
+                phenomena=[phenom_1, phenom_2],
                 handler=BoboActionHandlerBlocking(max_size=255),
                 gen_event_id=BoboGenEventIDUnique(),
                 max_size=255)

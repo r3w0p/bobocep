@@ -2,28 +2,39 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-"""A process pattern which determines the occurrence of a complex event."""
+"""
+A pattern which models the occurrence of a phenomenon and facilitates the
+generating of a complex event.
+"""
 
 from typing import Tuple, List
 
 from bobocep import BoboError
-from bobocep.cep.process.pattern.predicate import BoboPredicate
+from bobocep.cep.phenomenon.pattern.predicate import BoboPredicate
 
 
 class BoboPatternError(BoboError):
-    """A pattern error."""
+    """
+    A pattern error.
+    """
 
 
 class BoboPatternBlockError(BoboPatternError):
-    """A pattern block error."""
+    """
+    A pattern block error.
+    """
 
 
 class BoboPredicateError(BoboPatternError):
-    """A predicate error."""
+    """
+    A predicate error.
+    """
 
 
 class BoboPatternBlock:
-    """A pattern block."""
+    """
+    A pattern block.
+    """
 
     _EXC_GROUP_LEN = "'group' must have a length greater than 0"
     _EXC_PREDICATES_LEN = "'predicates' must have a length greater than 0"
@@ -40,6 +51,18 @@ class BoboPatternBlock:
                  loop: bool,
                  negated: bool,
                  optional: bool):
+        """
+        :param group: The group with which the block is associated.
+        :param predicates: The block predicates.
+        :param strict: `True` if the block has strict contiguity;
+            `False` otherwise.
+        :param loop: `True` if the block loops back to itself;
+            `False` otherwise.
+        :param negated: `True` if the block is negated;
+            `False` otherwise.
+        :param optional: `True` if the block is optional;
+            `False` otherwise.
+        """
         super().__init__()
 
         if len(group) == 0:
@@ -66,37 +89,56 @@ class BoboPatternBlock:
 
     @property
     def group(self) -> str:
-        """Get pattern block group."""
+        """
+        Get pattern block group.
+        """
         return self._group
 
     @property
     def predicates(self) -> Tuple[BoboPredicate, ...]:
-        """Get pattern block predicates."""
+        """
+        Get pattern block predicates.
+        """
         return self._predicates
 
     @property
     def strict(self) -> bool:
-        """`True` if pattern block has strict contiguity; `False` otherwise."""
+        """
+        `True` if pattern block has strict contiguity;
+        `False` otherwise.
+        """
         return self._strict
 
     @property
     def loop(self) -> bool:
-        """`True` if pattern block loops; `False` otherwise."""
+        """
+        `True` if pattern block loops;
+        `False` otherwise.
+        """
         return self._loop
 
     @property
     def negated(self) -> bool:
-        """`True` if pattern block is negated; `False` otherwise."""
+        """
+        `True` if pattern block is negated;
+        `False` otherwise.
+        """
         return self._negated
 
     @property
     def optional(self) -> bool:
-        """`True` if pattern block is optional; `False` otherwise."""
+        """
+        `True` if pattern block is optional;
+        `False` otherwise.
+        """
         return self._optional
 
 
 class BoboPattern:
-    """A pattern."""
+    """
+    A pattern that represents a means by which to detect the occurrence of
+    some phenomenon.
+    """
 
     _EXC_NAME_LEN = "'name' must have a length greater than 0"
     _EXC_BLOCKS_LEN = "'blocks' must have a length greater than 0"
@@ -112,6 +154,12 @@ class BoboPattern:
                  blocks: List[BoboPatternBlock],
                  preconditions: List[BoboPredicate],
                  haltconditions: List[BoboPredicate]):
+        """
+        :param name: The pattern name.
+        :param blocks: The pattern blocks.
+        :param preconditions: The pattern preconditions.
+        :param haltconditions: The pattern haltconditions.
+        """
         super().__init__()
 
         if len(name) == 0:

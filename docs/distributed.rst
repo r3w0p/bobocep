@@ -8,6 +8,17 @@ fault-tolerant CEP at the network edge.
           of a single network, ideally with 2-3 instances of the software.
 
 
+:code:`UPDATE`
+
+:code:`HALT`
+
+:code:`COMPLETE`
+
+:code:`PING`
+
+:code:`SYNC`
+
+
 Recovery Scenarios
 ==================
 
@@ -16,32 +27,66 @@ processing in the least complex way possible, that does not rely on excessive
 message passing as part of its recovery strategy. Various scenarios, and their
 expected recovery strategies, are discussed below.
 
-
-Scenario #: cannot communicate with another instance.
------------------------------------------------------
-
-TODO
+The scenarios below consider three distributed instances -
+:code:`A`, :code:`B`, and :code:`C` -
+that are hosted on three separate devices.
 
 
-Scenario #: multiple instances complete same run with different events.
-------------------------------------------------------------------------
+Communication Failure
+---------------------
 
-TODO
-
-
-Scenario #: one instance completes run, another halts it.
-----------------------------------------------------------
+Cannot communicate with another instance.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 TODO
 
 
-Scenario #: one instance updates run, another halts it.
-----------------------------------------------------------
+Run Complete
+------------
+
+Multiple instances complete same run with different events.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 TODO
 
 
-Scenario #: run update is multiple steps ahead of local run.
--------------------------------------------------------------
+Run Halt
+--------
+
+One instance completes run, another halts it.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:code:`A` receives
+:code:`COMPLETE` from :code:`B`, but receives
+:code:`HALT` from :code:`C`
+for the same run.
+
+In this scenario, :code:`COMPLETE` takes precedent over :code:`HALT`, and
+:code:`A` will complete the run, producing a complex event accordingly.
+It will do this if the run is in progress, or if it has been halted locally.
+It will not produce a complex event if the run was already completed locally.
+
+
+Run Update
+----------
+
+Update is multiple blocks ahead of local run.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:code:`A` receives an update for a run, where the update is several
+blocks ahead of where its local copy of the run is.
+
+In this scenario, the local run is simply pushed forward to the new block, and
+the event history of the update replaces the local run history.
+
+
+Update is behind local run.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In this scenario, the update is ignored.
+
+
+One instance updates run, another halts it.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 TODO

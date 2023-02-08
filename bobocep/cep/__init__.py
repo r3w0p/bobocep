@@ -2,7 +2,9 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-"""Complex event processing functionality."""
+"""
+Complex event processing functionality.
+"""
 
 from abc import ABC, abstractmethod
 

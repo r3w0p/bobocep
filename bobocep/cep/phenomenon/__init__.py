@@ -2,8 +2,10 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-"""The process which data must follow in order to determine the occurrence of
-a complex event."""
+"""
+A phenomenon, satisfied by patterns of events, which facilitates the
+generating of complex events.
+"""
 
 from inspect import signature
 from types import MethodType
@@ -11,15 +13,15 @@ from typing import Callable, List, Tuple, Optional
 
 from bobocep import BoboError
 from bobocep.cep.action import BoboAction
-from bobocep.cep.process.pattern import BoboPattern
+from bobocep.cep.phenomenon.pattern import BoboPattern
 
 
-class BoboProcessError(BoboError):
-    """A process error."""
+class BoboPhenomenonError(BoboError):
+    """A phenomenon error."""
 
 
-class BoboProcess:
-    """A process."""
+class BoboPhenomenon:
+    """A phenomenon."""
 
     _EXC_NAME_LEN = "'name' must have a length greater than 0"
     _EXC_INVALID_CALL = "'datagen' callable must have {} parameters, found {}"
@@ -34,13 +36,13 @@ class BoboProcess:
         super().__init__()
 
         if len(name) == 0:
-            raise BoboProcessError(self._EXC_NAME_LEN)
+            raise BoboPhenomenonError(self._EXC_NAME_LEN)
 
         if datagen is not None:
             len_param_datagen = len(signature(datagen).parameters)
 
             if len_param_datagen != self._LEN_PARAM_DATAGEN:
-                raise BoboProcessError(
+                raise BoboPhenomenonError(
                     self._EXC_INVALID_CALL.format(
                         self._LEN_PARAM_DATAGEN,
                         len_param_datagen))
@@ -56,20 +58,20 @@ class BoboProcess:
 
     @property
     def name(self) -> str:
-        """Get process name."""
+        """Get phenomenon name."""
         return self._name
 
     @property
     def patterns(self) -> Tuple[BoboPattern, ...]:
-        """Get process patterns."""
+        """Get phenomenon patterns."""
         return self._patterns
 
     @property
     def datagen(self) -> Optional[Callable]:
-        """Get process datagen."""
+        """Get phenomenon datagen."""
         return self._datagen
 
     @property
     def action(self) -> Optional[BoboAction]:
-        """Get process action."""
+        """Get phenomenon action."""
         return self._action

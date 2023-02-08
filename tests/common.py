@@ -21,9 +21,9 @@ from bobocep.cep.event import BoboEventComplex, BoboEventAction, \
 from bobocep.cep.gen.event import BoboGenEvent, BoboGenEventNone
 from bobocep.cep.gen.event_id import BoboGenEventIDUnique, BoboGenEventID
 from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
-from bobocep.cep.process import BoboProcess
-from bobocep.cep.process.pattern import BoboPatternBlock, BoboPattern
-from bobocep.cep.process.pattern.predicate import BoboPredicateCall, \
+from bobocep.cep.phenomenon import BoboPhenomenon
+from bobocep.cep.phenomenon.pattern import BoboPatternBlock, BoboPattern
+from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCall, \
     BoboPredicate
 from bobocep.dist.pubsub import BoboDistributedSubscriber
 
@@ -39,7 +39,7 @@ class BoboActionTrue(BoboAction):
             event_id=BoboGenEventIDUnique().generate(),
             timestamp=BoboGenTimestampEpoch().generate(),
             data=True,
-            process_name=event.process_name,
+            phenomenon_name=event.phenomenon_name,
             pattern_name=event.pattern_name,
             action_name=self.name,
             success=True)
@@ -56,7 +56,7 @@ class BoboActionFalse(BoboAction):
             event_id=BoboGenEventIDUnique().generate(),
             timestamp=BoboGenTimestampEpoch().generate(),
             data=False,
-            process_name=event.process_name,
+            phenomenon_name=event.phenomenon_name,
             pattern_name=event.pattern_name,
             action_name=self.name,
             success=False)
@@ -181,7 +181,7 @@ def event_simple(event_id: Optional[str] = None,
 def event_complex(event_id: Optional[str] = None,
                   timestamp: Optional[int] = None,
                   data=None,
-                  process_name: str = "process",
+                  phenomenon_name: str = "phenomenon",
                   pattern_name: str = "pattern",
                   history: Optional[BoboHistory] = None):
     return BoboEventComplex(
@@ -190,7 +190,7 @@ def event_complex(event_id: Optional[str] = None,
         timestamp=timestamp if timestamp is not None else
         BoboGenTimestampEpoch().generate(),
         data=data,
-        process_name=process_name,
+        phenomenon_name=phenomenon_name,
         pattern_name=pattern_name,
         history=history if history is not None else
         BoboHistory(events={}))
@@ -199,7 +199,7 @@ def event_complex(event_id: Optional[str] = None,
 def event_action(event_id: Optional[str] = None,
                  timestamp: Optional[int] = None,
                  data=None,
-                 process_name: str = "process",
+                 phenomenon_name: str = "phenomenon",
                  pattern_name: str = "pattern",
                  action_name: str = "action",
                  success: bool = True):
@@ -209,7 +209,7 @@ def event_action(event_id: Optional[str] = None,
         timestamp=timestamp if timestamp is not None else
         BoboGenTimestampEpoch().generate(),
         data=data,
-        process_name=process_name,
+        phenomenon_name=phenomenon_name,
         pattern_name=pattern_name,
         action_name=action_name,
         success=success)
@@ -275,12 +275,12 @@ def predicate(call: Callable = lambda e, h: True):
     return BoboPredicateCall(call=call)
 
 
-def process(
-        name: str = "process",
+def phenomenon(
+        name: str = "phenomenon",
         datagen: Callable = lambda p, h: None,
         patterns: Optional[List[BoboPattern]] = None,
         action: Optional[BoboAction] = None):
-    return BoboProcess(
+    return BoboPhenomenon(
         name=name,
         datagen=datagen,
         patterns=patterns if patterns is not None else [pattern()],
@@ -307,12 +307,12 @@ def receiver_sub(validator: Optional[BoboValidator] = None,
     return receiver, subscriber
 
 
-def decider_sub(processes: List[BoboProcess],
+def decider_sub(phenomena: List[BoboPhenomenon],
                 event_id_gen: Optional[BoboGenEventID] = None,
                 run_id_gen: Optional[BoboGenEventID] = None,
                 max_size: int = 255):
     decider = BoboDecider(
-        processes=processes,
+        phenomena=phenomena,
         gen_event_id=event_id_gen if event_id_gen is not None else
         BoboGenEventIDUnique(),
         gen_run_id=run_id_gen if run_id_gen is not None else
@@ -325,11 +325,11 @@ def decider_sub(processes: List[BoboProcess],
     return decider, subscriber
 
 
-def producer_sub(processes: List[BoboProcess],
+def producer_sub(phenomena: List[BoboPhenomenon],
                  event_id_gen: Optional[BoboGenEventID] = None,
                  max_size: int = 255):
     producer = BoboProducer(
-        processes=processes,
+        phenomena=phenomena,
         gen_event_id=event_id_gen if event_id_gen is not None else
         BoboGenEventIDUnique(),
         gen_timestamp=BoboGenTimestampEpoch(),
@@ -341,12 +341,12 @@ def producer_sub(processes: List[BoboProcess],
     return producer, subscriber
 
 
-def forwarder_sub(processes: List[BoboProcess],
+def forwarder_sub(phenomena: List[BoboPhenomenon],
                   handler: Optional[BoboActionHandler] = None,
                   event_id_gen: Optional[BoboGenEventID] = None,
                   max_size: int = 255):
     forwarder = BoboForwarder(
-        processes=processes,
+        phenomena=phenomena,
         handler=handler if handler is not None else
         BoboActionHandlerBlocking(max_size=max_size),
         gen_event_id=event_id_gen if event_id_gen is not None else
@@ -363,11 +363,11 @@ def run_simple(
         pattern: BoboPattern,
         event: BoboEvent,
         run_id: str = "run_id",
-        process_name: str = "process_name",
+        phenomenon_name: str = "phenomenon",
         block_index: int = 1):
     return BoboRun(
         run_id=run_id,
-        process_name=process_name,
+        phenomenon_name=phenomenon_name,
         pattern=pattern,
         block_index=block_index,
         history=BoboHistory({
@@ -376,7 +376,7 @@ def run_simple(
     )
 
 
-def engine_subs(processes: List[BoboProcess],
+def engine_subs(phenomena: List[BoboPhenomenon],
                 validator: Optional[BoboValidator] = None,
                 event_id_gen: Optional[BoboGenEventID] = None,
                 event_gen: Optional[BoboGenEvent] = None,
@@ -395,18 +395,18 @@ def engine_subs(processes: List[BoboProcess],
         max_size=max_size)
 
     dec, dec_sub = decider_sub(
-        processes=processes,
+        phenomena=phenomena,
         event_id_gen=event_id_gen,
         run_id_gen=run_id_gen,
         max_size=max_size)
 
     pro, pro_sub = producer_sub(
-        processes=processes,
+        phenomena=phenomena,
         event_id_gen=event_id_gen,
         max_size=max_size)
 
     fwd, fwd_sub = forwarder_sub(
-        processes=processes,
+        phenomena=phenomena,
         handler=handler,
         event_id_gen=event_id_gen,
         max_size=max_size)

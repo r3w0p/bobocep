@@ -2,7 +2,9 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-"""The engine for complex event processing."""
+"""
+The engine for complex event processing.
+"""
 
 from threading import RLock
 

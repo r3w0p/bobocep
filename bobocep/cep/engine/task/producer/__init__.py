@@ -15,7 +15,7 @@ from bobocep.cep.engine.task.producer.pubsub import BoboProducerPublisher
 from bobocep.cep.event import BoboEventComplex
 from bobocep.cep.gen.event_id import BoboGenEventID
 from bobocep.cep.gen.timestamp import BoboGenTimestamp
-from bobocep.cep.process import BoboProcess
+from bobocep.cep.phenomenon import BoboPhenomenon
 
 
 class BoboProducerError(BoboEngineTaskError):
@@ -27,11 +27,11 @@ class BoboProducer(BoboEngineTask,
                    BoboDeciderSubscriber):
     """A producer task."""
 
-    _EXC_PROCESS_NAME_DUP = "duplicate name in processes: {}"
+    _EXC_PHENOM_NAME_DUP = "duplicate name in phenomena: {}"
     _EXC_QUEUE_FULL = "queue is full (max size: {})"
 
     def __init__(self,
-                 processes: List[BoboProcess],
+                 phenomena: List[BoboPhenomenon],
                  gen_event_id: BoboGenEventID,
                  gen_timestamp: BoboGenTimestamp,
                  max_size: int = 0):
@@ -39,14 +39,14 @@ class BoboProducer(BoboEngineTask,
         self._lock: RLock = RLock()
         self._closed: bool = False
 
-        self._processes: Dict[str, BoboProcess] = {}
+        self._phenomena: Dict[str, BoboPhenomenon] = {}
 
-        for process in processes:
-            if process.name not in self._processes:
-                self._processes[process.name] = process
+        for phenom in phenomena:
+            if phenom.name not in self._phenomena:
+                self._phenomena[phenom.name] = phenom
             else:
                 raise BoboProducerError(
-                    self._EXC_PROCESS_NAME_DUP.format(process.name))
+                    self._EXC_PHENOM_NAME_DUP.format(phenom.name))
 
         self._gen_event_id: BoboGenEventID = gen_event_id
         self._gen_timestamp: BoboGenTimestamp = gen_timestamp
@@ -73,17 +73,17 @@ class BoboProducer(BoboEngineTask,
             return self._closed
 
     def _handle_completed_run(self, run_state: BoboRunTuple) -> None:
-        if run_state.process_name not in self._processes:
-            raise BoboProducerError(run_state.process_name)
+        if run_state.phenomenon_name not in self._phenomena:
+            raise BoboProducerError(run_state.phenomenon_name)
 
-        process: BoboProcess = self._processes[run_state.process_name]
+        phenom: BoboPhenomenon = self._phenomena[run_state.phenomenon_name]
 
         event_complex = BoboEventComplex(
             event_id=self._gen_event_id.generate(),
             timestamp=self._gen_timestamp.generate(),
-            data=process.datagen(process, run_state.history)
-            if process.datagen is not None else None,
-            process_name=run_state.process_name,
+            data=phenom.datagen(phenom, run_state.history)
+            if phenom.datagen is not None else None,
+            phenomenon_name=run_state.phenomenon_name,
             pattern_name=run_state.pattern_name,
             history=run_state.history)
 

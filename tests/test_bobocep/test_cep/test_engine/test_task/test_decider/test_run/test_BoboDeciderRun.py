@@ -7,8 +7,8 @@ import tests.common as tc
 from bobocep.cep.engine.task.decider.run import BoboRunError
 from bobocep.cep.event import BoboEventSimple, BoboHistory
 from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
-from bobocep.cep.process.pattern.builder import BoboPatternBuilder
-from bobocep.cep.process.pattern.predicate import BoboPredicateCall
+from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder
+from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCall
 
 
 class TestValid:
@@ -20,11 +20,11 @@ class TestValid:
             pattern,
             event,
             run_id="run_id",
-            process_name="process_name",
+            phenomenon_name="phenom_name",
             block_index=1)
 
         assert run.run_id == "run_id"
-        assert run.process_name == "process_name"
+        assert run.phenomenon_name == "phenom_name"
         assert run.pattern == pattern
         assert run.block_index == 1
         assert run.history().size() == 1
@@ -39,7 +39,7 @@ class TestValid:
             pattern,
             event_a,
             run_id="run_id",
-            process_name="process_name",
+            phenomenon_name="phenom_name",
             block_index=1)
 
         assert run.block_index == 1
@@ -449,9 +449,9 @@ class TestInvalid:
         with pytest.raises(BoboRunError):
             tc.run_simple(tc.pattern(), tc.event_simple(), run_id="")
 
-    def test_length_0_process_name(self):
+    def test_length_0_phenomenon_name(self):
         with pytest.raises(BoboRunError):
-            tc.run_simple(tc.pattern(), tc.event_simple(), process_name="")
+            tc.run_simple(tc.pattern(), tc.event_simple(), phenomenon_name="")
 
     def test_block_index_zero(self):
         with pytest.raises(BoboRunError):
@@ -469,7 +469,7 @@ class TestInvalid:
             tc.pattern(),
             tc.event_simple(),
             run_id="run_id",
-            process_name="process_name",
+            phenomenon_name="phenom_name",
             block_index=1)
 
         with pytest.raises(BoboRunError):
@@ -486,7 +486,7 @@ class TestInvalid:
             tc.pattern(),
             tc.event_simple(),
             run_id="run_id",
-            process_name="process_name",
+            phenomenon_name="phenom_name",
             block_index=1)
 
         with pytest.raises(BoboRunError):

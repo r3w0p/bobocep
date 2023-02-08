@@ -23,7 +23,7 @@ class TestValid:
         assert event_original.event_id == event_new.event_id
         assert event_original.timestamp == event_new.timestamp
         assert event_original.data == event_new.data
-        assert event_original.process_name == event_new.process_name
+        assert event_original.phenomenon_name == event_new.phenomenon_name
         assert event_original.pattern_name == event_new.pattern_name
         assert event_original.action_name == event_new.action_name
         assert event_original.success == event_new.success
@@ -44,18 +44,18 @@ class TestInvalid:
                 event_id="",
                 timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
-                process_name="process",
+                phenomenon_name="phenomenon",
                 pattern_name="pattern",
                 action_name="action",
                 success=True)
 
-    def test_process_name_length_0(self):
+    def test_phenomenon_name_length_0(self):
         with pytest.raises(BoboEventError):
             BoboEventAction(
                 event_id="event_id",
                 timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
-                process_name="",
+                phenomenon_name="",
                 pattern_name="pattern",
                 action_name="action",
                 success=True)
@@ -66,7 +66,7 @@ class TestInvalid:
                 event_id="event_id",
                 timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
-                process_name="process",
+                phenomenon_name="phenomenon",
                 pattern_name="",
                 action_name="action",
                 success=True)
@@ -77,7 +77,7 @@ class TestInvalid:
                 event_id="event_id",
                 timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
-                process_name="process",
+                phenomenon_name="phenomenon",
                 pattern_name="pattern",
                 action_name="",
                 success=True)

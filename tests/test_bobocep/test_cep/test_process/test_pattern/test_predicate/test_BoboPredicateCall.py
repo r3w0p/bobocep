@@ -6,7 +6,7 @@ import pytest
 
 from bobocep.cep.event import BoboEventSimple, BoboHistory
 from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
-from bobocep.cep.process.pattern.predicate import BoboPredicateCall, \
+from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCall, \
     BoboPredicateError
 
 

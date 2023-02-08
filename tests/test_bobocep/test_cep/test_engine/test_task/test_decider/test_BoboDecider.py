@@ -7,8 +7,8 @@ import pytest
 import tests.common as tc
 from bobocep.cep.engine.task.decider import BoboError, BoboDecider
 from bobocep.cep.gen.event_id import BoboGenEventIDUnique
-from bobocep.cep.process.pattern.builder import BoboPatternBuilder
-from bobocep.cep.process.pattern.predicate import BoboPredicateCall
+from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder
+from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCall
 
 
 class TestValid:
@@ -19,16 +19,16 @@ class TestValid:
         pattern_789 = tc.pattern("pattern_789", data_blocks=[7, 8, 9])
 
         decider, subscriber = tc.decider_sub([
-            tc.process(patterns=[pattern_123, pattern_456, pattern_789])
+            tc.phenomenon(patterns=[pattern_123, pattern_456, pattern_789])
         ])
 
-        processes = decider.processes()
-        assert len(processes) == 1
-        assert len(processes[0].patterns) == 3
+        phenomena = decider.phenomena()
+        assert len(phenomena) == 1
+        assert len(phenomena[0].patterns) == 3
 
-        assert pattern_123 in processes[0].patterns
-        assert pattern_456 in processes[0].patterns
-        assert pattern_789 in processes[0].patterns
+        assert pattern_123 in phenomena[0].patterns
+        assert pattern_456 in phenomena[0].patterns
+        assert pattern_789 in phenomena[0].patterns
 
         assert len(decider.all_runs()) == 0
         assert decider.size() == 0
@@ -39,10 +39,10 @@ class TestValid:
         pattern_789 = tc.pattern("pattern_789", data_blocks=[7, 8, 9])
 
         decider, subscriber = tc.decider_sub([
-            tc.process(patterns=[pattern_123, pattern_456, pattern_789])
+            tc.phenomenon(patterns=[pattern_123, pattern_456, pattern_789])
         ])
 
-        process_name = decider.processes()[0].name
+        phenomenon_name = decider.phenomena()[0].name
 
         for event, pattern in [
             (tc.event_simple(data=1), pattern_123),
@@ -55,8 +55,8 @@ class TestValid:
             result_update = decider.update()
             assert result_update is True
             assert decider.size() == 0
-            assert len(decider.runs_from(process_name, pattern.name)) == 1
-            assert decider.runs_from(process_name,
+            assert len(decider.runs_from(phenomenon_name, pattern.name)) == 1
+            assert decider.runs_from(phenomenon_name,
                                      pattern.name)[0].pattern == pattern
 
     def test_3_patterns_same_blocks(self):
@@ -65,40 +65,40 @@ class TestValid:
         pattern_123_3 = tc.pattern("pattern_123_3", data_blocks=[1, 2, 3])
 
         decider, subscriber = tc.decider_sub([
-            tc.process(patterns=[pattern_123_1, pattern_123_2, pattern_123_3])
+            tc.phenomenon(patterns=[pattern_123_1, pattern_123_2, pattern_123_3])
         ])
 
         decider.on_receiver_update(event=tc.event_simple(data=1))
         result_update = decider.update()
 
-        process_name = decider.processes()[0].name
+        phenomenon_name = decider.phenomena()[0].name
 
         assert result_update is True
         assert decider.size() == 0
         assert len(decider.all_runs()) == 3
-        assert len(decider.runs_from(process_name, pattern_123_1.name)) == 1
-        assert len(decider.runs_from(process_name, pattern_123_2.name)) == 1
-        assert len(decider.runs_from(process_name, pattern_123_3.name)) == 1
+        assert len(decider.runs_from(phenomenon_name, pattern_123_1.name)) == 1
+        assert len(decider.runs_from(phenomenon_name, pattern_123_2.name)) == 1
+        assert len(decider.runs_from(phenomenon_name, pattern_123_3.name)) == 1
 
     def test_1_pattern_init_3_runs(self):
         pattern_123 = tc.pattern(data_blocks=[1, 2, 3])
-        process = tc.process(patterns=[pattern_123])
+        phenomenon = tc.phenomenon(patterns=[pattern_123])
 
-        decider, subscriber = tc.decider_sub([process])
-        process_name = decider.processes()[0].name
+        decider, subscriber = tc.decider_sub([phenomenon])
+        phenom_name = decider.phenomena()[0].name
 
         for i in range(3):
             decider.on_receiver_update(event=tc.event_simple(data=1))
             result_update = decider.update()
             assert result_update is True
-            assert len(decider.runs_from(process_name,
+            assert len(decider.runs_from(phenom_name,
                                          pattern_123.name)) == i + 1
 
     def test_1_pattern_to_completion(self):
         pattern_123 = tc.pattern(data_blocks=[1, 2, 3])
-        process = tc.process(patterns=[pattern_123])
+        phenom = tc.phenomenon(patterns=[pattern_123])
 
-        decider, subscriber = tc.decider_sub([process])
+        decider, subscriber = tc.decider_sub([phenom])
 
         for event, length in [
             (tc.event_simple(data=1), 1),
@@ -108,22 +108,22 @@ class TestValid:
             decider.on_receiver_update(event=event)
             result_update = decider.update()
 
-            process_name = decider.processes()[0].name
+            phenom_name = decider.phenomena()[0].name
 
             assert result_update is True
             assert len(decider.runs_from(
-                process_name, pattern_123.name)) == length
+                phenom_name, pattern_123.name)) == length
 
         assert len(subscriber.completed) == 1
 
     def test_get_run_from_non_existent_pattern(self):
         pattern_123 = tc.pattern(data_blocks=[1, 2, 3])
-        process = tc.process(patterns=[pattern_123])
+        phenom = tc.phenomenon(patterns=[pattern_123])
 
-        decider, subscriber = tc.decider_sub([process])
-        process_name = decider.processes()[0].name
+        decider, subscriber = tc.decider_sub([phenom])
+        phenom_name = decider.phenomena()[0].name
 
-        assert len(decider.runs_from(process_name, "pattern_unknown")) == 0
+        assert len(decider.runs_from(phenom_name, "pattern_unknown")) == 0
 
     def test_1_block_pattern_init_run_immediately_completes(self):
         pattern = tc.pattern(
@@ -131,7 +131,7 @@ class TestValid:
             data_pres=[],
             data_halts=[])
 
-        decider, subscriber = tc.decider_sub([tc.process(patterns=[pattern])])
+        decider, subscriber = tc.decider_sub([tc.phenomenon(patterns=[pattern])])
 
         decider.on_receiver_update(tc.event_simple(data=1))
         result_update = decider.update()
@@ -145,7 +145,7 @@ class TestValid:
             data_pres=[],
             data_halts=[5])
 
-        decider, subscriber = tc.decider_sub([tc.process(patterns=[pattern])])
+        decider, subscriber = tc.decider_sub([tc.phenomenon(patterns=[pattern])])
 
         decider.on_receiver_update(tc.event_simple(data=1))
         decider.update()
@@ -167,7 +167,7 @@ class TestValid:
             .precondition(BoboPredicateCall(lambda e, h: e.data > 9)) \
             .generate("pattern")
 
-        decider, subscriber = tc.decider_sub([tc.process(patterns=[pattern])])
+        decider, subscriber = tc.decider_sub([tc.phenomenon(patterns=[pattern])])
 
         decider.on_receiver_update(tc.event_simple(data=10))
         decider.update()
@@ -182,14 +182,14 @@ class TestValid:
         assert len(subscriber.halted) == 1
 
     def test_close_then_update(self):
-        decider, subscriber = tc.decider_sub([tc.process()])
+        decider, subscriber = tc.decider_sub([tc.phenomenon()])
 
         decider.close()
         assert decider.is_closed()
         assert decider.update() is False
 
     def test_close_then_on_receiver_update(self):
-        decider, subscriber = tc.decider_sub([tc.process()])
+        decider, subscriber = tc.decider_sub([tc.phenomenon()])
 
         decider.close()
         assert decider.is_closed()
@@ -202,8 +202,8 @@ class TestValid:
 class TestInvalid:
 
     def test_add_on_queue_full(self):
-        process = tc.process(patterns=[tc.pattern(data_blocks=[1, 2, 3])])
-        decider, subscriber = tc.decider_sub([process], max_size=1)
+        phenom = tc.phenomenon(patterns=[tc.pattern(data_blocks=[1, 2, 3])])
+        decider, subscriber = tc.decider_sub([phenom], max_size=1)
 
         decider.on_receiver_update(tc.event_simple(data=1))
 
@@ -211,29 +211,29 @@ class TestInvalid:
             decider.on_receiver_update(tc.event_simple(data=2))
 
     def test_try_to_remove_run_that_does_not_exist(self):
-        process = tc.process(patterns=[tc.pattern(data_blocks=[1, 2, 3])])
-        decider, subscriber = tc.decider_sub([process])
-        process_name = decider.processes()[0].name
+        phenom = tc.phenomenon(patterns=[tc.pattern(data_blocks=[1, 2, 3])])
+        decider, subscriber = tc.decider_sub([phenom])
+        phenom_name = decider.phenomena()[0].name
 
         with pytest.raises(BoboError):
-            decider._remove_run(process_name=process_name,
+            decider._remove_run(phenomenon_name=phenom_name,
                                 pattern_name="a",
                                 run_id="b")
 
-    def test_duplicate_process_names(self):
+    def test_duplicate_phenomena_names(self):
         with pytest.raises(BoboError):
             BoboDecider(
-                processes=[tc.process(patterns=[tc.pattern()]),
-                           tc.process(patterns=[tc.pattern()])],
+                phenomena=[tc.phenomenon(patterns=[tc.pattern()]),
+                           tc.phenomenon(patterns=[tc.pattern()])],
                 gen_event_id=BoboGenEventIDUnique(),
                 gen_run_id=BoboGenEventIDUnique(),
                 max_size=255)
 
     def test_duplicate_run_id_for_pattern(self):
-        process = tc.process(patterns=[tc.pattern(data_blocks=[1, 2, 3])])
+        phenom = tc.phenomenon(patterns=[tc.pattern(data_blocks=[1, 2, 3])])
 
         decider, subscriber = tc.decider_sub(
-            [process],
+            [phenom],
             run_id_gen=tc.BoboSameEveryTimeEventID())
 
         decider.on_receiver_update(event=tc.event_simple(data=1))

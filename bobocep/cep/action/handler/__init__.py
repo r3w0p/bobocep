@@ -2,7 +2,9 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-"""Handlers that coordinate the execution of actions."""
+"""
+Handlers that coordinate the execution of actions.
+"""
 
 from abc import ABC, abstractmethod
 from multiprocessing import Manager, Pool
@@ -59,8 +61,9 @@ class BoboActionHandler(ABC):
 
 
 class BoboActionHandlerBlocking(BoboActionHandler):
-    """An action handler that executes without multithreading or
-    multiprocessing."""
+    """
+    An action handler that executes without multithreading or multiprocessing.
+    """
 
     def __init__(self, max_size: int = 0):
         super().__init__(max_size)
@@ -92,7 +95,9 @@ def _pool_execute_action(
 
 
 class BoboActionHandlerPool(BoboActionHandler):
-    """An action handler that uses multiprocessing for action execution."""
+    """
+    An action handler that uses multiprocessing for action execution.
+    """
 
     def __init__(self, processes: int, max_size: int = 0):
         super().__init__(max_size)

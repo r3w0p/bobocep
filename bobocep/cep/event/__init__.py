@@ -2,7 +2,9 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-"""Event types."""
+"""
+Event types.
+"""
 
 from abc import ABC, abstractmethod
 from json import dumps, loads
@@ -13,15 +15,21 @@ from bobocep.cep import BoboJSONable
 
 
 class BoboEventError(BoboError):
-    """An event error."""
+    """
+    An event error.
+    """
 
 
 class BoboEventFactoryError(BoboEventError):
-    """An event factory error."""
+    """
+    An event factory error.
+    """
 
 
 class BoboEvent(BoboJSONable, ABC):
-    """An abstract event."""
+    """
+    An abstract event.
+    """
 
     EVENT_TYPE = "event_type"
     EVENT_ID = "event_id"
@@ -39,7 +47,7 @@ class BoboEvent(BoboJSONable, ABC):
         :param timestamp: The event timestamp.
         :param data: The event data.
 
-        :raises BoboEventError: If `event_id` length is equal to 0.
+        :raises BoboEventError: If length of event ID is equal to 0.
         """
         super().__init__()
 
@@ -68,31 +76,39 @@ class BoboEvent(BoboJSONable, ABC):
 
     @property
     def event_id(self) -> str:
-        """Get event ID."""
+        """
+        Get event ID.
+        """
         return self._event_id
 
     @property
     def timestamp(self) -> int:
-        """Get event timestamp."""
+        """
+        Get event timestamp.
+        """
         return self._timestamp
 
     @property
     def data(self) -> Any:
-        """Get event data."""
+        """
+        Get event data.
+        """
         return self._data
 
 
 class BoboEventAction(BoboEvent):
-    """An action event."""
+    """
+    An action event.
+    """
 
     TYPE_ACTION = "action"
 
-    PROCESS_NAME = "process_name"
+    PHENOMENON_NAME = "phenomenon_name"
     PATTERN_NAME = "pattern_name"
     ACTION_NAME = "action_name"
     SUCCESS = "success"
 
-    _EXC_PRO_LEN = "process name must have a length greater than 0"
+    _EXC_PRO_LEN = "phenomenon name must have a length greater than 0"
     _EXC_PAT_LEN = "pattern name must have a length greater than 0"
     _EXC_ACT_LEN = "action name must have a length greater than 0"
 
@@ -100,7 +116,7 @@ class BoboEventAction(BoboEvent):
                  event_id,
                  timestamp: int,
                  data: Any,
-                 process_name: str,
+                 phenomenon_name: str,
                  pattern_name: str,
                  action_name: str,
                  success: bool):
@@ -108,21 +124,22 @@ class BoboEventAction(BoboEvent):
         :param event_id: The event ID.
         :param timestamp: The event timestamp.
         :param data: The event data.
-        :param process_name: The process name.
+        :param phenomenon_name: The phenomenon name.
         :param pattern_name: The pattern name.
         :param action_name: The action name.
-        :param success: `True` if the action was successful; `False` otherwise.
+        :param success: `True` if the action was successful;
+            `False` otherwise.
 
-        :raises BoboEventError: If `process_name` length is equal to 0.
-        :raises BoboEventError: If `pattern_name` length is equal to 0.
-        :raises BoboEventError: If `action_name` length is equal to 0.
+        :raises BoboEventError: If length of phenomenon name is equal to 0.
+        :raises BoboEventError: If length of pattern name is equal to 0.
+        :raises BoboEventError: If length of action name is equal to 0.
         """
         super().__init__(
             event_id=event_id,
             timestamp=timestamp,
             data=data)
 
-        if len(process_name) == 0:
+        if len(phenomenon_name) == 0:
             raise BoboEventError(self._EXC_PRO_LEN)
 
         if len(pattern_name) == 0:
@@ -131,7 +148,7 @@ class BoboEventAction(BoboEvent):
         if len(action_name) == 0:
             raise BoboEventError(self._EXC_ACT_LEN)
 
-        self._process_name: str = process_name
+        self._phenomenon_name: str = phenomenon_name
         self._pattern_name: str = pattern_name
         self._action_name: str = action_name
         self._success: bool = success
@@ -141,30 +158,38 @@ class BoboEventAction(BoboEvent):
             event_id=self._event_id,
             timestamp=self._timestamp,
             data=dtype(self._data),
-            process_name=self._process_name,
+            phenomenon_name=self._phenomenon_name,
             pattern_name=self._pattern_name,
             action_name=self._action_name,
             success=self._success
         )
 
     @property
-    def process_name(self) -> str:
-        """Get process name."""
-        return self._process_name
+    def phenomenon_name(self) -> str:
+        """
+        Get phenomenon name.
+        """
+        return self._phenomenon_name
 
     @property
     def pattern_name(self) -> str:
-        """Get pattern name."""
+        """
+        Get pattern name.
+        """
         return self._pattern_name
 
     @property
     def action_name(self) -> str:
-        """Get action name."""
+        """
+        Get action name.
+        """
         return self._action_name
 
     @property
     def success(self) -> bool:
-        """Get success."""
+        """
+        Get success.
+        """
         return self._success
 
     def to_json_str(self) -> str:
@@ -173,7 +198,7 @@ class BoboEventAction(BoboEvent):
             self.EVENT_ID: self.event_id,
             self.TIMESTAMP: self.timestamp,
             self.DATA: self.data,
-            self.PROCESS_NAME: self.process_name,
+            self.PHENOMENON_NAME: self.phenomenon_name,
             self.PATTERN_NAME: self.pattern_name,
             self.ACTION_NAME: self.action_name,
             self.SUCCESS: self.success
@@ -189,7 +214,7 @@ class BoboEventAction(BoboEvent):
             event_id=d[BoboEventAction.EVENT_ID],
             timestamp=d[BoboEventAction.TIMESTAMP],
             data=d[BoboEventAction.DATA],
-            process_name=d[BoboEventAction.PROCESS_NAME],
+            phenomenon_name=d[BoboEventAction.PHENOMENON_NAME],
             pattern_name=d[BoboEventAction.PATTERN_NAME],
             action_name=d[BoboEventAction.ACTION_NAME],
             success=d[BoboEventAction.SUCCESS]
@@ -200,11 +225,14 @@ class BoboEventAction(BoboEvent):
 
 
 class BoboHistory(BoboJSONable):
-    """An event history."""
+    """
+    An event history.
+    """
 
     def __init__(self, events: Dict[str, List[BoboEvent]]):
         """
-        :param events: The history of events. Keys are group names.
+        :param events: The history of events.
+            Keys are group names.
             Values are lists of BoboEvent instances associated with a group.
         """
         super().__init__()
@@ -314,47 +342,49 @@ class BoboHistory(BoboJSONable):
 
 
 class BoboEventComplex(BoboEvent):
-    """A complex event."""
+    """
+    A complex event.
+    """
 
     TYPE_COMPLEX = "complex"
 
-    PROCESS_NAME = "process_name"
+    PHENOMENON_NAME = "phenomenon_name"
     PATTERN_NAME = "pattern_name"
     HISTORY = "history"
 
-    _EXC_PRO_LEN = "process name must have a length greater than 0"
+    _EXC_PRO_LEN = "phenomenon name must have a length greater than 0"
     _EXC_PAT_LEN = "pattern name must have a length greater than 0"
 
     def __init__(self,
                  event_id: str,
                  timestamp: int,
                  data: Any,
-                 process_name: str,
+                 phenomenon_name: str,
                  pattern_name: str,
                  history: BoboHistory):
         """
         :param event_id: The event ID.
         :param timestamp: The event timestamp.
         :param data: The event data.
-        :param process_name: The process name.
+        :param phenomenon_name: The phenomenon name.
         :param pattern_name: The pattern name.
         :param history: The history of events.
 
-        :raises BoboEventError: If process name length is equal to 0.
-        :raises BoboEventError: If pattern name length is equal to 0.
+        :raises BoboEventError: If length of phenomenon name is equal to 0.
+        :raises BoboEventError: If length of pattern name is equal to 0.
         """
         super().__init__(
             event_id=event_id,
             timestamp=timestamp,
             data=data)
 
-        if len(process_name) == 0:
+        if len(phenomenon_name) == 0:
             raise BoboEventError(self._EXC_PRO_LEN)
 
         if len(pattern_name) == 0:
             raise BoboEventError(self._EXC_PAT_LEN)
 
-        self._process_name: str = process_name
+        self._phenomenon_name: str = phenomenon_name
         self._pattern_name: str = pattern_name
         self._history: BoboHistory = history
 
@@ -363,15 +393,15 @@ class BoboEventComplex(BoboEvent):
             event_id=self._event_id,
             timestamp=self._timestamp,
             data=dtype(self._data),
-            process_name=self._process_name,
+            phenomenon_name=self._phenomenon_name,
             pattern_name=self._pattern_name,
             history=self._history
         )
 
     @property
-    def process_name(self) -> str:
-        """Get process name."""
-        return self._process_name
+    def phenomenon_name(self) -> str:
+        """Get phenomenon name."""
+        return self._phenomenon_name
 
     @property
     def pattern_name(self) -> str:
@@ -389,7 +419,7 @@ class BoboEventComplex(BoboEvent):
             self.EVENT_ID: self.event_id,
             self.TIMESTAMP: self.timestamp,
             self.DATA: self.data,
-            self.PROCESS_NAME: self.process_name,
+            self.PHENOMENON_NAME: self.phenomenon_name,
             self.PATTERN_NAME: self.pattern_name,
             self.HISTORY: self.history
         }, default=lambda o: o.to_json_str())
@@ -404,7 +434,7 @@ class BoboEventComplex(BoboEvent):
             event_id=d[BoboEventComplex.EVENT_ID],
             timestamp=d[BoboEventComplex.TIMESTAMP],
             data=d[BoboEventComplex.DATA],
-            process_name=d[BoboEventComplex.PROCESS_NAME],
+            phenomenon_name=d[BoboEventComplex.PHENOMENON_NAME],
             pattern_name=d[BoboEventComplex.PATTERN_NAME],
             history=BoboHistory.from_json_str(d[BoboEventComplex.HISTORY])
         )
@@ -414,7 +444,9 @@ class BoboEventComplex(BoboEvent):
 
 
 class BoboEventSimple(BoboEvent):
-    """A simple event."""
+    """
+    A simple event.
+    """
 
     TYPE_SIMPLE = "simple"
 
@@ -464,8 +496,10 @@ class BoboEventSimple(BoboEvent):
 
 
 class BoboEventFactory:
-    """A BoboEvent factory that generates instances from JSON representations
-    of events."""
+    """
+    A BoboEvent factory that generates instances from JSON representations
+    of events.
+    """
 
     @staticmethod
     def from_json_str(j: str) -> BoboEvent:

@@ -3,10 +3,10 @@
 # modified under the terms of the MIT License.
 import pytest
 
-from bobocep.cep.process.pattern import BoboPatternError
-from bobocep.cep.process.pattern.builder import BoboPatternBuilder, \
+from bobocep.cep.phenomenon.pattern import BoboPatternError
+from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder, \
     BoboPatternBuilderError
-from bobocep.cep.process.pattern.predicate import BoboPredicateCall
+from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCall
 
 
 class TestNext:

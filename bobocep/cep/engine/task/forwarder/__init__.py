@@ -15,7 +15,7 @@ from bobocep.cep.engine.task.forwarder.pubsub import BoboForwarderPublisher
 from bobocep.cep.engine.task.producer.pubsub import BoboProducerSubscriber
 from bobocep.cep.event import BoboEventAction, BoboEventComplex
 from bobocep.cep.gen.event_id import BoboGenEventID
-from bobocep.cep.process import BoboProcess
+from bobocep.cep.phenomenon import BoboPhenomenon
 
 
 class BoboForwarderError(BoboEngineTaskError):
@@ -27,11 +27,11 @@ class BoboForwarder(BoboEngineTask,
                     BoboProducerSubscriber):
     """A forwarder task."""
 
-    _EXC_PROCESS_NAME_DUP = "duplicate name in processes: {}"
+    _EXC_PHENOM_NAME_DUP = "duplicate name in phenomena: {}"
     _EXC_QUEUE_FULL = "queue is full (max size: {})"
 
     def __init__(self,
-                 processes: List[BoboProcess],
+                 phenomena: List[BoboPhenomenon],
                  handler: BoboActionHandler,
                  gen_event_id: BoboGenEventID,
                  max_size: int = 0):
@@ -40,14 +40,14 @@ class BoboForwarder(BoboEngineTask,
         self._lock: RLock = RLock()
         self._closed: bool = False
 
-        self._processes: Dict[str, BoboProcess] = {}
+        self._phenomena: Dict[str, BoboPhenomenon] = {}
 
-        for process in processes:
-            if process.name not in self._processes:
-                self._processes[process.name] = process
+        for phenom in phenomena:
+            if phenom.name not in self._phenomena:
+                self._phenomena[phenom.name] = phenom
             else:
                 raise BoboForwarderError(
-                    self._EXC_PROCESS_NAME_DUP.format(process.name))
+                    self._EXC_PHENOM_NAME_DUP.format(phenom.name))
 
         self._handler: BoboActionHandler = handler
         self._gen_event_id: BoboGenEventID = gen_event_id
@@ -75,11 +75,14 @@ class BoboForwarder(BoboEngineTask,
         if not self._queue.empty():
             event: BoboEventComplex = self._queue.get_nowait()
 
-            if event.process_name in self._processes:
-                process: BoboProcess = self._processes[event.process_name]
+            if event.phenomenon_name in self._phenomena:
+                phenom: BoboPhenomenon = \
+                    self._phenomena[event.phenomenon_name]
 
-                if process.action is not None:
-                    self._handler.handle(action=process.action, event=event)
+                if phenom.action is not None:
+                    self._handler.handle(
+                        action=phenom.action,
+                        event=event)
             return True
         return False
 

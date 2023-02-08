@@ -195,7 +195,6 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     self._running = False
                     break
                 self._update()
-                time.sleep(0.1)
 
     def _update(self):
         # Take incoming data and pass to decider

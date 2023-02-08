@@ -7,9 +7,9 @@
 from typing import List
 
 from bobocep import BoboError
-from bobocep.cep.process.pattern import BoboPatternBlock, \
+from bobocep.cep.phenomenon.pattern import BoboPatternBlock, \
     BoboPattern
-from bobocep.cep.process.pattern.predicate import BoboPredicate
+from bobocep.cep.phenomenon.pattern.predicate import BoboPredicate
 
 
 class BoboPatternBuilderError(BoboError):

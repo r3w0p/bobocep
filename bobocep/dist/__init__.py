@@ -2,7 +2,9 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-"""Distributed complex event processing."""
+"""
+Distributed complex event processing.
+"""
 
 from abc import ABC, abstractmethod
 
@@ -11,15 +13,21 @@ from bobocep.dist.pubsub import BoboDistributedPublisher
 
 
 class BoboDistributedError(BoboError):
-    """A distributed error."""
+    """
+    A distributed error.
+    """
 
 
 class BoboDistributedSystemError(BoboDistributedError):
-    """A distributed system error."""
+    """
+    A distributed system error.
+    """
 
 
 class BoboDistributedTimeoutError(BoboDistributedError):
-    """A distributed timeout error."""
+    """
+    A distributed timeout error.
+    """
 
 
 class BoboDeviceTuple:

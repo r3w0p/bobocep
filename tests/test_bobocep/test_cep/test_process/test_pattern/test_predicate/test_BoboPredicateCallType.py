@@ -4,7 +4,7 @@
 
 import tests.common as tc
 from bobocep.cep.event import BoboEventSimple, BoboHistory, BoboEvent
-from bobocep.cep.process.pattern.predicate import BoboPredicateCallType
+from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCallType
 
 
 # TODO move to common

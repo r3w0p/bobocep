@@ -18,7 +18,7 @@ class TestValid:
         event_id: str = "event_id"
         timestamp: int = 123456789
         data: Any = 123
-        process_name: str = "process_name"
+        phenom_name: str = "phenom_name"
         pattern_name: str = "pattern_name"
         action_name: str = "action_name"
         success: bool = True
@@ -28,7 +28,7 @@ class TestValid:
             BoboEventAction.EVENT_ID: event_id,
             BoboEventAction.TIMESTAMP: timestamp,
             BoboEventAction.DATA: data,
-            BoboEventAction.PROCESS_NAME: process_name,
+            BoboEventAction.PHENOMENON_NAME: phenom_name,
             BoboEventAction.PATTERN_NAME: pattern_name,
             BoboEventAction.ACTION_NAME: action_name,
             BoboEventAction.SUCCESS: success
@@ -40,7 +40,7 @@ class TestValid:
         assert event.event_id == event_id
         assert event.timestamp == timestamp
         assert event.data == data
-        assert event.process_name == process_name
+        assert event.phenomenon_name == phenom_name
         assert event.pattern_name == pattern_name
         assert event.action_name == action_name
         assert event.success == success
@@ -49,7 +49,7 @@ class TestValid:
         event_id: str = "event_id"
         timestamp: int = 123456789
         data: Any = 123
-        process_name: str = "process_name"
+        phenom_name: str = "phenom_name"
         pattern_name: str = "pattern_name"
 
         group_history: str = "group_history"
@@ -63,7 +63,7 @@ class TestValid:
             BoboEventComplex.EVENT_ID: event_id,
             BoboEventComplex.TIMESTAMP: timestamp,
             BoboEventComplex.DATA: data,
-            BoboEventComplex.PROCESS_NAME: process_name,
+            BoboEventComplex.PHENOMENON_NAME: phenom_name,
             BoboEventComplex.PATTERN_NAME: pattern_name,
             BoboEventComplex.HISTORY: history
         }, default=lambda o: o.to_json_str())
@@ -74,7 +74,7 @@ class TestValid:
         assert event.event_id == event_id
         assert event.timestamp == timestamp
         assert event.data == data
-        assert event.process_name == process_name
+        assert event.phenomenon_name == phenom_name
         assert event.pattern_name == pattern_name
         assert isinstance(event.history, BoboHistory)
 

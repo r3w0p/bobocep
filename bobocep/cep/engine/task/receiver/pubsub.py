@@ -7,17 +7,21 @@ from bobocep.cep.event import BoboEvent
 
 
 class BoboReceiverSubscriber(ABC):
-    """A receiver subscriber interface."""
+    """
+    A receiver subscriber interface.
+    """
 
     @abstractmethod
     def on_receiver_update(self, event: BoboEvent) -> None:
         """
-        :param event: New BoboEvent instance processed by the receiver.
+        :param event: A new BoboEvent instance processed by the receiver.
         """
 
 
 class BoboReceiverPublisher(ABC):
-    """A receiver publisher interface."""
+    """
+    A receiver publisher interface.
+    """
 
     def __init__(self):
         super().__init__()

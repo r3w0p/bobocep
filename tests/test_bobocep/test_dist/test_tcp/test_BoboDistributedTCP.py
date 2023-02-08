@@ -24,7 +24,7 @@ class TestValid:
                 tc.pattern(name="pattern_completed"),
                 tc.event_simple(event_id="event_id_completed"),
                 run_id="run_id_completed",
-                process_name="process_name_completed",
+                phenomenon_name="phenom_name_completed",
                 block_index=1
             ).to_tuple()]
 
@@ -33,7 +33,7 @@ class TestValid:
                 tc.pattern(name="pattern_halted"),
                 tc.event_simple(event_id="event_id_halted"),
                 run_id="run_id_halted",
-                process_name="process_name_halted",
+                phenomenon_name="phenom_name_halted",
                 block_index=1
             ).to_tuple()]
 
@@ -42,7 +42,7 @@ class TestValid:
                 tc.pattern(name="pattern_updated"),
                 tc.event_simple(event_id="event_id_updated"),
                 run_id="run_id_updated",
-                process_name="process_name_updated",
+                phenomenon_name="phenom_name_updated",
                 block_index=1
             ).to_tuple()]
 
@@ -79,7 +79,7 @@ class TestValid:
             halted=halted,
             updated=updated)
 
-        sleep(3)
+        sleep(1)
 
         dist.close()
         dist.join()
@@ -98,7 +98,7 @@ class TestValid:
             (dist_sub.updated, updated),
         ]:
             assert idistsub[0].run_id == irun[0].run_id
-            assert idistsub[0].process_name == irun[0].process_name
+            assert idistsub[0].phenomenon_name == irun[0].phenomenon_name
             assert idistsub[0].pattern_name == irun[0].pattern_name
             assert idistsub[0].block_index == irun[0].block_index
             assert idistsub[0].history.size() == 1 and \

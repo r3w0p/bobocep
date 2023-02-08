@@ -22,31 +22,31 @@ def run_engine(engine: BoboEngine):
 class TestValid:
 
     def test_property_receiver(self):
-        engine, _, _, _, _ = tc.engine_subs([tc.process()])
+        engine, _, _, _, _ = tc.engine_subs([tc.phenomenon()])
         assert isinstance(engine.receiver, BoboReceiver)
 
     def test_property_decider(self):
-        engine, _, _, _, _ = tc.engine_subs([tc.process()])
+        engine, _, _, _, _ = tc.engine_subs([tc.phenomenon()])
         assert isinstance(engine.decider, BoboDecider)
 
     def test_property_producer(self):
-        engine, _, _, _, _ = tc.engine_subs([tc.process()])
+        engine, _, _, _, _ = tc.engine_subs([tc.phenomenon()])
         assert isinstance(engine.producer, BoboProducer)
 
     def test_property_forwarder(self):
-        engine, _, _, _, _ = tc.engine_subs([tc.process()])
+        engine, _, _, _, _ = tc.engine_subs([tc.phenomenon()])
         assert isinstance(engine.forwarder, BoboForwarder)
 
     def test_1_pattern_with_action_all_data_at_once(self):
-        processes = [tc.process(
-            name="process_a",
+        phenomena = [tc.phenomenon(
+            name="phenomenon_a",
             datagen=lambda p, h: True,
             patterns=[
                 tc.pattern("pattern_123", data_blocks=[1, 2, 3])
             ],
             action=tc.BoboActionTrue("action_true")
         )]
-        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(processes)
+        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(phenomena)
 
         engine.receiver.add_data(1)
         engine.receiver.add_data(2)
@@ -67,7 +67,7 @@ class TestValid:
 
         # Decider output: full history of events that caused run to complete
         assert len(dec_sub.completed) == 1
-        assert dec_sub.completed[0].process_name == "process_a"
+        assert dec_sub.completed[0].phenomenon_name == "phenomenon_a"
         assert dec_sub.completed[0].pattern_name == "pattern_123"
         dec_history = dec_sub.completed[0].history
         assert dec_history.group("g1")[0].data == 1
@@ -78,7 +78,7 @@ class TestValid:
         assert len(pro_sub.output) == 1
         assert isinstance(pro_sub.output[0], BoboEventComplex)
         assert pro_sub.output[0].data is True
-        assert pro_sub.output[0].process_name == "process_a"
+        assert pro_sub.output[0].phenomenon_name == "phenomenon_a"
         assert pro_sub.output[0].pattern_name == "pattern_123"
         assert pro_sub.output[0].history.all() == dec_history.all()
 
@@ -86,14 +86,14 @@ class TestValid:
         assert len(fwd_sub.output) == 1
         assert isinstance(fwd_sub.output[0], BoboEventAction)
         assert fwd_sub.output[0].data is True
-        assert fwd_sub.output[0].process_name == "process_a"
+        assert fwd_sub.output[0].phenomenon_name == "phenomenon_a"
         assert fwd_sub.output[0].pattern_name == "pattern_123"
         assert fwd_sub.output[0].action_name == "action_true"
         assert fwd_sub.output[0].success is True
 
     def test_1_pattern_with_action_one_at_a_time(self):
-        processes = [tc.process(
-            name="process_a",
+        phenomena = [tc.phenomenon(
+            name="phenomenon_a",
             datagen=lambda p, h: True,
             patterns=[
                 tc.pattern("pattern_123", data_blocks=[1, 2, 3])
@@ -101,7 +101,7 @@ class TestValid:
             action=tc.BoboActionTrue("action_true")
         )]
         engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(
-            processes,
+            phenomena,
             times_receiver=1,
             times_decider=1,
             times_producer=1,
@@ -157,7 +157,7 @@ class TestValid:
         # Decider output: full history of events that caused run to complete
         assert len(dec_sub.completed) == 1
         assert isinstance(dec_sub.completed[0], BoboRunTuple)
-        assert dec_sub.completed[0].process_name == "process_a"
+        assert dec_sub.completed[0].phenomenon_name == "phenomenon_a"
         assert dec_sub.completed[0].pattern_name == "pattern_123"
         dec_history = dec_sub.completed[0].history
         assert dec_history.group("g1")[0].data == 1
@@ -168,7 +168,7 @@ class TestValid:
         assert len(pro_sub.output) == 1
         assert isinstance(pro_sub.output[0], BoboEventComplex)
         assert pro_sub.output[0].data is True
-        assert pro_sub.output[0].process_name == "process_a"
+        assert pro_sub.output[0].phenomenon_name == "phenomenon_a"
         assert pro_sub.output[0].pattern_name == "pattern_123"
         assert pro_sub.output[0].history.all() == dec_history.all()
 
@@ -176,30 +176,30 @@ class TestValid:
         assert len(fwd_sub.output) == 1
         assert isinstance(fwd_sub.output[0], BoboEventAction)
         assert fwd_sub.output[0].data is True
-        assert fwd_sub.output[0].process_name == "process_a"
+        assert fwd_sub.output[0].phenomenon_name == "phenomenon_a"
         assert fwd_sub.output[0].pattern_name == "pattern_123"
         assert fwd_sub.output[0].action_name == "action_true"
         assert fwd_sub.output[0].success is True
 
     def test_close_then_update(self):
-        processes = [tc.process()]
-        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(processes)
+        phenomena = [tc.phenomenon()]
+        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(phenomena)
 
         engine.close()
         assert engine.is_closed()
         assert engine.update() is False
 
     def test_close_then_run(self):
-        processes = [tc.process()]
-        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(processes)
+        phenomena = [tc.phenomenon()]
+        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(phenomena)
 
         engine.close()
         assert engine.is_closed()
         assert engine.run() is None
 
     def test_run_then_close(self):
-        processes = [tc.process()]
-        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(processes)
+        phenomena = [tc.phenomenon()]
+        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(phenomena)
 
         t = Thread(target=run_engine, args=[engine])
         t.start()
@@ -209,15 +209,15 @@ class TestValid:
         assert engine.is_closed()
 
     def test_run_then_complete_pattern_then_close(self):
-        processes = [tc.process(
-            name="process_a",
+        phenomena = [tc.phenomenon(
+            name="phenom_a",
             datagen=lambda p, h: True,
             patterns=[
                 tc.pattern("pattern_123", data_blocks=[1, 2, 3])
             ],
             action=tc.BoboActionTrue("action_true")
         )]
-        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(processes)
+        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(phenomena)
 
         t = Thread(target=run_engine, args=[engine])
         t.start()
@@ -244,16 +244,16 @@ class TestInvalid:
 
     def test_times_receiver_negative(self):
         with pytest.raises(BoboEngineError):
-            tc.engine_subs([tc.process()], times_receiver=-1)
+            tc.engine_subs([tc.phenomenon()], times_receiver=-1)
 
     def test_times_decider_negative(self):
         with pytest.raises(BoboEngineError):
-            tc.engine_subs([tc.process()], times_decider=-1)
+            tc.engine_subs([tc.phenomenon()], times_decider=-1)
 
     def test_times_producer_negative(self):
         with pytest.raises(BoboEngineError):
-            tc.engine_subs([tc.process()], times_producer=-1)
+            tc.engine_subs([tc.phenomenon()], times_producer=-1)
 
     def test_times_forwarder_negative(self):
         with pytest.raises(BoboEngineError):
-            tc.engine_subs([tc.process()], times_forwarder=-1)
+            tc.engine_subs([tc.phenomenon()], times_forwarder=-1)

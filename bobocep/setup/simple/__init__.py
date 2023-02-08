@@ -15,7 +15,7 @@ from bobocep.cep.engine.task.receiver.validator import BoboValidatorAll
 from bobocep.cep.gen.event import BoboGenEvent
 from bobocep.cep.gen.event_id import BoboGenEventID, BoboGenEventIDUnique
 from bobocep.cep.gen.timestamp import BoboGenTimestamp, BoboGenTimestampEpoch
-from bobocep.cep.process import BoboProcess
+from bobocep.cep.phenomenon import BoboPhenomenon
 from bobocep.setup import BoboSetup
 
 
@@ -23,7 +23,7 @@ class BoboSetupSimple(BoboSetup):
     """A simple setup to make configuration easier."""
 
     def __init__(self,
-                 processes: List[BoboProcess],
+                 phenomena: List[BoboPhenomenon],
                  validator: Optional[BoboValidator] = None,
                  handler: Optional[BoboActionHandler] = None,
                  gen_event_id: Optional[BoboGenEventID] = None,
@@ -40,13 +40,13 @@ class BoboSetupSimple(BoboSetup):
 
         self._max_size: int = max(0, max_size)
 
-        self._processes: List[BoboProcess] = processes
+        self._phenomena: List[BoboPhenomenon] = phenomena
         self._validator: BoboValidator = validator \
             if validator is not None else BoboValidatorAll()
         self._handler: BoboActionHandler = handler \
             if handler is not None else BoboActionHandlerPool(
-            processes=max(1, cpu_count() - 1),
-            max_size=self._max_size)
+                processes=max(1, cpu_count() - 1),
+                max_size=self._max_size)
 
         self._gen_event_id: BoboGenEventID = gen_event_id \
             if gen_event_id is not None else BoboGenEventIDUnique()
@@ -71,19 +71,19 @@ class BoboSetupSimple(BoboSetup):
             max_size=self._max_size)
 
         decider = BoboDecider(
-            processes=self._processes,
+            phenomena=self._phenomena,
             gen_event_id=self._gen_event_id,
             gen_run_id=self._gen_run_id,
             max_size=self._max_size)
 
         producer = BoboProducer(
-            processes=self._processes,
+            phenomena=self._phenomena,
             gen_event_id=self._gen_event_id,
             gen_timestamp=self._gen_timestamp,
             max_size=self._max_size)
 
         forwarder = BoboForwarder(
-            processes=self._processes,
+            phenomena=self._phenomena,
             handler=self._handler,
             gen_event_id=self._gen_event_id,
             max_size=self._max_size)
