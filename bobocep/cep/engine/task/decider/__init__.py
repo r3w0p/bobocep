@@ -70,9 +70,9 @@ class BoboDecider(BoboEngineTask,
         self._queue: Queue[BoboEvent] = Queue(self._max_size)
 
         self._caching: bool = max_cache > 0
-        self._cache_completed: Optional[Deque[str]] = \
+        self._cache_completed: Optional[Deque[BoboRunTuple]] = \
             deque(maxlen=max_cache) if self._caching else None
-        self._cache_halted: Optional[Deque[str]] = \
+        self._cache_halted: Optional[Deque[BoboRunTuple]] = \
             deque(maxlen=max_cache) if self._caching else None
 
     def update(self) -> bool:
@@ -99,18 +99,8 @@ class BoboDecider(BoboEngineTask,
                 updated: List[BoboRunTuple] = \
                     [run_u.to_tuple() for run_u in rl_updated]
 
-                if (
-                        self._caching and
-                        self._cache_completed is not None and
-                        self._cache_halted is not None
-                ):
-                    # Cache the ID of runs that have been locally completed
-                    for c in completed:
-                        self._cache_completed.append(c.run_id)
-
-                    # Cache the ID of runs that have been locally halted
-                    for h in halted:
-                        self._cache_halted.append(h.run_id)
+                # Cache local changes
+                self._maybe_cache(completed, halted)
 
                 # Only notify subscribers if at least one list has values
                 internal_state_change = any(len(rl) > 0 for rl in
@@ -124,6 +114,23 @@ class BoboDecider(BoboEngineTask,
                 return internal_state_change
             return False
 
+    def _maybe_cache(
+            self,
+            completed: List[BoboRunTuple],
+            halted: List[BoboRunTuple]) -> None:
+        if (
+                self._caching and
+                self._cache_completed is not None and
+                self._cache_halted is not None
+        ):
+            # Cache the ID of runs that have been locally completed
+            for c in completed:
+                self._cache_completed.append(c)
+
+            # Cache the ID of runs that have been locally halted
+            for h in halted:
+                self._cache_halted.append(h)
+
     def on_receiver_update(self, event: BoboEvent) -> None:
         with self._lock:
             if self._closed:
@@ -135,36 +142,53 @@ class BoboDecider(BoboEngineTask,
                 raise BoboError(
                     _EXC_QUEUE_FULL.format(self._max_size))
 
+    def _maybe_check_against_cache(
+            self,
+            completed: List[BoboRunTuple],
+            halted: List[BoboRunTuple],
+            updated: List[BoboRunTuple]) -> Tuple[List[BoboRunTuple],
+                                                  List[BoboRunTuple],
+                                                  List[BoboRunTuple]]:
+        if (
+                self._caching and
+                self._cache_completed is not None and
+                self._cache_halted is not None
+        ):
+            # Keep completed IDs if not completed locally
+            # Complete takes precedent over halt and update
+            completed = [
+                comp for comp in completed
+                if (
+                    not any(comp.run_id == cache_comp.run_id
+                            for cache_comp in self._cache_completed)
+                )]
+
+            # Keep halted IDs if not completed and not halted locally
+            # Halt takes precedent over update
+            halted = [halt for halt in halted
+                      if ch not in self._cache_completed and
+                      ch not in self._cache_halted]
+
+            # Keep updated IDs if not completed and not halted locally
+            updated = [cu for cu in updated
+                       if cu not in self._cache_completed and
+                       cu not in self._cache_halted]
+
+        return completed, halted, updated
+
     def on_distributed_update(
             self,
             completed: List[BoboRunTuple],
             halted: List[BoboRunTuple],
-            updated: List[BoboRunTuple]):
+            updated: List[BoboRunTuple]) -> None:
 
         with self._lock:
             if self._closed:
                 return
 
-            if (
-                    self._caching and
-                    self._cache_completed is not None and
-                    self._cache_halted is not None
-            ):
-                # Keep completed IDs if not completed locally
-                # Complete takes precedent over halt and update
-                completed = [cc for cc in completed
-                             if cc not in self._cache_completed]
-
-                # Keep halted IDs if not completed and not halted locally
-                # Halt takes precedent over update
-                halted = [ch for ch in halted
-                          if ch not in self._cache_completed and
-                          ch not in self._cache_halted]
-
-                # Keep updated IDs if not completed and not halted locally
-                updated = [cu for cu in updated
-                           if cu not in self._cache_completed and
-                           cu not in self._cache_halted]
+            # Remove any invalid remote changes
+            completed, halted, updated = \
+                self._maybe_check_against_cache(completed, halted, updated)
 
             # Remove runs that were completed remotely
             for rc in completed:
@@ -221,6 +245,9 @@ class BoboDecider(BoboEngineTask,
             # Remove any updates for which a pattern could not be found
             for i in sorted(update_remove_indices, reverse=True):
                 del updated[i]
+
+            # Cache remote changes
+            self._maybe_cache(completed, halted)
 
             # Send updates to subscribers
             self._notify_subscribers(

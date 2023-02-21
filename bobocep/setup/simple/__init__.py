@@ -102,15 +102,4 @@ class BoboSetupSimple(BoboSetup):
         return engine
 
 # TODO BoboSetupSimpleDistributed, extends BoboSetupSimple
-
 # TODO if distributed, ensure validator is (instance of) JSONableVal
-
-# TODO move if self._distributed is not None:
-#    receiver.subscribe(self._distributed)
-#    decider.subscribe(self._distributed)
-#    producer.subscribe(self._distributed)
-#    forwarder.subscribe(self._distributed)
-
-# TODO BoboGenEventIDUnique urn MUST be set to something unique to avoid event
-#  ID conflicts when message passing
-#  - setup needs to check that all devices in the device list have unique urns

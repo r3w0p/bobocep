@@ -7,11 +7,6 @@ from bobocep.cep.event import BoboEventSimple, BoboHistory, BoboEvent
 from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCallType
 
 
-# TODO move to common
-class BoboEventSimpleSubclass(BoboEventSimple):
-    """"""
-
-
 class TestValid:
 
     def test_type_int_no_subtype_no_cast(self):
@@ -54,7 +49,7 @@ class TestValid:
             subtype=False,
             cast=False)
 
-        event = tc.event_simple(data=BoboEventSimpleSubclass(
+        event = tc.event_simple(data=tc.BoboEventSimpleSubclass(
             event_id="event_id",
             timestamp=123456789,
             data=123
@@ -107,7 +102,7 @@ class TestInvalid:
             subtype=False,
             cast=False)
 
-        event = tc.event_simple(data=BoboEventSimpleSubclass(
+        event = tc.event_simple(data=tc.BoboEventSimpleSubclass(
             event_id="event_id",
             timestamp=123456789,
             data=123

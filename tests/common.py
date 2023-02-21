@@ -77,6 +77,10 @@ class BoboSameEveryTimeEventID(BoboGenEventID):
         return self._id_str
 
 
+class BoboEventSimpleSubclass(BoboEventSimple):
+    """"""
+
+
 class StubReceiverSubscriber(BoboReceiverSubscriber):
     def __init__(self):
         super().__init__()

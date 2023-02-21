@@ -36,8 +36,9 @@ class BoboDeviceTuple:
     network.
     """
 
-    _EXC_ADDR_LEN = "addr must have a length greater than 0"
-    _EXC_URN_LEN = "urn must have a length greater than 0"
+    _EXC_ADDR_LEN = "address must have a length greater than 0"
+    _EXC_PORT_RANGE = "port must be between 1 and 65535 (inclusive)"
+    _EXC_URN_LEN = "URN must have a length greater than 0"
     _EXC_KEY_LEN = "ID key must have a length greater than 0"
 
     def __init__(self,
@@ -49,6 +50,9 @@ class BoboDeviceTuple:
 
         if len(addr) == 0:
             raise BoboDistributedError(self._EXC_ADDR_LEN)
+
+        if not (1 <= port <= 65535):
+            raise BoboDistributedError(self._EXC_URN_LEN)
 
         if len(urn) == 0:
             raise BoboDistributedError(self._EXC_URN_LEN)
@@ -86,7 +90,9 @@ class BoboDeviceTuple:
 
 
 class BoboDistributed(BoboDistributedPublisher, ABC):
-    """A class for enabling `BoboCEP` to be distributed over the network."""
+    """
+    Distributed `BoboCEP`.
+    """
 
     @abstractmethod
     def run(self):

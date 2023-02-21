@@ -59,12 +59,14 @@ class TestValid:
                 id_key="2222222222")
         ]
 
+        decider, dec_sub = tc.decider_sub([tc.phenomenon()])
+
         dist = BoboDistributedTCP(
             urn="urn:dist:1",
-            devices=devices,
             aes_key="1234567890ABCDEF",
-            max_size_incoming=255,
-            max_size_outgoing=255)
+            decider=decider,
+            devices=devices,
+            subscribe=False)
 
         dist_sub = tc.StubDistributedSubscriber()
         dist.subscribe(dist_sub)
