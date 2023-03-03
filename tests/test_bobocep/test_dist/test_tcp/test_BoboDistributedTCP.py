@@ -8,8 +8,12 @@ from typing import List
 import tests.common as tc
 from bobocep.cep.engine.task.decider import \
     BoboRunTuple
-from bobocep.dist import BoboDeviceTuple
+from bobocep.dist import BoboDevice
 from bobocep.dist.tcp import BoboDistributedTCP
+import logging
+
+
+# TODO test addr change
 
 
 def run_distributed_tcp(dist: BoboDistributedTCP):
@@ -18,7 +22,9 @@ def run_distributed_tcp(dist: BoboDistributedTCP):
 
 class TestValid:
 
-    def test_send_completed_halted_updated(self):
+    def test_send_comp_halt_upd_to_another_device(self):
+        logging.getLogger().setLevel(logging.DEBUG)
+
         completed: List[BoboRunTuple] = [
             tc.run_simple(
                 tc.pattern(name="pattern_completed"),
@@ -47,12 +53,12 @@ class TestValid:
             ).to_tuple()]
 
         devices = [
-            BoboDeviceTuple(
+            BoboDevice(
                 addr="127.0.0.1",
                 port=8080,
                 urn="urn:dist:1",
                 id_key="1111111111"),
-            BoboDeviceTuple(
+            BoboDevice(
                 addr="127.0.0.1",
                 port=8080,
                 urn="urn:dist:2",
@@ -66,10 +72,16 @@ class TestValid:
             aes_key="1234567890ABCDEF",
             decider=decider,
             devices=devices,
-            subscribe=False)
+            subscribe=False,  # to stop interference by decider
+            flag_reset=False  # to prevent initial FORCE_RESYNC
+        )
 
         dist_sub = tc.StubDistributedSubscriber()
         dist.subscribe(dist_sub)
+
+        # Sets Distributed to "OK Period"
+        dist._devices[devices[0].urn].last_comms = BoboDistributedTCP._now()
+        dist._devices[devices[1].urn].last_comms = BoboDistributedTCP._now()
 
         t = Thread(target=run_distributed_tcp, args=[dist])
         t.start()

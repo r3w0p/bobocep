@@ -5,7 +5,7 @@
 import pytest
 
 import tests.common as tc
-from bobocep.cep.engine.task.decider import BoboError, BoboDecider
+from bobocep.cep.engine.task.decider import BoboDeciderError, BoboDecider
 from bobocep.cep.gen.event_id import BoboGenEventIDUnique
 from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder
 from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCall
@@ -207,7 +207,7 @@ class TestInvalid:
 
         decider.on_receiver_update(tc.event_simple(data=1))
 
-        with pytest.raises(BoboError):
+        with pytest.raises(BoboDeciderError):
             decider.on_receiver_update(tc.event_simple(data=2))
 
     def test_try_to_remove_run_that_does_not_exist(self):
@@ -215,13 +215,13 @@ class TestInvalid:
         decider, subscriber = tc.decider_sub([phenom])
         phenom_name = decider.phenomena()[0].name
 
-        with pytest.raises(BoboError):
+        with pytest.raises(BoboDeciderError):
             decider._remove_run(phenomenon_name=phenom_name,
                                 pattern_name="a",
                                 run_id="b")
 
     def test_duplicate_phenomena_names(self):
-        with pytest.raises(BoboError):
+        with pytest.raises(BoboDeciderError):
             BoboDecider(
                 phenomena=[tc.phenomenon(patterns=[tc.pattern()]),
                            tc.phenomenon(patterns=[tc.pattern()])],
@@ -242,5 +242,5 @@ class TestInvalid:
 
         decider.on_receiver_update(event=tc.event_simple(data=1))
 
-        with pytest.raises(BoboError):
+        with pytest.raises(BoboDeciderError):
             decider.update()

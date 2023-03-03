@@ -7,8 +7,11 @@ Distributed complex event processing.
 """
 
 from abc import ABC, abstractmethod
+from threading import RLock
+from typing import List, Tuple
 
 from bobocep import BoboError
+from bobocep.cep.engine.task.decider import BoboRunTuple
 from bobocep.dist.pubsub import BoboDistributedPublisher
 
 
@@ -30,16 +33,18 @@ class BoboDistributedTimeoutError(BoboDistributedError):
     """
 
 
-class BoboDeviceTuple:
+class BoboDevice:
     """
-    A tuple that contains information about a BoboCEP instance on the
-    network.
+    Contains information about a BoboCEP instance on the network.
     """
 
     _EXC_ADDR_LEN = "address must have a length greater than 0"
+    _EXC_ADDR_SPACE = "address must not contain any spaces"
     _EXC_PORT_RANGE = "port must be between 1 and 65535 (inclusive)"
     _EXC_URN_LEN = "URN must have a length greater than 0"
+    _EXC_URN_SPACE = "URN must not contain any spaces"
     _EXC_KEY_LEN = "ID key must have a length greater than 0"
+    _EXC_KEY_SPACE = "ID key must not contain any spaces"
 
     def __init__(self,
                  addr: str,
@@ -47,9 +52,13 @@ class BoboDeviceTuple:
                  urn: str,
                  id_key: str):
         super().__init__()
+        self._lock: RLock = RLock()
 
         if len(addr) == 0:
             raise BoboDistributedError(self._EXC_ADDR_LEN)
+
+        if ' ' in addr:
+            raise BoboDistributedError(self._EXC_ADDR_SPACE)
 
         if not (1 <= port <= 65535):
             raise BoboDistributedError(self._EXC_URN_LEN)
@@ -57,8 +66,14 @@ class BoboDeviceTuple:
         if len(urn) == 0:
             raise BoboDistributedError(self._EXC_URN_LEN)
 
+        if ' ' in urn:
+            raise BoboDistributedError(self._EXC_URN_SPACE)
+
         if len(id_key) == 0:
             raise BoboDistributedError(self._EXC_KEY_LEN)
+
+        if ' ' in id_key:
+            raise BoboDistributedError(self._EXC_KEY_SPACE)
 
         self._addr: str = addr
         self._port: int = port
@@ -67,14 +82,19 @@ class BoboDeviceTuple:
 
     @property
     def addr(self) -> str:
-        return self._addr
+        with self._lock:
+            return self._addr
 
     @addr.setter
-    def addr(self, addr: str):
+    def addr(self, addr: str) -> None:
         if len(addr) == 0:
             raise BoboDistributedError(self._EXC_ADDR_LEN)
 
-        self._addr = addr
+        if ' ' in addr:
+            raise BoboDistributedError(self._EXC_ADDR_SPACE)
+
+        with self._lock:
+            self._addr = addr
 
     @property
     def port(self) -> int:

@@ -27,7 +27,7 @@ _EXC_RUN_NOT_FOUND = "run {} not found for phenomenon {}, pattern {}"
 _EXC_RUN_EXISTS = "run {} already exists for phenomenon {}, pattern {}"
 
 
-class BoboError(BoboEngineTaskError):
+class BoboDeciderError(BoboEngineTaskError):
     """
     A decider task error.
     """
@@ -58,7 +58,7 @@ class BoboDecider(BoboEngineTask,
             if phenom.name not in self._phenomena:
                 self._phenomena[phenom.name] = phenom
             else:
-                raise BoboError(
+                raise BoboDeciderError(
                     _EXC_PHENOM_NAME_DUP.format(phenom.name))
 
         self._gen_event_id: BoboGenEventID = gen_event_id
@@ -114,6 +114,31 @@ class BoboDecider(BoboEngineTask,
                 return internal_state_change
             return False
 
+    def snapshot(self) -> Tuple[List[BoboRunTuple],
+                                List[BoboRunTuple],
+                                List[BoboRunTuple]]:
+        with self._lock:
+            if self._closed:
+                return [], [], []
+
+            # Get completed from cache
+            r_completed = [c for c in self._cache_completed] \
+                if self._caching else []
+
+            # Get halted from cache
+            r_halted = [h for h in self._cache_halted] \
+                if self._caching else []
+
+            # Get updated from the current state of partially-completed runs
+            r_updated = []
+            for k_phenom in self._runs.keys():
+                for k_pattern in self._runs[k_phenom].keys():
+                    for k_id in self._runs[k_phenom][k_pattern].keys():
+                        r_updated.append(
+                            self._runs[k_phenom][k_pattern][k_id].to_tuple())
+
+            return r_completed, r_halted, r_updated
+
     def _maybe_cache(
             self,
             completed: List[BoboRunTuple],
@@ -123,11 +148,11 @@ class BoboDecider(BoboEngineTask,
                 self._cache_completed is not None and
                 self._cache_halted is not None
         ):
-            # Cache the ID of runs that have been locally completed
+            # Cache runs that have been locally completed
             for c in completed:
                 self._cache_completed.append(c)
 
-            # Cache the ID of runs that have been locally halted
+            # Cache runs that have been locally halted
             for h in halted:
                 self._cache_halted.append(h)
 
@@ -139,16 +164,17 @@ class BoboDecider(BoboEngineTask,
             if not self._queue.full():
                 self._queue.put(event)
             else:
-                raise BoboError(
+                raise BoboDeciderError(
                     _EXC_QUEUE_FULL.format(self._max_size))
 
     def _maybe_check_against_cache(
             self,
             completed: List[BoboRunTuple],
             halted: List[BoboRunTuple],
-            updated: List[BoboRunTuple]) -> Tuple[List[BoboRunTuple],
-                                                  List[BoboRunTuple],
-                                                  List[BoboRunTuple]]:
+            updated: List[BoboRunTuple]) \
+            -> Tuple[List[BoboRunTuple],
+                     List[BoboRunTuple],
+                     List[BoboRunTuple]]:
         if (
                 self._caching and
                 self._cache_completed is not None and
@@ -165,7 +191,7 @@ class BoboDecider(BoboEngineTask,
 
             # Keep halted IDs if not completed and not halted locally
             # Halt takes precedent over update
-            halted = [halt for halt in halted
+            halted = [ch for ch in halted
                       if ch not in self._cache_completed and
                       ch not in self._cache_halted]
 
@@ -438,7 +464,7 @@ class BoboDecider(BoboEngineTask,
         if newrun.run_id not in self._runs[phenomenon_name][pattern_name]:
             self._runs[phenomenon_name][pattern_name][newrun.run_id] = newrun
         else:
-            raise BoboError(_EXC_RUN_EXISTS.format(
+            raise BoboDeciderError(_EXC_RUN_EXISTS.format(
                 newrun.run_id, phenomenon_name, pattern_name))
 
     def _remove_run(self,
@@ -463,5 +489,5 @@ class BoboDecider(BoboEngineTask,
             del self._runs[phenomenon_name][pattern_name][run_id]
         else:
             if not quiet:
-                raise BoboError(_EXC_RUN_NOT_FOUND.format(
+                raise BoboDeciderError(_EXC_RUN_NOT_FOUND.format(
                     run_id, phenomenon_name, pattern_name))

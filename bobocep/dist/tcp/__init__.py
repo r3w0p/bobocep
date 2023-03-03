@@ -12,7 +12,7 @@ import socket
 import time
 from queue import Queue
 from threading import Thread, RLock
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Optional
 
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
@@ -20,19 +20,26 @@ from Crypto.Random import get_random_bytes
 from bobocep.cep import BoboJSONableError, BoboJSONable
 from bobocep.cep.engine.task.decider import BoboRunTuple, BoboDecider
 from bobocep.cep.engine.task.decider.pubsub import BoboDeciderSubscriber
-from bobocep.dist import BoboDistributed, BoboDeviceTuple, \
+from bobocep.dist import BoboDistributed, BoboDevice, \
     BoboDistributedError, BoboDistributedSystemError, \
     BoboDistributedTimeoutError
+
+# TODO move to kwargs
+PERIOD_PING = 30
+PERIOD_RESYNC = 60
+
+ATTEMPT_PING = 10
+ATTEMPT_RESYNC = 10
 
 _KEY_COMPLETED = "completed"
 _KEY_HALTED = "halted"
 _KEY_UPDATED = "updated"
-_KEY_MSG_TYPE = "msg_type"
 
-_VAL_TYPE_SYNC = "SYNC"
-_VAL_TYPE_SYNC_FULL = "SYNC_FULL"
-_VAL_TYPE_PING = "PING"
-_VAL_TYPE_RESYNC = "resync"
+TYPE_SYNC = 0
+TYPE_PING = 1
+TYPE_RESYNC = 2
+
+FLAG_RESET = 1
 
 _UTF_8 = "UTF-8"
 _PAD_MODULO = 16
@@ -92,6 +99,114 @@ class _IncomingJSONDecoder(json.JSONDecoder):
         return d
 
 
+class BoboDeviceManager:
+    """
+    Manages information about a BoboCEP instance on the network.
+    """
+
+    def __init__(self,
+                 device: BoboDevice,
+                 flag_reset: bool):
+        super().__init__()
+        self._lock: RLock = RLock()
+
+        self._device: BoboDevice = device
+        self._flag_reset: bool = flag_reset
+
+        self._last_comms: int = 0
+        self._last_attempt: int = 0
+
+        self._stash_completed: List[BoboRunTuple] = []
+        self._stash_halted: List[BoboRunTuple] = []
+        self._stash_updated: List[BoboRunTuple] = []
+
+    @property
+    def addr(self) -> str:
+        with self._lock:
+            return self._device.addr
+
+    @addr.setter
+    def addr(self, addr: str) -> None:
+        with self._lock:
+            self._device.addr = addr
+
+    @property
+    def port(self) -> int:
+        return self._device.port
+
+    @property
+    def urn(self) -> str:
+        return self._device.urn
+
+    @property
+    def id_key(self) -> str:
+        return self._device.id_key
+
+    @property
+    def flag_reset(self) -> bool:
+        with self._lock:
+            return self._flag_reset
+
+    @flag_reset.setter
+    def flag_reset(self, flag_reset: int) -> None:
+        with self._lock:
+            self._flag_reset = flag_reset
+
+    @property
+    def last_comms(self) -> int:
+        with self._lock:
+            return self._last_comms
+
+    @last_comms.setter
+    def last_comms(self, last_comms: int) -> None:
+        with self._lock:
+            self._last_comms = max(0, last_comms)
+
+    @property
+    def last_attempt(self) -> int:
+        with self._lock:
+            return self._last_attempt
+
+    @last_attempt.setter
+    def last_attempt(self, last_attempt: int) -> None:
+        with self._lock:
+            self._last_attempt = max(0, last_attempt)
+
+    def reset_last(self) -> None:
+        with self._lock:
+            self._last_comms = 0
+            self._last_attempt = 0
+
+    def stash(self) -> Tuple[List[BoboRunTuple],
+                             List[BoboRunTuple],
+                             List[BoboRunTuple]]:
+        with self._lock:
+            return self._stash_completed, \
+                   self._stash_halted, \
+                   self._stash_updated
+
+    def append_stash(self,
+                     completed: List[BoboRunTuple],
+                     halted: List[BoboRunTuple],
+                     updated: List[BoboRunTuple]):
+        with self._lock:
+            self._stash_completed.extend(completed)
+            self._stash_halted.extend(halted)
+            self._stash_updated.extend(updated)
+
+    def size_stash(self) -> int:
+        with self._lock:
+            return len(self._stash_completed) + \
+                   len(self._stash_halted) + \
+                   len(self._stash_updated)
+
+    def clear_stash(self) -> None:
+        with self._lock:
+            self._stash_completed = []
+            self._stash_halted = []
+            self._stash_updated = []
+
+
 class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
     """
     An implementation of distributed BoboCEP that uses TCP for data
@@ -107,20 +222,21 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                  urn: str,
                  aes_key: str,
                  decider: BoboDecider,
-                 devices: List[BoboDeviceTuple],
+                 devices: List[BoboDevice],
                  # TODO kwargs all below...
                  max_size_incoming: int = 0,
                  max_size_outgoing: int = 0,
-                 max_listen: int = 5,
-                 timeout_accept: int = 5,
-                 timeout_connect: int = 5,
-                 timeout_send: int = 5,
-                 timeout_receive: int = 5,
+                 max_listen: int = 3,
+                 timeout_accept: int = 3,
+                 timeout_connect: int = 3,
+                 timeout_send: int = 3,
+                 timeout_receive: int = 3,
                  recv_bytes: int = 2048,
                  pad_char: str = '\0',
                  nonce_length: int = 16,
                  mac_length: int = 16,
-                 subscribe: bool = True):
+                 subscribe: bool = True,
+                 flag_reset: bool = True):
         super().__init__()
         # Lock used for local updates to and from the decider
         self._lock_local: RLock = RLock()
@@ -133,7 +249,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
         self._urn: str = urn
         self._decider: BoboDecider = decider
-        self._devices: Dict[str, BoboDeviceTuple] = {}
+        self._devices: Dict[str, BoboDeviceManager] = {}
 
         # Subscribe distributed and decider to each other
         if subscribe:
@@ -145,7 +261,10 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
             if d.urn in self._devices:
                 raise BoboDistributedError(
                     "duplicate device URN {}".format(d.urn))
-            self._devices[d.urn] = d
+
+            self._devices[d.urn] = BoboDeviceManager(
+                device=d,
+                flag_reset=flag_reset)
 
         # Check devices for invalid keys
         if len(self._devices.keys()) == 0 or \
@@ -219,16 +338,18 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
     def _update(self):
         # Take incoming data and pass to decider
         while not self._queue_incoming.empty():
+            logging.debug("{} _update fetching data from incoming queue"
+                          .format(self._urn))
+
             incoming: Dict[str, List[BoboRunTuple]] = \
                 self._queue_incoming.get_nowait()
-
-            logging.debug("_update: processing incoming")
 
             completed: List[BoboRunTuple] = incoming[_KEY_COMPLETED]
             halted: List[BoboRunTuple] = incoming[_KEY_HALTED]
             updated: List[BoboRunTuple] = incoming[_KEY_UPDATED]
 
-            logging.debug("_update: sending to subscribers")
+            logging.debug("{} _update sending data to subscribers"
+                          .format(self._urn))
 
             for subscriber in self._subscribers:
                 subscriber.on_distributed_update(
@@ -248,7 +369,8 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
             if not self._running:
                 raise BoboDistributedError(self._EXC_NOT_RUNNING)
 
-            logging.debug("on_decider_update: packaging")
+            logging.debug("{} on_decider_update adding local Decider changes "
+                          "to outgoing queue".format(self._urn))
 
             # Take changes to decider and pass to outgoing
 
@@ -259,12 +381,208 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
             }
 
             if not self._queue_outgoing.full():
-                logging.debug("on_decider_update: adding to queue")
                 self._queue_outgoing.put_nowait(outgoing)
 
             else:
-                raise BoboDistributedSystemError(
-                    "Outgoing queue is full.")
+                errmsg = "Outgoing queue is full."
+                logging.critical(errmsg)
+                raise BoboDistributedSystemError(errmsg)
+
+    @staticmethod
+    def _now() -> int:
+        return int(time.time())
+
+    def _tcp_outgoing(self):
+        """
+        Executed within a thread. It sends internal Decider state updates,
+        stored in the outgoing queue, to external `BoboCEP` instances.
+        """
+
+        while True:
+            with self._lock_in_out:
+                # Thread has been marked to close
+                if self._thread_closed:
+                    return
+
+                outlist: List[Tuple[BoboDeviceManager, int]] = []
+                now: int = self._now()
+
+                # Determine what to send to each device...
+                for d in self._devices.values():
+                    # Ignore self...
+                    if d.urn == self._urn:
+                        continue
+
+                    # If device is within the "Resync Period"...
+                    if (now - d.last_comms) >= PERIOD_RESYNC:
+                        # ...and due to attempt another resync...
+                        if (now - d.last_attempt) > ATTEMPT_RESYNC:
+                            outlist.append((d, TYPE_RESYNC))
+
+                    # If device is within the "Ping Period"
+                    # and there is otherwise nothing to sync...
+                    elif (
+                            (now - d.last_comms) >= PERIOD_PING and
+                            self._queue_outgoing.empty()
+                    ):
+                        # ...and due to attempt another ping...
+                        if (now - d.last_attempt) > ATTEMPT_PING:
+                            outlist.append((d, TYPE_PING))
+
+                    # If device is within the "OK Period"...
+                    else:
+                        # ...and there is something to sync...
+                        if not self._queue_outgoing.empty():
+                            outlist.append((d, TYPE_SYNC))
+
+            # Used to share data across multiple devices
+            cache_resync_str: Optional[str] = None
+            cache_sync_dict: Optional[Dict[str, List[BoboRunTuple]]] = None
+
+            for d, msg_type in outlist:
+                # Set flags
+                msg_flags: int = 0
+
+                if d.flag_reset:
+                    msg_flags += FLAG_RESET
+
+                if msg_type == TYPE_RESYNC:
+                    # Stash contents not needed when sending resync
+                    d.clear_stash()
+
+                    # Collect and cache a snapshot of decider
+                    if cache_resync_str is None:
+                        snapshot = self._decider.snapshot()
+                        cache_resync_str = self._outgoing_to_json({
+                            _KEY_COMPLETED: snapshot[0],
+                            _KEY_HALTED: snapshot[1],
+                            _KEY_UPDATED: snapshot[2]
+                        })
+
+                    # Send snapshot to remote
+                    err: int = self._tcp_send(
+                        d, msg_type, msg_flags, cache_resync_str)
+
+                    # Update last comms on success
+                    now = self._now()
+
+                    if err == 0:
+                        logging.debug("{} _tcp_outgoing resync success with {}"
+                                      .format(self._urn, d.urn))
+                        d.last_comms = now
+
+                        if (msg_flags & FLAG_RESET) == FLAG_RESET:
+                            d.flag_reset = False
+
+                    else:
+                        logging.error(
+                            "{} _tcp_outgoing resync FAILURE with {} (code {})"
+                            .format(self._urn, d.urn, err))
+
+                    d.last_attempt = now
+
+                elif msg_type == TYPE_PING:
+                    # Send ping
+                    err: int = self._tcp_send(d, msg_type, msg_flags, "{}")
+
+                    # Update last comms on success
+                    now = self._now()
+
+                    if err == 0:
+                        logging.debug("{} _tcp_outgoing ping success with {}"
+                                      .format(self._urn, d.urn))
+                        d.last_comms = now
+
+                        if (msg_flags & FLAG_RESET) == FLAG_RESET:
+                            d.flag_reset = False
+
+                    else:
+                        logging.error(
+                            "{} _tcp_outgoing ping FAILURE with {} (code {})"
+                            .format(self._urn, d.urn, err))
+
+                    d.last_attempt = now
+
+                elif msg_type == TYPE_SYNC:
+                    # Get data from queue
+                    if cache_sync_dict is None:
+                        cache_sync_dict = self._queue_outgoing.get_nowait()
+
+                    # Get device's stash of unsent data
+                    stash_c, stash_h, stash_u = d.stash()
+
+                    # Add stash to new data to send
+                    send_sync: Dict[str, List[BoboRunTuple]] = {
+                        _KEY_COMPLETED:
+                            cache_sync_dict[_KEY_COMPLETED] + stash_c,
+                        _KEY_HALTED:
+                            cache_sync_dict[_KEY_HALTED] + stash_h,
+                        _KEY_UPDATED:
+                            cache_sync_dict[_KEY_UPDATED] + stash_u
+                    }
+
+                    # Send JSON sync
+                    msg_json_sync: str = self._outgoing_to_json(send_sync)
+                    err: int = self._tcp_send(
+                        d, msg_type, msg_flags, msg_json_sync)
+
+                    now = self._now()
+                    if err == 0:
+                        logging.debug("{} _tcp_outgoing sync success with {}"
+                                      .format(self._urn, d.urn))
+
+                        # Update last comms on success and clear stash
+                        d.clear_stash()
+                        d.last_comms = now
+
+                        if (msg_flags & FLAG_RESET) == FLAG_RESET:
+                            d.flag_reset = False
+                    else:
+                        logging.error(
+                            "{} _tcp_outgoing sync FAILURE with {} (code {})"
+                            .format(self._urn, d.urn, err))
+
+                        # Append stash with cache_sync on error
+                        d.append_stash(
+                            completed=cache_sync_dict[_KEY_COMPLETED],
+                            halted=cache_sync_dict[_KEY_HALTED],
+                            updated=cache_sync_dict[_KEY_UPDATED])
+
+                    d.last_attempt = now
+
+    def _tcp_send(self, d: BoboDeviceManager, msg_type: int,
+                  msg_flags: int, msg: str) -> int:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        try:
+            logging.debug("{} _tcp_send sending to {} at {}:{}"
+                          .format(self._urn, d.urn, d.addr, d.port))
+
+            s.settimeout(self._timeout_connect)
+            s.connect((d.addr, d.port))
+            s.settimeout(None)
+
+            msg_bytes = self._msg_wrap(
+                type_code=msg_type,
+                flags=msg_flags,
+                msg=msg)
+
+            s.settimeout(self._timeout_send)
+            s.sendall(msg_bytes)
+            s.settimeout(None)
+
+            return 0
+
+        except TimeoutError:
+            # Raised when a system function timed out at the system level.
+            return 1
+
+        except OSError:
+            # Raised when a system function returns a system-related error.
+            return 2
+
+        finally:
+            s.close()
 
     def _tcp_incoming(self) -> None:
         """
@@ -280,7 +598,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         # queue requests before refusing outside connections
         s.listen(self._max_listen)
 
-        with s:
+        try:
             while True:
                 with self._lock_in_out:
                     if self._thread_closed:
@@ -288,124 +606,49 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
                 try:
                     s.settimeout(self._timeout_accept)
-                    client_s, client_addr = s.accept()
+
+                    client_s, client_origin = s.accept()
+                    client_addr = client_origin[0]
+                    client_port = client_origin[1]
+
                     s.settimeout(None)
                     client_accepted = int(time.time())
 
-                    logging.debug("New client: {} ({})"
-                                  .format(client_addr, client_accepted))
+                    logging.debug("{} _tcp_incoming incoming client: {}:{}"
+                                  .format(self._urn, client_addr, client_port))
 
-                    addr_known = any(client_addr[0] == d.addr
-                                     for d in self._devices.values())
-
-                    if addr_known:
-                        self._tcp_incoming_handle_client(
-                            client_s, client_addr, client_accepted)
+                    self._tcp_incoming_handle_client(
+                        client_s, client_addr, client_accepted)
 
                 except (BoboDistributedSystemError,
                         BoboDistributedTimeoutError) as e:
                     # From _tcp_incoming_handle_client
-                    msg = "Incoming {}: {}".format(e.__class__.__name__, e)
-                    logging.error(msg)
-                    raise BoboDistributedSystemError(msg)
+                    logging.error("{} _tcp_incoming {}: {}"
+                                  .format(self._urn, e.__class__.__name__, e))
 
                 except socket.timeout:
                     # From s.accept()
                     # Timeout is added here so that the thread can react to
                     # _thread_closed=True when no data received for a while
-                    logging.debug("Incoming socket timeout (ignoring)")
+                    logging.debug("{} _tcp_incoming socket timeout (ignoring)"
+                                  .format(self._urn))
 
                 except Exception as e:
                     # From other
-                    msg = "Incoming {}: {}".format(e.__class__.__name__, e)
-                    logging.error(msg)
-                    raise BoboDistributedSystemError(msg)
-
-    def _tcp_outgoing(self):
-        """
-        Executed within a thread. It sends internal Decider state updates,
-        stored in the outgoing queue, to external `BoboCEP` instances.
-        """
-
-        while True:
-            with self._lock_in_out:
-                # Thread has been marked to close
-                if self._thread_closed:
-                    return
-
-                # TODO
-                #  Tailored messages for each device.
-                #  < p "OK PERIOD"
-                #    queue not empty, send SYNC (+ CACHE)
-                #    queue empty & attempt, send CACHE
-                #  < r "PING PERIOD"
-                #    attempt, send PING
-                #  >= r "RESYNC PERIOD"
-                #    attempt, try FULL SYNC
-
-                # Nothing in the outgoing queue
-                if self._queue_outgoing.empty():
-                    continue
-
-                # Get sync data to send
-                try:
-                    msg: str = self._outgoing_to_json(
-                        self._queue_outgoing.get_nowait())
-
-                except (BoboJSONableError, TypeError) as e:
-                    raise BoboDistributedSystemError(
-                        "Outgoing {}: {}".format(e.__class__.__name__, e))
-
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-            with s:
-                try:
-                    for d_urn in self._devices.keys():
-                        with self._lock_in_out:
-                            # Thread has been marked to close
-                            if self._thread_closed:
-                                return
-
-                        # Ignore self...
-                        if d_urn == self._urn:
-                            continue
-
-                        d = self._devices[d_urn]
-
-                        logging.debug("Outgoing: {} ({}:{})",
-                                      d.urn, d.addr, d.port)
-
-                        s.settimeout(self._timeout_connect)
-                        s.connect((d.addr, d.port))
-                        s.settimeout(None)
-
-                        msg_bytes = self._msg_wrap(_VAL_TYPE_SYNC, msg)
-
-                        s.settimeout(self._timeout_send)
-                        s.sendall(msg_bytes)
-                        s.settimeout(None)
-
-                except TimeoutError as e:
-                    # Raised when a system function timed out at
-                    # the system level
-                    raise BoboDistributedTimeoutError(
-                        "Outgoing {}: {}".format(e.__class__.__name__, e))
-
-                except OSError as e:
-                    # This exception is raised when a system function
-                    # returns a system-related error.
-                    raise BoboDistributedSystemError(
-                        "Outgoing {}: {}".format(e.__class__.__name__, e))
+                    logging.error("{} _tcp_incoming {}: {}"
+                                  .format(self._urn, e.__class__.__name__, e))
+        finally:
+            s.close()
 
     def _tcp_incoming_handle_client(
-            self, client_s, client_addr, client_accepted) -> None:
+            self, client_s, client_addr, client_accepted: int) -> None:
         """
         Handles an incoming client request.
         :param client_s: The client socket.
-        :param client_addr: The client address of origin.
+        :param client_addr: The client address.
         :param client_accepted: The time when the client request was accepted.
         """
-        with client_s:
+        try:
             all_bytes = bytearray()
 
             while True:
@@ -429,13 +672,8 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                         raise BoboDistributedTimeoutError(
                             "Failed to unwrap incoming message bytes:", e)
 
-                    pt_bobo, pt_urn, pt_id, pt_type, pt_json = \
+                    pt_bobo, pt_urn, pt_id, pt_type, pt_flags, pt_json = \
                         self._split_plaintext(plaintext)
-
-                    # TODO remove
-                    print("pt_bobo='{}', pt_urn='{}', pt_id='{}', pt_type='{}', pt_json='{}'".format(
-                        pt_bobo, pt_urn, pt_id, pt_type, pt_json
-                    ))
 
                     # Check if message has expected starting string
                     if pt_bobo != _START_STR:
@@ -448,7 +686,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                         raise BoboDistributedSystemError(
                             "Unknown device URN '{}'.".format(pt_urn))
 
-                    device: BoboDeviceTuple = self._devices[pt_urn]
+                    device: BoboDeviceManager = self._devices[pt_urn]
 
                     # Check if ID key matches expected key for URN
                     if pt_id != device.id_key:
@@ -456,32 +694,34 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                             "Invalid ID key for URN '{}'".format(device.urn))
 
                     # Update address if remote address has changed
-                    if client_addr[0] != device.addr:
-                        self._devices[pt_urn].addr = client_addr[0]
+                    if client_addr != device.addr:
+                        logging.debug(
+                            "{} _tcp_incoming_handle_client device {} "
+                            "address update: from '{}' to '{}'"
+                            .format(self._urn,
+                                    device.urn, device.addr, client_addr))
+                        device.addr = client_addr
 
-                    # TODO
-                    #  pt_type == SYNC
-                    #  pt_type == SYNC_FULL
-                    #  pt_type == PING
-                    #  pt_type == RESYNC
-                    #    Incoming wants resync...
-                    #    set FORCE_SYNC=True and last_attempt=0
-
-                    try:
+                    if pt_type == TYPE_SYNC or TYPE_RESYNC:
                         incoming = self._incoming_from_json(pt_json)
 
-                    except (BoboJSONableError, TypeError) as e:
-                        raise BoboDistributedSystemError(
-                            "Unable to build incoming message from JSON:", e)
+                        # Add incoming data to queue
+                        if not self._queue_incoming.full():
+                            self._queue_incoming.put_nowait(incoming)
+                        else:
+                            errmsg = "Incoming queue is full."
+                            logging.critical(errmsg)
+                            raise BoboDistributedSystemError(errmsg)
 
-                    # Add incoming data to queue
-                    if not self._queue_incoming.full():
-                        self._queue_incoming.put_nowait(incoming)
-                    else:
-                        raise BoboDistributedSystemError(
-                            "Incoming queue is full.")
+                    # (Nothing to do on PING; it exists for outgoing.)
+
+                    if (pt_flags & FLAG_RESET) == FLAG_RESET:
+                        # Resets comms for device to trigger RESYNC
+                        device.reset_last()
 
                     break
+        finally:
+            client_s.close()
 
     def _incoming_from_json(
             self, msg_str: str) -> Dict[str, List[BoboRunTuple]]:
@@ -489,8 +729,12 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         :param msg_str: Incoming JSON string.
         :return: Incoming Decider update information.
         """
-        msg = json.loads(msg_str, cls=_IncomingJSONDecoder)
-        return msg
+        try:
+            return json.loads(msg_str, cls=_IncomingJSONDecoder)
+
+        except (BoboJSONableError, TypeError) as e:
+            raise BoboDistributedSystemError(
+                "Failed to parse incoming JSON: {}".format(e))
 
     def _outgoing_to_json(
             self, msg: Dict[str, List[BoboRunTuple]]) -> str:
@@ -498,9 +742,14 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         :param msg: Outgoing Decider update information.
         :return: Outgoing JSON string.
         """
-        return json.dumps(msg, cls=_OutgoingJSONEncoder)
+        try:
+            return json.dumps(msg, cls=_OutgoingJSONEncoder)
 
-    def _msg_wrap(self, msg_type: str, msg: str) -> bytes:
+        except (BoboJSONableError, TypeError) as e:
+            raise BoboDistributedSystemError(
+                "Failed to generate outgoing JSON: {}".format(e))
+
+    def _msg_wrap(self, type_code: int, flags: int, msg: str) -> bytes:
         """
         :param msg: Wraps JSON string in other data for transit.
         :return: The bytes to transmit.
@@ -510,8 +759,8 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                          nonce=nonce, mac_len=self._mac_length)
 
         mydev = self._devices[self._urn]
-        msg = "{} {} {} {} {}".format(
-            _START_STR, mydev.urn, mydev.id_key, msg_type, msg)
+        msg = "{} {} {} {} {} {}".format(
+            _START_STR, mydev.urn, mydev.id_key, type_code, flags, msg)
 
         len_msg = len(msg)
         if len_msg % _PAD_MODULO != 0:
@@ -552,7 +801,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         return plaintext
 
     def _split_plaintext(self, plaintext: str) \
-            -> Tuple[str, str, str, str, str]:
+            -> Tuple[str, str, str, int, int, str]:
         """
         :param plaintext: The string to split.
         :return: Incoming start text, URN, ID, type, and JSON string.
@@ -563,19 +812,20 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
             if c == ' ':
                 ix_delim.append(i)
 
-            if len(ix_delim) == 4:
+            if len(ix_delim) == 5:
                 break
 
-        if len(ix_delim) != 4:
+        if len(ix_delim) != 5:
             raise BoboDistributedSystemError("Invalid plaintext message.")
 
-        # pt_bobo, pt_urn, pt_id,, pt_type, pt_json
+        # pt_bobo, pt_urn, pt_id,, pt_type, pt_flags, pt_json
         return (
             plaintext[:ix_delim[0]],
             plaintext[ix_delim[0] + 1:ix_delim[1]],
             plaintext[ix_delim[1] + 1:ix_delim[2]],
-            plaintext[ix_delim[2] + 1:ix_delim[3]],
-            plaintext[ix_delim[3] + 1:]
+            int(plaintext[ix_delim[2] + 1:ix_delim[3]]),
+            int(plaintext[ix_delim[3] + 1:ix_delim[4]]),
+            plaintext[ix_delim[4] + 1:]
         )
 
     def join(self):
@@ -588,7 +838,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
             if self._closed:
                 raise BoboDistributedError(self._EXC_CLOSED)
 
-            logging.debug("Closing distributed: {}".format(self._urn))
+            logging.debug("{} close distributed".format(self._urn))
             self._closed = True
 
             with self._lock_in_out:

@@ -18,6 +18,7 @@
    process
    actions
    distributed
+   publications
    glossary
 
 
@@ -27,5 +28,4 @@
    :hidden:
 
    source_code
-   publications
    contributing
