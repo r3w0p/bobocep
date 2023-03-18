@@ -133,8 +133,6 @@ class BoboRun:
         if block_index < 1:
             raise BoboRunError(self._EXC_INDEX.format)
 
-
-
         # TODO Exception to check that all of the necessary groups in the
         #  new history have at least one event each in them,
         #  up to the given block index.

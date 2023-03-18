@@ -45,8 +45,8 @@ class BoboSetupSimple(BoboSetup):
             if validator is not None else BoboValidatorAll()
         self._handler: BoboActionHandler = handler \
             if handler is not None else BoboActionHandlerPool(
-                processes=max(1, cpu_count() - 1),
-                max_size=self._max_size)
+            processes=max(1, cpu_count() - 1),
+            max_size=self._max_size)
 
         self._gen_event_id: BoboGenEventID = gen_event_id \
             if gen_event_id is not None else BoboGenEventIDUnique()

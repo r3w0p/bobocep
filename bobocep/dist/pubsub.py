@@ -22,11 +22,8 @@ class BoboDistributedSubscriber(ABC):
 class BoboDistributedPublisher(ABC):
     """A distributed publisher interface."""
 
-    def __init__(self):
-        super().__init__()
+    # TODO refactor subscribe methods elsewhere so that they are thread safe
 
-        self._subscribers = []
-
+    @abstractmethod
     def subscribe(self, subscriber: BoboDistributedSubscriber):
-        if subscriber not in self._subscribers:
-            self._subscribers.append(subscriber)
+        """"""

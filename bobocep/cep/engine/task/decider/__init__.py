@@ -121,13 +121,21 @@ class BoboDecider(BoboEngineTask,
             if self._closed:
                 return [], [], []
 
-            # Get completed from cache
-            r_completed = [c for c in self._cache_completed] \
-                if self._caching else []
+            if (
+                    self._caching and
+                    self._cache_completed is not None and
+                    self._cache_halted is not None
+            ):
+                # Get completed from cache
+                r_completed = [c for c in self._cache_completed] \
+                    if self._caching else []
 
-            # Get halted from cache
-            r_halted = [h for h in self._cache_halted] \
-                if self._caching else []
+                # Get halted from cache
+                r_halted = [h for h in self._cache_halted] \
+                    if self._caching else []
+            else:
+                r_completed = []
+                r_halted = []
 
             # Get updated from the current state of partially-completed runs
             r_updated = []
