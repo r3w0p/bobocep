@@ -2,4 +2,6 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-"""Unit test package for BoboCEP."""
+"""
+Unit test package for BoboCEP.
+"""

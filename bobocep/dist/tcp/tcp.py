@@ -11,19 +11,43 @@ import logging
 import socket
 import time
 from queue import Queue
-from threading import Thread
-from typing import Dict, Tuple, Optional
+from threading import Thread, RLock
+from typing import Dict, Tuple, Optional, List
 
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 
 from bobocep.cep import BoboJSONableError, BoboJSONable
-from bobocep.cep.engine.task.decider import BoboDecider
-from bobocep.cep.engine.task.decider.pubsub import BoboDeciderSubscriber
+from bobocep.cep.engine.decider import BoboDecider, BoboRunTuple
+from bobocep.cep.engine.decider import BoboDeciderSubscriber
 from bobocep.dist import *
 from bobocep.dist.pubsub import BoboDistributedSubscriber
-from bobocep.dist.tcp.constants import *
-from bobocep.dist.tcp.manager import BoboDeviceManager
+from bobocep.dist.tcp._manager import _BoboDeviceManager
+
+
+_KEY_COMPLETED = "completed"
+_KEY_HALTED = "halted"
+_KEY_UPDATED = "updated"
+
+_TYPE_SYNC = 0
+_TYPE_PING = 1
+_TYPE_RESYNC = 2
+
+_FLAG_RESET = 1
+
+_UTF_8 = "UTF-8"
+_PAD_MODULO = 16
+_START_STR = "BOBO"
+_END_BYTES = "BOBO".encode(_UTF_8)
+_LEN_END_BYTES = len(_END_BYTES)
+
+_BYTES_AES_128 = 16
+_BYTES_AES_192 = 24
+_BYTES_AES_256 = 32
+
+_EXC_CLOSED = "distributed is closed"
+_EXC_RUNNING = "distributed is already running"
+_EXC_NOT_RUNNING = "distributed is not running"
 
 
 class _OutgoingJSONEncoder(json.JSONEncoder):
@@ -55,20 +79,20 @@ class _IncomingJSONDecoder(json.JSONDecoder):
         :param d: An object dict.
         :return: Incoming Decider update information.
         """
-        if KEY_COMPLETED in d:
-            d[KEY_COMPLETED] = [
+        if _KEY_COMPLETED in d:
+            d[_KEY_COMPLETED] = [
                 BoboRunTuple.from_json_str(rt)
-                for rt in d[KEY_COMPLETED]]
+                for rt in d[_KEY_COMPLETED]]
 
-        if KEY_HALTED in d:
-            d[KEY_HALTED] = [
+        if _KEY_HALTED in d:
+            d[_KEY_HALTED] = [
                 BoboRunTuple.from_json_str(rt)
-                for rt in d[KEY_HALTED]]
+                for rt in d[_KEY_HALTED]]
 
-        if KEY_UPDATED in d:
-            d[KEY_UPDATED] = [
+        if _KEY_UPDATED in d:
+            d[_KEY_UPDATED] = [
                 BoboRunTuple.from_json_str(rt)
-                for rt in d[KEY_UPDATED]]
+                for rt in d[_KEY_UPDATED]]
 
         return d
 
@@ -116,7 +140,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
         self._urn: str = urn
         self._decider: BoboDecider = decider
-        self._devices: Dict[str, BoboDeviceManager] = {}
+        self._devices: Dict[str, _BoboDeviceManager] = {}
 
         self._period_ping: int = period_ping
         self._period_resync: int = period_resync
@@ -134,7 +158,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                 raise BoboDistributedError(
                     "duplicate device URN {}".format(d.urn))
 
-            self._devices[d.urn] = BoboDeviceManager(
+            self._devices[d.urn] = _BoboDeviceManager(
                 device=d,
                 flag_reset=flag_reset)
 
@@ -157,15 +181,15 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
         # Check AES key
         num_bytes_aes_key = len(aes_key)
-        if (num_bytes_aes_key != BYTES_AES_128 and
-                num_bytes_aes_key != BYTES_AES_192 and
-                num_bytes_aes_key != BYTES_AES_256):
+        if (num_bytes_aes_key != _BYTES_AES_128 and
+                num_bytes_aes_key != _BYTES_AES_192 and
+                num_bytes_aes_key != _BYTES_AES_256):
             raise BoboDistributedError(
                 "AES key must be 16, 24, or 32 bytes long "
                 "(respectively for AES-128, AES-192, or AES-256): "
                 "'{}' has {} bytes.".format(aes_key, len(aes_key)))
 
-        self._aes_key: bytes = aes_key.encode(UTF_8)
+        self._aes_key: bytes = aes_key.encode(_UTF_8)
         self._max_listen: int = max_listen
         self._timeout_accept: int = timeout_accept
         self._timeout_connect: int = timeout_connect
@@ -177,7 +201,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         self._nonce_length: int = nonce_length
         self._mac_length: int = mac_length
 
-        self._msg_min_length: int = PAD_MODULO + nonce_length + mac_length
+        self._msg_min_length: int = _PAD_MODULO + nonce_length + mac_length
 
         self._thread_incoming: Thread = Thread(target=self._tcp_incoming)
         self._thread_outgoing: Thread = Thread(target=self._tcp_outgoing)
@@ -190,10 +214,10 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
     def run(self) -> None:
         with self._lock_local:
             if self._closed:
-                raise BoboDistributedError(EXC_CLOSED)
+                raise BoboDistributedError(_EXC_CLOSED)
 
             if self._running:
-                raise BoboDistributedError(EXC_RUNNING)
+                raise BoboDistributedError(_EXC_RUNNING)
 
             self._thread_incoming.start()
             self._thread_outgoing.start()
@@ -221,9 +245,9 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
             incoming: Dict[str, List[BoboRunTuple]] = \
                 self._queue_incoming.get_nowait()
 
-            completed: List[BoboRunTuple] = incoming[KEY_COMPLETED]
-            halted: List[BoboRunTuple] = incoming[KEY_HALTED]
-            updated: List[BoboRunTuple] = incoming[KEY_UPDATED]
+            completed: List[BoboRunTuple] = incoming[_KEY_COMPLETED]
+            halted: List[BoboRunTuple] = incoming[_KEY_HALTED]
+            updated: List[BoboRunTuple] = incoming[_KEY_UPDATED]
 
             logging.debug("{} _update sending data to subscribers"
                           .format(self._urn))
@@ -241,10 +265,10 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
             updated: List[BoboRunTuple]):
         with self._lock_local:
             if self._closed:
-                raise BoboDistributedError(EXC_CLOSED)
+                raise BoboDistributedError(_EXC_CLOSED)
 
             if not self._running:
-                raise BoboDistributedError(EXC_NOT_RUNNING)
+                raise BoboDistributedError(_EXC_NOT_RUNNING)
 
             logging.debug("{} on_decider_update adding local Decider changes "
                           "to outgoing queue".format(self._urn))
@@ -252,9 +276,9 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
             # Take changes to decider and pass to outgoing
 
             outgoing: Dict[str, List[BoboRunTuple]] = {
-                KEY_COMPLETED: completed,
-                KEY_HALTED: halted,
-                KEY_UPDATED: updated
+                _KEY_COMPLETED: completed,
+                _KEY_HALTED: halted,
+                _KEY_UPDATED: updated
             }
 
             if not self._queue_outgoing.full():
@@ -281,7 +305,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                 if self._thread_closed:
                     return
 
-                outlist: List[Tuple[BoboDeviceManager, int]] = []
+                outlist: List[Tuple[_BoboDeviceManager, int]] = []
                 now: int = self._now()
 
                 # Determine what to send to each device...
@@ -294,7 +318,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     if (now - d.last_comms) >= self._period_resync:
                         # ...and due to attempt another resync...
                         if (now - d.last_attempt) > self._attempt_resync:
-                            outlist.append((d, TYPE_RESYNC))
+                            outlist.append((d, _TYPE_RESYNC))
 
                     # If device is within the "Ping Period"
                     # and there is otherwise nothing to sync...
@@ -304,13 +328,13 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     ):
                         # ...and due to attempt another ping...
                         if (now - d.last_attempt) > self._attempt_ping:
-                            outlist.append((d, TYPE_PING))
+                            outlist.append((d, _TYPE_PING))
 
                     # If device is within the "OK Period"...
                     else:
                         # ...and there is something to sync...
                         if not self._queue_outgoing.empty():
-                            outlist.append((d, TYPE_SYNC))
+                            outlist.append((d, _TYPE_SYNC))
 
             # Used to share data across multiple devices
             cache_resync_str: Optional[str] = None
@@ -321,9 +345,9 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                 msg_flags: int = 0
 
                 if d.flag_reset:
-                    msg_flags += FLAG_RESET
+                    msg_flags += _FLAG_RESET
 
-                if msg_type == TYPE_RESYNC:
+                if msg_type == _TYPE_RESYNC:
                     # Stash contents not needed when sending resync
                     d.clear_stash()
 
@@ -331,9 +355,9 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     if cache_resync_str is None:
                         snapshot = self._decider.snapshot()
                         cache_resync_str = self._outgoing_to_json({
-                            KEY_COMPLETED: snapshot[0],
-                            KEY_HALTED: snapshot[1],
-                            KEY_UPDATED: snapshot[2]
+                            _KEY_COMPLETED: snapshot[0],
+                            _KEY_HALTED: snapshot[1],
+                            _KEY_UPDATED: snapshot[2]
                         })
 
                     # Send snapshot to remote
@@ -348,7 +372,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                                       .format(self._urn, d.urn))
                         d.last_comms = now
 
-                        if (msg_flags & FLAG_RESET) == FLAG_RESET:
+                        if (msg_flags & _FLAG_RESET) == _FLAG_RESET:
                             d.flag_reset = False
 
                     else:
@@ -358,7 +382,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
                     d.last_attempt = now
 
-                elif msg_type == TYPE_PING:
+                elif msg_type == _TYPE_PING:
                     # Send ping
                     err: int = self._tcp_send(d, msg_type, msg_flags, "{}")
 
@@ -370,7 +394,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                                       .format(self._urn, d.urn))
                         d.last_comms = now
 
-                        if (msg_flags & FLAG_RESET) == FLAG_RESET:
+                        if (msg_flags & _FLAG_RESET) == _FLAG_RESET:
                             d.flag_reset = False
 
                     else:
@@ -380,7 +404,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
                     d.last_attempt = now
 
-                elif msg_type == TYPE_SYNC:
+                elif msg_type == _TYPE_SYNC:
                     # Get data from queue
                     if cache_sync_dict is None:
                         cache_sync_dict = self._queue_outgoing.get_nowait()
@@ -390,12 +414,12 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
                     # Add stash to new data to send
                     send_sync: Dict[str, List[BoboRunTuple]] = {
-                        KEY_COMPLETED:
-                            cache_sync_dict[KEY_COMPLETED] + stash_c,
-                        KEY_HALTED:
-                            cache_sync_dict[KEY_HALTED] + stash_h,
-                        KEY_UPDATED:
-                            cache_sync_dict[KEY_UPDATED] + stash_u
+                        _KEY_COMPLETED:
+                            cache_sync_dict[_KEY_COMPLETED] + stash_c,
+                        _KEY_HALTED:
+                            cache_sync_dict[_KEY_HALTED] + stash_h,
+                        _KEY_UPDATED:
+                            cache_sync_dict[_KEY_UPDATED] + stash_u
                     }
 
                     # Send JSON sync
@@ -412,7 +436,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                         d.clear_stash()
                         d.last_comms = now
 
-                        if (msg_flags & FLAG_RESET) == FLAG_RESET:
+                        if (msg_flags & _FLAG_RESET) == _FLAG_RESET:
                             d.flag_reset = False
                     else:
                         logging.error(
@@ -421,13 +445,13 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
                         # Append stash with cache_sync on error
                         d.append_stash(
-                            completed=cache_sync_dict[KEY_COMPLETED],
-                            halted=cache_sync_dict[KEY_HALTED],
-                            updated=cache_sync_dict[KEY_UPDATED])
+                            completed=cache_sync_dict[_KEY_COMPLETED],
+                            halted=cache_sync_dict[_KEY_HALTED],
+                            updated=cache_sync_dict[_KEY_UPDATED])
 
                     d.last_attempt = now
 
-    def _tcp_send(self, d: BoboDeviceManager, msg_type: int,
+    def _tcp_send(self, d: _BoboDeviceManager, msg_type: int,
                   msg_flags: int, msg: str) -> int:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -541,7 +565,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                 all_bytes.extend(bytes_msg)
 
                 if len(bytes_msg) >= self._msg_min_length and \
-                        bytes_msg[-len(END_BYTES):] == END_BYTES:
+                        bytes_msg[-len(_END_BYTES):] == _END_BYTES:
 
                     try:
                         plaintext = self._msg_unwrap(all_bytes)
@@ -553,17 +577,17 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                         self._split_plaintext(plaintext)
 
                     # Check if message has expected starting string
-                    if pt_bobo != START_STR:
+                    if pt_bobo != _START_STR:
                         raise BoboDistributedSystemError(
                             "Invalid start message '{}': expected '{}'."
-                            .format(pt_bobo, START_STR))
+                            .format(pt_bobo, _START_STR))
 
                     # Check if URN is a recognised device
                     if pt_urn not in self._devices:
                         raise BoboDistributedSystemError(
                             "Unknown device URN '{}'.".format(pt_urn))
 
-                    device: BoboDeviceManager = self._devices[pt_urn]
+                    device: _BoboDeviceManager = self._devices[pt_urn]
 
                     # Check if ID key matches expected key for URN
                     if pt_id != device.id_key:
@@ -579,7 +603,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                                     device.urn, device.addr, client_addr))
                         device.addr = client_addr
 
-                    if pt_type == TYPE_SYNC or TYPE_RESYNC:
+                    if pt_type == _TYPE_SYNC or _TYPE_RESYNC:
                         incoming = self._incoming_from_json(pt_json)
 
                         # Add incoming data to queue
@@ -592,7 +616,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
                     # (Nothing to do on PING; it exists for outgoing.)
 
-                    if (pt_flags & FLAG_RESET) == FLAG_RESET:
+                    if (pt_flags & _FLAG_RESET) == _FLAG_RESET:
                         # Resets comms for device to trigger RESYNC
                         device.reset_last()
 
@@ -637,21 +661,21 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
         mydev = self._devices[self._urn]
         msg = "{} {} {} {} {} {}".format(
-            START_STR, mydev.urn, mydev.id_key, type_code, flags, msg)
+            _START_STR, mydev.urn, mydev.id_key, type_code, flags, msg)
 
         len_msg = len(msg)
-        if len_msg % PAD_MODULO != 0:
+        if len_msg % _PAD_MODULO != 0:
             msg = msg + (self._pad_char *
-                         (PAD_MODULO - len_msg % PAD_MODULO))
+                         (_PAD_MODULO - len_msg % _PAD_MODULO))
 
         ciphertext, mac = cipher.encrypt_and_digest(  # type: ignore
-            msg.encode(UTF_8))
+            msg.encode(_UTF_8))
 
         # Append nonce, mac, end bytes
         ciphertext_bytes = bytearray(ciphertext)
         ciphertext_bytes.extend(nonce)
         ciphertext_bytes.extend(mac)
-        ciphertext_bytes.extend(END_BYTES)
+        ciphertext_bytes.extend(_END_BYTES)
 
         return ciphertext_bytes
 
@@ -663,17 +687,17 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
         # [CIPHERTEXT][NONCE][MAC][END_BYTES]
         ciphertext = msg_bytes[:-(
-                self._nonce_length + self._mac_length + LEN_END_BYTES)]
+                self._nonce_length + self._mac_length + _LEN_END_BYTES)]
         nonce = msg_bytes[
-                -(self._nonce_length + self._mac_length + LEN_END_BYTES):
-                -(self._mac_length + LEN_END_BYTES)]
+                -(self._nonce_length + self._mac_length + _LEN_END_BYTES):
+                -(self._mac_length + _LEN_END_BYTES)]
         mac = msg_bytes[
-              -(self._mac_length + LEN_END_BYTES):
-              -LEN_END_BYTES]
+              -(self._mac_length + _LEN_END_BYTES):
+              -_LEN_END_BYTES]
 
         cipher = AES.new(self._aes_key, AES.MODE_GCM, nonce=nonce)
         plaintext = cipher.decrypt_and_verify(  # type: ignore
-            ciphertext, mac).decode(UTF_8).rstrip(self._pad_char)
+            ciphertext, mac).decode(_UTF_8).rstrip(self._pad_char)
 
         return plaintext
 
@@ -713,7 +737,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
     def close(self):
         with self._lock_local:
             if self._closed:
-                raise BoboDistributedError(EXC_CLOSED)
+                raise BoboDistributedError(_EXC_CLOSED)
 
             logging.debug("{} close distributed".format(self._urn))
             self._closed = True

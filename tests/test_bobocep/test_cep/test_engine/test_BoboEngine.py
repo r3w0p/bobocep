@@ -6,11 +6,12 @@ from threading import Thread
 from time import sleep
 
 import pytest
-
 import tests.common as tc
-from bobocep.cep.engine import BoboEngine, BoboEngineError, BoboReceiver, \
-    BoboProducer, BoboForwarder
-from bobocep.cep.engine.task.decider import BoboRunTuple, BoboDecider
+from bobocep.cep.engine import BoboEngine, BoboEngineError
+from bobocep.cep.engine.decider import BoboRunTuple, BoboDecider
+from bobocep.cep.engine.forwarder import BoboForwarder
+from bobocep.cep.engine.producer import BoboProducer
+from bobocep.cep.engine.receiver import BoboReceiver
 from bobocep.cep.event import BoboEventSimple, BoboEventComplex, \
     BoboEventAction
 

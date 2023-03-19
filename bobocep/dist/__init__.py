@@ -1,2 +1,10 @@
-from bobocep.dist.dist import *
-from bobocep.dist.pubsub import *
+# Copyright (c) 2019-2023 r3w0p
+# The following code can be redistributed and/or
+# modified under the terms of the MIT License.
+
+"""
+Distributed complex event processing.
+"""
+
+from bobocep.dist.dist import BoboDistributed, BoboDevice, BoboDistributedError, BoboDistributedSystemError, BoboDistributedTimeoutError
+from bobocep.dist.pubsub import BoboDistributedPublisher, BoboDistributedSubscriber

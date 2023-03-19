@@ -6,7 +6,7 @@ from time import sleep
 from typing import List
 
 import tests.common as tc
-from bobocep.cep.engine.task.decider import \
+from bobocep.cep.engine.decider import \
     BoboRunTuple
 from bobocep.dist import BoboDevice
 from bobocep.dist.tcp import BoboDistributedTCP

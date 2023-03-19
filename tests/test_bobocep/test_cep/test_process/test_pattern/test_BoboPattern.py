@@ -5,8 +5,7 @@
 import pytest
 
 import tests.common as tc
-from bobocep.cep.phenomenon import BoboPattern
-from bobocep.cep.phenomenon.pattern import BoboPatternError
+from bobocep.cep.phenomenon.pattern import BoboPattern, BoboPatternError
 
 
 class TestInvalid:

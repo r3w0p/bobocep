@@ -2,9 +2,7 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-"""
-Setup imports.
-"""
-
-from bobocep.setup.setup import BoboSetup
-from bobocep.setup.simple import BoboSetupSimple
+class BoboError(Exception):
+    """
+    A `BoboCEP` error.
+    """

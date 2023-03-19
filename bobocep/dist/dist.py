@@ -2,16 +2,20 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-"""
-Distributed complex event processing.
-"""
-
 from abc import ABC, abstractmethod
 from threading import RLock
 
 from bobocep import BoboError
-from bobocep.dist.constants import *
 from bobocep.dist.pubsub import BoboDistributedPublisher
+
+
+_EXC_ADDR_LEN = "address must have a length greater than 0"
+_EXC_ADDR_SPACE = "address must not contain any spaces"
+_EXC_PORT_RANGE = "port must be between 1 and 65535 (inclusive)"
+_EXC_URN_LEN = "URN must have a length greater than 0"
+_EXC_URN_SPACE = "URN must not contain any spaces"
+_EXC_KEY_LEN = "ID key must have a length greater than 0"
+_EXC_KEY_SPACE = "ID key must not contain any spaces"
 
 
 class BoboDistributedError(BoboError):
@@ -56,25 +60,25 @@ class BoboDevice:
         self._lock: RLock = RLock()
 
         if len(addr) == 0:
-            raise BoboDistributedError(EXC_ADDR_LEN)
+            raise BoboDistributedError(_EXC_ADDR_LEN)
 
         if ' ' in addr:
-            raise BoboDistributedError(EXC_ADDR_SPACE)
+            raise BoboDistributedError(_EXC_ADDR_SPACE)
 
         if not (1 <= port <= 65535):
-            raise BoboDistributedError(EXC_URN_LEN)
+            raise BoboDistributedError(_EXC_URN_LEN)
 
         if len(urn) == 0:
-            raise BoboDistributedError(EXC_URN_LEN)
+            raise BoboDistributedError(_EXC_URN_LEN)
 
         if ' ' in urn:
-            raise BoboDistributedError(EXC_URN_SPACE)
+            raise BoboDistributedError(_EXC_URN_SPACE)
 
         if len(id_key) == 0:
-            raise BoboDistributedError(EXC_KEY_LEN)
+            raise BoboDistributedError(_EXC_KEY_LEN)
 
         if ' ' in id_key:
-            raise BoboDistributedError(EXC_KEY_SPACE)
+            raise BoboDistributedError(_EXC_KEY_SPACE)
 
         self._addr: str = addr
         self._port: int = port
@@ -89,10 +93,10 @@ class BoboDevice:
     @addr.setter
     def addr(self, addr: str) -> None:
         if len(addr) == 0:
-            raise BoboDistributedError(EXC_ADDR_LEN)
+            raise BoboDistributedError(_EXC_ADDR_LEN)
 
         if ' ' in addr:
-            raise BoboDistributedError(EXC_ADDR_SPACE)
+            raise BoboDistributedError(_EXC_ADDR_SPACE)
 
         with self._lock:
             self._addr = addr

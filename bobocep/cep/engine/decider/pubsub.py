@@ -1,21 +1,23 @@
 # Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
+
 from abc import ABC, abstractmethod
 from typing import List
-
 from bobocep.cep.engine.decider import BoboRunTuple
 
 """
-Distributed publish-subscriber classes.
+Decider publish-subscriber classes.
 """
 
 
-class BoboDistributedSubscriber(ABC):
-    """A distributed subscriber interface."""
+class BoboDeciderSubscriber(ABC):
+    """
+    A decider subscriber interface.
+    """
 
     @abstractmethod
-    def on_distributed_update(
+    def on_decider_update(
             self,
             completed: List[BoboRunTuple],
             halted: List[BoboRunTuple],
@@ -23,11 +25,13 @@ class BoboDistributedSubscriber(ABC):
         """"""
 
 
-class BoboDistributedPublisher(ABC):
-    """A distributed publisher interface."""
-
-    # TODO refactor subscribe methods elsewhere so that they are thread safe
+class BoboDeciderPublisher(ABC):
+    """
+    A decider publisher interface.
+    """
 
     @abstractmethod
-    def subscribe(self, subscriber: BoboDistributedSubscriber):
-        """"""
+    def subscribe(self, subscriber: BoboDeciderSubscriber):
+        """
+        :param subscriber: Subscriber to add to list.
+        """
