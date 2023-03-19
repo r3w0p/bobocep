@@ -2,6 +2,10 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
+"""
+Distributed complex event processing.
+"""
+
 from abc import ABC, abstractmethod
 from threading import RLock
 

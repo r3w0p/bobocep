@@ -6,7 +6,7 @@ from json import dumps, loads
 from typing import Any
 
 from bobocep.cep.event.event import BoboEvent, BoboEventError
-from bobocep.cep.event._constants import *
+from bobocep.cep.event.constants import *
 
 
 class BoboEventAction(BoboEvent):

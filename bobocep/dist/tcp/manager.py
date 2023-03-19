@@ -9,7 +9,7 @@ from bobocep.cep.engine.decider import BoboRunTuple
 from bobocep.dist import BoboDevice
 
 
-class _BoboDeviceManager:
+class BoboDeviceManager:
     """
     Manages information about a BoboCEP instance on the network.
     """
@@ -17,6 +17,13 @@ class _BoboDeviceManager:
     def __init__(self,
                  device: BoboDevice,
                  flag_reset: bool):
+        """
+        :param device: The device to manage.
+        :param flag_reset: If `True`, it indicates to the BoboDistributed
+            instance that the next message to the device should set a flag to
+            reset its data on the sending device;
+            'False' indicates that no flag should be set.
+        """
         super().__init__()
         self._lock: RLock = RLock()
 
@@ -32,6 +39,9 @@ class _BoboDeviceManager:
 
     @property
     def addr(self) -> str:
+        """
+        :return: Device address.
+        """
         with self._lock:
             return self._device.addr
 
@@ -42,18 +52,30 @@ class _BoboDeviceManager:
 
     @property
     def port(self) -> int:
+        """
+        :return: Device port.
+        """
         return self._device.port
 
     @property
     def urn(self) -> str:
+        """
+        :return: Device URN.
+        """
         return self._device.urn
 
     @property
     def id_key(self) -> str:
+        """
+        :return: Device ID key.
+        """
         return self._device.id_key
 
     @property
     def flag_reset(self) -> bool:
+        """
+        :return: 'True' if reset flag should be set; `False` otherwise.
+        """
         with self._lock:
             return self._flag_reset
 
@@ -64,6 +86,9 @@ class _BoboDeviceManager:
 
     @property
     def last_comms(self) -> int:
+        """
+        :return: Time of last communication with device.
+        """
         with self._lock:
             return self._last_comms
 
@@ -79,6 +104,9 @@ class _BoboDeviceManager:
 
     @last_attempt.setter
     def last_attempt(self, last_attempt: int) -> None:
+        """
+        :return: Time of last communication attempt with device.
+        """
         with self._lock:
             self._last_attempt = max(0, last_attempt)
 

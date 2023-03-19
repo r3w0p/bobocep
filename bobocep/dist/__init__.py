@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 
 """
-Distributed complex event processing.
+Distributed imports.
 """
 
 from bobocep.dist.dist import BoboDistributed, BoboDevice, BoboDistributedError, BoboDistributedSystemError, BoboDistributedTimeoutError

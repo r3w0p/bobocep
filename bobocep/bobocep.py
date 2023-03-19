@@ -2,6 +2,11 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
+"""
+`BoboCEP` core.
+"""
+
+
 class BoboError(Exception):
     """
     A `BoboCEP` error.

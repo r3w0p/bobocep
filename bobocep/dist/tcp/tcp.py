@@ -22,7 +22,7 @@ from bobocep.cep.engine.decider import BoboDecider, BoboRunTuple
 from bobocep.cep.engine.decider import BoboDeciderSubscriber
 from bobocep.dist import *
 from bobocep.dist.pubsub import BoboDistributedSubscriber
-from bobocep.dist.tcp._manager import _BoboDeviceManager
+from bobocep.dist.tcp.manager import BoboDeviceManager
 
 
 _KEY_COMPLETED = "completed"
@@ -140,7 +140,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
         self._urn: str = urn
         self._decider: BoboDecider = decider
-        self._devices: Dict[str, _BoboDeviceManager] = {}
+        self._devices: Dict[str, BoboDeviceManager] = {}
 
         self._period_ping: int = period_ping
         self._period_resync: int = period_resync
@@ -158,7 +158,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                 raise BoboDistributedError(
                     "duplicate device URN {}".format(d.urn))
 
-            self._devices[d.urn] = _BoboDeviceManager(
+            self._devices[d.urn] = BoboDeviceManager(
                 device=d,
                 flag_reset=flag_reset)
 
@@ -305,7 +305,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                 if self._thread_closed:
                     return
 
-                outlist: List[Tuple[_BoboDeviceManager, int]] = []
+                outlist: List[Tuple[BoboDeviceManager, int]] = []
                 now: int = self._now()
 
                 # Determine what to send to each device...
@@ -451,7 +451,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
                     d.last_attempt = now
 
-    def _tcp_send(self, d: _BoboDeviceManager, msg_type: int,
+    def _tcp_send(self, d: BoboDeviceManager, msg_type: int,
                   msg_flags: int, msg: str) -> int:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -587,7 +587,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                         raise BoboDistributedSystemError(
                             "Unknown device URN '{}'.".format(pt_urn))
 
-                    device: _BoboDeviceManager = self._devices[pt_urn]
+                    device: BoboDeviceManager = self._devices[pt_urn]
 
                     # Check if ID key matches expected key for URN
                     if pt_id != device.id_key:

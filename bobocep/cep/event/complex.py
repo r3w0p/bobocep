@@ -7,7 +7,7 @@ from typing import Any
 
 from bobocep.cep.event.event import BoboEventError, BoboEvent
 from bobocep.cep.event.history import BoboHistory
-from bobocep.cep.event._constants import *
+from bobocep.cep.event.constants import *
 
 
 class BoboEventComplex(BoboEvent):

@@ -251,23 +251,24 @@ class BoboDecider(BoboEngineTask,
 
             # Update existing runs, or add new run that was started remotely
             update_remove_indices = []
-            for i, ru in enumerate(updated):
+
+            for i, runtup in enumerate(updated):
                 urun: Optional[BoboRun] = self.run_at(
-                    ru.phenomenon_name,
-                    ru.pattern_name,
-                    ru.run_id)
+                    runtup.phenomenon_name,
+                    runtup.pattern_name,
+                    runtup.run_id)
 
                 if urun is not None:
                     # Update existing run
                     # Push local run forward to index and history from remote
-                    if ru.block_index > urun.block_index:
+                    if runtup.block_index > urun.block_index:
                         urun.set_block(
-                            block_index=ru.block_index,
-                            history=ru.history)
+                            block_index=runtup.block_index,
+                            history=runtup.history)
 
                 else:
                     pattern: Optional[BoboPattern] = self._get_pattern(
-                        ru.phenomenon_name, ru.pattern_name)
+                        runtup.phenomenon_name, runtup.pattern_name)
 
                     # Ignore if pattern does not exist - it may have been
                     # removed from the decider
@@ -277,13 +278,13 @@ class BoboDecider(BoboEngineTask,
 
                     # Add new run that was started remotely
                     newrun = BoboRun(
-                        run_id=ru.run_id,
-                        phenomenon_name=ru.phenomenon_name,
+                        run_id=runtup.run_id,
+                        phenomenon_name=runtup.phenomenon_name,
                         pattern=pattern,
-                        block_index=ru.block_index,
-                        history=ru.history)
+                        block_index=runtup.block_index,
+                        history=runtup.history)
 
-                    self._add_run(ru.phenomenon_name, ru.pattern_name, newrun)
+                    self._add_run(runtup.phenomenon_name, runtup.pattern_name, newrun)
 
             # Remove any updates for which a pattern could not be found
             for i in sorted(update_remove_indices, reverse=True):

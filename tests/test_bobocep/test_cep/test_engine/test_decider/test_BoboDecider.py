@@ -244,3 +244,188 @@ class TestInvalid:
 
         with pytest.raises(BoboDeciderError):
             decider.update()
+
+    def test_run_at(self):
+        pattern = tc.pattern(name="pattern", data_blocks=[1, 2, 3])
+        phenomenon = tc.phenomenon(name="phenomenon", patterns=[pattern])
+
+        decider, subscriber = tc.decider_sub([phenomenon])
+
+        decider.on_receiver_update(event=tc.event_simple(data=1))
+        assert decider.update()
+
+        all_runs = decider.runs_from(phenomenon.name, pattern.name)
+        assert len(all_runs) == 1
+
+        run = decider.run_at(phenomenon.name, pattern.name, all_runs[0].run_id)
+        assert run is not None
+
+        assert run.phenomenon_name == phenomenon.name
+        assert run.pattern.name == pattern.name
+
+    def test_snapshot_decider_closed(self):
+        pattern = tc.pattern(
+            name="pattern",
+            data_blocks=[1, 2, 3],
+            data_halts=[4])
+        phenomenon = tc.phenomenon(name="phenomenon", patterns=[pattern])
+
+        decider, subscriber = tc.decider_sub([phenomenon], max_cache=10)
+
+        # completed [1, 2, 3]
+        # halted [1, 2, 4]
+        # updated [1]
+        for data in [1, 2, 3, 1, 2, 4, 1]:
+            decider.on_receiver_update(event=tc.event_simple(data=data))
+            assert decider.update()
+
+        decider.close()
+        snap_completed, snap_halted, snap_updated = decider.snapshot()
+
+        assert len(snap_completed) == 0
+        assert len(snap_halted) == 0
+        assert len(snap_updated) == 0
+
+    def test_snapshot_caching(self):
+        pattern = tc.pattern(
+            name="pattern",
+            data_blocks=[1, 2, 3],
+            data_halts=[4])
+        phenomenon = tc.phenomenon(name="phenomenon", patterns=[pattern])
+
+        decider, subscriber = tc.decider_sub([phenomenon], max_cache=10)
+
+        # completed [1, 2, 3]
+        # halted [1, 2, 4]
+        # updated [1]
+        for data in [1, 2, 3, 1, 2, 4, 1]:
+            decider.on_receiver_update(event=tc.event_simple(data=data))
+            assert decider.update()
+
+        snap_completed, snap_halted, snap_updated = decider.snapshot()
+
+        assert len(snap_completed) == 1
+        assert len(snap_halted) == 1
+        assert len(snap_updated) == 1
+
+    def test_snapshot_not_caching(self):
+        pattern = tc.pattern(
+            name="pattern",
+            data_blocks=[1, 2, 3],
+            data_halts=[4])
+        phenomenon = tc.phenomenon(name="phenomenon", patterns=[pattern])
+
+        decider, subscriber = tc.decider_sub([phenomenon], max_cache=0)
+
+        # completed [1, 2, 3]
+        # halted [1, 2, 4]
+        # updated [1]
+        for data in [1, 2, 3, 1, 2, 4, 1]:
+            decider.on_receiver_update(event=tc.event_simple(data=data))
+            assert decider.update()
+
+        snap_completed, snap_halted, snap_updated = decider.snapshot()
+
+        assert len(snap_completed) == 0
+        assert len(snap_halted) == 0
+        assert len(snap_updated) == 1
+
+    def test_on_distributed_update_empty_decider_caching(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc.pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4])
+        phenomenon = tc.phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc.decider_sub([phenomenon], max_cache=10)
+
+        completed = [tc.run_tuple(
+            run_id="id_completed",
+            phenomenon_name=phenom_name,
+            pattern_name=pattern_name
+        )]
+        halted = [tc.run_tuple(
+            run_id="id_halted",
+            phenomenon_name=phenom_name,
+            pattern_name=pattern_name
+        )]
+        updated = [tc.run_tuple(
+            run_id="id_updated",
+            phenomenon_name=phenom_name,
+            pattern_name=pattern_name
+        )]
+
+        decider.on_distributed_update(
+            completed=completed,
+            halted=halted,
+            updated=updated
+        )
+
+        # Check that completed and halted were cached locally
+        snap_completed, snap_halted, snap_updated = decider.snapshot()
+
+        assert len(snap_completed) == 1
+        assert len(snap_halted) == 1
+
+        # Check that subscriber has received updates
+        assert len(subscriber.completed) == 1
+        assert len(subscriber.halted) == 1
+        assert len(subscriber.updated) == 1
+
+    def test_on_distributed_update_empty_decider_closed_before_call(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc.pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4])
+        phenomenon = tc.phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc.decider_sub([phenomenon], max_cache=10)
+
+        completed = [tc.run_tuple(
+            run_id="id_completed",
+            phenomenon_name=phenom_name,
+            pattern_name=pattern_name
+        )]
+        halted = [tc.run_tuple(
+            run_id="id_halted",
+            phenomenon_name=phenom_name,
+            pattern_name=pattern_name
+        )]
+        updated = [tc.run_tuple(
+            run_id="id_updated",
+            phenomenon_name=phenom_name,
+            pattern_name=pattern_name
+        )]
+
+        decider.close()
+
+        decider.on_distributed_update(
+            completed=completed,
+            halted=halted,
+            updated=updated
+        )
+
+        # Check that completed and halted were cached locally
+        snap_completed, snap_halted, snap_updated = decider.snapshot()
+
+        assert len(snap_completed) == 0
+        assert len(snap_halted) == 0
+
+        # Check that subscriber has received updates
+        assert len(subscriber.completed) == 0
+        assert len(subscriber.halted) == 0
+        assert len(subscriber.updated) == 0
+
+    def test_on_distributed_update_empty_decider_not_caching(self):
+        pass  # TODO
+
+    # TODO test_on_distributed_update for:
+    #  "Remove runs that were completed remotely"
+    #  "Remove runs that were halted remotely"
+    #  "Update existing runs"

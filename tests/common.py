@@ -308,6 +308,7 @@ def receiver_sub(validator: Optional[BoboValidator] = None,
 def decider_sub(phenomena: List[BoboPhenomenon],
                 event_id_gen: Optional[BoboGenEventID] = None,
                 run_id_gen: Optional[BoboGenEventID] = None,
+                max_cache: int = 0,
                 max_size: int = 255):
     decider = BoboDecider(
         phenomena=phenomena,
@@ -315,6 +316,7 @@ def decider_sub(phenomena: List[BoboPhenomenon],
         BoboGenEventIDUnique(),
         gen_run_id=run_id_gen if run_id_gen is not None else
         BoboGenEventIDUnique(),
+        max_cache=max_cache,
         max_size=max_size)
 
     subscriber = StubDeciderSubscriber()
@@ -371,6 +373,21 @@ def run_simple(
         history=BoboHistory({
             pattern.blocks[0].group: [event]
         })
+    )
+
+
+def run_tuple(
+        run_id: str = "run_id",
+        phenomenon_name: str = "phenomenon_name",
+        pattern_name: str = "pattern_name",
+        block_index: int = 1,
+        history: BoboHistory = BoboHistory({})):
+    return BoboRunTuple(
+        run_id=run_id,
+        phenomenon_name=phenomenon_name,
+        pattern_name=pattern_name,
+        block_index=block_index,
+        history=history
     )
 
 
