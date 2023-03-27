@@ -5,7 +5,7 @@
 import pytest
 
 import tests.common as tc
-from bobocep.cep.engine.decider import BoboDeciderError, BoboDecider
+from bobocep.cep.engine.decider import BoboDeciderError, BoboDecider, BoboRun
 from bobocep.cep.gen.event_id import BoboGenEventIDUnique
 from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder
 from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCall
@@ -272,9 +272,9 @@ class TestInvalid:
 
         decider, subscriber = tc.decider_sub([phenomenon], max_cache=10)
 
-        # completed [1, 2, 3]
-        # halted [1, 2, 4]
-        # updated [1]
+        # First three to complete a run: [1, 2, 3]
+        # Next three to halt a run: [1, 2, 4]
+        # Last one to generate a run: [1]
         for data in [1, 2, 3, 1, 2, 4, 1]:
             decider.on_receiver_update(event=tc.event_simple(data=data))
             assert decider.update()
@@ -282,6 +282,7 @@ class TestInvalid:
         decider.close()
         snap_completed, snap_halted, snap_updated = decider.snapshot()
 
+        # Nothing should have been stored
         assert len(snap_completed) == 0
         assert len(snap_halted) == 0
         assert len(snap_updated) == 0
@@ -295,15 +296,17 @@ class TestInvalid:
 
         decider, subscriber = tc.decider_sub([phenomenon], max_cache=10)
 
-        # completed [1, 2, 3]
-        # halted [1, 2, 4]
-        # updated [1]
+        # First three to complete a run: [1, 2, 3]
+        # Next three to halt a run: [1, 2, 4]
+        # Last one to generate a run: [1]
         for data in [1, 2, 3, 1, 2, 4, 1]:
             decider.on_receiver_update(event=tc.event_simple(data=data))
             assert decider.update()
 
         snap_completed, snap_halted, snap_updated = decider.snapshot()
 
+        # Completed and halted should have been cached
+        # Updated should exist in snapshot
         assert len(snap_completed) == 1
         assert len(snap_halted) == 1
         assert len(snap_updated) == 1
@@ -313,19 +316,22 @@ class TestInvalid:
             name="pattern",
             data_blocks=[1, 2, 3],
             data_halts=[4])
+
         phenomenon = tc.phenomenon(name="phenomenon", patterns=[pattern])
 
         decider, subscriber = tc.decider_sub([phenomenon], max_cache=0)
 
-        # completed [1, 2, 3]
-        # halted [1, 2, 4]
-        # updated [1]
+        # First three to complete a run: [1, 2, 3]
+        # Next three to halt a run: [1, 2, 4]
+        # Last one to generate a run: [1]
         for data in [1, 2, 3, 1, 2, 4, 1]:
             decider.on_receiver_update(event=tc.event_simple(data=data))
             assert decider.update()
 
         snap_completed, snap_halted, snap_updated = decider.snapshot()
 
+        # Completed and halted should not have been cached
+        # Updated should exist in snapshot
         assert len(snap_completed) == 0
         assert len(snap_halted) == 0
         assert len(snap_updated) == 1
@@ -338,6 +344,7 @@ class TestInvalid:
             name=pattern_name,
             data_blocks=[1, 2, 3],
             data_halts=[4])
+
         phenomenon = tc.phenomenon(name=phenom_name, patterns=[pattern])
 
         decider, subscriber = tc.decider_sub([phenomenon], max_cache=10)
@@ -364,13 +371,13 @@ class TestInvalid:
             updated=updated
         )
 
-        # Check that completed and halted were cached locally
         snap_completed, snap_halted, snap_updated = decider.snapshot()
 
+        # Completed and halted should have been cached locally
         assert len(snap_completed) == 1
         assert len(snap_halted) == 1
 
-        # Check that subscriber has received updates
+        # Subscriber should have received updates
         assert len(subscriber.completed) == 1
         assert len(subscriber.halted) == 1
         assert len(subscriber.updated) == 1
@@ -411,21 +418,287 @@ class TestInvalid:
             updated=updated
         )
 
-        # Check that completed and halted were cached locally
         snap_completed, snap_halted, snap_updated = decider.snapshot()
 
+        # Nothing should have been cached
         assert len(snap_completed) == 0
         assert len(snap_halted) == 0
 
-        # Check that subscriber has received updates
+        # Nothing should have been sent to the subscriber
         assert len(subscriber.completed) == 0
         assert len(subscriber.halted) == 0
         assert len(subscriber.updated) == 0
 
     def test_on_distributed_update_empty_decider_not_caching(self):
-        pass  # TODO
+        pattern_name = "pattern"
+        phenom_name = "phenom"
 
-    # TODO test_on_distributed_update for:
-    #  "Remove runs that were completed remotely"
-    #  "Remove runs that were halted remotely"
-    #  "Update existing runs"
+        pattern = tc.pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4])
+
+        phenomenon = tc.phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc.decider_sub([phenomenon], max_cache=0)
+
+        completed = [tc.run_tuple(
+            run_id="id_completed",
+            phenomenon_name=phenom_name,
+            pattern_name=pattern_name
+        )]
+        halted = [tc.run_tuple(
+            run_id="id_halted",
+            phenomenon_name=phenom_name,
+            pattern_name=pattern_name
+        )]
+        updated = [tc.run_tuple(
+            run_id="id_updated",
+            phenomenon_name=phenom_name,
+            pattern_name=pattern_name
+        )]
+
+        decider.on_distributed_update(
+            completed=completed,
+            halted=halted,
+            updated=updated
+        )
+
+        snap_completed, snap_halted, snap_updated = decider.snapshot()
+
+        # Completed and halted should not have been cached locally
+        assert len(snap_completed) == 0
+        assert len(snap_halted) == 0
+
+        # Check that subscriber has received updates
+        assert len(subscriber.completed) == 1
+        assert len(subscriber.halted) == 1
+        assert len(subscriber.updated) == 1
+
+    def test_on_distributed_update_remove_run_completed_remotely_caching(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc.pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4])
+
+        phenomenon = tc.phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc.decider_sub([phenomenon], max_cache=10)
+
+        decider.on_receiver_update(tc.event_simple(data=1))
+        assert decider.update()
+
+        # Check that subscriber received update
+        assert len(subscriber.updated) == 1
+
+        # Only one run should have been generated
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 1
+
+        run = runs[0]
+
+        completed = [tc.run_tuple(
+            run_id=run.run_id,
+            phenomenon_name=run.phenomenon_name,
+            pattern_name=run.pattern.name
+        )]
+
+        decider.on_distributed_update(
+            completed=completed,
+            halted=[],
+            updated=[]
+        )
+
+        snap_completed, snap_halted, snap_updated = decider.snapshot()
+
+        # Cache should have received completed
+        assert len(snap_completed) == 1
+
+        # Subscriber should have received completed
+        assert len(subscriber.completed) == 1
+
+    def test_on_distributed_update_remove_run_halted_remotely_caching(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc.pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4])
+
+        phenomenon = tc.phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc.decider_sub([phenomenon], max_cache=10)
+
+        decider.on_receiver_update(tc.event_simple(data=1))
+        assert decider.update()
+
+        # Check that subscriber received update
+        assert len(subscriber.updated) == 1
+
+        # Only one run should have been generated
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 1
+
+        run = runs[0]
+
+        halted = [tc.run_tuple(
+            run_id=run.run_id,
+            phenomenon_name=run.phenomenon_name,
+            pattern_name=run.pattern.name
+        )]
+
+        decider.on_distributed_update(
+            completed=[],
+            halted=halted,
+            updated=[]
+        )
+
+        snap_completed, snap_halted, snap_updated = decider.snapshot()
+
+        # Cache should have received halted
+        assert len(snap_halted) == 1
+
+        # Subscriber should have received halted
+        assert len(subscriber.halted) == 1
+
+    def test_on_distributed_update_update_existing_run_caching(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc.pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4])
+
+        phenomenon = tc.phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc.decider_sub([phenomenon], max_cache=10)
+
+        decider.on_receiver_update(tc.event_simple(data=1))
+        assert decider.update()
+
+        # Check that subscriber received update
+        assert len(subscriber.updated) == 1
+
+        # Only one run should have been generated
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 1
+
+        # Run should be at its first block
+        run = runs[0]
+        assert run.block_index == 1
+
+        updated = [tc.run_tuple(
+            run_id=run.run_id,
+            phenomenon_name=run.phenomenon_name,
+            pattern_name=run.pattern.name,
+            block_index=2
+        )]
+
+        decider.on_distributed_update(
+            completed=[],
+            halted=[],
+            updated=updated
+        )
+
+        # Check that subscriber has received another update
+        assert len(subscriber.updated) == 2
+
+        # Run should have changed block index
+        assert run.block_index == 2
+
+    def test_on_distributed_update_nonexistent_pattern_in_updated(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc.pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4])
+
+        phenomenon = tc.phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc.decider_sub([phenomenon], max_cache=10)
+
+        decider.on_receiver_update(tc.event_simple(data=1))
+        assert decider.update()
+
+        # Check that subscriber received update
+        assert len(subscriber.updated) == 1
+
+        # Only one run should have been generated
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 1
+
+        # Run should be at its first block
+        run = runs[0]
+        assert run.block_index == 1
+
+        updated = [tc.run_tuple(
+            run_id=run.run_id,
+            phenomenon_name=run.phenomenon_name,
+            pattern_name="nonexistent_pattern_name",
+            block_index=2
+        )]
+
+        decider.on_distributed_update(
+            completed=[],
+            halted=[],
+            updated=updated
+        )
+
+        # Check that subscriber has not received another update
+        assert len(subscriber.updated) == 1
+
+        # Run should not have changed block index
+        assert run.block_index == 1
+
+    def test_on_distributed_update_nonexistent_phenomenon_in_updated(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc.pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4])
+
+        phenomenon = tc.phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc.decider_sub([phenomenon], max_cache=10)
+
+        decider.on_receiver_update(tc.event_simple(data=1))
+        assert decider.update()
+
+        # Check that subscriber received update
+        assert len(subscriber.updated) == 1
+
+        # Only one run should have been generated
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 1
+
+        # Run should be at its first block
+        run = runs[0]
+        assert run.block_index == 1
+
+        updated = [tc.run_tuple(
+            run_id=run.run_id,
+            phenomenon_name="nonexistent_phenomenon_name",
+            pattern_name=run.pattern.name,
+            block_index=2
+        )]
+
+        decider.on_distributed_update(
+            completed=[],
+            halted=[],
+            updated=updated
+        )
+
+        # Subscriber should not have received another update
+        assert len(subscriber.updated) == 1
+
+        # Run should not have changed block index
+        assert run.block_index == 1

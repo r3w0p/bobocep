@@ -308,9 +308,10 @@ class BoboDecider(BoboEngineTask,
         :return: A BoboPattern instance corresponding to the
             phenomenon and pattern name.
         """
-        for pattern in self._phenomena[phenomenon_name].patterns:
-            if pattern.name == pattern_name:
-                return pattern
+        if phenomenon_name in self._phenomena:
+            for pattern in self._phenomena[phenomenon_name].patterns:
+                if pattern.name == pattern_name:
+                    return pattern
         return None
 
     def phenomena(self) -> Tuple[BoboPhenomenon, ...]:
