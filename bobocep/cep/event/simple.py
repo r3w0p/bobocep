@@ -4,6 +4,7 @@
 
 from json import loads, dumps
 from typing import Any
+
 from bobocep.cep.event.event import BoboEvent
 
 

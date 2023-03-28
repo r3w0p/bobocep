@@ -4,22 +4,28 @@
 
 import pytest
 
-import tests.common as tc
 from bobocep.cep.action.handler import BoboActionHandlerPool, \
     BoboActionHandlerBlocking
-from bobocep.cep.engine.forwarder import BoboForwarderError, BoboForwarder
+from bobocep.cep.engine.forwarder.forwarder import BoboForwarderError, \
+    BoboForwarder
 from bobocep.cep.gen.event_id import BoboGenEventIDUnique
 from bobocep.cep.phenomenon import BoboPhenomenon
+from tests.test_bobocep.test_cep.test_action import BoboActionTrue
+from tests.test_bobocep.test_cep.test_engine.test_forwarder import \
+    tc_forwarder_sub
+from tests.test_bobocep.test_cep.test_event import tc_event_complex
+from tests.test_bobocep.test_cep.test_phenomenon import tc_pattern, \
+    tc_phenomenon
 
 
 class TestValid:
 
     def test_phenomenon_complex_event_blocking(self):
-        event = tc.event_complex()
-        phenom = tc.phenomenon(datagen=lambda p, h: True,
-                                action=tc.BoboActionTrue())
+        event = tc_event_complex()
+        phenom = tc_phenomenon(datagen=lambda p, h: True,
+                               action=BoboActionTrue())
 
-        forwarder, subscriber = tc.forwarder_sub([phenom], max_size=255)
+        forwarder, subscriber = tc_forwarder_sub([phenom], max_size=255)
         assert len(subscriber.output) == 0
 
         forwarder.on_producer_update(event)
@@ -27,11 +33,11 @@ class TestValid:
         assert len(subscriber.output) == 1
 
     def test_phenomenon_complex_event_pool(self):
-        event = tc.event_complex()
-        phenom = tc.phenomenon(datagen=lambda p, h: True,
-                               action=tc.BoboActionTrue())
+        event = tc_event_complex()
+        phenom = tc_phenomenon(datagen=lambda p, h: True,
+                               action=BoboActionTrue())
 
-        forwarder, subscriber = tc.forwarder_sub(
+        forwarder, subscriber = tc_forwarder_sub(
             phenomena=[phenom],
             handler=BoboActionHandlerPool(processes=1, max_size=255),
             max_size=255)
@@ -46,44 +52,44 @@ class TestValid:
         assert len(subscriber.output) == 1
 
     def test_close_then_update(self):
-        forwarder, subscriber = tc.forwarder_sub([tc.phenomenon()])
+        forwarder, subscriber = tc_forwarder_sub([tc_phenomenon()])
 
         forwarder.close()
         assert forwarder.is_closed()
         assert forwarder.update() is False
 
     def test_close_then_on_producer_update(self):
-        forwarder, subscriber = tc.forwarder_sub([tc.phenomenon()])
+        forwarder, subscriber = tc_forwarder_sub([tc_phenomenon()])
 
         forwarder.close()
         assert forwarder.is_closed()
         assert forwarder.size() == 0
 
-        forwarder.on_producer_update(tc.event_complex())
+        forwarder.on_producer_update(tc_event_complex())
         assert forwarder.size() == 0
 
 
 class TestInvalid:
 
     def test_add_on_queue_full(self):
-        forwarder, subscriber = tc.forwarder_sub([tc.phenomenon()], max_size=1)
+        forwarder, subscriber = tc_forwarder_sub([tc_phenomenon()], max_size=1)
 
-        forwarder.on_producer_update(tc.event_complex())
+        forwarder.on_producer_update(tc_event_complex())
 
         with pytest.raises(BoboForwarderError):
-            forwarder.on_producer_update(tc.event_complex())
+            forwarder.on_producer_update(tc_event_complex())
 
     def test_duplicate_phenomena_names(self):
         phenom_1 = BoboPhenomenon(
             name="phenom",
             datagen=lambda p, h: True,
-            patterns=[tc.pattern()],
+            patterns=[tc_pattern()],
             action=None)
 
         phenom_2 = BoboPhenomenon(
             name="phenom",
             datagen=lambda p, h: True,
-            patterns=[tc.pattern()],
+            patterns=[tc_pattern()],
             action=None)
 
         with pytest.raises(BoboForwarderError):

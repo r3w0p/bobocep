@@ -1,52 +1,54 @@
 # Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
+import logging
 from threading import Thread
 from time import sleep
 from typing import List
 
-import tests.common as tc
-from bobocep.cep.engine.decider import \
-    BoboRunTuple
-from bobocep.dist import BoboDevice
+from bobocep.cep.engine.decider.runtup import BoboRunTuple
+from bobocep.dist.crypto.aes import BoboDistributedCryptoAES
+from bobocep.dist.device import BoboDevice
 from bobocep.dist.tcp import BoboDistributedTCP
-import logging
+from tests.test_bobocep.test_cep.test_engine.test_decider import tc_run_simple, \
+    tc_decider_sub
+from tests.test_bobocep.test_cep.test_event import tc_event_simple
+from tests.test_bobocep.test_cep.test_phenomenon import tc_pattern, \
+    tc_phenomenon
+from tests.test_bobocep.test_dist import StubDistributedSubscriber, \
+    tc_run_distributed_tcp
 
 
 # TODO test addr change
 
 
-def run_distributed_tcp(dist: BoboDistributedTCP):
-    dist.run()
-
-
 class TestValid:
 
-    def test_send_comp_halt_upd_to_another_device(self):
+    def test_send_completed_halted_updated_to_another_device_aes(self):
         logging.getLogger().setLevel(logging.DEBUG)
 
         completed: List[BoboRunTuple] = [
-            tc.run_simple(
-                tc.pattern(name="pattern_completed"),
-                tc.event_simple(event_id="event_id_completed"),
+            tc_run_simple(
+                tc_pattern(name="pattern_completed"),
+                tc_event_simple(event_id="event_id_completed"),
                 run_id="run_id_completed",
                 phenomenon_name="phenom_name_completed",
                 block_index=1
             ).to_tuple()]
 
         halted: List[BoboRunTuple] = [
-            tc.run_simple(
-                tc.pattern(name="pattern_halted"),
-                tc.event_simple(event_id="event_id_halted"),
+            tc_run_simple(
+                tc_pattern(name="pattern_halted"),
+                tc_event_simple(event_id="event_id_halted"),
                 run_id="run_id_halted",
                 phenomenon_name="phenom_name_halted",
                 block_index=1
             ).to_tuple()]
 
         updated: List[BoboRunTuple] = [
-            tc.run_simple(
-                tc.pattern(name="pattern_updated"),
-                tc.event_simple(event_id="event_id_updated"),
+            tc_run_simple(
+                tc_pattern(name="pattern_updated"),
+                tc_event_simple(event_id="event_id_updated"),
                 run_id="run_id_updated",
                 phenomenon_name="phenom_name_updated",
                 block_index=1
@@ -65,25 +67,25 @@ class TestValid:
                 id_key="2222222222")
         ]
 
-        decider, dec_sub = tc.decider_sub([tc.phenomenon()])
+        decider, dec_sub = tc_decider_sub([tc_phenomenon()])
 
         dist = BoboDistributedTCP(
             urn="urn:dist:1",
-            aes_key="1234567890ABCDEF",
             decider=decider,
             devices=devices,
+            crypto=BoboDistributedCryptoAES("1234567890ABCDEF"),
             subscribe=False,  # to stop interference by decider
             flag_reset=False  # to prevent initial FORCE_RESYNC
         )
 
-        dist_sub = tc.StubDistributedSubscriber()
+        dist_sub = StubDistributedSubscriber()
         dist.subscribe(dist_sub)
 
         # Sets Distributed to "OK Period"
         dist._devices[devices[0].urn].last_comms = BoboDistributedTCP._now()
         dist._devices[devices[1].urn].last_comms = BoboDistributedTCP._now()
 
-        t = Thread(target=run_distributed_tcp, args=[dist])
+        t = Thread(target=tc_run_distributed_tcp, args=[dist])
         t.start()
 
         sleep(1)

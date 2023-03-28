@@ -2,7 +2,7 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-from bobocep.cep.engine.receiver import BoboValidatorType
+from bobocep.cep.engine.receiver.validator import BoboValidatorType
 from bobocep.cep.event import BoboEventSimple
 from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
 

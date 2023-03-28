@@ -1,7 +1,7 @@
 from threading import RLock
 from typing import List, Tuple
 
-from bobocep.cep.engine.decider import BoboRunTuple
+from bobocep.cep.engine.decider.runtup import BoboRunTuple
 from bobocep.dist.dist import BoboDistributedError
 
 """

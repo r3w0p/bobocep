@@ -4,7 +4,8 @@
 
 import pytest
 
-from bobocep.cep.phenomenon.pattern import BoboPatternBlock, BoboPatternBlockError
+from bobocep.cep.phenomenon.pattern.pattern import BoboPatternBlock, \
+    BoboPatternBlockError
 from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCall
 
 

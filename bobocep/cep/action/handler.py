@@ -14,7 +14,7 @@ from threading import RLock
 from typing import Any, Optional
 
 from bobocep import BoboError
-from bobocep.cep.action import BoboAction
+from bobocep.cep.action.action import BoboAction
 from bobocep.cep.event import BoboEventAction, BoboEventComplex
 
 

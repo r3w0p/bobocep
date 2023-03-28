@@ -4,22 +4,22 @@
 
 from time import sleep
 
-import tests.common as tc
 from bobocep.cep.event import BoboHistory, BoboEventSimple
 from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
+from tests.test_bobocep.test_cep.test_event import tc_event_simple
 
 
 class TestValid:
 
     def test_to_str(self):
         history = BoboHistory(events={
-            "group": [tc.event_simple(data=123)]
+            "group": [tc_event_simple(data=123)]
         })
         assert history.__str__() == history.to_json_str()
 
     def test_to_from_json_str(self):
         group_original = "group"
-        event_original = tc.event_simple(data=123)
+        event_original = tc_event_simple(data=123)
         history_original = BoboHistory(events={
             group_original: [event_original]
         })

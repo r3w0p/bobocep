@@ -2,9 +2,8 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-import tests.common as tc
-from bobocep.dist import BoboDevice
-from bobocep.dist.device import BoboDeviceManager
+from bobocep.dist.device import BoboDeviceManager, BoboDevice
+from tests.test_bobocep.test_cep.test_engine.test_decider import tc_run_tuple
 
 
 class TestValid:
@@ -120,9 +119,9 @@ class TestValid:
 
         assert manager.size_stash() == 0
 
-        completed = [tc.run_tuple(run_id="run_completed")]
-        halted = [tc.run_tuple(run_id="run_halted")]
-        updated = [tc.run_tuple(run_id="run_updated")]
+        completed = [tc_run_tuple(run_id="run_completed")]
+        halted = [tc_run_tuple(run_id="run_halted")]
+        updated = [tc_run_tuple(run_id="run_updated")]
 
         manager.append_stash(
             completed=completed,
@@ -153,9 +152,9 @@ class TestValid:
         assert manager.size_stash() == 0
 
         manager.append_stash(
-            completed=[tc.run_tuple()],
-            halted=[tc.run_tuple()],
-            updated=[tc.run_tuple()]
+            completed=[tc_run_tuple()],
+            halted=[tc_run_tuple()],
+            updated=[tc_run_tuple()]
         )
 
         assert manager.size_stash() == 3

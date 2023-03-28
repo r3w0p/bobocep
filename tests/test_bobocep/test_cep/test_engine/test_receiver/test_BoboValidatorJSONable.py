@@ -1,9 +1,9 @@
 # Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
-
-import tests.common as tc
-from bobocep.cep.engine.receiver import BoboValidatorJSONable
+from bobocep.cep.engine.receiver.validator import BoboValidatorJSONable
+from tests.test_bobocep.test_cep.test_event import tc_event_simple, \
+    tc_event_action, tc_event_complex
 
 
 class TestValid:
@@ -45,13 +45,13 @@ class TestValid:
         assert BoboValidatorJSONable().is_valid({"abc": 123})
 
     def test_event_simple(self):
-        assert BoboValidatorJSONable().is_valid(tc.event_simple())
+        assert BoboValidatorJSONable().is_valid(tc_event_simple())
 
     def test_event_complex(self):
-        assert BoboValidatorJSONable().is_valid(tc.event_complex())
+        assert BoboValidatorJSONable().is_valid(tc_event_complex())
 
     def test_event_action(self):
-        assert BoboValidatorJSONable().is_valid(tc.event_action())
+        assert BoboValidatorJSONable().is_valid(tc_event_action())
 
 
 class TestInvalid:

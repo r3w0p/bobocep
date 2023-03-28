@@ -15,7 +15,6 @@ from typing import Callable
 from bobocep import BoboError
 from bobocep.cep.event import BoboEvent, BoboHistory
 
-
 EXC_INVALID_PARAM = "call must have {} parameters, found {}"
 LEN_PARAM_CALL = 2
 

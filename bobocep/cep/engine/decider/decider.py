@@ -12,16 +12,16 @@ from queue import Queue
 from threading import RLock
 from typing import Tuple, Dict, List, Optional, Deque
 
-from bobocep.cep.engine.decider import BoboRunTuple
-from bobocep.cep.engine.decider.run import BoboRun
-from bobocep.cep.engine.task import BoboEngineTaskError, BoboEngineTask
 from bobocep.cep.engine.decider.pubsub import BoboDeciderPublisher, \
     BoboDeciderSubscriber
+from bobocep.cep.engine.decider.run import BoboRun
+from bobocep.cep.engine.decider.runtup import BoboRunTuple
 from bobocep.cep.engine.receiver.pubsub import BoboReceiverSubscriber
+from bobocep.cep.engine.task import BoboEngineTaskError, BoboEngineTask
 from bobocep.cep.event import BoboHistory, BoboEvent
 from bobocep.cep.gen.event_id import BoboGenEventID
-from bobocep.cep.phenomenon import BoboPhenomenon
-from bobocep.cep.phenomenon.pattern import BoboPattern
+from bobocep.cep.phenomenon.pattern.pattern import BoboPattern
+from bobocep.cep.phenomenon.phenomenon import BoboPhenomenon
 from bobocep.dist.pubsub import BoboDistributedSubscriber
 
 _EXC_PHENOM_NAME_DUP = "duplicate name in phenomena: {}"
@@ -221,7 +221,7 @@ class BoboDecider(BoboEngineTask,
 
     def on_distributed_update(
             self,
-            completed: List[BoboRunTuple],
+            completed: List['BoboRunTuple'],
             halted: List[BoboRunTuple],
             updated: List[BoboRunTuple]) -> None:
 
@@ -284,7 +284,8 @@ class BoboDecider(BoboEngineTask,
                         block_index=runtup.block_index,
                         history=runtup.history)
 
-                    self._add_run(runtup.phenomenon_name, runtup.pattern_name, newrun)
+                    self._add_run(runtup.phenomenon_name, runtup.pattern_name,
+                                  newrun)
 
             # Remove any updates for which a pattern could not be found
             for i in sorted(update_remove_indices, reverse=True):

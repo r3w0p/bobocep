@@ -12,7 +12,6 @@ from typing import Tuple, List
 from bobocep import BoboError
 from bobocep.cep.phenomenon.pattern.predicate import BoboPredicate
 
-
 _EXC_GROUP_LEN = "'group' must have a length greater than 0"
 _EXC_PREDICATES_LEN = "'predicates' must have a length greater than 0"
 _EXC_STRICT_OPT_TRUE = "'strict' and 'optional' must not both be True"

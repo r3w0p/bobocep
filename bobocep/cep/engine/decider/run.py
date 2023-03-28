@@ -1,12 +1,11 @@
-
 from threading import RLock
 from typing import Dict, Tuple, List
 
 from bobocep import BoboError
-from bobocep.cep.engine.decider import BoboRunTuple
+from bobocep.cep.engine.decider.runtup import BoboRunTuple
 from bobocep.cep.event import BoboHistory, BoboEvent
-from bobocep.cep.phenomenon.pattern import BoboPattern, BoboPatternBlock, \
-    BoboPredicate
+from bobocep.cep.phenomenon.pattern.pattern import BoboPattern, \
+    BoboPatternBlock, BoboPredicate
 
 _EXC_RUN_ID_LEN = "run ID must have a length greater than 0"
 _EXC_PHENOM_LEN = "phenomenon name must have a length greater than 0"

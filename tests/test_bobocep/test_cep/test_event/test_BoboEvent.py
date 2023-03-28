@@ -4,12 +4,12 @@
 
 import pytest
 
-import tests.common as tc
 from bobocep.cep.event import BoboEventError
+from tests.test_bobocep.test_cep.test_event import tc_event_simple
 
 
 class TestInvalid:
 
     def test_event_id_length_0(self):
         with pytest.raises(BoboEventError):
-            tc.event_simple(event_id="")
+            tc_event_simple(event_id="")

@@ -4,16 +4,19 @@
 
 import pytest
 
-import tests.common as tc
-from bobocep.cep.engine.receiver import BoboReceiverError
+from bobocep.cep.engine.receiver.receiver import BoboReceiverError
 from bobocep.cep.event import BoboEventSimple
 from bobocep.cep.gen.event import BoboGenEventTime
+from tests.test_bobocep.test_cep.test_engine.test_receiver import \
+    BoboValidatorRejectAll, tc_receiver_sub
+from tests.test_bobocep.test_cep.test_event import tc_event_action, \
+    tc_event_complex, tc_event_simple
 
 
 class TestValid:
 
     def test_size_add_1_event_then_update(self):
-        receiver, subscriber = tc.receiver_sub()
+        receiver, subscriber = tc_receiver_sub()
 
         assert receiver.size() == 0
         receiver.add_data(data=123)
@@ -22,7 +25,7 @@ class TestValid:
         assert receiver.size() == 0
 
     def test_subscriber_add_1_event_then_update(self):
-        receiver, subscriber = tc.receiver_sub()
+        receiver, subscriber = tc_receiver_sub()
 
         data = 123
         receiver.add_data(data=data)
@@ -33,14 +36,14 @@ class TestValid:
         assert subscriber.output[0].data == data
 
     def test_update_on_queue_empty(self):
-        receiver, subscriber = tc.receiver_sub()
+        receiver, subscriber = tc_receiver_sub()
 
         assert receiver.update() is False
 
     def test_null_event(self):
         data_null_event = 456
 
-        receiver, subscriber = tc.receiver_sub(
+        receiver, subscriber = tc_receiver_sub(
             event_gen=BoboGenEventTime(
                 millis=1,
                 datagen=lambda: data_null_event,
@@ -57,10 +60,10 @@ class TestValid:
         assert subscriber.output[1].data == data_null_event
 
     def test_process_add_data_event_simple(self):
-        receiver, subscriber = tc.receiver_sub()
+        receiver, subscriber = tc_receiver_sub()
         assert receiver.size() == 0
 
-        event = tc.event_simple()
+        event = tc_event_simple()
         receiver.add_data(data=event)
         receiver.update()
 
@@ -68,29 +71,29 @@ class TestValid:
         assert subscriber.output[0] == event
 
     def test_on_producer_update(self):
-        receiver, subscriber = tc.receiver_sub()
+        receiver, subscriber = tc_receiver_sub()
         assert receiver.size() == 0
 
-        receiver.on_producer_update(event=tc.event_complex())
+        receiver.on_producer_update(event=tc_event_complex())
         assert receiver.size() == 1
 
     def test_on_forwarder_update(self):
-        receiver, subscriber = tc.receiver_sub()
+        receiver, subscriber = tc_receiver_sub()
 
         assert receiver.size() == 0
 
-        receiver.on_forwarder_update(event=tc.event_action())
+        receiver.on_forwarder_update(event=tc_event_action())
         assert receiver.size() == 1
 
     def test_close_then_update(self):
-        receiver, subscriber = tc.receiver_sub()
+        receiver, subscriber = tc_receiver_sub()
 
         receiver.close()
         assert receiver.is_closed()
         assert receiver.update() is False
 
     def test_close_then_add_data(self):
-        receiver, subscriber = tc.receiver_sub()
+        receiver, subscriber = tc_receiver_sub()
 
         receiver.close()
         assert receiver.is_closed()
@@ -100,30 +103,30 @@ class TestValid:
         assert receiver.size() == 0
 
     def test_close_then_on_producer_update(self):
-        receiver, subscriber = tc.receiver_sub()
+        receiver, subscriber = tc_receiver_sub()
 
         receiver.close()
         assert receiver.is_closed()
         assert receiver.size() == 0
 
-        receiver.on_producer_update(tc.event_complex())
+        receiver.on_producer_update(tc_event_complex())
         assert receiver.size() == 0
 
     def test_close_then_on_forwarder_update(self):
-        receiver, subscriber = tc.receiver_sub()
+        receiver, subscriber = tc_receiver_sub()
 
         receiver.close()
         assert receiver.is_closed()
         assert receiver.size() == 0
 
-        receiver.on_forwarder_update(tc.event_action())
+        receiver.on_forwarder_update(tc_event_action())
         assert receiver.size() == 0
 
 
 class TestInvalid:
 
     def test_add_on_queue_full(self):
-        receiver, subscriber = tc.receiver_sub(max_size=1)
+        receiver, subscriber = tc_receiver_sub(max_size=1)
 
         receiver.add_data(data=123)
 
@@ -131,8 +134,8 @@ class TestInvalid:
             receiver.add_data(data=456)
 
     def test_invalid_data_reject(self):
-        receiver, subscriber = tc.receiver_sub(
-            validator=tc.BoboValidatorRejectAll())
+        receiver, subscriber = tc_receiver_sub(
+            validator=BoboValidatorRejectAll())
 
         assert receiver.size() == 0
         receiver.add_data(data=123)

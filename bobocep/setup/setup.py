@@ -8,7 +8,7 @@ Tools to help with `BoboCEP` setup.
 
 from abc import ABC, abstractmethod
 
-from bobocep.cep.engine import BoboEngine
+from bobocep.cep.engine.engine import BoboEngine
 
 
 class BoboSetup(ABC):

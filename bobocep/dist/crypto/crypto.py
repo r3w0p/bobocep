@@ -6,16 +6,35 @@
 Encryption for distributed `BoboCEP`.
 """
 
-from abc import ABC
+from abc import ABC, abstractmethod
 
-from bobocep import BoboError
+from bobocep.dist.dist import BoboDistributedError
 
 
-class BoboDistributedCryptoError(BoboError):
+class BoboDistributedCryptoError(BoboDistributedError):
     """
     A distributed crypto error.
     """
 
 
 class BoboDistributedCrypto(ABC):
-    """"""
+
+    @abstractmethod
+    def encrypt(self, msg_str: str) -> bytes:
+        """"""
+
+    @abstractmethod
+    def decrypt(self, msg_bytes: bytes) -> str:
+        """"""
+
+    @abstractmethod
+    def end_bytes(self) -> bytes:
+        """
+        :return: The bytes used to signify the end of ciphertext output.
+        """
+
+    @abstractmethod
+    def min_length(self) -> int:
+        """
+        :return: The minimum length of ciphertext output.
+        """

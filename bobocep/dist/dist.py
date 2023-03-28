@@ -7,6 +7,7 @@ Distributed complex event processing.
 """
 
 from abc import ABC, abstractmethod
+
 from bobocep import BoboError
 from bobocep.dist.pubsub import BoboDistributedPublisher
 

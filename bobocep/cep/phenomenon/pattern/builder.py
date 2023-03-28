@@ -8,15 +8,14 @@ Builders to assist in generating a pattern.
 
 from typing import List
 
-from bobocep import BoboError
-from bobocep.cep.phenomenon.pattern import BoboPatternBlock, \
-    BoboPattern
+from bobocep.cep.phenomenon.pattern.pattern import BoboPatternBlock, \
+    BoboPattern, BoboPatternError
 from bobocep.cep.phenomenon.pattern.predicate import BoboPredicate
 
 _EXC_NAME_LEN = "name must have a length greater than 0"
 
 
-class BoboPatternBuilderError(BoboError):
+class BoboPatternBuilderError(BoboPatternError):
     """
     A pattern builder error.
     """

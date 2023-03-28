@@ -4,7 +4,8 @@
 
 from abc import ABC, abstractmethod
 from typing import List
-from bobocep.cep.engine.decider import BoboRunTuple
+
+from bobocep.cep.engine.decider.runtup import BoboRunTuple
 
 """
 Decider publish-subscriber classes.

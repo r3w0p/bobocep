@@ -7,9 +7,10 @@ from multiprocessing.pool import AsyncResult
 
 import pytest
 
-import tests.common as tc
 from bobocep.cep.action.handler import BoboActionHandlerPool, \
     BoboActionHandlerError, _pool_execute_action
+from tests.test_bobocep.test_cep.test_action import BoboActionTrue
+from tests.test_bobocep.test_cep.test_event import tc_event_complex
 
 
 class TestValid:
@@ -22,8 +23,8 @@ class TestValid:
 
         _pool_execute_action(
             queue=q,
-            action=tc.BoboActionTrue(),
-            event=tc.event_complex())
+            action=BoboActionTrue(),
+            event=tc_event_complex())
 
         assert q.qsize() == 1
 
@@ -32,8 +33,8 @@ class TestValid:
 
         assert handler.size() == 0
         result: AsyncResult = handler.handle(
-            tc.BoboActionTrue(),
-            tc.event_complex())
+            BoboActionTrue(),
+            tc_event_complex())
         result.wait(timeout=5)
         assert handler.size() == 1
 
@@ -42,8 +43,8 @@ class TestValid:
 
         assert handler.size() == 0
         for i in range(10):
-            handler.handle(tc.BoboActionTrue("action_{}".format(i)),
-                           tc.event_complex())
+            handler.handle(BoboActionTrue("action_{}".format(i)),
+                           tc_event_complex())
         handler.close()
         handler.join()
         assert handler.size() == 10
@@ -53,8 +54,8 @@ class TestValid:
 
         assert handler.size() == 0
         for i in range(10):
-            handler.handle(tc.BoboActionTrue("action_{}".format(i)),
-                           tc.event_complex())
+            handler.handle(BoboActionTrue("action_{}".format(i)),
+                           tc_event_complex())
         handler.close()
         handler.join()
         assert handler.size() == 10
@@ -64,8 +65,8 @@ class TestValid:
 
         assert handler.size() == 0
         for i in range(10):
-            handler.handle(tc.BoboActionTrue("action_{}".format(i)),
-                           tc.event_complex())
+            handler.handle(BoboActionTrue("action_{}".format(i)),
+                           tc_event_complex())
         handler.close()
         handler.join()
         assert handler.size() == 10
@@ -79,7 +80,7 @@ class TestValid:
         handler = BoboActionHandlerPool(processes=1, max_size=255)
 
         result: AsyncResult = handler.handle(
-            tc.BoboActionTrue(), tc.event_complex())
+            BoboActionTrue(), tc_event_complex())
         result.wait(timeout=5)
 
         assert handler.get_action_event() is not None
@@ -91,10 +92,10 @@ class TestInvalid:
         handler = BoboActionHandlerPool(processes=1, max_size=1)
 
         result: AsyncResult = handler.handle(
-            tc.BoboActionTrue(), tc.event_complex())
+            BoboActionTrue(), tc_event_complex())
         result.wait(timeout=5)
 
         assert handler.size() == 1
 
         with pytest.raises(BoboActionHandlerError):
-            handler.handle(tc.BoboActionTrue(), tc.event_complex())
+            handler.handle(BoboActionTrue(), tc_event_complex())

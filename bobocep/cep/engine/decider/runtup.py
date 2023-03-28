@@ -1,8 +1,8 @@
 from json import loads, dumps
 
 from bobocep import BoboError
-from bobocep.cep import BoboJSONable
 from bobocep.cep.event import BoboHistory
+from bobocep.cep.json import BoboJSONable
 
 
 class BoboRunTupleError(BoboError):

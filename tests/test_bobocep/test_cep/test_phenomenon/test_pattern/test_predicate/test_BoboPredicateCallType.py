@@ -2,9 +2,10 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-import tests.common as tc
 from bobocep.cep.event import BoboEventSimple, BoboHistory, BoboEvent
 from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCallType
+from tests.test_bobocep.test_cep.test_event import tc_event_simple, \
+    BoboEventSimpleSubclass
 
 
 class TestValid:
@@ -15,7 +16,7 @@ class TestValid:
             dtype=int,
             subtype=False,
             cast=False)
-        event = tc.event_simple(data=123)
+        event = tc_event_simple(data=123)
         history = BoboHistory(events={})
 
         assert predicate.evaluate(event, history)
@@ -26,7 +27,7 @@ class TestValid:
             dtype=BoboEventSimple,
             subtype=False,
             cast=False)
-        event = tc.event_simple(data=tc.event_simple(data=123))
+        event = tc_event_simple(data=tc_event_simple(data=123))
         history = BoboHistory(events={})
 
         assert predicate.evaluate(event, history)
@@ -37,7 +38,7 @@ class TestValid:
             dtype=BoboEvent,
             subtype=True,
             cast=False)
-        event = tc.event_simple(data=tc.event_simple(data=123))
+        event = tc_event_simple(data=tc_event_simple(data=123))
         history = BoboHistory(events={})
 
         assert predicate.evaluate(event, history)
@@ -49,7 +50,7 @@ class TestValid:
             subtype=False,
             cast=False)
 
-        event = tc.event_simple(data=tc.BoboEventSimpleSubclass(
+        event = tc_event_simple(data=BoboEventSimpleSubclass(
             event_id="event_id",
             timestamp=123456789,
             data=123
@@ -65,7 +66,7 @@ class TestValid:
             dtype=int,
             subtype=False,
             cast=True)
-        event = tc.event_simple(data="123")
+        event = tc_event_simple(data="123")
         history = BoboHistory(events={})
 
         assert predicate.evaluate(event, history)
@@ -79,7 +80,7 @@ class TestInvalid:
             dtype=BoboEvent,
             subtype=False,
             cast=False)
-        event = tc.event_simple(data=tc.event_simple(data=123))
+        event = tc_event_simple(data=tc_event_simple(data=123))
         history = BoboHistory(events={})
 
         assert not predicate.evaluate(event, history)
@@ -90,7 +91,7 @@ class TestInvalid:
             dtype=BoboEvent,
             subtype=False,
             cast=False)
-        event = tc.event_simple(data=tc.event_simple(data=123))
+        event = tc_event_simple(data=tc_event_simple(data=123))
         history = BoboHistory(events={})
 
         assert not predicate.evaluate(event, history)
@@ -102,7 +103,7 @@ class TestInvalid:
             subtype=False,
             cast=False)
 
-        event = tc.event_simple(data=tc.BoboEventSimpleSubclass(
+        event = tc_event_simple(data=BoboEventSimpleSubclass(
             event_id="event_id",
             timestamp=123456789,
             data=123
@@ -118,7 +119,7 @@ class TestInvalid:
             dtype=int,
             subtype=False,
             cast=True)
-        event = tc.event_simple(data="abc")
+        event = tc_event_simple(data="abc")
         history = BoboHistory(events={})
 
         assert not predicate.evaluate(event, history)
@@ -129,7 +130,7 @@ class TestInvalid:
             dtype=int,
             subtype=True,
             cast=False)
-        event = tc.event_simple(data="abc")
+        event = tc_event_simple(data="abc")
         history = BoboHistory(events={})
 
         assert not predicate.evaluate(event, history)

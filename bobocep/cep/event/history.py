@@ -5,8 +5,8 @@
 from json import dumps, loads
 from typing import Dict, List, Optional, Tuple
 
-from bobocep.cep import BoboJSONable
 from bobocep.cep.event.event import BoboEvent
+from bobocep.cep.json import BoboJSONable
 
 
 class BoboHistory(BoboJSONable):

@@ -4,9 +4,10 @@
 
 from abc import ABC, abstractmethod
 from typing import Any
-from bobocep.cep.event.constants import *
+
 from bobocep import BoboError
-from bobocep.cep import BoboJSONable
+from bobocep.cep.event.constants import *
+from bobocep.cep.json import BoboJSONable
 
 
 class BoboEventError(BoboError):

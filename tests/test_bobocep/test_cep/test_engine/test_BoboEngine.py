@@ -6,48 +6,50 @@ from threading import Thread
 from time import sleep
 
 import pytest
-import tests.common as tc
-from bobocep.cep.engine import BoboEngine, BoboEngineError
-from bobocep.cep.engine.decider import BoboRunTuple, BoboDecider
-from bobocep.cep.engine.forwarder import BoboForwarder
-from bobocep.cep.engine.producer import BoboProducer
-from bobocep.cep.engine.receiver import BoboReceiver
+
+from bobocep.cep.engine.decider.decider import BoboDecider
+from bobocep.cep.engine.decider.runtup import BoboRunTuple
+from bobocep.cep.engine.engine import BoboEngineError
+from bobocep.cep.engine.forwarder.forwarder import BoboForwarder
+from bobocep.cep.engine.producer.producer import BoboProducer
+from bobocep.cep.engine.receiver.receiver import BoboReceiver
 from bobocep.cep.event import BoboEventSimple, BoboEventComplex, \
     BoboEventAction
-
-
-def run_engine(engine: BoboEngine):
-    engine.run()
+from tests.test_bobocep.test_cep.test_action import BoboActionTrue
+from tests.test_bobocep.test_cep.test_engine import tc_engine_subs, \
+    tc_run_engine
+from tests.test_bobocep.test_cep.test_phenomenon import tc_phenomenon, \
+    tc_pattern
 
 
 class TestValid:
 
     def test_property_receiver(self):
-        engine, _, _, _, _ = tc.engine_subs([tc.phenomenon()])
+        engine, _, _, _, _ = tc_engine_subs([tc_phenomenon()])
         assert isinstance(engine.receiver, BoboReceiver)
 
     def test_property_decider(self):
-        engine, _, _, _, _ = tc.engine_subs([tc.phenomenon()])
+        engine, _, _, _, _ = tc_engine_subs([tc_phenomenon()])
         assert isinstance(engine.decider, BoboDecider)
 
     def test_property_producer(self):
-        engine, _, _, _, _ = tc.engine_subs([tc.phenomenon()])
+        engine, _, _, _, _ = tc_engine_subs([tc_phenomenon()])
         assert isinstance(engine.producer, BoboProducer)
 
     def test_property_forwarder(self):
-        engine, _, _, _, _ = tc.engine_subs([tc.phenomenon()])
+        engine, _, _, _, _ = tc_engine_subs([tc_phenomenon()])
         assert isinstance(engine.forwarder, BoboForwarder)
 
     def test_1_pattern_with_action_all_data_at_once(self):
-        phenomena = [tc.phenomenon(
+        phenomena = [tc_phenomenon(
             name="phenomenon_a",
             datagen=lambda p, h: True,
             patterns=[
-                tc.pattern("pattern_123", data_blocks=[1, 2, 3])
+                tc_pattern("pattern_123", data_blocks=[1, 2, 3])
             ],
-            action=tc.BoboActionTrue("action_true")
+            action=BoboActionTrue("action_true")
         )]
-        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(phenomena)
+        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc_engine_subs(phenomena)
 
         engine.receiver.add_data(1)
         engine.receiver.add_data(2)
@@ -93,15 +95,15 @@ class TestValid:
         assert fwd_sub.output[0].success is True
 
     def test_1_pattern_with_action_one_at_a_time(self):
-        phenomena = [tc.phenomenon(
+        phenomena = [tc_phenomenon(
             name="phenomenon_a",
             datagen=lambda p, h: True,
             patterns=[
-                tc.pattern("pattern_123", data_blocks=[1, 2, 3])
+                tc_pattern("pattern_123", data_blocks=[1, 2, 3])
             ],
-            action=tc.BoboActionTrue("action_true")
+            action=BoboActionTrue("action_true")
         )]
-        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(
+        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc_engine_subs(
             phenomena,
             times_receiver=1,
             times_decider=1,
@@ -183,26 +185,26 @@ class TestValid:
         assert fwd_sub.output[0].success is True
 
     def test_close_then_update(self):
-        phenomena = [tc.phenomenon()]
-        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(phenomena)
+        phenomena = [tc_phenomenon()]
+        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc_engine_subs(phenomena)
 
         engine.close()
         assert engine.is_closed()
         assert engine.update() is False
 
     def test_close_then_run(self):
-        phenomena = [tc.phenomenon()]
-        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(phenomena)
+        phenomena = [tc_phenomenon()]
+        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc_engine_subs(phenomena)
 
         engine.close()
         assert engine.is_closed()
         assert engine.run() is None
 
     def test_run_then_close(self):
-        phenomena = [tc.phenomenon()]
-        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(phenomena)
+        phenomena = [tc_phenomenon()]
+        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc_engine_subs(phenomena)
 
-        t = Thread(target=run_engine, args=[engine])
+        t = Thread(target=tc_run_engine, args=[engine])
         t.start()
         engine.close()
         t.join()
@@ -210,17 +212,17 @@ class TestValid:
         assert engine.is_closed()
 
     def test_run_then_complete_pattern_then_close(self):
-        phenomena = [tc.phenomenon(
+        phenomena = [tc_phenomenon(
             name="phenom_a",
             datagen=lambda p, h: True,
             patterns=[
-                tc.pattern("pattern_123", data_blocks=[1, 2, 3])
+                tc_pattern("pattern_123", data_blocks=[1, 2, 3])
             ],
-            action=tc.BoboActionTrue("action_true")
+            action=BoboActionTrue("action_true")
         )]
-        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc.engine_subs(phenomena)
+        engine, rec_sub, dec_sub, pro_sub, fwd_sub = tc_engine_subs(phenomena)
 
-        t = Thread(target=run_engine, args=[engine])
+        t = Thread(target=tc_run_engine, args=[engine])
         t.start()
 
         engine.receiver.add_data(1)
@@ -245,16 +247,16 @@ class TestInvalid:
 
     def test_times_receiver_negative(self):
         with pytest.raises(BoboEngineError):
-            tc.engine_subs([tc.phenomenon()], times_receiver=-1)
+            tc_engine_subs([tc_phenomenon()], times_receiver=-1)
 
     def test_times_decider_negative(self):
         with pytest.raises(BoboEngineError):
-            tc.engine_subs([tc.phenomenon()], times_decider=-1)
+            tc_engine_subs([tc_phenomenon()], times_decider=-1)
 
     def test_times_producer_negative(self):
         with pytest.raises(BoboEngineError):
-            tc.engine_subs([tc.phenomenon()], times_producer=-1)
+            tc_engine_subs([tc_phenomenon()], times_producer=-1)
 
     def test_times_forwarder_negative(self):
         with pytest.raises(BoboEngineError):
-            tc.engine_subs([tc.phenomenon()], times_forwarder=-1)
+            tc_engine_subs([tc_phenomenon()], times_forwarder=-1)

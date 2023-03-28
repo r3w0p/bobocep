@@ -14,17 +14,14 @@ from queue import Queue
 from threading import Thread, RLock
 from typing import Dict, Tuple, Optional, List
 
-from Crypto.Cipher import AES
-from Crypto.Random import get_random_bytes
-
-from bobocep.cep import BoboJSONableError, BoboJSONable
-from bobocep.cep.engine.decider import BoboDecider, BoboRunTuple
-from bobocep.cep.engine.decider import BoboDeciderSubscriber
+from bobocep.cep.engine.decider.decider import BoboDecider, BoboRunTuple
+from bobocep.cep.engine.decider.pubsub import BoboDeciderSubscriber
+from bobocep.cep.json import BoboJSONableError, BoboJSONable
+from bobocep.dist.crypto.crypto import BoboDistributedCrypto
 from bobocep.dist.device import BoboDevice, BoboDeviceManager
 from bobocep.dist.dist import BoboDistributed, BoboDistributedError, \
     BoboDistributedSystemError, BoboDistributedTimeoutError
 from bobocep.dist.pubsub import BoboDistributedSubscriber
-
 
 _KEY_COMPLETED = "completed"
 _KEY_HALTED = "halted"
@@ -35,16 +32,6 @@ _TYPE_PING = 1
 _TYPE_RESYNC = 2
 
 _FLAG_RESET = 1
-
-_UTF_8 = "UTF-8"
-_PAD_MODULO = 16
-_START_STR = "BOBO"
-_END_BYTES = "BOBO".encode(_UTF_8)
-_LEN_END_BYTES = len(_END_BYTES)
-
-_BYTES_AES_128 = 16
-_BYTES_AES_192 = 24
-_BYTES_AES_256 = 32
 
 _EXC_CLOSED = "distributed is closed"
 _EXC_RUNNING = "distributed is already running"
@@ -102,14 +89,13 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
     """
     An implementation of distributed BoboCEP that uses TCP for data
     transmission across the network.
-    Data are encrypted using AES-128, 192, or 256 encryption.
     """
 
     def __init__(self,
                  urn: str,
-                 aes_key: str,
                  decider: BoboDecider,
                  devices: List[BoboDevice],
+                 crypto: BoboDistributedCrypto,
                  max_size_incoming: int = 0,
                  max_size_outgoing: int = 0,
                  period_ping: int = 30,
@@ -122,9 +108,6 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                  timeout_send: int = 3,
                  timeout_receive: int = 3,
                  recv_bytes: int = 2048,
-                 pad_char: str = '\0',
-                 nonce_length: int = 16,
-                 mac_length: int = 16,
                  subscribe: bool = True,
                  flag_reset: bool = True):
         super().__init__()
@@ -142,6 +125,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         self._urn: str = urn
         self._decider: BoboDecider = decider
         self._devices: Dict[str, BoboDeviceManager] = {}
+        self._crypto: BoboDistributedCrypto = crypto
 
         self._period_ping: int = period_ping
         self._period_resync: int = period_resync
@@ -157,52 +141,32 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         for d in devices:
             if d.urn in self._devices:
                 raise BoboDistributedError(
-                    "duplicate device URN {}".format(d.urn))
+                    "Duplicate device URN: {}".format(d.urn))
 
             self._devices[d.urn] = BoboDeviceManager(
                 device=d,
                 flag_reset=flag_reset)
 
-        # Check devices for invalid keys
-        if len(self._devices.keys()) == 0 or \
-                (len(self._devices.keys()) == 1 and urn in self._devices):
+        # Ensure at least one device is listed
+        # Ensure that, if only one device is listed, it is itself
+        if (
+                len(self._devices.keys()) == 0 or
+                (len(self._devices.keys()) == 1 and urn in self._devices)
+        ):
             raise BoboDistributedError(
-                "must provide at least one other device")
+                "Devices must provide at least one other device")
 
-        # Check devices to ensure this distributed instance is present
+        # Check that itself is in the device list
         if urn not in self._devices:
             raise BoboDistributedError(
                 "URN not found in devices: {}".format(urn))
 
-        # Check pad char
-        if len(pad_char) != 1:
-            raise BoboDistributedError(
-                "pad_char must have a length of 1: '{}' has a length of {}"
-                .format(pad_char, len(pad_char)))
-
-        # Check AES key
-        num_bytes_aes_key = len(aes_key)
-        if (num_bytes_aes_key != _BYTES_AES_128 and
-                num_bytes_aes_key != _BYTES_AES_192 and
-                num_bytes_aes_key != _BYTES_AES_256):
-            raise BoboDistributedError(
-                "AES key must be 16, 24, or 32 bytes long "
-                "(respectively for AES-128, AES-192, or AES-256): "
-                "'{}' has {} bytes.".format(aes_key, len(aes_key)))
-
-        self._aes_key: bytes = aes_key.encode(_UTF_8)
         self._max_listen: int = max_listen
         self._timeout_accept: int = timeout_accept
         self._timeout_connect: int = timeout_connect
         self._timeout_send: int = timeout_send
         self._timeout_receive: int = timeout_receive
-
         self._recv_bytes: int = recv_bytes
-        self._pad_char: str = pad_char
-        self._nonce_length: int = nonce_length
-        self._mac_length: int = mac_length
-
-        self._msg_min_length: int = _PAD_MODULO + nonce_length + mac_length
 
         self._thread_incoming: Thread = Thread(target=self._tcp_incoming)
         self._thread_outgoing: Thread = Thread(target=self._tcp_outgoing)
@@ -453,7 +417,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     d.last_attempt = now
 
     def _tcp_send(self, d: BoboDeviceManager, msg_type: int,
-                  msg_flags: int, msg: str) -> int:
+                  msg_flags: int, msg_str: str) -> int:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         try:
@@ -464,10 +428,16 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
             s.connect((d.addr, d.port))
             s.settimeout(None)
 
-            msg_bytes = self._msg_wrap(
-                type_code=msg_type,
-                flags=msg_flags,
-                msg=msg)
+            mydev = self._devices[self._urn]
+
+            msg_str = "{} {} {} {} {}".format(
+                mydev.urn,
+                mydev.id_key,
+                msg_type,
+                msg_flags,
+                msg_str)
+
+            msg_bytes = self._crypto.encrypt(msg_str)
 
             s.settimeout(self._timeout_send)
             s.sendall(msg_bytes)
@@ -565,23 +535,27 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                 bytes_msg = client_s.recv(self._recv_bytes)
                 all_bytes.extend(bytes_msg)
 
-                if len(bytes_msg) >= self._msg_min_length and \
-                        bytes_msg[-len(_END_BYTES):] == _END_BYTES:
+                # If bytes received so far are at least the minimum length
+                # and end with the expected end bytes.
+                if (
+                        len(bytes_msg) >= self._crypto.min_length() and
+                        bytes_msg[-len(self._crypto.end_bytes()):]
+                        == self._crypto.end_bytes()
+                ):
 
                     try:
-                        plaintext = self._msg_unwrap(all_bytes)
+                        plaintext = self._crypto.decrypt(all_bytes)
                     except ValueError as e:
                         raise BoboDistributedTimeoutError(
-                            "Failed to unwrap incoming message bytes:", e)
+                            "Failed to unwrap incoming message bytes: {}"
+                            .format(e))
 
-                    pt_bobo, pt_urn, pt_id, pt_type, pt_flags, pt_json = \
+                    pt_urn, pt_id, pt_type, pt_flags, pt_json = \
                         self._split_plaintext(plaintext)
 
-                    # Check if message has expected starting string
-                    if pt_bobo != _START_STR:
-                        raise BoboDistributedSystemError(
-                            "Invalid start message '{}': expected '{}'."
-                            .format(pt_bobo, _START_STR))
+                    logging.debug(
+                        "{} _tcp_incoming_handle_client plaintext: {}"
+                        .format(self._urn, pt_urn))
 
                     # Check if URN is a recognised device
                     if pt_urn not in self._devices:
@@ -625,6 +599,34 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         finally:
             client_s.close()
 
+    def _split_plaintext(self, plaintext: str) \
+            -> Tuple[str, str, int, int, str]:
+        """
+        :param plaintext: The string to split.
+        :return: Tuple containing: URN, ID, type, flags, and JSON message
+        """
+        ix_delim = []
+
+        for i, c in enumerate(plaintext):
+            if c == ' ':
+                ix_delim.append(i)
+
+            if len(ix_delim) == 4:
+                break
+
+        if len(ix_delim) != 4:
+            raise BoboDistributedError(
+                "Invalid plaintext message: {}".format(plaintext))
+
+        # pt_urn, pt_id,, pt_type, pt_flags, pt_json
+        return (
+            plaintext[:ix_delim[0]],
+            plaintext[ix_delim[0] + 1:ix_delim[1]],
+            int(plaintext[ix_delim[1] + 1:ix_delim[2]]),
+            int(plaintext[ix_delim[2] + 1:ix_delim[3]]),
+            plaintext[ix_delim[3] + 1:]
+        )
+
     def _incoming_from_json(
             self, msg_str: str) -> Dict[str, List[BoboRunTuple]]:
         """
@@ -650,85 +652,6 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         except (BoboJSONableError, TypeError) as e:
             raise BoboDistributedSystemError(
                 "Failed to generate outgoing JSON: {}".format(e))
-
-    def _msg_wrap(self, type_code: int, flags: int, msg: str) -> bytes:
-        """
-        :param msg: Wraps JSON string in other data for transit.
-        :return: The bytes to transmit.
-        """
-        nonce = get_random_bytes(self._nonce_length)
-        cipher = AES.new(self._aes_key, AES.MODE_GCM,
-                         nonce=nonce, mac_len=self._mac_length)
-
-        mydev = self._devices[self._urn]
-        msg = "{} {} {} {} {} {}".format(
-            _START_STR, mydev.urn, mydev.id_key, type_code, flags, msg)
-
-        len_msg = len(msg)
-        if len_msg % _PAD_MODULO != 0:
-            msg = msg + (self._pad_char *
-                         (_PAD_MODULO - len_msg % _PAD_MODULO))
-
-        ciphertext, mac = cipher.encrypt_and_digest(  # type: ignore
-            msg.encode(_UTF_8))
-
-        # Append nonce, mac, end bytes
-        ciphertext_bytes = bytearray(ciphertext)
-        ciphertext_bytes.extend(nonce)
-        ciphertext_bytes.extend(mac)
-        ciphertext_bytes.extend(_END_BYTES)
-
-        return ciphertext_bytes
-
-    def _msg_unwrap(self, msg_bytes: bytes) -> str:
-        """
-        :param msg_bytes: Incoming bytes.
-        :return: Incoming JSON string with other data from transit.
-        """
-
-        # [CIPHERTEXT][NONCE][MAC][END_BYTES]
-        ciphertext = msg_bytes[:-(
-                self._nonce_length + self._mac_length + _LEN_END_BYTES)]
-        nonce = msg_bytes[
-                -(self._nonce_length + self._mac_length + _LEN_END_BYTES):
-                -(self._mac_length + _LEN_END_BYTES)]
-        mac = msg_bytes[
-              -(self._mac_length + _LEN_END_BYTES):
-              -_LEN_END_BYTES]
-
-        cipher = AES.new(self._aes_key, AES.MODE_GCM, nonce=nonce)
-        plaintext = cipher.decrypt_and_verify(  # type: ignore
-            ciphertext, mac).decode(_UTF_8).rstrip(self._pad_char)
-
-        return plaintext
-
-    def _split_plaintext(self, plaintext: str) \
-            -> Tuple[str, str, str, int, int, str]:
-        """
-        :param plaintext: The string to split.
-        :return: Incoming start text, URN, ID, type, and JSON string.
-        """
-        ix_delim = []
-
-        for i, c in enumerate(plaintext):
-            if c == ' ':
-                ix_delim.append(i)
-
-            if len(ix_delim) == 5:
-                break
-
-        if len(ix_delim) != 5:
-            raise BoboDistributedSystemError("Invalid plaintext message.")
-
-        # pt_bobo, pt_urn, pt_id,, pt_type, pt_flags, pt_json
-        return (
-            plaintext[:ix_delim[0]],
-            plaintext[ix_delim[0] + 1:ix_delim[1]],
-            plaintext[ix_delim[1] + 1:ix_delim[2]],
-            int(plaintext[ix_delim[2] + 1:ix_delim[3]]),
-            int(plaintext[ix_delim[3] + 1:ix_delim[4]]),
-            plaintext[ix_delim[4] + 1:]
-        )
 
     def join(self):
         with self._lock_local:

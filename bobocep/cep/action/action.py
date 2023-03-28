@@ -10,7 +10,6 @@ from abc import ABC, abstractmethod
 
 from bobocep import BoboError
 
-
 _EXC_NAME_LEN = "name must have a length greater than 0"
 
 

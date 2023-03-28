@@ -14,14 +14,13 @@ from bobocep.cep.engine.forwarder.pubsub import BoboForwarderSubscriber
 from bobocep.cep.engine.producer.pubsub import BoboProducerSubscriber
 from bobocep.cep.engine.receiver.pubsub import BoboReceiverPublisher, \
     BoboReceiverSubscriber
-from bobocep.cep.engine.task import BoboEngineTaskError, BoboEngineTask
 from bobocep.cep.engine.receiver.validator import BoboValidator
+from bobocep.cep.engine.task import BoboEngineTaskError, BoboEngineTask
 from bobocep.cep.event import BoboEvent, BoboEventSimple, BoboEventComplex, \
     BoboEventAction
-from bobocep.cep.gen import BoboGenTimestamp
 from bobocep.cep.gen.event import BoboGenEvent
 from bobocep.cep.gen.event_id import BoboGenEventID
-
+from bobocep.cep.gen.timestamp import BoboGenTimestamp
 
 _EXC_QUEUE_FULL = "queue is full (max size: {})"
 

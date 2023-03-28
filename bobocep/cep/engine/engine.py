@@ -7,11 +7,12 @@ Engine for complex event processing.
 """
 
 from threading import RLock
+
 from bobocep import BoboError
-from bobocep.cep.engine.receiver import BoboReceiver
-from bobocep.cep.engine.producer import BoboProducer
-from bobocep.cep.engine.decider import BoboDecider
-from bobocep.cep.engine.forwarder import BoboForwarder
+from bobocep.cep.engine.decider.decider import BoboDecider
+from bobocep.cep.engine.forwarder.forwarder import BoboForwarder
+from bobocep.cep.engine.producer.producer import BoboProducer
+from bobocep.cep.engine.receiver.receiver import BoboReceiver
 
 _EXC_TIMES_REC = "receiver times must be greater than or equal to 0"
 _EXC_TIMES_DEC = "decider times must be greater than or equal to 0"

@@ -7,9 +7,9 @@ from typing import Any, Tuple
 
 import pytest
 
-import tests.common as tc
 from bobocep.cep.event import BoboEventAction, BoboEvent, BoboEventFactory, \
     BoboEventSimple, BoboHistory, BoboEventComplex, BoboEventError
+from tests.test_bobocep.test_cep.test_event import tc_event_simple
 
 
 class TestValid:
@@ -53,7 +53,7 @@ class TestValid:
         pattern_name: str = "pattern_name"
 
         group_history: str = "group_history"
-        event_history: BoboEventSimple = tc.event_simple()
+        event_history: BoboEventSimple = tc_event_simple()
         history: BoboHistory = BoboHistory(events={
             group_history: [event_history]
         })

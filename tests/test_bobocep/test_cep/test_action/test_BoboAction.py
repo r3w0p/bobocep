@@ -4,12 +4,12 @@
 
 import pytest
 
-import tests.common as tc
-from bobocep.cep.action import BoboActionError
+from bobocep.cep.action.action import BoboActionError
+from tests.test_bobocep.test_cep.test_action import BoboActionTrue
 
 
 class TestInvalid:
 
     def test_name_length_0(self):
         with pytest.raises(BoboActionError):
-            tc.BoboActionTrue(name="")
+            BoboActionTrue(name="")

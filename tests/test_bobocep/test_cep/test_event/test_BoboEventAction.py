@@ -4,19 +4,19 @@
 
 import pytest
 
-import tests.common as tc
 from bobocep.cep.event import BoboEventAction, BoboEventError
 from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
+from tests.test_bobocep.test_cep.test_event import tc_event_action
 
 
 class TestValid:
 
     def test_to_str(self):
-        event = tc.event_action()
+        event = tc_event_action()
         assert event.__str__() == event.to_json_str()
 
     def test_to_from_json_str(self):
-        event_original = tc.event_action(data=123)
+        event_original = tc_event_action(data=123)
         json_event = event_original.to_json_str()
         event_new = BoboEventAction.from_json_str(json_event)
 
@@ -29,7 +29,7 @@ class TestValid:
         assert event_original.success == event_new.success
 
     def test_cast_str_to_int(self):
-        event = tc.event_action(data="123")
+        event = tc_event_action(data="123")
         assert type(event.data) == str
 
         event_cast = event.cast(int)

@@ -3,8 +3,9 @@
 # modified under the terms of the MIT License.
 
 import pytest
-import tests.common as tc
-from bobocep.dist import BoboDevice, BoboDistributedError
+
+from bobocep.dist.device import BoboDevice
+from bobocep.dist.dist import BoboDistributedError
 
 
 class TestValid:

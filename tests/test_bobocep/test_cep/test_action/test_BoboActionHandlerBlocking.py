@@ -4,9 +4,10 @@
 
 import pytest
 
-import tests.common as tc
 from bobocep.cep.action.handler import BoboActionHandlerBlocking, \
     BoboActionHandlerError
+from tests.test_bobocep.test_cep.test_action import BoboActionTrue
+from tests.test_bobocep.test_cep.test_event import tc_event_complex
 
 
 class TestValid:
@@ -15,7 +16,7 @@ class TestValid:
         handler = BoboActionHandlerBlocking(max_size=255)
 
         assert handler.size() == 0
-        handler.handle(tc.BoboActionTrue(), tc.event_complex())
+        handler.handle(BoboActionTrue(), tc_event_complex())
         assert handler.size() == 1
 
     def test_get_action_event_empty(self):
@@ -26,7 +27,7 @@ class TestValid:
     def test_get_action_event_not_empty(self):
         handler = BoboActionHandlerBlocking(max_size=255)
 
-        handler.handle(tc.BoboActionTrue(), tc.event_complex())
+        handler.handle(BoboActionTrue(), tc_event_complex())
         assert handler.get_action_event() is not None
 
 
@@ -34,7 +35,7 @@ class TestInvalid:
 
     def test_add_action_event_queue_full(self):
         handler = BoboActionHandlerBlocking(max_size=1)
-        handler.handle(tc.BoboActionTrue(), tc.event_complex())
+        handler.handle(BoboActionTrue(), tc_event_complex())
 
         with pytest.raises(BoboActionHandlerError):
-            handler.handle(tc.BoboActionTrue(), tc.event_complex())
+            handler.handle(BoboActionTrue(), tc_event_complex())

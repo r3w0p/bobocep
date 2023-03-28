@@ -4,20 +4,20 @@
 
 import pytest
 
-import tests.common as tc
-from bobocep.cep.phenomenon import BoboPhenomenonError, BoboPhenomenon
+from bobocep.cep.phenomenon import BoboPhenomenonError
+from tests.test_bobocep.test_cep.test_phenomenon import tc_phenomenon
 
 
 class TestInvalid:
 
     def test_name_length_0(self):
         with pytest.raises(BoboPhenomenonError):
-            tc.phenomenon(name="")
+            tc_phenomenon(name="")
 
     def test_datagen_too_few_parameters(self):
         with pytest.raises(BoboPhenomenonError):
-            tc.phenomenon(datagen=lambda p: None)
+            tc_phenomenon(datagen=lambda p: None)
 
     def test_datagen_too_many_parameters(self):
         with pytest.raises(BoboPhenomenonError):
-            tc.phenomenon(datagen=lambda p, h, a: None)
+            tc_phenomenon(datagen=lambda p, h, a: None)

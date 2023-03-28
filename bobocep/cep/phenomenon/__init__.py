@@ -6,4 +6,9 @@
 Phenomenon imports.
 """
 
-from bobocep.cep.phenomenon.phenomenon import BoboPhenomenon, BoboPhenomenonError
+from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder, \
+    BoboPatternBuilderError
+from bobocep.cep.phenomenon.pattern.pattern import BoboPattern, \
+    BoboPatternError
+from bobocep.cep.phenomenon.phenomenon import BoboPhenomenon, \
+    BoboPhenomenonError
