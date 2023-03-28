@@ -4,6 +4,11 @@ from bobocep import BoboError
 from bobocep.cep.event import BoboHistory
 from bobocep.cep.json import BoboJSONable
 
+_EXC_RUN_ID_LEN = "run ID must have a length greater than 0"
+_EXC_PHENOM_LEN = "phenomenon name must have a length greater than 0"
+_EXC_INDEX = "block index must be greater than 1"
+_EXC_HISTORY_LEN = "history must have at least 1 event"
+
 
 class BoboRunTupleError(BoboError):
     """
@@ -30,7 +35,17 @@ class BoboRunTuple(BoboJSONable):
                  history: BoboHistory):
         super().__init__()
 
-        # TODO validation
+        if len(run_id) == 0:
+            raise BoboRunTupleError(_EXC_RUN_ID_LEN)
+
+        if len(phenomenon_name) == 0:
+            raise BoboRunTupleError(_EXC_PHENOM_LEN)
+
+        if block_index < 1:
+            raise BoboRunTupleError(_EXC_INDEX)
+
+        if history.size() < 1:
+            raise BoboRunTupleError(_EXC_HISTORY_LEN)
 
         self._run_id: str = run_id
         self._phenomenon_name: str = phenomenon_name

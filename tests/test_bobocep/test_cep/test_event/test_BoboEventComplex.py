@@ -27,7 +27,7 @@ class TestValid:
         assert event_original.phenomenon_name == event_new.phenomenon_name
         assert event_original.pattern_name == event_new.pattern_name
         assert isinstance(event_original.history, BoboHistory)
-        assert event_original.history.all() == event_new.history.all()
+        assert event_original.history.all_events() == event_new.history.all_events()
 
     def test_cast_str_to_int(self):
         event = tc_event_complex(data="123")

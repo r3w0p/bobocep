@@ -53,8 +53,8 @@ class TestValid:
         assert g_ori[0].timestamp == g_new[0].timestamp
         assert g_ori[0].data == g_new[0].data
 
-        all_ori = history_original.all()
-        all_new = history_new.all()
+        all_ori = history_original.all_events()
+        all_new = history_new.all_events()
 
         assert len(all_ori) == 1
         assert len(all_new) == 1
@@ -65,7 +65,7 @@ class TestValid:
     def test_empty_history(self):
         history = BoboHistory(events={})
 
-        assert history.all() == tuple()
+        assert history.all_events() == tuple()
         assert history.first() is None
         assert history.last() is None
 
@@ -77,7 +77,7 @@ class TestValid:
 
         history = BoboHistory(events={group: [event]})
 
-        assert history.all() == (event,)
+        assert history.all_events() == (event,)
         assert history.group(group=group) == (event,)
         assert history.first() == event
         assert history.last() == event

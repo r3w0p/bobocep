@@ -26,14 +26,19 @@ _BYTES_AES_256: int = 32
 
 class BoboDistributedCryptoAES(BoboDistributedCrypto):
     """
-    AES encryption for distributed traffic. Data are encrypted using either
-    AES-128, AES-192, or AES-256 encryption.
+    AES encryption in GCM mode.
+    Data are encrypted using either AES-128, AES-192, or AES-256 encryption.
     """
 
     def __init__(self,
                  aes_key: str,
                  nonce_length: int = 16,
                  mac_length: int = 16):
+        """
+        :param aes_key: The AES key to use for encryption.
+        :param nonce_length: The nonce length.
+        :param mac_length: The MAC length.
+        """
         super().__init__()
         self._lock: RLock = RLock()
 

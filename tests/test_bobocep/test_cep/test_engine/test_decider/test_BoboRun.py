@@ -30,7 +30,7 @@ class TestValid:
         assert run.pattern == pattern
         assert run.block_index == 1
         assert run.history().size() == 1
-        assert run.history().all()[0].event_id == "event_id"
+        assert run.history().all_events()[0].event_id == "event_id"
         assert run.is_halted() is False
 
     def test_set_block(self):
@@ -46,7 +46,7 @@ class TestValid:
 
         assert run.block_index == 1
         assert run.history().size() == 1
-        assert run.history().all()[0].event_id == event_a.event_id
+        assert run.history().all_events()[0].event_id == event_a.event_id
         assert run.is_halted() is False
 
         run.set_block(2, BoboHistory({
@@ -56,8 +56,8 @@ class TestValid:
 
         assert run.block_index == 2
         assert run.history().size() == 2
-        assert run.history().all()[0].event_id == event_a.event_id
-        assert run.history().all()[1].event_id == event_b.event_id
+        assert run.history().all_events()[0].event_id == event_a.event_id
+        assert run.history().all_events()[1].event_id == event_b.event_id
         assert run.is_halted() is False
 
     def test_pattern_1_block_halt_complete_on_init(self):
@@ -461,7 +461,17 @@ class TestInvalid:
 
     def test_block_index_negative(self):
         with pytest.raises(BoboRunError):
-            tc_run_simple(tc_pattern(), tc_event_simple(), block_index=-1)
+            tc_run_simple(
+                tc_pattern(),
+                tc_event_simple(),
+                block_index=-1)
+
+    def test_history_no_events(self):
+        with pytest.raises(BoboRunError):
+            tc_run_simple(
+                tc_pattern(),
+                tc_event_simple(),
+                history=BoboHistory({}))
 
     def test_set_block_block_index_zero(self):
         pattern = tc_pattern(name="pattern_name", data_blocks=[1, 2, 3])

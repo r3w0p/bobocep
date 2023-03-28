@@ -13,6 +13,7 @@ from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
 from tests.test_bobocep.test_cep.test_action import BoboActionTrue
 from tests.test_bobocep.test_cep.test_engine.test_producer import \
     tc_producer_sub
+from tests.test_bobocep.test_cep.test_event import tc_event_simple
 from tests.test_bobocep.test_cep.test_phenomenon import tc_phenomenon
 
 
@@ -26,7 +27,7 @@ class TestValid:
 
         producer, subscriber = tc_producer_sub([phenom])
 
-        history = BoboHistory(events={})
+        history = BoboHistory(events={"pattern_group": [tc_event_simple()]})
 
         producer.on_decider_update(
             completed=[BoboRunTuple(
@@ -55,13 +56,15 @@ class TestValid:
         producer, subscriber = tc_producer_sub([tc_phenomenon()])
         assert producer.size() == 0
 
+        history = BoboHistory(events={"pattern_group": [tc_event_simple()]})
+
         producer.on_decider_update(
             completed=[BoboRunTuple(
                 run_id="run_id",
                 phenomenon_name="phenom",
                 pattern_name="pattern",
                 block_index=3,
-                history=BoboHistory({})
+                history=history
             )],
             halted=[],
             updated=[]
@@ -83,13 +86,15 @@ class TestValid:
         assert producer.is_closed()
         assert producer.size() == 0
 
+        history = BoboHistory(events={"pattern_group": [tc_event_simple()]})
+
         producer.on_decider_update(
             completed=[BoboRunTuple(
                 run_id="run_id",
                 phenomenon_name="phenom",
                 pattern_name="pattern",
                 block_index=3,
-                history=BoboHistory({})
+                history=history
             )],
             halted=[],
             updated=[]
@@ -106,13 +111,15 @@ class TestInvalid:
         producer, subscriber = tc_producer_sub(
             [phenom_1, phenom_2], max_size=1)
 
+        history = BoboHistory(events={"pattern_group": [tc_event_simple()]})
+
         producer.on_decider_update(
             completed=[BoboRunTuple(
                 run_id="run_id",
                 phenomenon_name="phenom_1",
                 pattern_name="pattern",
                 block_index=3,
-                history=BoboHistory({})
+                history=history
             )],
             halted=[],
             updated=[]
@@ -125,7 +132,7 @@ class TestInvalid:
                     phenomenon_name="phenom_2",
                     pattern_name="pattern",
                     block_index=3,
-                    history=BoboHistory({})
+                    history=history
                 )],
                 halted=[],
                 updated=[]
@@ -142,13 +149,15 @@ class TestInvalid:
     def test_decider_run_phenomenon_does_not_exist(self):
         producer, subscriber = tc_producer_sub([tc_phenomenon()], max_size=255)
 
+        history = BoboHistory(events={"pattern_group": [tc_event_simple()]})
+
         producer.on_decider_update(
             completed=[BoboRunTuple(
                 run_id="run_id",
                 phenomenon_name="phenom_invalid",
                 pattern_name="pattern",
                 block_index=3,
-                history=BoboHistory({})
+                history=history
             )],
             halted=[],
             updated=[]
@@ -160,13 +169,15 @@ class TestInvalid:
     def test_decider_run_pattern_does_not_exist(self):
         producer, subscriber = tc_producer_sub([tc_phenomenon()], max_size=255)
 
+        history = BoboHistory(events={"pattern_group": [tc_event_simple()]})
+
         producer.on_decider_update(
             completed=[BoboRunTuple(
                 run_id="run_id",
                 phenomenon_name="phenom_invalid",
                 pattern_name="pattern",
                 block_index=3,
-                history=BoboHistory({})
+                history=history
             )],
             halted=[],
             updated=[]

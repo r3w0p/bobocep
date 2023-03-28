@@ -19,9 +19,6 @@ from tests.test_bobocep.test_dist import StubDistributedSubscriber, \
     tc_run_distributed_tcp
 
 
-# TODO test addr change
-
-
 class TestValid:
 
     def test_send_completed_halted_updated_to_another_device_aes(self):
@@ -119,5 +116,5 @@ class TestValid:
             assert idistsub[0].block_index == irun[0].block_index
             assert idistsub[0].history.size() == 1 and \
                    irun[0].history.size() == 1
-            assert idistsub[0].history.all()[0].event_id == \
-                   irun[0].history.all()[0].event_id
+            assert idistsub[0].history.all_events()[0].event_id == \
+                   irun[0].history.all_events()[0].event_id

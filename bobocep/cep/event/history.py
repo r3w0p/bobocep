@@ -68,7 +68,13 @@ class BoboHistory(BoboJSONable):
 
         return count
 
-    def all(self) -> Tuple[BoboEvent, ...]:
+    def all_groups(self) -> Tuple[str, ...]:
+        """
+        :return: All history groups in a tuple.
+        """
+        return tuple(self._events.keys())
+
+    def all_events(self) -> Tuple[BoboEvent, ...]:
         """
         :return: All history events in a tuple.
         """

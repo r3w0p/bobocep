@@ -26,8 +26,6 @@ class BoboDistributedSubscriber(ABC):
 class BoboDistributedPublisher(ABC):
     """A distributed publisher interface."""
 
-    # TODO refactor subscribe methods elsewhere so that they are thread safe
-
     @abstractmethod
     def subscribe(self, subscriber: BoboDistributedSubscriber):
         """"""

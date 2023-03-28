@@ -8,6 +8,7 @@ from bobocep.cep.event import BoboEvent, BoboHistory
 from bobocep.cep.gen.event_id import BoboGenEventID, BoboGenEventIDUnique
 from bobocep.cep.phenomenon.pattern.pattern import BoboPattern
 from bobocep.cep.phenomenon.phenomenon import BoboPhenomenon
+from tests.test_bobocep.test_cep.test_event import tc_event_simple
 
 
 class StubDeciderSubscriber(BoboDeciderSubscriber):
@@ -51,13 +52,14 @@ def tc_run_simple(
         event: BoboEvent,
         run_id: str = "run_id",
         phenomenon_name: str = "phenomenon",
-        block_index: int = 1):
+        block_index: int = 1,
+        history: Optional[BoboHistory] = None):
     return BoboRun(
         run_id=run_id,
         phenomenon_name=phenomenon_name,
         pattern=pattern,
         block_index=block_index,
-        history=BoboHistory({
+        history=history if history is not None else BoboHistory({
             pattern.blocks[0].group: [event]
         })
     )
@@ -68,11 +70,13 @@ def tc_run_tuple(
         phenomenon_name: str = "phenomenon_name",
         pattern_name: str = "pattern_name",
         block_index: int = 1,
-        history: BoboHistory = BoboHistory({})):
+        history: Optional[BoboHistory] = None):
     return BoboRunTuple(
         run_id=run_id,
         phenomenon_name=phenomenon_name,
         pattern_name=pattern_name,
         block_index=block_index,
-        history=history
+        history=history if history is not None else BoboHistory({
+            "pattern_group": [tc_event_simple()]
+        })
     )

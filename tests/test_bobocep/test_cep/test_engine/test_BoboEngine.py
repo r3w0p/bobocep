@@ -83,7 +83,7 @@ class TestValid:
         assert pro_sub.output[0].data is True
         assert pro_sub.output[0].phenomenon_name == "phenomenon_a"
         assert pro_sub.output[0].pattern_name == "pattern_123"
-        assert pro_sub.output[0].history.all() == dec_history.all()
+        assert pro_sub.output[0].history.all_events() == dec_history.all_events()
 
         # Forwarder output: action event
         assert len(fwd_sub.output) == 1
@@ -173,7 +173,7 @@ class TestValid:
         assert pro_sub.output[0].data is True
         assert pro_sub.output[0].phenomenon_name == "phenomenon_a"
         assert pro_sub.output[0].pattern_name == "pattern_123"
-        assert pro_sub.output[0].history.all() == dec_history.all()
+        assert pro_sub.output[0].history.all_events() == dec_history.all_events()
 
         # Forwarder output: action event
         assert len(fwd_sub.output) == 1

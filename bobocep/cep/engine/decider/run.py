@@ -10,6 +10,7 @@ from bobocep.cep.phenomenon.pattern.pattern import BoboPattern, \
 _EXC_RUN_ID_LEN = "run ID must have a length greater than 0"
 _EXC_PHENOM_LEN = "phenomenon name must have a length greater than 0"
 _EXC_INDEX = "block index must be greater than 1"
+_EXC_HISTORY_LEN = "history must have at least 1 event"
 
 
 class BoboRunError(BoboError):
@@ -53,12 +54,10 @@ class BoboRun:
             raise BoboRunError(_EXC_PHENOM_LEN)
 
         if block_index < 1:
-            raise BoboRunError(_EXC_INDEX.format)
+            raise BoboRunError(_EXC_INDEX)
 
-        # TODO Exception to check that all of the necessary groups in the
-        #  new history have at least one event each in them,
-        #  up to the given block index.
-        #  Do this for set_block also.
+        if history.size() < 1:
+            raise BoboRunError(_EXC_HISTORY_LEN)
 
         self._run_id: str = run_id
         self._phenomenon_name: str = phenomenon_name
@@ -135,7 +134,7 @@ class BoboRun:
         with self._lock:
             return self._halted
 
-    def to_tuple(self) -> 'BoboRunTuple':
+    def to_tuple(self) -> BoboRunTuple:
         """
         :return: A BoboRunTuple representation of the run.
         """
