@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 
 """
-Distributed complex event processing via TCP.
+Distributed `BoboCEP` via TCP.
 """
 
 import json
@@ -20,9 +20,10 @@ from Crypto.Random import get_random_bytes
 from bobocep.cep import BoboJSONableError, BoboJSONable
 from bobocep.cep.engine.decider import BoboDecider, BoboRunTuple
 from bobocep.cep.engine.decider import BoboDeciderSubscriber
-from bobocep.dist import *
+from bobocep.dist.device import BoboDevice, BoboDeviceManager
+from bobocep.dist.dist import BoboDistributed, BoboDistributedError, \
+    BoboDistributedSystemError, BoboDistributedTimeoutError
 from bobocep.dist.pubsub import BoboDistributedSubscriber
-from bobocep.dist.tcp.manager import BoboDeviceManager
 
 
 _KEY_COMPLETED = "completed"

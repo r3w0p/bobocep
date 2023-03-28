@@ -2,10 +2,9 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-import pytest
 import tests.common as tc
 from bobocep.dist import BoboDevice
-from bobocep.dist.tcp.manager import BoboDeviceManager
+from bobocep.dist.device import BoboDeviceManager
 
 
 class TestValid:

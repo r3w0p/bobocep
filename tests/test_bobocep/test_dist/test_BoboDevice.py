@@ -53,7 +53,7 @@ class TestInvalid:
                 urn="urn:test",
                 id_key="abc123")
 
-    def test_addr_contains_space(self):
+    def test_addr_contains_inner_space(self):
         with pytest.raises(BoboDistributedError):
             BoboDevice(
                 addr="127 1",
@@ -85,7 +85,7 @@ class TestInvalid:
                 urn="",
                 id_key="abc123")
 
-    def test_urn_contains_space(self):
+    def test_urn_contains_inner_space(self):
         with pytest.raises(BoboDistributedError):
             BoboDevice(
                 addr="127.0.0.1",
@@ -101,7 +101,7 @@ class TestInvalid:
                 urn="urn:test",
                 id_key="")
 
-    def test_id_key_contains_space(self):
+    def test_id_key_contains_inner_space(self):
         with pytest.raises(BoboDistributedError):
             BoboDevice(
                 addr="127.0.0.1",
@@ -124,7 +124,7 @@ class TestInvalid:
 
         assert device.addr == addr_original
 
-    def test_set_addr_contains_space(self):
+    def test_set_addr_contains_inner_space(self):
         addr_original = "127.0.0.1"
         addr_new = "192 2"
 

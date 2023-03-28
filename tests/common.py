@@ -6,9 +6,10 @@
 Various helper functions, classes, etc. that are common among test cases.
 """
 
+# (putting dist imports first seems to solve "circular import" error...)
+from bobocep.dist import *
 from threading import RLock
 from typing import Callable, List, Any, Optional
-
 from bobocep.cep.event import *
 from bobocep.cep.action import *
 from bobocep.cep.gen import *
@@ -19,7 +20,6 @@ from bobocep.cep.engine.decider import *
 from bobocep.cep.engine.producer import *
 from bobocep.cep.engine.forwarder import *
 from bobocep.cep.engine import *
-from bobocep.dist import *
 
 
 class BoboActionTrue(BoboAction):
