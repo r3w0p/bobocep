@@ -21,7 +21,7 @@ from tests.test_bobocep.test_dist import StubDistributedSubscriber, \
 
 class TestValid:
 
-    def test_send_completed_halted_updated_to_another_device_aes(self):
+    def test_sync_1c_1h_1u_1device_aes(self):
         logging.getLogger().setLevel(logging.DEBUG)
 
         completed: List[BoboRunTuple] = [
@@ -71,6 +71,8 @@ class TestValid:
             decider=decider,
             devices=devices,
             crypto=BoboDistributedCryptoAES("1234567890ABCDEF"),
+            period_ping=30,
+            period_resync=60,
             subscribe=False,  # to stop interference by decider
             flag_reset=False  # to prevent initial FORCE_RESYNC
         )
@@ -78,9 +80,9 @@ class TestValid:
         dist_sub = StubDistributedSubscriber()
         dist.subscribe(dist_sub)
 
-        # Sets Distributed to "OK Period"
-        dist._devices[devices[0].urn].last_comms = BoboDistributedTCP._now()
-        dist._devices[devices[1].urn].last_comms = BoboDistributedTCP._now()
+        # Sets Distributed to within "SYNC Period" for "remote device"
+        last_comms = BoboDistributedTCP._now()
+        dist._devices[devices[1].urn].last_comms = last_comms
 
         t = Thread(target=tc_run_distributed_tcp, args=[dist])
         t.start()
@@ -118,3 +120,51 @@ class TestValid:
                    irun[0].history.size() == 1
             assert idistsub[0].history.all_events()[0].event_id == \
                    irun[0].history.all_events()[0].event_id
+
+    def test_ping_aes(self):
+        logging.getLogger().setLevel(logging.DEBUG)
+
+        devices = [
+            BoboDevice(
+                addr="127.0.0.1",
+                port=8080,
+                urn="urn:dist:1",
+                id_key="1111111111"),
+            BoboDevice(
+                addr="127.0.0.1",
+                port=8080,
+                urn="urn:dist:2",
+                id_key="2222222222")
+        ]
+
+        decider, dec_sub = tc_decider_sub([tc_phenomenon()])
+
+        dist = BoboDistributedTCP(
+            urn="urn:dist:1",
+            decider=decider,
+            devices=devices,
+            crypto=BoboDistributedCryptoAES("1234567890ABCDEF"),
+            period_ping=30,
+            period_resync=60,
+            subscribe=False,  # to stop interference by decider
+            flag_reset=False  # to prevent initial FORCE_RESYNC
+        )
+
+        dist_sub = StubDistributedSubscriber()
+        dist.subscribe(dist_sub)
+
+        # Sets Distributed to within "PING Period" for "remote device"
+        last_comms = BoboDistributedTCP._now() - 35
+        dist._devices[devices[1].urn].last_comms = last_comms
+
+        t = Thread(target=tc_run_distributed_tcp, args=[dist])
+        t.start()
+
+        sleep(2)
+
+        dist.close()
+        dist.join()
+        t.join()
+
+        # "Remote device" now within "SYNC Period"
+        assert dist._devices[devices[1].urn].last_comms > last_comms

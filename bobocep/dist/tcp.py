@@ -295,7 +295,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                         if (now - d.last_attempt) > self._attempt_ping:
                             outlist.append((d, _TYPE_PING))
 
-                    # If device is within the "OK Period"...
+                    # If device is within the "SYNC Period"...
                     else:
                         # ...and there is something to sync...
                         if not self._queue_outgoing.empty():
@@ -372,6 +372,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                 elif msg_type == _TYPE_SYNC:
                     # Get data from queue
                     if cache_sync_dict is None:
+                        # (The check for empty queue was already made above)
                         cache_sync_dict = self._queue_outgoing.get_nowait()
 
                     # Get device's stash of unsent data
@@ -554,8 +555,9 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                         self._split_plaintext(plaintext)
 
                     logging.debug(
-                        "{} _tcp_incoming_handle_client plaintext: {}"
-                        .format(self._urn, pt_urn))
+                        "{} _tcp_incoming_handle_client: "
+                        "urn={} type={} flags={}"
+                        .format(self._urn, pt_urn, pt_type, pt_flags))
 
                     # Check if URN is a recognised device
                     if pt_urn not in self._devices:
@@ -578,8 +580,11 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                                     device.urn, device.addr, client_addr))
                         device.addr = client_addr
 
-                    if pt_type == _TYPE_SYNC or _TYPE_RESYNC:
+                    if pt_type == _TYPE_SYNC or pt_type == _TYPE_RESYNC:
                         incoming = self._incoming_from_json(pt_json)
+
+                        logging.debug("{} _tcp_incoming_handle_client data={}"
+                                      .format(self._urn, incoming))
 
                         # Add incoming data to queue
                         if not self._queue_incoming.full():

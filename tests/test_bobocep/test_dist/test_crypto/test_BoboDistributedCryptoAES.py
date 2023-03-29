@@ -56,6 +56,15 @@ class TestValid:
 
         assert plaintext == decrypted
 
+    def test_encrypt_string_length_16(self):
+        crypto = BoboDistributedCryptoAES(aes_key="1234567890123456")
+
+        plaintext: str = "1234567890123456"
+        ciphertext: bytes = crypto.encrypt(plaintext)
+        decrypted: str = crypto.decrypt(ciphertext)
+
+        assert plaintext == decrypted
+
 
 class TestInvalid:
 
