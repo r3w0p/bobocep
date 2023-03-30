@@ -127,12 +127,12 @@ class TestValid:
         devices = [
             BoboDevice(
                 addr="127.0.0.1",
-                port=8080,
+                port=8081,
                 urn="urn:dist:1",
                 id_key="1111111111"),
             BoboDevice(
                 addr="127.0.0.1",
-                port=8080,
+                port=8081,
                 urn="urn:dist:2",
                 id_key="2222222222")
         ]
