@@ -147,19 +147,12 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                 device=d,
                 flag_reset=flag_reset)
 
-        # Ensure at least one device is listed
-        # Ensure that, if only one device is listed, it is itself
-        if (
-                len(self._devices.keys()) == 0 or
-                (len(self._devices.keys()) == 1 and urn in self._devices)
-        ):
+        # Ensure at least two devices are listed, one of which is this device
+        if (len(self._devices.keys()) < 2) or (urn not in self._devices):
             raise BoboDistributedError(
-                "Devices must provide at least one other device")
-
-        # Check that itself is in the device list
-        if urn not in self._devices:
-            raise BoboDistributedError(
-                "URN not found in devices: {}".format(urn))
+                "Devices list must contain at least 2 devices, one of which"
+                " is this device ({}), found: {}"
+                .format(urn, list(self._devices.keys())))
 
         self._max_listen: int = max_listen
         self._timeout_accept: int = timeout_accept
@@ -658,21 +651,24 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
             raise BoboDistributedSystemError(
                 "Failed to generate outgoing JSON: {}".format(e))
 
-    def join(self):
+    def join(self) -> None:
         with self._lock_local:
             self._thread_incoming.join()
             self._thread_outgoing.join()
 
-    def close(self):
+    def close(self) -> None:
         with self._lock_local:
             if self._closed:
-                raise BoboDistributedError(_EXC_CLOSED)
+                return
 
-            logging.debug("{} close distributed".format(self._urn))
-            self._closed = True
+            try:
+                logging.debug("{} close distributed".format(self._urn))
 
-            with self._lock_in_out:
-                self._thread_closed = True
+                with self._lock_in_out:
+                    self._thread_closed = True
+
+            finally:
+                self._closed = True
 
     def is_closed(self) -> bool:
         with self._lock_local:
