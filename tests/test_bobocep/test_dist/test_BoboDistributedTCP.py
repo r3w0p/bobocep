@@ -94,7 +94,7 @@ class TestValid:
             halted=halted,
             updated=updated)
 
-        sleep(1)
+        sleep(3)
 
         dist.close()
         dist.join()
@@ -160,7 +160,7 @@ class TestValid:
         t = Thread(target=tc_run_distributed_tcp, args=[dist])
         t.start()
 
-        sleep(2)
+        sleep(3)
 
         dist.close()
         dist.join()
