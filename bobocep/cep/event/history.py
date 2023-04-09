@@ -2,6 +2,10 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
+"""
+Event history.
+"""
+
 from json import dumps, loads
 from typing import Dict, List, Optional, Tuple
 
@@ -107,20 +111,37 @@ class BoboHistory(BoboJSONable):
         """
         return self._last
 
-    def to_json_str(self) -> str:
+    def to_json_dict(self) -> dict:
+        """
+        :return: A JSON `dict` representation of the history.
+        """
         d: Dict[str, List[BoboEvent]] = {}
 
         for key in self._events:
             d[key] = [e for e in self._events[key]]
 
-        return dumps(d, default=lambda o: o.to_json_str())
+        return d
+
+    def to_json_str(self) -> str:
+        """
+        :return: A JSON `str` representation of the history.
+        """
+        return dumps(self.to_json_dict(), default=lambda o: o.to_json_str())
 
     @staticmethod
     def from_json_str(j: str) -> 'BoboHistory':
-        return BoboHistory.from_dict(loads(j))
+        """
+        :param j: A JSON `str` representation of the history.
+        :return: A new instance of the history.
+        """
+        return BoboHistory.from_json_dict(loads(j))
 
     @staticmethod
-    def from_dict(d: dict) -> 'BoboHistory':
+    def from_json_dict(d: dict) -> 'BoboHistory':
+        """
+        :param d: A JSON `dict` representation of the history.
+        :return: A new instance of the history.
+        """
         from bobocep.cep.event.factory import BoboEventFactory
 
         events: Dict[str, List[BoboEvent]] = {}
@@ -131,4 +152,7 @@ class BoboHistory(BoboJSONable):
         return BoboHistory(events=events)
 
     def __str__(self) -> str:
+        """
+        :return: A JSON `str` representation of the history.
+        """
         return self.to_json_str()

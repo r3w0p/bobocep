@@ -2,6 +2,10 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
+"""
+Receiver publish-subscribe classes.
+"""
+
 from abc import ABC, abstractmethod
 
 from bobocep.cep.event import BoboEvent

@@ -2,7 +2,9 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-"""Determines which data are able to enter the system."""
+"""
+Receiver data validators.
+"""
 
 from abc import ABC, abstractmethod
 from json import dumps
@@ -23,7 +25,9 @@ class BoboValidator(ABC):
 
 
 class BoboValidatorAll(BoboValidator):
-    """Validator that accepts all data."""
+    """
+    Validator that accepts all data.
+    """
 
     def is_valid(self, data: Any) -> bool:
         """
@@ -33,8 +37,10 @@ class BoboValidatorAll(BoboValidator):
 
 
 class BoboValidatorJSONable(BoboValidator):
-    """Validates whether the data type is JSONable. If the data are a
-    BoboEvent, then the event's data are checked instead."""
+    """
+    Validates whether the data type is JSONable. If the data are a
+    BoboEvent, then the event's data are checked instead.
+    """
 
     def is_valid(self, data: Any) -> bool:
         """
@@ -53,8 +59,10 @@ class BoboValidatorJSONable(BoboValidator):
 
 
 class BoboValidatorType(BoboValidator):
-    """Validates whether the entity type matches any of the given data types.
-    If the data are a BoboEvent, then the event's data are checked instead."""
+    """
+    Validates whether the entity type matches any of the given data types.
+    If the data are a BoboEvent, then the event's data are checked instead.
+    """
 
     def __init__(self,
                  types: List[type],

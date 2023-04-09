@@ -2,12 +2,17 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
+"""
+Abstract event.
+"""
+
 from abc import ABC, abstractmethod
 from typing import Any
 
 from bobocep import BoboError
-from bobocep.cep.event.constants import *
 from bobocep.cep.json import BoboJSONable
+
+_EXC_ID_LEN = "event ID must have a length greater than 0"
 
 
 class BoboEventError(BoboError):
@@ -40,7 +45,7 @@ class BoboEvent(BoboJSONable, ABC):
         super().__init__()
 
         if len(event_id) == 0:
-            raise BoboEventError(EXC_ID_LEN)
+            raise BoboEventError(_EXC_ID_LEN)
 
         self._event_id: str = event_id
         self._timestamp: int = timestamp
@@ -49,17 +54,9 @@ class BoboEvent(BoboJSONable, ABC):
     @abstractmethod
     def cast(self, dtype: type) -> 'BoboEvent':
         """
-        :param dtype: The type to which the data is cast.
-        :return: A new instance of the BoboEvent with its data cast to `dtype`
-            and all other properties identical to the original BoboEvent.
-        """
-
-    @staticmethod
-    @abstractmethod
-    def from_dict(d: dict) -> 'BoboEvent':
-        """
-        :param d: A BoboEvent in `dict` format.
-        :return: A BoboEvent instance with the properties defined in `d`.
+        :param dtype: The type to which the event's data is cast.
+        :return: A new BoboEvent instance with its data cast to `dtype`
+            and all other properties identical to the original event.
         """
 
     @property

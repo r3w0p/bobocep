@@ -3,8 +3,7 @@
 # modified under the terms of the MIT License.
 
 """
-A phenomenon, satisfied by patterns of events, which facilitates the
-generating of complex events.
+A phenomenon.
 """
 
 from inspect import signature
@@ -28,7 +27,8 @@ class BoboPhenomenonError(BoboError):
 
 class BoboPhenomenon:
     """
-    A phenomenon.
+    A phenomenon, satisfied by patterns of events, which facilitates the
+    generating of complex events
     """
 
     def __init__(self,
@@ -37,6 +37,14 @@ class BoboPhenomenon:
                  action: Optional[BoboAction] = None,
                  datagen: Optional[Callable] = None,
                  retain: bool = True):
+        """
+        :param name: Phenomenon name.
+        :param patterns: Phenomenon patterns.
+        :param action: Phenomenon action.
+        :param datagen: Phenomenon datagen.
+        :param retain: If `True`, retains datagen callable as an object
+            variable to prevent garbage collection of it.
+        """
         super().__init__()
 
         if len(name) == 0:
@@ -63,27 +71,27 @@ class BoboPhenomenon:
     @property
     def name(self) -> str:
         """
-        Get phenomenon name.
+        :return: Phenomenon name.
         """
         return self._name
 
     @property
     def patterns(self) -> Tuple[BoboPattern, ...]:
         """
-        Get phenomenon patterns.
+        :return: Phenomenon patterns.
         """
         return self._patterns
 
     @property
     def datagen(self) -> Optional[Callable]:
         """
-        Get phenomenon datagen.
+        :return: Phenomenon datagen, or `None`.
         """
         return self._datagen
 
     @property
     def action(self) -> Optional[BoboAction]:
         """
-        Get phenomenon action.
+        :return: Phenomenon action, or `None`.
         """
         return self._action

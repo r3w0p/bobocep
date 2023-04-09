@@ -2,15 +2,15 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-from threading import RLock
-from typing import List, Tuple
-
-from bobocep.cep.engine.decider.runtup import BoboRunTuple
-from bobocep.dist.dist import BoboDistributedError
-
 """
 Devices on the network.
 """
+
+from threading import RLock
+from typing import List, Tuple
+
+from bobocep.cep.engine.decider.runserial import BoboRunSerial
+from bobocep.dist.dist import BoboDistributedError
 
 _EXC_ADDR_LEN = "address must have a length greater than 0"
 _EXC_ADDR_SPACE = "address must not contain any spaces"
@@ -31,6 +31,12 @@ class BoboDevice:
                  port: int,
                  urn: str,
                  id_key: str):
+        """
+        :param addr: Device address.
+        :param port: Device port.
+        :param urn: Device URN.
+        :param id_key: Device ID key.
+        """
         super().__init__()
         self._lock: RLock = RLock()
 
@@ -68,11 +74,19 @@ class BoboDevice:
 
     @property
     def addr(self) -> str:
+        """
+        :return: Device address.
+        """
         with self._lock:
             return self._addr
 
     @addr.setter
     def addr(self, addr: str) -> None:
+        """
+        Set device address.
+
+        :param addr: The new address.
+        """
         with self._lock:
             addr = addr.strip()
 
@@ -86,14 +100,23 @@ class BoboDevice:
 
     @property
     def port(self) -> int:
+        """
+        :return: Device port.
+        """
         return self._port
 
     @property
     def urn(self) -> str:
+        """
+        :return: Device URN.
+        """
         return self._urn
 
     @property
     def id_key(self) -> str:
+        """
+        :return: Device ID key.
+        """
         return self._id_key
 
 
@@ -121,9 +144,9 @@ class BoboDeviceManager:
         self._last_comms: int = 0
         self._last_attempt: int = 0
 
-        self._stash_completed: List[BoboRunTuple] = []
-        self._stash_halted: List[BoboRunTuple] = []
-        self._stash_updated: List[BoboRunTuple] = []
+        self._stash_completed: List[BoboRunSerial] = []
+        self._stash_halted: List[BoboRunSerial] = []
+        self._stash_updated: List[BoboRunSerial] = []
 
     @property
     def addr(self) -> str:
@@ -135,6 +158,11 @@ class BoboDeviceManager:
 
     @addr.setter
     def addr(self, addr: str) -> None:
+        """
+        Set device address.
+
+        :param addr: The new address.
+        """
         with self._lock:
             self._device.addr = addr
 
@@ -169,6 +197,9 @@ class BoboDeviceManager:
 
     @flag_reset.setter
     def flag_reset(self, flag_reset: bool) -> None:
+        """
+        :param flag_reset: `True` to set flag for resetting the device.
+        """
         with self._lock:
             self._flag_reset = flag_reset
 
@@ -182,11 +213,17 @@ class BoboDeviceManager:
 
     @last_comms.setter
     def last_comms(self, last_comms: int) -> None:
+        """
+        :param last_comms: The last communication with the device.
+        """
         with self._lock:
             self._last_comms = max(0, last_comms)
 
     @property
     def last_attempt(self) -> int:
+        """
+        :return: Last attempted communication with the device.
+        """
         with self._lock:
             return self._last_attempt
 
@@ -199,34 +236,55 @@ class BoboDeviceManager:
             self._last_attempt = max(0, last_attempt)
 
     def reset_last(self) -> None:
+        """
+        Resets both the last communication and last attempted communication
+        time with this device to 0.
+        """
         with self._lock:
             self._last_comms = 0
             self._last_attempt = 0
 
-    def stash(self) -> Tuple[List[BoboRunTuple],
-                             List[BoboRunTuple],
-                             List[BoboRunTuple]]:
+    def stash(self) -> Tuple[List[BoboRunSerial],
+    List[BoboRunSerial],
+    List[BoboRunSerial]]:
+        """
+        :return: The device's stash.
+        """
         with self._lock:
             return self._stash_completed, \
-                   self._stash_halted, \
-                   self._stash_updated
+                self._stash_halted, \
+                self._stash_updated
 
     def append_stash(self,
-                     completed: List[BoboRunTuple],
-                     halted: List[BoboRunTuple],
-                     updated: List[BoboRunTuple]):
+                     completed: List[BoboRunSerial],
+                     halted: List[BoboRunSerial],
+                     updated: List[BoboRunSerial]) -> None:
+        """
+        Append runs to stash.
+
+        :param completed: Completed runs to append.
+        :param halted: Halted runs to append.
+        :param updated: Updated runs to append.
+        """
         with self._lock:
             self._stash_completed.extend(completed)
             self._stash_halted.extend(halted)
             self._stash_updated.extend(updated)
 
     def size_stash(self) -> int:
+        """
+        :return: The stash size, equal to all completed, halted,
+            and updated runs in the stash.
+        """
         with self._lock:
             return len(self._stash_completed) + \
-                   len(self._stash_halted) + \
-                   len(self._stash_updated)
+                len(self._stash_halted) + \
+                len(self._stash_updated)
 
     def clear_stash(self) -> None:
+        """
+        Removes all items in the stash.
+        """
         with self._lock:
             self._stash_completed = []
             self._stash_halted = []

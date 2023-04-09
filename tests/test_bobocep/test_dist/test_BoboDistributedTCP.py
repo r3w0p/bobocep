@@ -8,7 +8,7 @@ from typing import List
 
 import pytest
 
-from bobocep.cep.engine.decider.runtup import BoboRunTuple
+from bobocep.cep.engine.decider.runserial import BoboRunSerial
 from bobocep.dist.crypto.aes import BoboDistributedCryptoAES
 from bobocep.dist.device import BoboDevice
 from bobocep.dist.dist import BoboDistributedError
@@ -30,32 +30,32 @@ class TestValid:
     def test_sync_1c_1h_1u_1remote_aes(self):
         logging.getLogger().setLevel(logging.DEBUG)
 
-        completed: List[BoboRunTuple] = [
+        completed: List[BoboRunSerial] = [
             tc_run_simple(
                 tc_pattern(name="pattern_completed"),
                 tc_event_simple(event_id="event_id_completed"),
                 run_id="run_id_completed",
                 phenomenon_name="phenom_name_completed",
                 block_index=1
-            ).to_tuple()]
+            ).serialize()]
 
-        halted: List[BoboRunTuple] = [
+        halted: List[BoboRunSerial] = [
             tc_run_simple(
                 tc_pattern(name="pattern_halted"),
                 tc_event_simple(event_id="event_id_halted"),
                 run_id="run_id_halted",
                 phenomenon_name="phenom_name_halted",
                 block_index=1
-            ).to_tuple()]
+            ).serialize()]
 
-        updated: List[BoboRunTuple] = [
+        updated: List[BoboRunSerial] = [
             tc_run_simple(
                 tc_pattern(name="pattern_updated"),
                 tc_event_simple(event_id="event_id_updated"),
                 run_id="run_id_updated",
                 phenomenon_name="phenom_name_updated",
                 block_index=1
-            ).to_tuple()]
+            ).serialize()]
 
         devices = [
             BoboDevice(
@@ -182,32 +182,32 @@ class TestValid:
         # NOT the FORCE_RESYNC flag
         logging.getLogger().setLevel(logging.DEBUG)
 
-        completed: List[BoboRunTuple] = [
+        completed: List[BoboRunSerial] = [
             tc_run_simple(
                 tc_pattern(name="pattern_completed"),
                 tc_event_simple(event_id="event_id_completed"),
                 run_id="run_id_completed",
                 phenomenon_name="phenom_name_completed",
                 block_index=1
-            ).to_tuple()]
+            ).serialize()]
 
-        halted: List[BoboRunTuple] = [
+        halted: List[BoboRunSerial] = [
             tc_run_simple(
                 tc_pattern(name="pattern_halted"),
                 tc_event_simple(event_id="event_id_halted"),
                 run_id="run_id_halted",
                 phenomenon_name="phenom_name_halted",
                 block_index=1
-            ).to_tuple()]
+            ).serialize()]
 
-        updated: List[BoboRunTuple] = [
+        updated: List[BoboRunSerial] = [
             tc_run_simple(
                 tc_pattern(name="pattern_updated"),
                 tc_event_simple(event_id="event_id_updated"),
                 run_id="run_id_updated",
                 phenomenon_name="phenom_name_updated",
                 block_index=1
-            ).to_tuple()]
+            ).serialize()]
 
         devices = [
             BoboDevice(
@@ -269,32 +269,32 @@ class TestValid:
     def test_flag_reset_1c_1h_1u_1remote_aes(self):
         logging.getLogger().setLevel(logging.DEBUG)
 
-        completed: List[BoboRunTuple] = [
+        completed: List[BoboRunSerial] = [
             tc_run_simple(
                 tc_pattern(name="pattern_completed"),
                 tc_event_simple(event_id="event_id_completed"),
                 run_id="run_id_completed",
                 phenomenon_name="phenom_name_completed",
                 block_index=1
-            ).to_tuple()]
+            ).serialize()]
 
-        halted: List[BoboRunTuple] = [
+        halted: List[BoboRunSerial] = [
             tc_run_simple(
                 tc_pattern(name="pattern_halted"),
                 tc_event_simple(event_id="event_id_halted"),
                 run_id="run_id_halted",
                 phenomenon_name="phenom_name_halted",
                 block_index=1
-            ).to_tuple()]
+            ).serialize()]
 
-        updated: List[BoboRunTuple] = [
+        updated: List[BoboRunSerial] = [
             tc_run_simple(
                 tc_pattern(name="pattern_updated"),
                 tc_event_simple(event_id="event_id_updated"),
                 run_id="run_id_updated",
                 phenomenon_name="phenom_name_updated",
                 block_index=1
-            ).to_tuple()]
+            ).serialize()]
 
         devices = [
             BoboDevice(
@@ -388,6 +388,8 @@ class TestValid:
         # Should be an idempotent operation
         assert dist.close() is None
 
+    # TODO "Update address if remote address has changed"
+    # TODO ping with RESET FLAG
 
 
 class TestInvalid:
@@ -591,32 +593,32 @@ class TestInvalid:
     def test_on_decider_update_closed(self):
         logging.getLogger().setLevel(logging.DEBUG)
 
-        completed: List[BoboRunTuple] = [
+        completed: List[BoboRunSerial] = [
             tc_run_simple(
                 tc_pattern(name="pattern_completed"),
                 tc_event_simple(event_id="event_id_completed"),
                 run_id="run_id_completed",
                 phenomenon_name="phenom_name_completed",
                 block_index=1
-            ).to_tuple()]
+            ).serialize()]
 
-        halted: List[BoboRunTuple] = [
+        halted: List[BoboRunSerial] = [
             tc_run_simple(
                 tc_pattern(name="pattern_halted"),
                 tc_event_simple(event_id="event_id_halted"),
                 run_id="run_id_halted",
                 phenomenon_name="phenom_name_halted",
                 block_index=1
-            ).to_tuple()]
+            ).serialize()]
 
-        updated: List[BoboRunTuple] = [
+        updated: List[BoboRunSerial] = [
             tc_run_simple(
                 tc_pattern(name="pattern_updated"),
                 tc_event_simple(event_id="event_id_updated"),
                 run_id="run_id_updated",
                 phenomenon_name="phenom_name_updated",
                 block_index=1
-            ).to_tuple()]
+            ).serialize()]
 
         devices = [
             BoboDevice(
@@ -662,32 +664,32 @@ class TestInvalid:
     def test_on_decider_update_not_running(self):
         logging.getLogger().setLevel(logging.DEBUG)
 
-        completed: List[BoboRunTuple] = [
+        completed: List[BoboRunSerial] = [
             tc_run_simple(
                 tc_pattern(name="pattern_completed"),
                 tc_event_simple(event_id="event_id_completed"),
                 run_id="run_id_completed",
                 phenomenon_name="phenom_name_completed",
                 block_index=1
-            ).to_tuple()]
+            ).serialize()]
 
-        halted: List[BoboRunTuple] = [
+        halted: List[BoboRunSerial] = [
             tc_run_simple(
                 tc_pattern(name="pattern_halted"),
                 tc_event_simple(event_id="event_id_halted"),
                 run_id="run_id_halted",
                 phenomenon_name="phenom_name_halted",
                 block_index=1
-            ).to_tuple()]
+            ).serialize()]
 
-        updated: List[BoboRunTuple] = [
+        updated: List[BoboRunSerial] = [
             tc_run_simple(
                 tc_pattern(name="pattern_updated"),
                 tc_event_simple(event_id="event_id_updated"),
                 run_id="run_id_updated",
                 phenomenon_name="phenom_name_updated",
                 block_index=1
-            ).to_tuple()]
+            ).serialize()]
 
         devices = [
             BoboDevice(
@@ -716,3 +718,12 @@ class TestInvalid:
                 completed=completed,
                 halted=halted,
                 updated=updated)
+
+    # TODO "Outgoing queue is full."
+
+    # TODO resync FAILURE
+    # TODO ping FAILURE
+    # TODO sync FAILURE
+
+    # TODO Check if URN is NOT a recognised device
+    # TODO Check if ID key DOES NOT MATCH expected key for URN

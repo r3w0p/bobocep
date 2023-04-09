@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 
 """
-Engine tasks.
+CEP engine tasks.
 """
 
 from abc import ABC, abstractmethod

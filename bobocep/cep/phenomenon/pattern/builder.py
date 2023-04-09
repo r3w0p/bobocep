@@ -27,13 +27,23 @@ class BoboPatternBuilder:
     """
 
     def __init__(self):
-        super().__init__()
+        """
+        Pattern builder constructor.
+        """
 
         self._blocks: List[BoboPatternBlock] = []
         self._preconditions: List[BoboPredicate] = []
         self._haltconditions: List[BoboPredicate] = []
 
     def generate(self, name: str) -> BoboPattern:
+        """
+        Generates a BoboPattern instance with the configuration specified
+        in the builder.
+
+        :param name: Name of generated pattern.
+
+        :return: A BoboPattern instance.
+        """
         if len(name) == 0:
             raise BoboPatternBuilderError(_EXC_NAME_LEN)
 
@@ -49,6 +59,18 @@ class BoboPatternBuilder:
              predicate: BoboPredicate,
              times: int = 1,
              loop: bool = False) -> 'BoboPatternBuilder':
+        """
+        Adds a block with strict contiguity.
+
+        :param group: Block group.
+        :param predicate: Block predicate.
+        :param times: Number of times to add this block to the pattern,
+            in sequence.
+        :param loop: If `True`, the block loops back onto itself (making it
+            non-deterministic). If `False`, the block remains deterministic.
+
+        :return: The BoboPatternBuilder instance that made the function call.
+        """
 
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
@@ -64,6 +86,16 @@ class BoboPatternBuilder:
                  group: str,
                  predicate: BoboPredicate,
                  times: int = 1) -> 'BoboPatternBuilder':
+        """
+        Adds a negated block with strict contiguity.
+
+        :param group: Block group.
+        :param predicate: Block predicate.
+        :param times: Number of times to add this block to the pattern,
+            in sequence.
+
+        :return: The BoboPatternBuilder instance that made the function call.
+        """
 
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
@@ -81,6 +113,18 @@ class BoboPatternBuilder:
                     times: int = 1,
                     loop: bool = False,
                     optional: bool = False) -> 'BoboPatternBuilder':
+        """
+        Adds a block with relaxed contiguity.
+
+        :param group: Block group.
+        :param predicate: Block predicate.
+        :param times: Number of times to add this block to the pattern,
+            in sequence.
+        :param loop: If `True`, the block loops back onto itself.
+        :param optional: If `True`, the block is optional.
+
+        :return: The BoboPatternBuilder instance that made the function call.
+        """
 
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
@@ -96,6 +140,16 @@ class BoboPatternBuilder:
                         group: str,
                         predicate: BoboPredicate,
                         times: int = 1) -> 'BoboPatternBuilder':
+        """
+        Adds a negated block with relaxed contiguity.
+
+        :param group: Block group.
+        :param predicate: Block predicate.
+        :param times: Number of times to add this block to the pattern,
+            in sequence.
+
+        :return: The BoboPatternBuilder instance that made the function call.
+        """
 
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
@@ -113,6 +167,18 @@ class BoboPatternBuilder:
                         times: int = 1,
                         loop: bool = False,
                         optional: bool = False) -> 'BoboPatternBuilder':
+        """
+        Adds multiple blocks with non-deterministic relaxed contiguity.
+
+        :param group: Group name for all blocks.
+        :param predicates: Predicates, one per block.
+        :param times: Number of times to add these blocks to the pattern,
+            in sequence.
+        :param loop: If `True`, the blocks loop back onto themselves.
+        :param optional: If `True`, the blocks are optional.
+
+        :return: The BoboPatternBuilder instance that made the function call.
+        """
 
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
@@ -128,6 +194,16 @@ class BoboPatternBuilder:
                             group: str,
                             predicates: List[BoboPredicate],
                             times: int = 1) -> 'BoboPatternBuilder':
+        """
+        Adds multiple negated blocks with non-deterministic relaxed contiguity.
+
+        :param group: Group name for all blocks.
+        :param predicates: Predicates, one per block.
+        :param times: Number of times to add these blocks to the pattern,
+            in sequence.
+
+        :return: The BoboPatternBuilder instance that made the function call.
+        """
 
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
@@ -144,10 +220,8 @@ class BoboPatternBuilder:
         Adds a precondition.
 
         :param predicate: The precondition predicate.
-        :type predicate: BoboPredicate
 
-        :return: The current BoboPatternBuilder instance.
-        :rtype: BoboPatternBuilder
+        :return: The BoboPatternBuilder instance that made the function call.
         """
 
         self._preconditions.append(predicate)
@@ -159,10 +233,8 @@ class BoboPatternBuilder:
         Adds a haltcondition.
 
         :param predicate: The haltcondition predicate.
-        :type predicate: BoboPredicate
 
-        :return: The current BoboPatternBuilder instance.
-        :rtype: BoboPatternBuilder
+        :return: The BoboPatternBuilder instance that made the function call.
         """
 
         self._haltconditions.append(predicate)

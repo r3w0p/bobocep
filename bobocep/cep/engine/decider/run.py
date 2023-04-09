@@ -2,11 +2,15 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
+"""
+A run.
+"""
+
 from threading import RLock
 from typing import Dict, Tuple, List
 
 from bobocep import BoboError
-from bobocep.cep.engine.decider.runtup import BoboRunTuple
+from bobocep.cep.engine.decider.runserial import BoboRunSerial
 from bobocep.cep.event import BoboHistory, BoboEvent
 from bobocep.cep.phenomenon.pattern.pattern import BoboPattern, \
     BoboPatternBlock, BoboPredicate
@@ -138,13 +142,13 @@ class BoboRun:
         with self._lock:
             return self._halted
 
-    def to_tuple(self) -> BoboRunTuple:
+    def serialize(self) -> BoboRunSerial:
         """
-        :return: A BoboRunTuple representation of the run.
+        :return: A serializable representation of the run.
         """
 
         with self._lock:
-            return BoboRunTuple(
+            return BoboRunSerial(
                 run_id=self.run_id,
                 phenomenon_name=self.phenomenon_name,
                 pattern_name=self.pattern.name,
@@ -197,6 +201,15 @@ class BoboRun:
                       event: BoboEvent,
                       block: BoboPatternBlock,
                       temp_index: int) -> bool:
+        """
+        Process a block that loops.
+
+        :param event: An event.
+        :param block: The block to process.
+        :param temp_index: Temporary index used during processing.
+
+        :return: `True` if halted; `False` otherwise.
+        """
         match = self._is_match(event, block.predicates)
 
         if match:
@@ -220,6 +233,15 @@ class BoboRun:
                           event: BoboEvent,
                           block: BoboPatternBlock,
                           temp_index: int) -> bool:
+        """
+        Process a block that does not loop.
+
+        :param event: An event.
+        :param block: The block to process.
+        :param temp_index: Temporary index used during processing.
+
+        :return: `True` if halted; `False` otherwise.
+        """
         # Non-looping block cannot be both negated and optional.
         match = self._is_match(event, block.predicates)
 
@@ -262,10 +284,22 @@ class BoboRun:
     def _is_match(self,
                   event: BoboEvent,
                   predicates: Tuple[BoboPredicate, ...]) -> bool:
+        """
+        :param event: An event.
+        :param predicates: Predicates to match against.
+
+        :return: `True` if the event matches any predicate;
+            `False` otherwise.
+        """
         return any(predicate.evaluate(event, self._history)
                    for predicate in predicates)
 
-    def _add_event(self, event: BoboEvent, block: BoboPatternBlock):
+    def _add_event(self, event: BoboEvent, block: BoboPatternBlock) -> None:
+        """
+        :param event: Event to add to history.
+        :param block: Block to determine which group to add event to
+            in the history.
+        """
         newevents: Dict[str, List[BoboEvent]] = self._history.events
 
         if block.group not in newevents:
@@ -277,7 +311,14 @@ class BoboRun:
     def _move_forward(self,
                       event: BoboEvent,
                       block: BoboPatternBlock,
-                      temp_index: int):
+                      temp_index: int) -> None:
+        """
+        Move run forward to a new block.
+
+        :param event: An event.
+        :param block: A block.
+        :param temp_index: Temporary index used during processing.
+        """
         self._add_event(event, block)
         self._block_index = temp_index + 1
         self._halted = self.is_complete()

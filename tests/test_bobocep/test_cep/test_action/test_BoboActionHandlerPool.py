@@ -85,6 +85,13 @@ class TestValid:
 
         assert handler.get_action_event() is not None
 
+    def test_close(self):
+        handler = BoboActionHandlerPool(processes=3, max_size=255)
+        assert handler.is_closed() is False
+
+        handler.close()
+        assert handler.is_closed() is True
+
 
 class TestInvalid:
 

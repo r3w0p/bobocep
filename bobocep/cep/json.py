@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 
 """
-Complex event processing functionality.
+Types for JSON serialization.
 """
 
 from abc import ABC, abstractmethod
@@ -25,21 +25,27 @@ class BoboJSONable(ABC):
     @abstractmethod
     def to_json_str(self) -> str:
         """
-        :return: A JSON `str` representation of object of this type.
+        :return: A JSON `str` representation of an object of this type.
+        """
+
+    @abstractmethod
+    def to_json_dict(self) -> dict:
+        """
+        :return: A JSON `dict` representation of an object of this type.
         """
 
     @staticmethod
     @abstractmethod
     def from_json_str(j: str) -> 'BoboJSONable':
         """
-        :param j: A JSON `str` representation of object of this type.
+        :param j: A JSON `str` representation of an object of this type.
         :return: A new instance of this type.
         """
 
     @staticmethod
     @abstractmethod
-    def from_dict(d: dict) -> 'BoboJSONable':
+    def from_json_dict(d: dict) -> 'BoboJSONable':
         """
-        :param d: A `dict` representation of an object of this type.
+        :param d: A JSON `dict` representation of an object of this type.
         :return: A new instance of this type.
         """

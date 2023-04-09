@@ -4,7 +4,7 @@
 
 import pytest
 
-from bobocep.cep.engine.decider.runtup import BoboRunTuple
+from bobocep.cep.engine.decider.runserial import BoboRunSerial
 from bobocep.cep.engine.producer.producer import BoboProducerError, \
     BoboProducer
 from bobocep.cep.event import BoboHistory
@@ -30,7 +30,7 @@ class TestValid:
         history = BoboHistory(events={"pattern_group": [tc_event_simple()]})
 
         producer.on_decider_update(
-            completed=[BoboRunTuple(
+            completed=[BoboRunSerial(
                 run_id="run_id",
                 phenomenon_name="phenom",
                 pattern_name="pattern",
@@ -59,7 +59,7 @@ class TestValid:
         history = BoboHistory(events={"pattern_group": [tc_event_simple()]})
 
         producer.on_decider_update(
-            completed=[BoboRunTuple(
+            completed=[BoboRunSerial(
                 run_id="run_id",
                 phenomenon_name="phenom",
                 pattern_name="pattern",
@@ -89,7 +89,7 @@ class TestValid:
         history = BoboHistory(events={"pattern_group": [tc_event_simple()]})
 
         producer.on_decider_update(
-            completed=[BoboRunTuple(
+            completed=[BoboRunSerial(
                 run_id="run_id",
                 phenomenon_name="phenom",
                 pattern_name="pattern",
@@ -114,7 +114,7 @@ class TestInvalid:
         history = BoboHistory(events={"pattern_group": [tc_event_simple()]})
 
         producer.on_decider_update(
-            completed=[BoboRunTuple(
+            completed=[BoboRunSerial(
                 run_id="run_id",
                 phenomenon_name="phenom_1",
                 pattern_name="pattern",
@@ -127,7 +127,7 @@ class TestInvalid:
 
         with pytest.raises(BoboProducerError):
             producer.on_decider_update(
-                completed=[BoboRunTuple(
+                completed=[BoboRunSerial(
                     run_id="run_id",
                     phenomenon_name="phenom_2",
                     pattern_name="pattern",
@@ -152,7 +152,7 @@ class TestInvalid:
         history = BoboHistory(events={"pattern_group": [tc_event_simple()]})
 
         producer.on_decider_update(
-            completed=[BoboRunTuple(
+            completed=[BoboRunSerial(
                 run_id="run_id",
                 phenomenon_name="phenom_invalid",
                 pattern_name="pattern",
@@ -172,7 +172,7 @@ class TestInvalid:
         history = BoboHistory(events={"pattern_group": [tc_event_simple()]})
 
         producer.on_decider_update(
-            completed=[BoboRunTuple(
+            completed=[BoboRunSerial(
                 run_id="run_id",
                 phenomenon_name="phenom_invalid",
                 pattern_name="pattern",

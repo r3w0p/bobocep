@@ -8,7 +8,7 @@ from time import sleep
 import pytest
 
 from bobocep.cep.engine.decider.decider import BoboDecider
-from bobocep.cep.engine.decider.runtup import BoboRunTuple
+from bobocep.cep.engine.decider.runserial import BoboRunSerial
 from bobocep.cep.engine.engine import BoboEngineError
 from bobocep.cep.engine.forwarder.forwarder import BoboForwarder
 from bobocep.cep.engine.producer.producer import BoboProducer
@@ -159,7 +159,7 @@ class TestValid:
 
         # Decider output: full history of events that caused run to complete
         assert len(dec_sub.completed) == 1
-        assert isinstance(dec_sub.completed[0], BoboRunTuple)
+        assert isinstance(dec_sub.completed[0], BoboRunSerial)
         assert dec_sub.completed[0].phenomenon_name == "phenomenon_a"
         assert dec_sub.completed[0].pattern_name == "pattern_123"
         dec_history = dec_sub.completed[0].history

@@ -12,6 +12,7 @@ from types import MethodType
 from typing import Optional, Callable
 
 from bobocep.cep.event import BoboEvent, BoboEventSimple
+from bobocep.cep.gen.timestamp import BoboGenTimestamp, BoboGenTimestampEpoch
 
 
 class BoboGenEvent(ABC):
@@ -41,8 +42,6 @@ class BoboGenEventNone(BoboGenEvent):
 
 
 class BoboGenEventTime(BoboGenEvent):
-    from bobocep.cep.gen.timestamp import BoboGenTimestamp
-
     """
     An event generator that returns a BoboEventSimple time event if a given
     amount of time has elapsed. If the time has not elapsed, None is returned
@@ -66,9 +65,6 @@ class BoboGenEventTime(BoboGenEvent):
             time; otherwise, the timer is set to 0.
         :param tz: Timezone data.
         """
-        from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch, \
-            BoboGenTimestamp
-
         super().__init__()
         self._lock: RLock = RLock()
 
@@ -86,6 +82,11 @@ class BoboGenEventTime(BoboGenEvent):
                 if isinstance(datagen, MethodType) else None
 
     def maybe_generate(self, event_id: str) -> Optional[BoboEvent]:
+        """
+        :param event_id: An event ID.
+        :return: A BoboEventSimple instance if one is due to be generated,
+            or `None` if not.
+        """
         with self._lock:
             now = self._gen_ts_internal.generate()
             if (now - self._last) > self._millis:

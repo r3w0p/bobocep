@@ -51,10 +51,14 @@ class BoboPredicate(ABC):
 
 class BoboPredicateCall(BoboPredicate):
     """
-    A predicate that evaluates using a custom function or method.
+    A predicate that evaluates using a custom function or method
+    (i.e. a 'callable').
     """
 
     def __init__(self, call: Callable):
+        """
+        :param call: The callable to use for evaluating the predicate.
+        """
         super().__init__()
 
         len_param_call = len(signature(call).parameters)
@@ -69,6 +73,11 @@ class BoboPredicateCall(BoboPredicate):
         self._obj = call.__self__ if isinstance(call, MethodType) else None
 
     def evaluate(self, event: BoboEvent, history: BoboHistory) -> bool:
+        """
+        :param event: The event used for evaluation.
+        :param history: The history of currently accepted events.
+        :return: `True` if predicate is satisfied; `False` otherwise.
+        """
         return self._call(event, history)
 
 
@@ -76,10 +85,11 @@ class BoboPredicateCallType(BoboPredicateCall):
     """
     A predicate that evaluates using a custom function or method after
     first checking whether the event data is an instance of a given type.
-    If it is not, then a cast to the type can be attempted and a copy of
-    the event is passed with its data cast to the type. Note that the
-    copy is only used within the predicate, and the original event remains
-    in use elsewhere.
+    If it is not, then a cast to the type can be attempted and a **copy of
+    the event** is passed with its data cast to the type.
+
+    **Note**: the copy is only used **within the predicate callable**.
+    The original event remains in use elsewhere.
     """
 
     def __init__(self,
@@ -87,6 +97,16 @@ class BoboPredicateCallType(BoboPredicateCall):
                  dtype: type,
                  subtype: bool = True,
                  cast: bool = True):
+        """
+        :param call: The callable to use for evaluating the predicate.
+        :param dtype: The data type to use for evaluation.
+        :param subtype: If `True`, the event's data can be a subtype of
+            the type specified in `dtype`.
+            If `False`, it must be exactly the type in `dtype`.
+        :param cast: If `True`, and if the event's data is not the expected
+            type, then an attempt is made to cast it to `dtype`.
+            If `False`, no attempt is made to cast the event's data.
+        """
         super().__init__(call=call)
 
         self._dtype: type = dtype
@@ -94,6 +114,11 @@ class BoboPredicateCallType(BoboPredicateCall):
         self._cast: bool = cast
 
     def evaluate(self, event: BoboEvent, history: BoboHistory) -> bool:
+        """
+        :param event: The event used for evaluation.
+        :param history: The history of currently accepted events.
+        :return: `True` if predicate is satisfied; `False` otherwise.
+        """
         ok_type: bool = True
 
         if self._subtype:

@@ -30,6 +30,9 @@ class BoboGenEventIDUnique(BoboGenEventID):
     """
 
     def __init__(self, urn: Optional[str] = None):
+        """
+        :param urn: A URN to prefix before the generated event ID (optional).
+        """
         super().__init__()
         self._lock: RLock = RLock()
 
@@ -38,6 +41,9 @@ class BoboGenEventIDUnique(BoboGenEventID):
         self._urn: Optional[str] = urn
 
     def generate(self) -> str:
+        """
+        :return: A generated event ID.
+        """
         with self._lock:
             now: int = int(time())
 

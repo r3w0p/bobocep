@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 
 """
-`BoboCEP` core.
+Core classes.
 """
 
 

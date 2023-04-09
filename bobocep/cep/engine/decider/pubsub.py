@@ -2,14 +2,14 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
+"""
+Decider publish-subscribe classes.
+"""
+
 from abc import ABC, abstractmethod
 from typing import List
 
-from bobocep.cep.engine.decider.runtup import BoboRunTuple
-
-"""
-Decider publish-subscriber classes.
-"""
+from bobocep.cep.engine.decider.runserial import BoboRunSerial
 
 
 class BoboDeciderSubscriber(ABC):
@@ -20,10 +20,14 @@ class BoboDeciderSubscriber(ABC):
     @abstractmethod
     def on_decider_update(
             self,
-            completed: List[BoboRunTuple],
-            halted: List[BoboRunTuple],
-            updated: List[BoboRunTuple]):
-        """"""
+            completed: List[BoboRunSerial],
+            halted: List[BoboRunSerial],
+            updated: List[BoboRunSerial]) -> None:
+        """
+        :param completed: Completed runs.
+        :param halted: Halted runs.
+        :param updated: Updated runs.
+        """
 
 
 class BoboDeciderPublisher(ABC):

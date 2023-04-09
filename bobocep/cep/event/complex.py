@@ -2,12 +2,18 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
+"""
+Complex event.
+"""
+
 from json import dumps, loads
 from typing import Any
 
-from bobocep.cep.event.constants import *
 from bobocep.cep.event.event import BoboEventError, BoboEvent
 from bobocep.cep.event.history import BoboHistory
+
+_EXC_PRO_LEN = "phenomenon name must have a length greater than 0"
+_EXC_PAT_LEN = "pattern name must have a length greater than 0"
 
 
 class BoboEventComplex(BoboEvent):
@@ -15,7 +21,7 @@ class BoboEventComplex(BoboEvent):
     A complex event.
     """
 
-    TYPE_COMPLEX = "complex"
+    TYPE_COMPLEX = "type_complex"
 
     PHENOMENON_NAME = "phenomenon_name"
     PATTERN_NAME = "pattern_name"
@@ -45,16 +51,21 @@ class BoboEventComplex(BoboEvent):
             data=data)
 
         if len(phenomenon_name) == 0:
-            raise BoboEventError(EXC_PRO_LEN)
+            raise BoboEventError(_EXC_PRO_LEN)
 
         if len(pattern_name) == 0:
-            raise BoboEventError(EXC_PAT_LEN)
+            raise BoboEventError(_EXC_PAT_LEN)
 
         self._phenomenon_name: str = phenomenon_name
         self._pattern_name: str = pattern_name
         self._history: BoboHistory = history
 
     def cast(self, dtype: type) -> 'BoboEventComplex':
+        """
+        :param dtype: The type to which the event's data is cast.
+        :return: A new BoboEventComplex instance with its data cast to `dtype`
+            and all other properties identical to the original event.
+        """
         return BoboEventComplex(
             event_id=self._event_id,
             timestamp=self._timestamp,
@@ -66,21 +77,30 @@ class BoboEventComplex(BoboEvent):
 
     @property
     def phenomenon_name(self) -> str:
-        """Get phenomenon name."""
+        """
+        :return: Phenomenon name.
+        """
         return self._phenomenon_name
 
     @property
     def pattern_name(self) -> str:
-        """Get pattern name."""
+        """
+        :return: Pattern name.
+        """
         return self._pattern_name
 
     @property
     def history(self) -> BoboHistory:
-        """Get history."""
+        """
+        :return: Event history.
+        """
         return self._history
 
-    def to_json_str(self) -> str:
-        return dumps({
+    def to_json_dict(self) -> dict:
+        """
+        :return: A JSON `dict` representation of the event.
+        """
+        return {
             self.EVENT_TYPE: self.TYPE_COMPLEX,
             self.EVENT_ID: self.event_id,
             self.TIMESTAMP: self.timestamp,
@@ -88,14 +108,30 @@ class BoboEventComplex(BoboEvent):
             self.PHENOMENON_NAME: self.phenomenon_name,
             self.PATTERN_NAME: self.pattern_name,
             self.HISTORY: self.history
-        }, default=lambda o: o.to_json_str())
+        }
+
+    def to_json_str(self) -> str:
+        """
+        :return: A JSON `str` representation of the event.
+        """
+        return dumps(self.to_json_dict(), default=lambda o: o.to_json_str())
 
     @staticmethod
     def from_json_str(j: str) -> 'BoboEventComplex':
-        return BoboEventComplex.from_dict(loads(j))
+        """
+        :param j: A JSON `str` representation of the event.
+
+        :return: A new instance of the event type.
+        """
+        return BoboEventComplex.from_json_dict(loads(j))
 
     @staticmethod
-    def from_dict(d: dict) -> 'BoboEventComplex':
+    def from_json_dict(d: dict) -> 'BoboEventComplex':
+        """
+        :param d: A JSON `dict` representation of the event.
+
+        :return: A new instance of the event type.
+        """
         return BoboEventComplex(
             event_id=d[BoboEventComplex.EVENT_ID],
             timestamp=d[BoboEventComplex.TIMESTAMP],
@@ -106,4 +142,7 @@ class BoboEventComplex(BoboEvent):
         )
 
     def __str__(self) -> str:
+        """
+        :return: A JSON `str` representation of the event.
+        """
         return self.to_json_str()

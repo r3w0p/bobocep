@@ -9,6 +9,7 @@ Action definitions.
 from abc import ABC, abstractmethod
 
 from bobocep import BoboError
+from bobocep.cep.event import BoboEventComplex, BoboEventAction
 
 _EXC_NAME_LEN = "name must have a length greater than 0"
 
@@ -20,7 +21,6 @@ class BoboActionError(BoboError):
 
 
 class BoboAction(ABC):
-    from bobocep.cep.event import BoboEventComplex, BoboEventAction
     """
     An action.
     """
@@ -28,6 +28,8 @@ class BoboAction(ABC):
     def __init__(self, name: str, *args, **kwargs):
         """
         :param name: The action name.
+        :param args: Action arguments.
+        :param kwargs: Action keyword arguments.
         """
         super().__init__()
 
@@ -41,7 +43,7 @@ class BoboAction(ABC):
     @property
     def name(self) -> str:
         """
-        Get action name.
+        :return: Action name.
         """
         return self._name
 

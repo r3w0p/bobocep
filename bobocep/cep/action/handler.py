@@ -26,33 +26,80 @@ class BoboActionHandlerError(BoboError):
 
 class BoboActionHandler(ABC):
     """
-    A handler for the execution of actions.
+    An abstract action handler.
     """
 
     _EXC_QUEUE_FULL = "queue is full (max size: {})"
 
     def __init__(self, max_size: int = 0):
+        """
+        :param max_size: Maximum queue size.
+            Default: 0 (unbounded).
+        """
         super().__init__()
+        self._closed: bool = False
         self._lock: RLock = RLock()
         self._max_size = max(0, max_size)
 
     def handle(self,
                action: BoboAction,
                event: BoboEventComplex) -> Any:
+        """
+        Handle an action.
+
+        :param action: The action to handle.
+        :param event: The complex event that caused the action to trigger.
+        :return: A return value from handling the action.
+        """
         with self._lock:
             return self._execute_action(action, event)
+
+    def is_closed(self) -> bool:
+        """
+        :return: `True` if handler is closed; `False` otherwise.
+        """
+        with self._lock:
+            return self._closed
+
+    def close(self) -> None:
+        """
+        Closes the handler.
+        """
+        with self._lock:
+            try:
+                self._on_closing()
+            finally:
+                self._closed = True
+
+    @abstractmethod
+    def _on_closing(self) -> None:
+        """
+        Close the handler.
+        """
 
     @abstractmethod
     def _execute_action(self,
                         action: BoboAction,
                         event: BoboEventComplex) -> Any:
-        """"""
+        """
+        Execute an action.
+
+        :param action: The action to execute.
+        :param event: The complex event that caused the action to trigger.
+
+        :return: A return value from executing the action.
+        """
 
     @abstractmethod
     def _get_queue(self) -> Queue:
-        """"""
+        """
+        :return: The handler queue.
+        """
 
     def get_action_event(self) -> Optional[BoboEventAction]:
+        """
+        :return: Action event from queue, or `None` if queue is empty.
+        """
         with self._lock:
             queue = self._get_queue()
             if not queue.empty():
@@ -60,16 +107,23 @@ class BoboActionHandler(ABC):
             return None
 
     def size(self) -> int:
+        """
+        :return: The size of the handler queue.
+        """
         with self._lock:
             return self._get_queue().qsize()
 
 
 class BoboActionHandlerBlocking(BoboActionHandler):
     """
-    An action handler that executes without multithreading or multiprocessing.
+    An action handler that blocks during action execution.
     """
 
     def __init__(self, max_size: int = 0):
+        """
+        :param max_size: Maximum queue size.
+            Default: 0 (unbounded).
+        """
         super().__init__(max_size)
 
         self._queue: "Queue[BoboEventAction]" = Queue(self._max_size)
@@ -77,24 +131,41 @@ class BoboActionHandlerBlocking(BoboActionHandler):
     def _execute_action(self,
                         action: BoboAction,
                         event: BoboEventComplex) -> None:
-        self._add_action_event(action.execute(event))
+        """
+        :param action: Action to execute.
+        :param event: Complex event associated with the action.
+        """
+        action_event: BoboEventAction = action.execute(event)
+
+        if not self._queue.full():
+            self._queue.put(action_event)
+        else:
+            raise BoboActionHandlerError(
+                self._EXC_QUEUE_FULL.format(self._max_size))
+
+    def _on_closing(self) -> None:
+        """
+        Action on closing the handler.
+        """
+        pass
 
     def _get_queue(self) -> Queue:
+        """
+        :return: Handler queue.
+        """
         return self._queue
-
-    def _add_action_event(self, event: BoboEventAction) -> None:
-        with self._lock:
-            if not self._queue.full():
-                self._queue.put(event)
-            else:
-                raise BoboActionHandlerError(
-                    self._EXC_QUEUE_FULL.format(self._max_size))
 
 
 def _pool_execute_action(
         queue: Queue,
         action: BoboAction,
-        event: BoboEventComplex):
+        event: BoboEventComplex) -> None:
+    """
+    :param queue: A queue in which to put the action event that is returned
+                  after the action is executed.
+    :param action: The action to execute.
+    :param event: The complex event that triggered the action being executed.
+    """
     queue.put(action.execute(event))
 
 
@@ -104,6 +175,11 @@ class BoboActionHandlerPool(BoboActionHandler):
     """
 
     def __init__(self, processes: int, max_size: int = 0):
+        """
+        :param processes: Number of processes to use for handling actions.
+        :param max_size: Maximum queue size.
+            Default: 0 (unbounded).
+        """
         super().__init__(max_size)
 
         self._processes = processes
@@ -111,9 +187,22 @@ class BoboActionHandlerPool(BoboActionHandler):
         self._manager = Manager()
         self._queue: "Queue[BoboEventAction]" = self._manager.Queue()
 
+    def join(self) -> None:
+        """
+        Join the multiprocessing pool.
+        """
+        with self._lock:
+            self._pool.join()
+
     def _execute_action(self,
                         action: BoboAction,
                         event: BoboEventComplex) -> AsyncResult:
+        """
+        :param action: Action to execute.
+        :param event: Complex event associated with the action.
+
+        :return: Result from asynchronous action execution.
+        """
         # The queue size is checked manually before action execution because
         # a 'queue full' error within a running process would not be visible
         # outside of the process itself. Also, a 'maxsize' parameter for the
@@ -127,12 +216,13 @@ class BoboActionHandlerPool(BoboActionHandler):
             _pool_execute_action, [(self._queue, action, event)])
 
     def _get_queue(self) -> Queue:
+        """
+        :return: Handler queue.
+        """
         return self._queue
 
-    def close(self) -> None:
-        with self._lock:
-            self._pool.close()
-
-    def join(self) -> None:
-        with self._lock:
-            self._pool.join()
+    def _on_closing(self) -> None:
+        """
+        Action on closing the handler.
+        """
+        self._pool.close()

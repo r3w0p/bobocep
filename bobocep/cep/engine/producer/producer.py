@@ -11,7 +11,7 @@ from threading import RLock
 from typing import List, Dict
 
 from bobocep.cep.engine.decider.pubsub import BoboDeciderSubscriber
-from bobocep.cep.engine.decider.runtup import BoboRunTuple
+from bobocep.cep.engine.decider.runserial import BoboRunSerial
 from bobocep.cep.engine.producer.pubsub import BoboProducerPublisher, \
     BoboProducerSubscriber
 from bobocep.cep.engine.task import BoboEngineTaskError, BoboEngineTask
@@ -42,6 +42,13 @@ class BoboProducer(BoboEngineTask,
                  gen_event_id: BoboGenEventID,
                  gen_timestamp: BoboGenTimestamp,
                  max_size: int = 0):
+        """
+        :param phenomena: List of phenomena.
+        :param gen_event_id: Event ID generator.
+        :param gen_timestamp: Timestamp generator.
+        :param max_size: Maximum queue size.
+            Default: 0 (unbounded).
+        """
         super().__init__()
         self._lock: RLock = RLock()
         self._closed: bool = False
@@ -59,14 +66,20 @@ class BoboProducer(BoboEngineTask,
         self._gen_event_id: BoboGenEventID = gen_event_id
         self._gen_timestamp: BoboGenTimestamp = gen_timestamp
         self._max_size: int = max(0, max_size)
-        self._queue: Queue[BoboRunTuple] = Queue(self._max_size)
+        self._queue: Queue[BoboRunSerial] = Queue(self._max_size)
 
     def subscribe(self, subscriber: BoboProducerSubscriber):
+        """
+        :param subscriber: Subscriber to Producer data.
+        """
         with self._lock:
             if subscriber not in self._subscribers:
                 self._subscribers.append(subscriber)
 
     def update(self) -> bool:
+        """
+        :return: `True` if an internal update occurred; `False` otherwise.
+        """
         with self._lock:
             if self._closed:
                 return False
@@ -78,35 +91,49 @@ class BoboProducer(BoboEngineTask,
             return False
 
     def close(self) -> None:
+        """
+        Closes the Producer.
+        """
         with self._lock:
             self._closed = True
 
     def is_closed(self) -> bool:
+        """
+        :return: `True` if Producer is closed; `False` otherwise.
+        """
         with self._lock:
             return self._closed
 
-    def _handle_completed_run(self, run_state: BoboRunTuple) -> None:
-        if run_state.phenomenon_name not in self._phenomena:
-            raise BoboProducerError(run_state.phenomenon_name)
+    def _handle_completed_run(self, runserial: BoboRunSerial) -> None:
+        """
+        :param runserial: The run to handle.
+        """
+        if runserial.phenomenon_name not in self._phenomena:
+            raise BoboProducerError(runserial.phenomenon_name)
 
-        phenom: BoboPhenomenon = self._phenomena[run_state.phenomenon_name]
+        phenom: BoboPhenomenon = self._phenomena[runserial.phenomenon_name]
 
         event_complex = BoboEventComplex(
             event_id=self._gen_event_id.generate(),
             timestamp=self._gen_timestamp.generate(),
-            data=phenom.datagen(phenom, run_state.history)
+            data=phenom.datagen(phenom, runserial.history)
             if phenom.datagen is not None else None,
-            phenomenon_name=run_state.phenomenon_name,
-            pattern_name=run_state.pattern_name,
-            history=run_state.history)
+            phenomenon_name=runserial.phenomenon_name,
+            pattern_name=runserial.pattern_name,
+            history=runserial.history)
 
         for subscriber in self._subscribers:
             subscriber.on_producer_update(event_complex)
 
     def on_decider_update(self,
-                          completed: List[BoboRunTuple],
-                          halted: List[BoboRunTuple],
-                          updated: List[BoboRunTuple]) -> None:
+                          completed: List[BoboRunSerial],
+                          halted: List[BoboRunSerial],
+                          updated: List[BoboRunSerial]) -> None:
+        """
+        :param completed: Completed runs.
+        :param halted: Halted runs.
+        :param updated: Updated runs.
+        """
         with self._lock:
             if self._closed:
                 return
@@ -119,5 +146,8 @@ class BoboProducer(BoboEngineTask,
                         _EXC_QUEUE_FULL.format(self._max_size))
 
     def size(self) -> int:
+        """
+        :return: Queue size.
+        """
         with self._lock:
             return self._queue.qsize()

@@ -18,6 +18,8 @@ https://github.com/r3w0p/bobocep/blob/main/LICENSE/)
 https://pypi.org/project/bobocep/)
 [![Python](https://img.shields.io/pypi/pyversions/bobocep?color=blue&label=python)](
 https://pypi.org/project/bobocep/)
+[![Repo Size](https://img.shields.io/github/repo-size/r3w0p/bobocep?label=repo%20size)](
+https://github.com/r3w0p/bobocep/pulse/)
 <br/>
 
 [![Issues](https://img.shields.io/github/issues/r3w0p/bobocep?label=issues)](
@@ -32,10 +34,10 @@ https://codeclimate.com/github/r3w0p/bobocep/)
 https://codeclimate.com/github/r3w0p/bobocep/)
 
 
-`BoboCEP` is a [complex event processing](https://en.wikipedia.org/wiki/Complex_event_processing) (CEP) engine
+`BoboCEP` is a [Complex Event Processing](https://en.wikipedia.org/wiki/Complex_event_processing) (CEP) engine
 designed for [edge computing](https://en.wikipedia.org/wiki/Edge_computing) in
 [Internet of Things](https://en.wikipedia.org/wiki/Internet_of_things) (IoT) systems
-to provide inferential reasoning and decision making using stream data.
+to facilitate inferential reasoning and decision-making on streaming data.
 It provides [fault tolerance](https://en.wikipedia.org/wiki/Fault_tolerance) (FT) via the
 [active replication](https://en.wikipedia.org/wiki/Replication_(computing)) of
 partially completed complex events across multiple instances of the software.

@@ -36,5 +36,7 @@ class BoboDistributed(BoboDistributedPublisher, ABC):
     """
 
     @abstractmethod
-    def run(self):
-        """"""
+    def run(self) -> None:
+        """
+        Runs distributed.
+        """

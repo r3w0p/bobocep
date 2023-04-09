@@ -7,8 +7,15 @@ Tools to help with `BoboCEP` setup.
 """
 
 from abc import ABC, abstractmethod
+from typing import Any
 
-from bobocep.cep.engine.engine import BoboEngine
+from bobocep import BoboError
+
+
+class BoboSetupError(BoboError):
+    """
+    A setup error.
+    """
 
 
 class BoboSetup(ABC):
@@ -17,7 +24,7 @@ class BoboSetup(ABC):
     """
 
     @abstractmethod
-    def generate(self) -> BoboEngine:
+    def generate(self) -> Any:
         """
-        :return: A BoboEngine instance with the chosen setup.
+        :return: Relevant setup data.
         """

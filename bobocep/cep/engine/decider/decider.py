@@ -15,7 +15,7 @@ from typing import Tuple, Dict, List, Optional, Deque
 from bobocep.cep.engine.decider.pubsub import BoboDeciderPublisher, \
     BoboDeciderSubscriber
 from bobocep.cep.engine.decider.run import BoboRun
-from bobocep.cep.engine.decider.runtup import BoboRunTuple
+from bobocep.cep.engine.decider.runserial import BoboRunSerial
 from bobocep.cep.engine.receiver.pubsub import BoboReceiverSubscriber
 from bobocep.cep.engine.task import BoboEngineTaskError, BoboEngineTask
 from bobocep.cep.event import BoboHistory, BoboEvent
@@ -50,6 +50,15 @@ class BoboDecider(BoboEngineTask,
                  gen_run_id: BoboGenEventID,
                  max_cache: int = 0,
                  max_size: int = 0):
+        """
+        :param phenomena: List of phenomena.
+        :param gen_event_id: Event ID generator.
+        :param gen_run_id: Run ID generator.
+        :param max_cache: Max cache size (<=0 means no caching).
+            Default: 0.
+        :param max_size: Max queue size.
+            Default: 0 (unbounded).
+        """
         super().__init__()
 
         self._lock: RLock = RLock()
@@ -74,12 +83,15 @@ class BoboDecider(BoboEngineTask,
         self._queue: Queue[BoboEvent] = Queue(self._max_size)
 
         self._caching: bool = max_cache > 0
-        self._cache_completed: Optional[Deque[BoboRunTuple]] = \
+        self._cache_completed: Optional[Deque[BoboRunSerial]] = \
             deque(maxlen=max_cache) if self._caching else None
-        self._cache_halted: Optional[Deque[BoboRunTuple]] = \
+        self._cache_halted: Optional[Deque[BoboRunSerial]] = \
             deque(maxlen=max_cache) if self._caching else None
 
-    def subscribe(self, subscriber: BoboDeciderSubscriber):
+    def subscribe(self, subscriber: BoboDeciderSubscriber) -> None:
+        """
+        :param subscriber: Subscriber to Decider data.
+        """
         with self._lock:
             if subscriber not in self._subscribers:
                 self._subscribers.append(subscriber)
@@ -101,12 +113,12 @@ class BoboDecider(BoboEngineTask,
                 rl_completed, rl_halted, rl_updated = \
                     self._process_event(self._queue.get_nowait())
 
-                completed: List[BoboRunTuple] = \
-                    [run_c.to_tuple() for run_c in rl_completed]
-                halted: List[BoboRunTuple] = \
-                    [run_h.to_tuple() for run_h in rl_halted]
-                updated: List[BoboRunTuple] = \
-                    [run_u.to_tuple() for run_u in rl_updated]
+                completed: List[BoboRunSerial] = \
+                    [run_c.serialize() for run_c in rl_completed]
+                halted: List[BoboRunSerial] = \
+                    [run_h.serialize() for run_h in rl_halted]
+                updated: List[BoboRunSerial] = \
+                    [run_u.serialize() for run_u in rl_updated]
 
                 # Cache local changes
                 self._maybe_cache(completed, halted)
@@ -123,9 +135,16 @@ class BoboDecider(BoboEngineTask,
                 return internal_state_change
             return False
 
-    def snapshot(self) -> Tuple[List[BoboRunTuple],
-                                List[BoboRunTuple],
-                                List[BoboRunTuple]]:
+    def snapshot(self) -> Tuple[List[BoboRunSerial],
+    List[BoboRunSerial],
+    List[BoboRunSerial]]:
+        """
+        A snapshot of the current state of the Decider.
+
+        :return: Tuple of cached completed, cached halted, and
+            currently partially-completed runs.
+            If caching is disabled, the first two lists will be empty.
+        """
         with self._lock:
             if self._closed:
                 return [], [], []
@@ -152,14 +171,20 @@ class BoboDecider(BoboEngineTask,
                 for k_pattern in self._runs[k_phenom].keys():
                     for k_id in self._runs[k_phenom][k_pattern].keys():
                         r_updated.append(
-                            self._runs[k_phenom][k_pattern][k_id].to_tuple())
+                            self._runs[k_phenom][k_pattern][k_id].serialize())
 
             return r_completed, r_halted, r_updated
 
     def _maybe_cache(
             self,
-            completed: List[BoboRunTuple],
-            halted: List[BoboRunTuple]) -> None:
+            completed: List[BoboRunSerial],
+            halted: List[BoboRunSerial]) -> None:
+        """
+        Caches completed and halted runs, if caching is enabled.#
+
+        :param completed: Completed runs.
+        :param halted: Halted runs.
+        """
         if (
                 self._caching and
                 self._cache_completed is not None and
@@ -174,6 +199,9 @@ class BoboDecider(BoboEngineTask,
                 self._cache_halted.append(h)
 
     def on_receiver_update(self, event: BoboEvent) -> None:
+        """
+        :param event: Event from Receiver.
+        """
         with self._lock:
             if self._closed:
                 return
@@ -186,12 +214,24 @@ class BoboDecider(BoboEngineTask,
 
     def _maybe_check_against_cache(
             self,
-            completed: List[BoboRunTuple],
-            halted: List[BoboRunTuple],
-            updated: List[BoboRunTuple]) \
-            -> Tuple[List[BoboRunTuple],
-                     List[BoboRunTuple],
-                     List[BoboRunTuple]]:
+            completed: List[BoboRunSerial],
+            halted: List[BoboRunSerial],
+            updated: List[BoboRunSerial]) \
+            -> Tuple[List[BoboRunSerial],
+            List[BoboRunSerial],
+            List[BoboRunSerial]]:
+        """
+        Compares run changes that occurred remotely with local run states.
+
+        :param completed: Completed runs.
+        :param halted: Halted runs.
+        :param updated: Updated runs.
+
+        :return: The original lists but with the following changes:
+            (1) completed runs kept if they have not been complete locally;
+            (2) halted runs kept if not halted locally; and
+            (3) updated runs kept if not completed or halted locally.
+        """
         if (
                 self._caching and
                 self._cache_completed is not None and
@@ -221,9 +261,14 @@ class BoboDecider(BoboEngineTask,
 
     def on_distributed_update(
             self,
-            completed: List['BoboRunTuple'],
-            halted: List[BoboRunTuple],
-            updated: List[BoboRunTuple]) -> None:
+            completed: List['BoboRunSerial'],
+            halted: List[BoboRunSerial],
+            updated: List[BoboRunSerial]) -> None:
+        """
+        :param completed: Completed runs.
+        :param halted: Halted runs.
+        :param updated: Updated runs.
+        """
 
         with self._lock:
             if self._closed:
@@ -381,23 +426,28 @@ class BoboDecider(BoboEngineTask,
 
     def close(self) -> None:
         """
-        Sets the decider to close.
+        Closes the Decider.
         """
         with self._lock:
             self._closed = True
 
     def is_closed(self) -> bool:
         """
-        :return: True if decider is set to close; False otherwise.
+        :return: `True` if decider is set to close; `False` otherwise.
         """
         with self._lock:
             return self._closed
 
     def _notify_subscribers(
             self,
-            completed: List[BoboRunTuple],
-            halted: List[BoboRunTuple],
-            updated: List[BoboRunTuple]) -> None:
+            completed: List[BoboRunSerial],
+            halted: List[BoboRunSerial],
+            updated: List[BoboRunSerial]) -> None:
+        """
+        :param completed: Completed runs.
+        :param halted: Halted runs.
+        :param updated: Updated runs.
+        """
 
         for subscriber in self._subscribers:
             subscriber.on_decider_update(
@@ -407,8 +457,13 @@ class BoboDecider(BoboEngineTask,
 
     def _process_event(self, event: BoboEvent) -> \
             Tuple[List[BoboRun],
-                  List[BoboRun],
-                  List[BoboRun]]:
+            List[BoboRun],
+            List[BoboRun]]:
+        """
+        :param event: An event.
+
+        :return: Runs that had a state change due to the event.
+        """
         r_halt_com, r_halt_incom, r_upd = self._check_against_runs(event)
         p_halt_com, p_upd = self._check_against_patterns(event)
 
@@ -416,8 +471,13 @@ class BoboDecider(BoboEngineTask,
 
     def _check_against_runs(self, event: BoboEvent) -> \
             Tuple[List[BoboRun],
-                  List[BoboRun],
-                  List[BoboRun]]:
+            List[BoboRun],
+            List[BoboRun]]:
+        """
+        :param event: An event.
+
+        :return: Runs that had a state change due to the event.
+        """
         runs_halted_complete: List[BoboRun] = []
         runs_halted_incomplete: List[BoboRun] = []
         runs_updated: List[BoboRun] = []
@@ -445,7 +505,12 @@ class BoboDecider(BoboEngineTask,
 
     def _check_against_patterns(self, event: BoboEvent) -> \
             Tuple[List[BoboRun],
-                  List[BoboRun]]:
+            List[BoboRun]]:
+        """
+        :param event: An event.
+
+        :return: Newly-created runs due to the event.
+        """
         runs_halted_complete: List[BoboRun] = []
         runs_updated: List[BoboRun] = []
 
@@ -475,6 +540,13 @@ class BoboDecider(BoboEngineTask,
                  phenomenon_name: str,
                  pattern_name: str,
                  newrun: BoboRun) -> None:
+        """
+        Adds new run to Decider.
+
+        :param phenomenon_name: Phenomenon associated with new run.
+        :param pattern_name: Pattern associated with new run.
+        :param newrun: Run to add.
+        """
         if phenomenon_name not in self._runs:
             self._runs[phenomenon_name] = {}
 

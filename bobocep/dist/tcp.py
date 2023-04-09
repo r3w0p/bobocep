@@ -14,7 +14,7 @@ from queue import Queue
 from threading import Thread, RLock
 from typing import Dict, Tuple, Optional, List
 
-from bobocep.cep.engine.decider.decider import BoboDecider, BoboRunTuple
+from bobocep.cep.engine.decider.decider import BoboDecider, BoboRunSerial
 from bobocep.cep.engine.decider.pubsub import BoboDeciderSubscriber
 from bobocep.cep.json import BoboJSONableError, BoboJSONable
 from bobocep.dist.crypto.crypto import BoboDistributedCrypto
@@ -44,6 +44,12 @@ class _OutgoingJSONEncoder(json.JSONEncoder):
     """
 
     def __init__(self, *args, **kwargs):
+        """
+        Constructor for encoding outgoing data into JSON.
+
+        :param args: Arguments.
+        :param kwargs: Keyword arguments.
+        """
         json.JSONEncoder.__init__(self, *args, **kwargs)
 
     def default(self, obj: BoboJSONable):
@@ -60,26 +66,30 @@ class _IncomingJSONDecoder(json.JSONDecoder):
     """
 
     def __init__(self):
+        """
+        Constructor for decoding incoming JSON data.
+        """
+
         json.JSONDecoder.__init__(self, object_hook=self.object_hook)
 
-    def object_hook(self, d: dict) -> Dict[str, List[BoboRunTuple]]:
+    def object_hook(self, d: dict) -> Dict[str, List[BoboRunSerial]]:
         """
         :param d: An object dict.
         :return: Incoming Decider update information.
         """
         if _KEY_COMPLETED in d:
             d[_KEY_COMPLETED] = [
-                BoboRunTuple.from_json_str(rt)
+                BoboRunSerial.from_json_str(rt)
                 for rt in d[_KEY_COMPLETED]]
 
         if _KEY_HALTED in d:
             d[_KEY_HALTED] = [
-                BoboRunTuple.from_json_str(rt)
+                BoboRunSerial.from_json_str(rt)
                 for rt in d[_KEY_HALTED]]
 
         if _KEY_UPDATED in d:
             d[_KEY_UPDATED] = [
-                BoboRunTuple.from_json_str(rt)
+                BoboRunSerial.from_json_str(rt)
                 for rt in d[_KEY_UPDATED]]
 
         return d
@@ -110,6 +120,49 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                  recv_bytes: int = 2048,
                  subscribe: bool = True,
                  flag_reset: bool = True):
+        """
+        :param urn: A URN that is unique across devices in the network.
+        :param decider: The Decider used in the local engine.
+        :param devices: Devices in the network (including this device).
+        :param crypto: Encryption to use for message exchange.
+        :param max_size_incoming: Max queue size for incoming data.
+            Default: 0 (unbounded).
+        :param max_size_outgoing: Max queue size for outgoing data.
+            Default: 0 (unbounded).
+        :param period_ping: Period of inactivity from another device
+            to warrant pinging the device, in seconds.
+            Default: 30.
+        :param period_resync: Period of inactivity from another device
+            to warrant resyncing with the device, in seconds.
+            Default: 60.
+        :param attempt_ping: How frequently to ping another device
+            if it is within the ping period, in seconds.
+            Default: 10.
+        :param attempt_resync: How frequently to resync with another device
+            if it is within the resync period, in seconds.
+            Default: 10.
+        :param max_listen: Max number of incoming connections to listen for
+            at a given time, in seconds.
+            Default: 3.
+        :param timeout_accept: Timeout for accepting a new incoming
+            connection, in seconds.
+            Default: 3.
+        :param timeout_connect: Timeout for connecting to a client
+            when sending data, in seconds.
+            Default: 3.
+        :param timeout_send: Timeout for sending data, in seconds.
+            Default: 3.
+        :param timeout_receive: Timeout for receiving data, in seconds.
+            Default: 3.
+        :param recv_bytes: Number of bytes to receive at a time when receiving
+            data.
+            Default: 2048.
+        :param subscribe: If `True`, distributed will subscribe itself to
+            the decider and the decider to itself.
+        :param flag_reset: If `True`, the RESET flag is set to indicate to
+            external devices that it should reset its data on this device,
+            which will trigger a resync.
+        """
         super().__init__()
 
         # Lock used for local updates to and from the decider
@@ -164,12 +217,15 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         self._thread_incoming: Thread = Thread(target=self._tcp_incoming)
         self._thread_outgoing: Thread = Thread(target=self._tcp_outgoing)
 
-        self._queue_incoming: Queue[Dict[str, List[BoboRunTuple]]] = \
+        self._queue_incoming: Queue[Dict[str, List[BoboRunSerial]]] = \
             Queue(maxsize=max_size_incoming)
-        self._queue_outgoing: Queue[Dict[str, List[BoboRunTuple]]] = \
+        self._queue_outgoing: Queue[Dict[str, List[BoboRunSerial]]] = \
             Queue(maxsize=max_size_outgoing)
 
     def run(self) -> None:
+        """
+        Runs the distributed instance.
+        """
         with self._lock_local:
             if self._closed:
                 raise BoboDistributedError(_EXC_CLOSED)
@@ -189,23 +245,29 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     break
                 self._update()
 
-    def subscribe(self, subscriber: BoboDistributedSubscriber):
+    def subscribe(self, subscriber: BoboDistributedSubscriber) -> None:
+        """
+        :param subscriber: Subscriber to the distributed instance.
+        """
         with self._lock_local:
             if subscriber not in self._subscribers:
                 self._subscribers.append(subscriber)
 
-    def _update(self):
+    def _update(self) -> None:
+        """
+        Processes data in the incoming queue and passes them to subscribers.
+        """
         # Take incoming data and pass to decider
         while not self._queue_incoming.empty():
             logging.debug("{} _update fetching data from incoming queue"
                           .format(self._urn))
 
-            incoming: Dict[str, List[BoboRunTuple]] = \
+            incoming: Dict[str, List[BoboRunSerial]] = \
                 self._queue_incoming.get_nowait()
 
-            completed: List[BoboRunTuple] = incoming[_KEY_COMPLETED]
-            halted: List[BoboRunTuple] = incoming[_KEY_HALTED]
-            updated: List[BoboRunTuple] = incoming[_KEY_UPDATED]
+            completed: List[BoboRunSerial] = incoming[_KEY_COMPLETED]
+            halted: List[BoboRunSerial] = incoming[_KEY_HALTED]
+            updated: List[BoboRunSerial] = incoming[_KEY_UPDATED]
 
             logging.debug("{} _update sending data to subscribers"
                           .format(self._urn))
@@ -218,9 +280,14 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
     def on_decider_update(
             self,
-            completed: List[BoboRunTuple],
-            halted: List[BoboRunTuple],
-            updated: List[BoboRunTuple]):
+            completed: List[BoboRunSerial],
+            halted: List[BoboRunSerial],
+            updated: List[BoboRunSerial]) -> None:
+        """
+        :param completed: Locally completed runs.
+        :param halted: Locally halted runs.
+        :param updated: Locally updated runs.
+        """
         with self._lock_local:
             if self._closed:
                 raise BoboDistributedError(_EXC_CLOSED)
@@ -233,7 +300,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
             # Take changes to decider and pass to outgoing
 
-            outgoing: Dict[str, List[BoboRunTuple]] = {
+            outgoing: Dict[str, List[BoboRunSerial]] = {
                 _KEY_COMPLETED: completed,
                 _KEY_HALTED: halted,
                 _KEY_UPDATED: updated
@@ -249,6 +316,9 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
     @staticmethod
     def _now() -> int:
+        """
+        :return: The current time in seconds since epoch.
+        """
         return int(time.time())
 
     def _tcp_outgoing(self):
@@ -296,7 +366,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
             # Used to share data across multiple devices
             cache_resync_str: Optional[str] = None
-            cache_sync_dict: Optional[Dict[str, List[BoboRunTuple]]] = None
+            cache_sync_dict: Optional[Dict[str, List[BoboRunSerial]]] = None
 
             for d, msg_type in outlist:
                 # Set flags
@@ -372,7 +442,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     stash_c, stash_h, stash_u = d.stash()
 
                     # Add stash to new data to send
-                    send_sync: Dict[str, List[BoboRunTuple]] = {
+                    send_sync: Dict[str, List[BoboRunSerial]] = {
                         _KEY_COMPLETED:
                             cache_sync_dict[_KEY_COMPLETED] + stash_c,
                         _KEY_HALTED:
@@ -412,6 +482,15 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
     def _tcp_send(self, d: BoboDeviceManager, msg_type: int,
                   msg_flags: int, msg_str: str) -> int:
+        """
+        Sends data via TCP.
+
+        :param d: The device to send data to.
+        :param msg_type: Message type.
+        :param msg_flags: Message flags.
+        :param msg_str: The data to send.
+        :return: 0 for success; 1 for timeout error; 2 for system error.
+        """
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         try:
@@ -540,7 +619,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     try:
                         plaintext = self._crypto.decrypt(all_bytes)
                     except ValueError as e:
-                        raise BoboDistributedTimeoutError(
+                        raise BoboDistributedSystemError(
                             "Failed to unwrap incoming message bytes: {}"
                             .format(e))
 
@@ -552,14 +631,14 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                         "urn={} type={} flags={}"
                         .format(self._urn, pt_urn, pt_type, pt_flags))
 
-                    # Check if URN is a recognised device
+                    # Check if URN is NOT a recognised device
                     if pt_urn not in self._devices:
                         raise BoboDistributedSystemError(
                             "Unknown device URN '{}'.".format(pt_urn))
 
                     device: BoboDeviceManager = self._devices[pt_urn]
 
-                    # Check if ID key matches expected key for URN
+                    # Check if ID key DOES NOT MATCH expected key for URN
                     if pt_id != device.id_key:
                         raise BoboDistributedSystemError(
                             "Invalid ID key for URN '{}'".format(device.urn))
@@ -601,7 +680,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
             -> Tuple[str, str, int, int, str]:
         """
         :param plaintext: The string to split.
-        :return: Tuple containing: URN, ID, type, flags, and JSON message
+        :return: Tuple containing: URN, ID, type, flags, and JSON message.
         """
         ix_delim = []
 
@@ -626,7 +705,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         )
 
     def _incoming_from_json(
-            self, msg_str: str) -> Dict[str, List[BoboRunTuple]]:
+            self, msg_str: str) -> Dict[str, List[BoboRunSerial]]:
         """
         :param msg_str: Incoming JSON string.
         :return: Incoming Decider update information.
@@ -639,7 +718,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                 "Failed to parse incoming JSON: {}".format(e))
 
     def _outgoing_to_json(
-            self, msg: Dict[str, List[BoboRunTuple]]) -> str:
+            self, msg: Dict[str, List[BoboRunSerial]]) -> str:
         """
         :param msg: Outgoing Decider update information.
         :return: Outgoing JSON string.
@@ -652,11 +731,17 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                 "Failed to generate outgoing JSON: {}".format(e))
 
     def join(self) -> None:
+        """
+        Joins with the incoming and outgoing threads.
+        """
         with self._lock_local:
             self._thread_incoming.join()
             self._thread_outgoing.join()
 
     def close(self) -> None:
+        """
+        Closes the distributed instance.
+        """
         with self._lock_local:
             if self._closed:
                 return
@@ -671,13 +756,22 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                 self._closed = True
 
     def is_closed(self) -> bool:
+        """
+        :return: `True` if distributed is closed; `False` otherwise.
+        """
         with self._lock_local:
             return self._closed
 
     def size_incoming(self) -> int:
+        """
+        :return: Size of incoming queue.
+        """
         with self._lock_local:
             return self._queue_incoming.qsize()
 
     def size_outgoing(self) -> int:
+        """
+        :return: Size of outgoing queue
+        """
         with self._lock_local:
             return self._queue_outgoing.qsize()

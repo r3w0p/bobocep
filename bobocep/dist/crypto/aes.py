@@ -64,9 +64,16 @@ class BoboDistributedCryptoAES(BoboDistributedCrypto):
         )
 
     def end_bytes(self) -> bytes:
+        """
+        :return: Bytes used to signify the end of every encrypted payload.
+        """
         return _END_BYTES
 
     def min_length(self) -> int:
+        """
+        :return: The minimum possible length of an encrypted payload,
+            in number of bytes.
+        """
         return self._msg_min_length
 
     def encrypt(self, msg_str: str) -> bytes:

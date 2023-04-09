@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 
 """
-Engine for complex event processing.
+CEP engine.
 """
 
 from threading import RLock

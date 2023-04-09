@@ -7,7 +7,7 @@ from typing import Optional, List
 from bobocep.cep.engine.decider.decider import BoboDecider
 from bobocep.cep.engine.decider.pubsub import BoboDeciderSubscriber
 from bobocep.cep.engine.decider.run import BoboRun
-from bobocep.cep.engine.decider.runtup import BoboRunTuple
+from bobocep.cep.engine.decider.runserial import BoboRunSerial
 from bobocep.cep.event import BoboEvent, BoboHistory
 from bobocep.cep.gen.event_id import BoboGenEventID, BoboGenEventIDUnique
 from bobocep.cep.phenomenon.pattern.pattern import BoboPattern
@@ -18,14 +18,14 @@ from tests.test_bobocep.test_cep.test_event import tc_event_simple
 class StubDeciderSubscriber(BoboDeciderSubscriber):
     def __init__(self):
         super().__init__()
-        self.completed: List[BoboRunTuple] = []
-        self.halted: List[BoboRunTuple] = []
-        self.updated: List[BoboRunTuple] = []
+        self.completed: List[BoboRunSerial] = []
+        self.halted: List[BoboRunSerial] = []
+        self.updated: List[BoboRunSerial] = []
 
     def on_decider_update(self,
-                          completed: List[BoboRunTuple],
-                          halted: List[BoboRunTuple],
-                          updated: List[BoboRunTuple]):
+                          completed: List[BoboRunSerial],
+                          halted: List[BoboRunSerial],
+                          updated: List[BoboRunSerial]):
         self.completed += completed
         self.halted += halted
         self.updated += updated
@@ -75,7 +75,7 @@ def tc_run_tuple(
         pattern_name: str = "pattern_name",
         block_index: int = 1,
         history: Optional[BoboHistory] = None):
-    return BoboRunTuple(
+    return BoboRunSerial(
         run_id=run_id,
         phenomenon_name=phenomenon_name,
         pattern_name=pattern_name,

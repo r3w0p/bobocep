@@ -18,23 +18,33 @@ class BoboDistributedCryptoError(BoboDistributedError):
 
 
 class BoboDistributedCrypto(ABC):
+    """
+    Abstract class for distributed crypto.
+    """
 
     @abstractmethod
     def encrypt(self, msg_str: str) -> bytes:
-        """"""
+        """
+        :param msg_str: Message to encrypt.
+        :return: Encrypted message.
+        """
 
     @abstractmethod
     def decrypt(self, msg_bytes: bytes) -> str:
-        """"""
+        """
+        :param msg_bytes: Message to decrypt.
+        :return: Decrypted message.
+        """
 
     @abstractmethod
     def end_bytes(self) -> bytes:
         """
-        :return: The bytes used to signify the end of ciphertext output.
+        :return: Bytes used to signify the end of every encrypted payload.
         """
 
     @abstractmethod
     def min_length(self) -> int:
         """
-        :return: The minimum length of ciphertext output.
+        :return: The minimum possible length of an encrypted payload,
+            in number of bytes.
         """

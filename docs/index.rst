@@ -15,7 +15,7 @@
    :maxdepth: 1
    :hidden:
 
-   process
+   phenomena
    actions
    distributed
    publications
