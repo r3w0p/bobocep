@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 from bobocep import BoboError
-from bobocep.cep.json import BoboJSONable
+from bobocep.bobocep import BoboJSONable
 
 _EXC_ID_LEN = "event ID must have a length greater than 0"
 

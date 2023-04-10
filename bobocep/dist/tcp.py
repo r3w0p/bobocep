@@ -14,13 +14,14 @@ from queue import Queue
 from threading import Thread, RLock
 from typing import Dict, Tuple, Optional, List
 
+from bobocep.bobocep import BoboJSONableError, BoboJSONable
 from bobocep.cep.engine.decider.decider import BoboDecider, BoboRunSerial
 from bobocep.cep.engine.decider.pubsub import BoboDeciderSubscriber
-from bobocep.cep.json import BoboJSONableError, BoboJSONable
 from bobocep.dist.crypto.crypto import BoboDistributedCrypto
 from bobocep.dist.device import BoboDevice, BoboDeviceManager
 from bobocep.dist.dist import BoboDistributed, BoboDistributedError, \
-    BoboDistributedSystemError, BoboDistributedTimeoutError
+    BoboDistributedSystemError, BoboDistributedTimeoutError, \
+    BoboDistributedJSONDecodeError
 from bobocep.dist.pubsub import BoboDistributedSubscriber
 
 _KEY_COMPLETED = "completed"
@@ -57,7 +58,14 @@ class _OutgoingJSONEncoder(json.JSONEncoder):
         :param obj: A JSONable object.
         :return: A JSON string.
         """
-        return obj.to_json_str()
+        try:
+            return obj.to_json_str()
+
+        except (KeyError, RecursionError, TypeError, ValueError) as e:
+            raise BoboDistributedJSONDecodeError(
+                "Failed to encode outgoing data. "
+                "Ensure all types are JSONable. "
+                "Error: {}".format(e))
 
 
 class _IncomingJSONDecoder(json.JSONDecoder):
@@ -77,22 +85,31 @@ class _IncomingJSONDecoder(json.JSONDecoder):
         :param d: An object dict.
         :return: Incoming Decider update information.
         """
-        if _KEY_COMPLETED in d:
-            d[_KEY_COMPLETED] = [
-                BoboRunSerial.from_json_str(rt)
-                for rt in d[_KEY_COMPLETED]]
 
-        if _KEY_HALTED in d:
-            d[_KEY_HALTED] = [
-                BoboRunSerial.from_json_str(rt)
-                for rt in d[_KEY_HALTED]]
+        try:
+            if _KEY_COMPLETED in d:
+                d[_KEY_COMPLETED] = [
+                    BoboRunSerial.from_json_str(rt)
+                    for rt in d[_KEY_COMPLETED]]
 
-        if _KEY_UPDATED in d:
-            d[_KEY_UPDATED] = [
-                BoboRunSerial.from_json_str(rt)
-                for rt in d[_KEY_UPDATED]]
+            if _KEY_HALTED in d:
+                d[_KEY_HALTED] = [
+                    BoboRunSerial.from_json_str(rt)
+                    for rt in d[_KEY_HALTED]]
 
-        return d
+            if _KEY_UPDATED in d:
+                d[_KEY_UPDATED] = [
+                    BoboRunSerial.from_json_str(rt)
+                    for rt in d[_KEY_UPDATED]]
+
+            return d
+
+        except (KeyError, RecursionError, TypeError, ValueError) as e:
+            # json.JSONDecodeError is a subclass of ValueError
+            raise BoboDistributedJSONDecodeError(
+                "Failed to decode incoming data. "
+                "Ensure all types are JSONable."
+                "Error: {}".format(e))
 
 
 class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):

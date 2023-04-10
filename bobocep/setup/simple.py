@@ -89,8 +89,8 @@ class BoboSetupSimple(BoboSetup):
         return engine
 
 
-class BoboSetupDistributed(BoboSetup):
-    """A setup to make distributed configuration easier."""
+class BoboSetupSimpleDistributed(BoboSetup):
+    """A simple setup to make distributed configuration easier."""
 
     def __init__(
             self,

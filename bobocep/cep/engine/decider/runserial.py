@@ -9,8 +9,8 @@ A serializable representation of a run.
 from json import loads, dumps
 
 from bobocep import BoboError
+from bobocep.bobocep import BoboJSONable
 from bobocep.cep.event import BoboHistory
-from bobocep.cep.json import BoboJSONable
 
 _EXC_RUN_ID_LEN = "run ID must have a length greater than 0"
 _EXC_PHENOM_LEN = "phenomenon name must have a length greater than 0"

@@ -7,7 +7,6 @@ import pytest
 from bobocep.cep.engine.decider.decider import BoboDeciderError, BoboDecider
 from bobocep.cep.gen.event_id import BoboGenEventIDUnique
 from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder
-from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCall
 from tests.test_bobocep.test_cep.test_engine.test_decider import \
     tc_decider_sub, \
     tc_run_tuple
@@ -170,12 +169,12 @@ class TestValid:
         assert len(subscriber.halted) == 1
 
     def test_3_block_pattern_halt_incomplete_failed_precondition(self):
-        pattern = BoboPatternBuilder() \
-            .next("g1", BoboPredicateCall(lambda e, h: e.data == 10)) \
-            .next("g2", BoboPredicateCall(lambda e, h: e.data == 11)) \
-            .next("g3", BoboPredicateCall(lambda e, h: e.data == 12)) \
-            .precondition(BoboPredicateCall(lambda e, h: e.data > 9)) \
-            .generate("pattern")
+        pattern = BoboPatternBuilder(name="pattern") \
+            .next(lambda e, h: e.data == 10) \
+            .next(lambda e, h: e.data == 11) \
+            .next(lambda e, h: e.data == 12) \
+            .precondition(lambda e, h: e.data > 9) \
+            .generate()
 
         decider, subscriber = tc_decider_sub(
             [tc_phenomenon(patterns=[pattern])])

@@ -48,15 +48,16 @@ class BoboPatternBlock:
     """
 
     def __init__(self,
-                 group: str,
                  predicates: List[BoboPredicate],
+                 group: str,
                  strict: bool,
                  loop: bool,
                  negated: bool,
                  optional: bool):
         """
+        :param predicates: Block predicates.
         :param group: The group with which the block is associated.
-        :param predicates: The block predicates.
+            Can be an empty string.
         :param strict: `True` if the block has strict contiguity;
             `False` otherwise.
         :param loop: `True` if the block loops back to itself;
@@ -67,9 +68,6 @@ class BoboPatternBlock:
             `False` otherwise.
         """
         super().__init__()
-
-        if len(group) == 0:
-            raise BoboPatternBlockError(_EXC_GROUP_LEN)
 
         if len(predicates) == 0:
             raise BoboPatternBlockError(_EXC_PREDICATES_LEN)
@@ -83,56 +81,56 @@ class BoboPatternBlock:
         if (not loop) and (negated and optional):
             raise BoboPatternBlockError(_EXC_NEG_AND_OPT_LOOP_FALSE)
 
-        self._group: str = group
         self._predicates: Tuple[BoboPredicate, ...] = tuple(predicates)
+        self._group: str = group
         self._strict: bool = strict
         self._loop: bool = loop
         self._negated: bool = negated
         self._optional: bool = optional
 
     @property
-    def group(self) -> str:
-        """
-        Get pattern block group.
-        """
-        return self._group
-
-    @property
     def predicates(self) -> Tuple[BoboPredicate, ...]:
         """
-        Get pattern block predicates.
+        :return: Block predicates.
         """
         return self._predicates
 
     @property
+    def group(self) -> str:
+        """
+        :return: Block group.
+        """
+        return self._group
+
+    @property
     def strict(self) -> bool:
         """
-        `True` if pattern block has strict contiguity;
-        `False` otherwise.
+        :return: `True` if pattern block has strict contiguity;
+            `False` otherwise.
         """
         return self._strict
 
     @property
     def loop(self) -> bool:
         """
-        `True` if pattern block loops;
-        `False` otherwise.
+        :return: `True` if pattern block loops;
+            `False` otherwise.
         """
         return self._loop
 
     @property
     def negated(self) -> bool:
         """
-        `True` if pattern block is negated;
-        `False` otherwise.
+        :return: `True` if pattern block is negated;
+            `False` otherwise.
         """
         return self._negated
 
     @property
     def optional(self) -> bool:
         """
-        `True` if pattern block is optional;
-        `False` otherwise.
+        :return: `True` if pattern block is optional;
+            `False` otherwise.
         """
         return self._optional
 
@@ -188,27 +186,27 @@ class BoboPattern:
     @property
     def name(self) -> str:
         """
-        Get pattern name.
+        :return: Pattern name.
         """
         return self._name
 
     @property
     def blocks(self) -> Tuple[BoboPatternBlock, ...]:
         """
-        Get pattern blocks.
+        :return: Pattern blocks.
         """
         return self._blocks
 
     @property
     def preconditions(self) -> Tuple[BoboPredicate, ...]:
         """
-        Get pattern preconditions.
+        :return: Pattern preconditions.
         """
         return self._preconditions
 
     @property
     def haltconditions(self) -> Tuple[BoboPredicate, ...]:
         """
-        Get pattern haltconditions.
+        :return: Pattern haltconditions.
         """
         return self._haltconditions

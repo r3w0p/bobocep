@@ -5,14 +5,21 @@
 """
 Builders to assist in generating a pattern.
 """
-
-from typing import List
+import typing
+from typing import List, Union, Callable
 
 from bobocep.cep.phenomenon.pattern.pattern import BoboPatternBlock, \
     BoboPattern, BoboPatternError
-from bobocep.cep.phenomenon.pattern.predicate import BoboPredicate
+from bobocep.cep.phenomenon.pattern.predicate import BoboPredicate, \
+    BoboPredicateCall
 
 _EXC_NAME_LEN = "name must have a length greater than 0"
+
+
+# Decorator "@typing.no_type_check" is used to suppress a mypy issue regarding
+# the use of "Union[BoboPredicate, Callable]" for predicate parameters.
+# This may have the unintended side effect of suppressing actual typing issues
+# present in the methods.
 
 
 class BoboPatternBuilderError(BoboPatternError):
@@ -26,44 +33,46 @@ class BoboPatternBuilder:
     A pattern builder.
     """
 
-    def __init__(self):
+    def __init__(self, name: str):
         """
-        Pattern builder constructor.
+        :param name: Pattern name.
         """
 
+        if len(name) == 0:
+            raise BoboPatternBuilderError(_EXC_NAME_LEN)
+
+        self._name: str = name
         self._blocks: List[BoboPatternBlock] = []
         self._preconditions: List[BoboPredicate] = []
         self._haltconditions: List[BoboPredicate] = []
 
-    def generate(self, name: str) -> BoboPattern:
+    def generate(self) -> BoboPattern:
         """
         Generates a BoboPattern instance with the configuration specified
         in the builder.
 
-        :param name: Name of generated pattern.
-
         :return: A BoboPattern instance.
         """
-        if len(name) == 0:
-            raise BoboPatternBuilderError(_EXC_NAME_LEN)
 
         return BoboPattern(
-            name=name,
+            name=self._name,
             blocks=self._blocks,
             preconditions=self._preconditions,
             haltconditions=self._haltconditions
         )
 
+    @typing.no_type_check
     def next(self,
-             group: str,
-             predicate: BoboPredicate,
+             predicate: Union[BoboPredicate, Callable],
+             group: str = "",
              times: int = 1,
              loop: bool = False) -> 'BoboPatternBuilder':
         """
         Adds a block with strict contiguity.
 
+        :param predicate: Block predicate. If a Callable is provided, it will
+            be wrapped in a BoboPredicateCall instance.
         :param group: Block group.
-        :param predicate: Block predicate.
         :param times: Number of times to add this block to the pattern,
             in sequence.
         :param loop: If `True`, the block loops back onto itself (making it
@@ -72,52 +81,63 @@ class BoboPatternBuilder:
         :return: The BoboPatternBuilder instance that made the function call.
         """
 
+        if isinstance(predicate, Callable):
+            predicate = BoboPredicateCall(call=predicate)
+
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
-                group=group,
                 predicates=[predicate],
+                group=group,
                 strict=True,
                 loop=loop,
                 negated=False,
                 optional=False))
         return self
 
+    @typing.no_type_check
     def not_next(self,
-                 group: str,
-                 predicate: BoboPredicate,
+                 predicate: Union[BoboPredicate, Callable],
+                 group: str = "",
                  times: int = 1) -> 'BoboPatternBuilder':
         """
         Adds a negated block with strict contiguity.
 
+        :param predicate: Block predicate. If a Callable is provided, it will
+            be wrapped in a BoboPredicateCall instance.
         :param group: Block group.
-        :param predicate: Block predicate.
         :param times: Number of times to add this block to the pattern,
             in sequence.
 
         :return: The BoboPatternBuilder instance that made the function call.
         """
 
+        if isinstance(predicate, Callable):
+            predicate = BoboPredicateCall(call=predicate)
+
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
-                group=group,
                 predicates=[predicate],
+                group=group,
                 strict=True,
                 loop=False,
                 negated=True,
                 optional=False))
         return self
 
-    def followed_by(self,
-                    group: str,
-                    predicate: BoboPredicate,
-                    times: int = 1,
-                    loop: bool = False,
-                    optional: bool = False) -> 'BoboPatternBuilder':
+    @typing.no_type_check
+    def followed_by(
+            self,
+            predicate: Union[BoboPredicate, Callable],
+            group: str = "",
+            times: int = 1,
+            loop: bool = False,
+            optional: bool = False) -> 'BoboPatternBuilder':
         """
         Adds a block with relaxed contiguity.
 
+        :param predicate: Block predicate. If a Callable is provided, it will
+            be wrapped in a BoboPredicateCall instance.
         :param group: Block group.
-        :param predicate: Block predicate.
         :param times: Number of times to add this block to the pattern,
             in sequence.
         :param loop: If `True`, the block loops back onto itself.
@@ -126,52 +146,64 @@ class BoboPatternBuilder:
         :return: The BoboPatternBuilder instance that made the function call.
         """
 
+        if isinstance(predicate, Callable):
+            predicate = BoboPredicateCall(call=predicate)
+
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
-                group=group,
                 predicates=[predicate],
+                group=group,
                 strict=False,
                 loop=loop,
                 negated=False,
                 optional=optional))
         return self
 
-    def not_followed_by(self,
-                        group: str,
-                        predicate: BoboPredicate,
-                        times: int = 1) -> 'BoboPatternBuilder':
+    @typing.no_type_check
+    def not_followed_by(
+            self,
+            predicate: Union[BoboPredicate, Callable],
+            group: str = "",
+            times: int = 1) -> 'BoboPatternBuilder':
         """
         Adds a negated block with relaxed contiguity.
 
+        :param predicate: Block predicate. If a Callable is provided, it will
+            be wrapped in a BoboPredicateCall instance.
         :param group: Block group.
-        :param predicate: Block predicate.
         :param times: Number of times to add this block to the pattern,
             in sequence.
 
         :return: The BoboPatternBuilder instance that made the function call.
         """
 
+        if isinstance(predicate, Callable):
+            predicate = BoboPredicateCall(call=predicate)
+
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
-                group=group,
                 predicates=[predicate],
+                group=group,
                 strict=False,
                 loop=False,
                 negated=True,
                 optional=False))
         return self
 
-    def followed_by_any(self,
-                        group: str,
-                        predicates: List[BoboPredicate],
-                        times: int = 1,
-                        loop: bool = False,
-                        optional: bool = False) -> 'BoboPatternBuilder':
+    @typing.no_type_check
+    def followed_by_any(
+            self,
+            predicates: List[Union[BoboPredicate, Callable]],
+            group: str = "",
+            times: int = 1,
+            loop: bool = False,
+            optional: bool = False) -> 'BoboPatternBuilder':
         """
         Adds multiple blocks with non-deterministic relaxed contiguity.
 
+        :param predicates: Predicates, one per block. Any Callable types in
+            the list will be wrapped in their own BoboPredicateCall instance.
         :param group: Group name for all blocks.
-        :param predicates: Predicates, one per block.
         :param times: Number of times to add these blocks to the pattern,
             in sequence.
         :param loop: If `True`, the blocks loop back onto themselves.
@@ -180,62 +212,90 @@ class BoboPatternBuilder:
         :return: The BoboPatternBuilder instance that made the function call.
         """
 
+        for i in range(len(predicates)):
+            if isinstance(predicates[i], Callable):
+                predicates[i] = BoboPredicateCall(
+                    call=predicates[i])
+
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
-                group=group,
                 predicates=predicates,
+                group=group,
                 strict=False,
                 loop=loop,
                 negated=False,
                 optional=optional))
         return self
 
-    def not_followed_by_any(self,
-                            group: str,
-                            predicates: List[BoboPredicate],
-                            times: int = 1) -> 'BoboPatternBuilder':
+    @typing.no_type_check
+    def not_followed_by_any(
+            self,
+            predicates: List[Union[BoboPredicate, Callable]],
+            group: str = "",
+            times: int = 1) -> 'BoboPatternBuilder':
         """
         Adds multiple negated blocks with non-deterministic relaxed contiguity.
 
+        :param predicates: Predicates, one per block. Any Callable types in
+            the list will be wrapped in their own BoboPredicateCall instance.
         :param group: Group name for all blocks.
-        :param predicates: Predicates, one per block.
         :param times: Number of times to add these blocks to the pattern,
             in sequence.
 
         :return: The BoboPatternBuilder instance that made the function call.
         """
 
+        for i in range(len(predicates)):
+            if isinstance(predicates[i], Callable):
+                predicates[i] = BoboPredicateCall(
+                    call=predicates[i])
+
         for _ in range(max(times, 1)):
             self._blocks.append(BoboPatternBlock(
-                group=group,
                 predicates=predicates,
+                group=group,
                 strict=False,
                 loop=False,
                 negated=True,
                 optional=False))
         return self
 
-    def precondition(self, predicate: BoboPredicate) -> 'BoboPatternBuilder':
+    @typing.no_type_check
+    def precondition(
+            self, predicate: Union[BoboPredicate, Callable]) \
+            -> 'BoboPatternBuilder':
         """
         Adds a precondition.
 
         :param predicate: The precondition predicate.
+            If a Callable is provided, it will be wrapped in a
+            BoboPredicateCall instance.
 
         :return: The BoboPatternBuilder instance that made the function call.
         """
+
+        if isinstance(predicate, Callable):
+            predicate = BoboPredicateCall(call=predicate)
 
         self._preconditions.append(predicate)
         return self
 
-    def haltcondition(self,
-                      predicate: BoboPredicate) -> 'BoboPatternBuilder':
+    @typing.no_type_check
+    def haltcondition(
+            self, predicate: Union[BoboPredicate, Callable]) \
+            -> 'BoboPatternBuilder':
         """
         Adds a haltcondition.
 
         :param predicate: The haltcondition predicate.
+            If a Callable is provided, it will be wrapped in a
+            BoboPredicateCall instance.
 
         :return: The BoboPatternBuilder instance that made the function call.
         """
+
+        if isinstance(predicate, Callable):
+            predicate = BoboPredicateCall(call=predicate)
 
         self._haltconditions.append(predicate)
         return self

@@ -21,6 +21,7 @@ from tests.test_bobocep.test_cep.test_phenomenon import tc_pattern, \
 from tests.test_bobocep.test_dist import StubDistributedSubscriber, \
     tc_run_distributed_tcp
 
+
 # GitHub Actions: "OSError: [Errno 98] Address already in use"
 # Use a different port for each running dist in this file: 8080, 8081, 8082...
 
@@ -359,12 +360,12 @@ class TestValid:
         devices = [
             BoboDevice(
                 addr="127.0.0.1",
-                port=8083,
+                port=8084,
                 urn="urn:dist:1",
                 id_key="1111111111"),
             BoboDevice(
                 addr="127.0.0.1",
-                port=8083,
+                port=8084,
                 urn="urn:dist:2",
                 id_key="2222222222")
         ]
@@ -400,12 +401,12 @@ class TestInvalid:
         devices = [
             BoboDevice(
                 addr="127.0.0.1",
-                port=8080,
+                port=8085,
                 urn="urn:dist:duplicate",
                 id_key="1111111111"),
             BoboDevice(
                 addr="127.0.0.1",
-                port=8080,
+                port=8085,
                 urn="urn:dist:duplicate",
                 id_key="2222222222")
         ]
@@ -441,7 +442,7 @@ class TestInvalid:
         devices = [
             BoboDevice(
                 addr="127.0.0.1",
-                port=8080,
+                port=8086,
                 urn="urn:dist:2",
                 id_key="1111111111")
         ]
@@ -462,17 +463,17 @@ class TestInvalid:
         devices = [
             BoboDevice(
                 addr="127.0.0.1",
-                port=8080,
+                port=8087,
                 urn="urn:dist:2",
                 id_key="1111111111"),
             BoboDevice(
                 addr="127.0.0.1",
-                port=8080,
+                port=8087,
                 urn="urn:dist:3",
                 id_key="1111111111"),
             BoboDevice(
                 addr="127.0.0.1",
-                port=8080,
+                port=8087,
                 urn="urn:dist:4",
                 id_key="1111111111")
         ]
@@ -493,7 +494,7 @@ class TestInvalid:
         devices = [
             BoboDevice(
                 addr="127.0.0.1",
-                port=8080,
+                port=8088,
                 urn="urn:dist:1",
                 id_key="1111111111")
         ]
@@ -514,12 +515,12 @@ class TestInvalid:
         devices = [
             BoboDevice(
                 addr="127.0.0.1",
-                port=9080,
+                port=8089,
                 urn="urn:dist:1",
                 id_key="1111111111"),
             BoboDevice(
                 addr="127.0.0.1",
-                port=9080,
+                port=8089,
                 urn="urn:dist:2",
                 id_key="2222222222")
         ]
@@ -555,12 +556,12 @@ class TestInvalid:
         devices = [
             BoboDevice(
                 addr="127.0.0.1",
-                port=9081,
+                port=8090,
                 urn="urn:dist:1",
                 id_key="1111111111"),
             BoboDevice(
                 addr="127.0.0.1",
-                port=9081,
+                port=8090,
                 urn="urn:dist:2",
                 id_key="2222222222")
         ]
@@ -623,12 +624,12 @@ class TestInvalid:
         devices = [
             BoboDevice(
                 addr="127.0.0.1",
-                port=9080,
+                port=8091,
                 urn="urn:dist:1",
                 id_key="1111111111"),
             BoboDevice(
                 addr="127.0.0.1",
-                port=9080,
+                port=8091,
                 urn="urn:dist:2",
                 id_key="2222222222")
         ]
@@ -694,12 +695,12 @@ class TestInvalid:
         devices = [
             BoboDevice(
                 addr="127.0.0.1",
-                port=9080,
+                port=8092,
                 urn="urn:dist:1",
                 id_key="1111111111"),
             BoboDevice(
                 addr="127.0.0.1",
-                port=9080,
+                port=8092,
                 urn="urn:dist:2",
                 id_key="2222222222")
         ]

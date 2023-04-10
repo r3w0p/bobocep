@@ -10,15 +10,15 @@ from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCall, \
     BoboPredicate
 
 
-def tc_block(group: str = "group",
-             call: Callable = lambda e, h: e.data,
+def tc_block(call: Callable = lambda e, h: e.data,
+             group: str = "group",
              strict: bool = False,
              loop: bool = False,
              negated: bool = False,
              optional: bool = False) -> BoboPatternBlock:
     return BoboPatternBlock(
-        group=group,
         predicates=[BoboPredicateCall(call=call)],
+        group=group,
         strict=strict,
         loop=loop,
         negated=negated,

@@ -15,7 +15,7 @@ class TestInvalid:
     def test_name_0_length(self):
         with pytest.raises(BoboPatternError):
             BoboPattern(name="",
-                        blocks=[tc_block("a")],
+                        blocks=[tc_block(group="a")],
                         preconditions=[tc_predicate()],
                         haltconditions=[tc_predicate()])
 
@@ -29,53 +29,53 @@ class TestInvalid:
     def test_3_blocks_first_block_negated(self):
         with pytest.raises(BoboPatternError):
             BoboPattern(name="pattern",
-                        blocks=[tc_block("a", negated=True),
-                                tc_block("b"),
-                                tc_block("c")],
+                        blocks=[tc_block(group="a", negated=True),
+                                tc_block(group="b"),
+                                tc_block(group="c")],
                         preconditions=[tc_predicate()],
                         haltconditions=[tc_predicate()])
 
     def test_3_blocks_first_block_optional(self):
         with pytest.raises(BoboPatternError):
             BoboPattern(name="pattern",
-                        blocks=[tc_block("a", optional=True),
-                                tc_block("b"),
-                                tc_block("c")],
+                        blocks=[tc_block(group="a", optional=True),
+                                tc_block(group="b"),
+                                tc_block(group="c")],
                         preconditions=[tc_predicate()],
                         haltconditions=[tc_predicate()])
 
     def test_3_blocks_first_block_loop(self):
         with pytest.raises(BoboPatternError):
             BoboPattern(name="pattern",
-                        blocks=[tc_block("a", loop=True),
-                                tc_block("b"),
-                                tc_block("c")],
+                        blocks=[tc_block(group="a", loop=True),
+                                tc_block(group="b"),
+                                tc_block(group="c")],
                         preconditions=[tc_predicate()],
                         haltconditions=[tc_predicate()])
 
     def test_3_blocks_last_block_negated(self):
         with pytest.raises(BoboPatternError):
             BoboPattern(name="pattern",
-                        blocks=[tc_block("a"),
-                                tc_block("b"),
-                                tc_block("c", negated=True)],
+                        blocks=[tc_block(group="a"),
+                                tc_block(group="b"),
+                                tc_block(group="c", negated=True)],
                         preconditions=[tc_predicate()],
                         haltconditions=[tc_predicate()])
 
     def test_3_blocks_last_block_optional(self):
         with pytest.raises(BoboPatternError):
             BoboPattern(name="pattern",
-                        blocks=[tc_block("a"),
-                                tc_block("b"),
-                                tc_block("c", optional=True)],
+                        blocks=[tc_block(group="a"),
+                                tc_block(group="b"),
+                                tc_block(group="c", optional=True)],
                         preconditions=[tc_predicate()],
                         haltconditions=[tc_predicate()])
 
     def test_3_blocks_last_block_loop(self):
         with pytest.raises(BoboPatternError):
             BoboPattern(name="pattern",
-                        blocks=[tc_block("a"),
-                                tc_block("b"),
-                                tc_block("c", loop=True)],
+                        blocks=[tc_block(group="a"),
+                                tc_block(group="b"),
+                                tc_block(group="c", loop=True)],
                         preconditions=[tc_predicate()],
                         haltconditions=[tc_predicate()])

@@ -13,8 +13,8 @@ class TestValid:
 
     def test_negated_and_optional_both_false_if_loop_true(self):
         assert type(BoboPatternBlock(
-            group="group",
             predicates=[BoboPredicateCall(call=lambda e, h: True)],
+            group="group",
             strict=False,
             loop=True,
             negated=False,
@@ -23,8 +23,8 @@ class TestValid:
 
     def test_negated_and_optional_both_false_if_loop_false(self):
         assert type(BoboPatternBlock(
-            group="group",
             predicates=[BoboPredicateCall(call=lambda e, h: True)],
+            group="group",
             strict=False,
             loop=False,
             negated=False,
@@ -33,8 +33,8 @@ class TestValid:
 
     def test_negated_true_optional_false_if_loop_false(self):
         assert type(BoboPatternBlock(
-            group="group",
             predicates=[BoboPredicateCall(call=lambda e, h: True)],
+            group="group",
             strict=False,
             loop=False,
             negated=True,
@@ -43,8 +43,8 @@ class TestValid:
 
     def test_negated_false_optional_true_if_loop_false(self):
         assert type(BoboPatternBlock(
-            group="group",
             predicates=[BoboPredicateCall(call=lambda e, h: True)],
+            group="group",
             strict=False,
             loop=False,
             negated=False,
@@ -54,21 +54,11 @@ class TestValid:
 
 class TestInvalid:
 
-    def test_group_0_length(self):
-        with pytest.raises(BoboPatternBlockError):
-            BoboPatternBlock(
-                group="",
-                predicates=[BoboPredicateCall(call=lambda e, h: True)],
-                strict=False,
-                loop=True,
-                negated=False,
-                optional=False)
-
     def test_predicates_0_length(self):
         with pytest.raises(BoboPatternBlockError):
             BoboPatternBlock(
-                group="group",
                 predicates=[],
+                group="group",
                 strict=False,
                 loop=True,
                 negated=False,
@@ -77,8 +67,8 @@ class TestInvalid:
     def test_strict_and_optional_true(self):
         with pytest.raises(BoboPatternBlockError):
             BoboPatternBlock(
-                group="group",
                 predicates=[BoboPredicateCall(call=lambda e, h: True)],
+                group="group",
                 strict=True,
                 loop=False,
                 negated=False,
@@ -87,8 +77,8 @@ class TestInvalid:
     def test_negated_and_optional_true_if_loop_true(self):
         with pytest.raises(BoboPatternBlockError):
             BoboPatternBlock(
-                group="group",
                 predicates=[BoboPredicateCall(call=lambda e, h: True)],
+                group="group",
                 strict=False,
                 loop=True,
                 negated=True,
@@ -97,8 +87,8 @@ class TestInvalid:
     def test_negated_true_optional_false_if_loop_true(self):
         with pytest.raises(BoboPatternBlockError):
             BoboPatternBlock(
-                group="group",
                 predicates=[BoboPredicateCall(call=lambda e, h: True)],
+                group="group",
                 strict=False,
                 loop=True,
                 negated=True,
@@ -107,8 +97,8 @@ class TestInvalid:
     def test_negated_false_optional_true_if_loop_true(self):
         with pytest.raises(BoboPatternBlockError):
             BoboPatternBlock(
-                group="group",
                 predicates=[BoboPredicateCall(call=lambda e, h: True)],
+                group="group",
                 strict=False,
                 loop=True,
                 negated=False,
@@ -117,8 +107,8 @@ class TestInvalid:
     def test_negated_and_optional_true_if_loop_false(self):
         with pytest.raises(BoboPatternBlockError):
             BoboPatternBlock(
-                group="group",
                 predicates=[BoboPredicateCall(call=lambda e, h: True)],
+                group="group",
                 strict=False,
                 loop=False,
                 negated=True,

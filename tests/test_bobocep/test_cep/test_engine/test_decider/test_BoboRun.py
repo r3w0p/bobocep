@@ -7,7 +7,6 @@ from bobocep.cep.engine.decider.run import BoboRunError
 from bobocep.cep.event import BoboEventSimple, BoboHistory
 from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
 from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder
-from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCall
 from tests.test_bobocep.test_cep.test_engine.test_decider import tc_run_simple
 from tests.test_bobocep.test_cep.test_event import tc_event_simple
 from tests.test_bobocep.test_cep.test_phenomenon import tc_pattern
@@ -61,9 +60,9 @@ class TestValid:
         assert run.is_halted() is False
 
     def test_pattern_1_block_halt_complete_on_init(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
-            .generate("pattern")
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: True) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a"))
 
@@ -71,11 +70,11 @@ class TestValid:
         assert run.is_complete()
 
     def test_pattern_3_blocks_not_halt_not_complete_on_init(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_b", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
-            .generate("pattern")
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: True) \
+            .followed_by(lambda e, h: True) \
+            .followed_by(lambda e, h: True) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a"))
 
@@ -83,11 +82,11 @@ class TestValid:
         assert not run.is_complete()
 
     def test_pattern_3_blocks_halt_complete_complete(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_b", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
-            .generate("pattern")
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: True) \
+            .followed_by(lambda e, h: True) \
+            .followed_by(lambda e, h: True) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a"))
 
@@ -104,11 +103,11 @@ class TestValid:
         assert run.is_complete()
 
     def test_pattern_3_blocks_manual_halt_not_complete(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_b", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
-            .generate("pattern")
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: True) \
+            .followed_by(lambda e, h: True) \
+            .followed_by(lambda e, h: True) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a"))
 
@@ -117,11 +116,11 @@ class TestValid:
         assert not run.is_complete()
 
     def test_pattern_3_blocks_process_on_halt(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_b", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
-            .generate("pattern")
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: True) \
+            .followed_by(lambda e, h: True) \
+            .followed_by(lambda e, h: True) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a"))
 
@@ -132,11 +131,11 @@ class TestValid:
         assert run.is_halted()
 
     def test_pattern_3_blocks_halt_no_match_on_strict(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
-            .next("group_b", BoboPredicateCall(lambda e, h: False)) \
-            .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
-            .generate("pattern")
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: True) \
+            .next(lambda e, h: False) \
+            .followed_by(lambda e, h: True) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a"))
 
@@ -147,11 +146,11 @@ class TestValid:
         assert not run.is_complete()
 
     def test_pattern_3_blocks_halt_no_match_on_strict_negated_complete(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
-            .not_next("group_b", BoboPredicateCall(lambda e, h: False)) \
-            .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
-            .generate("pattern")
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: True) \
+            .not_next(lambda e, h: False) \
+            .followed_by(lambda e, h: True) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a"))
 
@@ -168,11 +167,11 @@ class TestValid:
         assert run.is_complete()
 
     def test_pattern_3_blocks_halt_match_on_strict_negated(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
-            .not_next("group_b", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
-            .generate("pattern")
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: True) \
+            .not_next(lambda e, h: True) \
+            .followed_by(lambda e, h: True) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a"))
 
@@ -183,14 +182,11 @@ class TestValid:
         assert not run.is_complete()
 
     def test_pattern_3_blocks_not_strict_negated(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a",
-                         BoboPredicateCall(lambda e, h: e.data)) \
-            .not_followed_by("group_b",
-                             BoboPredicateCall(lambda e, h: e.data)) \
-            .followed_by("group_c",
-                         BoboPredicateCall(lambda e, h: e.data)) \
-            .generate("pattern")
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: e.data) \
+            .not_followed_by(lambda e, h: e.data) \
+            .followed_by(lambda e, h: e.data) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a", data=True))
 
@@ -201,13 +197,13 @@ class TestValid:
         assert not run.is_complete()
 
     def test_pattern_4_blocks_not_match_optional_complete(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_b", BoboPredicateCall(lambda e, h: False),
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: True) \
+            .followed_by(lambda e, h: False,
                          optional=True) \
-            .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_d", BoboPredicateCall(lambda e, h: True)) \
-            .generate("pattern")
+            .followed_by(lambda e, h: True) \
+            .followed_by(lambda e, h: True) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a"))
 
@@ -224,13 +220,13 @@ class TestValid:
         assert run.is_complete()
 
     def test_pattern_4_blocks_match_optional_complete(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_b", BoboPredicateCall(lambda e, h: True),
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: True) \
+            .followed_by(lambda e, h: True,
                          optional=True) \
-            .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_d", BoboPredicateCall(lambda e, h: True)) \
-            .generate("pattern")
+            .followed_by(lambda e, h: True) \
+            .followed_by(lambda e, h: True) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a"))
 
@@ -253,14 +249,14 @@ class TestValid:
         assert run.is_complete()
 
     def test_pattern_4_blocks_not_match_optional_then_loop(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_b", BoboPredicateCall(lambda e, h: False),
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: True) \
+            .followed_by(lambda e, h: False,
                          optional=True) \
-            .followed_by("group_c", BoboPredicateCall(lambda e, h: True),
+            .followed_by(lambda e, h: True,
                          loop=True) \
-            .followed_by("group_d", BoboPredicateCall(lambda e, h: True)) \
-            .generate("pattern")
+            .followed_by(lambda e, h: True) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a"))
 
@@ -289,14 +285,14 @@ class TestValid:
         assert not run.is_complete()
 
     def test_pattern_4_blocks_match_optional_then_loop(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_b", BoboPredicateCall(lambda e, h: True),
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: True) \
+            .followed_by(lambda e, h: True,
                          optional=True) \
-            .followed_by("group_c", BoboPredicateCall(lambda e, h: True),
+            .followed_by(lambda e, h: True,
                          loop=True) \
-            .followed_by("group_d", BoboPredicateCall(lambda e, h: True)) \
-            .generate("pattern")
+            .followed_by(lambda e, h: True) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a"))
 
@@ -325,12 +321,11 @@ class TestValid:
         assert not run.is_complete()
 
     def test_pattern_3_blocks_1_loop_not_match_strict(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a", BoboPredicateCall(lambda e, h: e.data)) \
-            .next("group_b", BoboPredicateCall(lambda e, h: e.data),
-                  loop=True) \
-            .followed_by("group_c", BoboPredicateCall(lambda e, h: e.data)) \
-            .generate("pattern")
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: e.data) \
+            .next(lambda e, h: e.data, loop=True) \
+            .followed_by(lambda e, h: e.data) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a", data=True))
 
@@ -353,15 +348,11 @@ class TestValid:
         assert not run.is_complete()
 
     def test_pattern_3_blocks_1_loop_complete(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a",
-                         BoboPredicateCall(lambda e, h: e.data == 1)) \
-            .followed_by("group_b",
-                         BoboPredicateCall(lambda e, h: e.data == 2),
-                         loop=True) \
-            .followed_by("group_c",
-                         BoboPredicateCall(lambda e, h: e.data == 3)) \
-            .generate("pattern")
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: e.data == 1) \
+            .followed_by(lambda e, h: e.data == 2, loop=True) \
+            .followed_by(lambda e, h: e.data == 3) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a", data=1))
 
@@ -381,18 +372,12 @@ class TestValid:
         assert run.is_complete()
 
     def test_pattern_4_blocks_2_loops_complete(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a",
-                         BoboPredicateCall(lambda e, h: e.data == 1)) \
-            .followed_by("group_b",
-                         BoboPredicateCall(lambda e, h: e.data == 2),
-                         loop=True) \
-            .followed_by("group_c",
-                         BoboPredicateCall(lambda e, h: e.data == 3),
-                         loop=True) \
-            .followed_by("group_d",
-                         BoboPredicateCall(lambda e, h: e.data == 4)) \
-            .generate("pattern")
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: e.data == 1) \
+            .followed_by(lambda e, h: e.data == 2, loop=True) \
+            .followed_by(lambda e, h: e.data == 3, loop=True) \
+            .followed_by(lambda e, h: e.data == 4) \
+            .generate()
 
         run = tc_run_simple(pattern, tc_event_simple("event_a", data=1))
 
@@ -422,11 +407,11 @@ class TestValid:
         assert run.is_complete()
 
     def test_history(self):
-        pattern = BoboPatternBuilder() \
-            .followed_by("group_a", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_b", BoboPredicateCall(lambda e, h: True)) \
-            .followed_by("group_c", BoboPredicateCall(lambda e, h: True)) \
-            .generate("pattern")
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: True, group="group_a") \
+            .followed_by(lambda e, h: True, group="group_b") \
+            .followed_by(lambda e, h: True, group="group_c") \
+            .generate()
 
         event_a = tc_event_simple("event_a")
         event_b = tc_event_simple("event_b")

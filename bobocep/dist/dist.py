@@ -30,6 +30,24 @@ class BoboDistributedTimeoutError(BoboDistributedError):
     """
 
 
+class BoboDistributedJSONError(BoboDistributedError):
+    """
+    A distributed JSON error.
+    """
+
+
+class BoboDistributedJSONEncodeError(BoboDistributedJSONError):
+    """
+    A distributed JSON encode error.
+    """
+
+
+class BoboDistributedJSONDecodeError(BoboDistributedJSONError):
+    """
+    A distributed JSON decode error.
+    """
+
+
 class BoboDistributed(BoboDistributedPublisher, ABC):
     """
     Distributed `BoboCEP`.

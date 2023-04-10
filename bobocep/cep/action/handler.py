@@ -208,7 +208,7 @@ class BoboActionHandlerPool(BoboActionHandler):
         # outside of the process itself. Also, a 'maxsize' parameter for the
         # Manager queue does not appear to work correctly e.g. a max_size of 1
         # causes unit tests to 'hang'.
-        if self._queue.qsize() >= self._max_size:
+        if self._max_size > 0 and (self._queue.qsize() >= self._max_size):
             raise BoboActionHandlerError(
                 self._EXC_QUEUE_FULL.format(self._max_size))
 

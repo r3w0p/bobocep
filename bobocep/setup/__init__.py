@@ -7,4 +7,4 @@ Setup imports.
 """
 
 from bobocep.setup.setup import BoboSetupError
-from bobocep.setup.simple import BoboSetupSimple, BoboSetupDistributed
+from bobocep.setup.simple import BoboSetupSimple, BoboSetupSimpleDistributed

@@ -2,8 +2,6 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-import pytest
-
 from bobocep.setup import BoboSetupSimple
 from tests.test_bobocep.test_cep.test_phenomenon import tc_phenomenon
 

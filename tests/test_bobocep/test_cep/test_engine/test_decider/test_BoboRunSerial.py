@@ -3,7 +3,8 @@
 # modified under the terms of the MIT License.
 import pytest
 
-from bobocep.cep.engine.decider.runserial import BoboRunSerial, BoboRunSerialError
+from bobocep.cep.engine.decider.runserial import BoboRunSerial, \
+    BoboRunSerialError
 from bobocep.cep.event import BoboHistory
 from tests.test_bobocep.test_cep.test_engine.test_decider import tc_run_tuple
 from tests.test_bobocep.test_cep.test_event import tc_event_simple
