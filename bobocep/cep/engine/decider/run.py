@@ -165,8 +165,8 @@ class BoboRun:
     def process(self, event: BoboEvent) -> bool:
         """
         :param event: An event for the run to process.
-        :return: True if the event caused a state change in the run;
-            False otherwise.
+        :return: `True` if the event caused a state change in the run;
+            `False` otherwise.
         """
         # True if state change occurred; False otherwise.
         # E.g. accepted event, changed block, completed, halted.
@@ -175,36 +175,27 @@ class BoboRun:
             if self._halted:
                 return False
 
-            try:
-                # Halt if run does not match against all preconditions
-                if len(self.pattern.preconditions) > 0:
-                    if not all([precon.evaluate(event, self._history)
-                                for precon in self.pattern.preconditions]):
-                        self._halted = True
-                        return True
+            # Halt if run does not match against all preconditions
+            if len(self.pattern.preconditions) > 0:
+                if not all([precon.evaluate(event, self._history)
+                            for precon in self.pattern.preconditions]):
+                    self._halted = True
+                    return True
 
-                # Halt if run matches against any haltconditions
-                if len(self.pattern.haltconditions) > 0:
-                    if any([haltcon.evaluate(event, self._history)
-                            for haltcon in self.pattern.haltconditions]):
-                        self._halted = True
-                        return True
+            # Halt if run matches against any haltconditions
+            if len(self.pattern.haltconditions) > 0:
+                if any([haltcon.evaluate(event, self._history)
+                        for haltcon in self.pattern.haltconditions]):
+                    self._halted = True
+                    return True
 
-                temp_index = self._block_index
-                block: BoboPatternBlock = self.pattern.blocks[temp_index]
+            temp_index = self._block_index
+            block: BoboPatternBlock = self.pattern.blocks[temp_index]
 
-                if block.loop:
-                    return self._process_loop(event, block, temp_index)
-                else:
-                    return self._process_not_loop(event, block, temp_index)
-
-            except (Exception,):
-                # Exception ensures 'generic' errors within predicate
-                # will not crash BoboCEP, e.g. TypeError casting errors.
-                # Other more 'serious' exceptions, e.g. SystemExit,
-                # KeyboardInterrupt, are not caught.
-                # See Built-In Exceptions hierarchy for more information.
-                return False
+            if block.loop:
+                return self._process_loop(event, block, temp_index)
+            else:
+                return self._process_not_loop(event, block, temp_index)
 
     def _process_loop(self,
                       event: BoboEvent,

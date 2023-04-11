@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 
 from bobocep.setup import BoboSetupSimple
-from tests.test_bobocep.test_cep.test_phenomenon import tc_phenomenon
+from tests.test_bobocep.test_cep.test_phenom import tc_phenomenon
 
 
 class TestValid:

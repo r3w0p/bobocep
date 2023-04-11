@@ -13,8 +13,8 @@ from tests.test_bobocep.test_cep.test_engine.test_decider import \
 from tests.test_bobocep.test_cep.test_event import tc_event_simple
 from tests.test_bobocep.test_cep.test_gen.test_event_id import \
     BoboSameEveryTimeEventID
-from tests.test_bobocep.test_cep.test_phenomenon import tc_phenomenon
-from tests.test_bobocep.test_cep.test_phenomenon.test_pattern import tc_pattern
+from tests.test_bobocep.test_cep.test_phenom import tc_phenomenon
+from tests.test_bobocep.test_cep.test_phenom.test_pattern import tc_pattern
 
 
 class TestValid:
@@ -207,6 +207,49 @@ class TestValid:
 
         decider.on_receiver_update(tc_event_simple())
         assert decider.size() == 0
+
+    def test_tolerate_casting_error_in_predicate_existing_run(self):
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: int(e.data) == 1) \
+            .followed_by(lambda e, h: int(e.data) == 2) \
+            .followed_by(lambda e, h: int(e.data) == 3) \
+            .generate()
+
+        decider, subscriber = tc_decider_sub([
+            tc_phenomenon(patterns=[pattern])])
+
+        event_a = tc_event_simple("event_a", data=1)
+        # int(e.data) would throw ValueError on int("not_int")
+        event_b = tc_event_simple("event_a", data="not_int")
+
+        decider.on_receiver_update(event_a)
+        decider.update()
+        assert len(decider.all_runs()) == 1
+        assert decider.all_runs()[0].block_index == 1
+
+        # No error should be raised, and run should not have updated
+        decider.on_receiver_update(event_b)
+        decider.update()
+        assert len(decider.all_runs()) == 1
+        assert decider.all_runs()[0].block_index == 1
+
+    def test_tolerate_casting_error_in_predicate_no_existing_run(self):
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: int(e.data) == 1) \
+            .followed_by(lambda e, h: int(e.data) == 2) \
+            .followed_by(lambda e, h: int(e.data) == 3) \
+            .generate()
+
+        decider, subscriber = tc_decider_sub([
+            tc_phenomenon(patterns=[pattern])])
+
+        # int(e.data) would throw ValueError on int("not_int")
+        event_a = tc_event_simple("event_a", data="not_int")
+
+        # No error should be raised, and no run should be created
+        decider.on_receiver_update(event_a)
+        decider.update()
+        assert len(decider.all_runs()) == 0
 
 
 class TestInvalid:

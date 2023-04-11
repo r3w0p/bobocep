@@ -487,7 +487,15 @@ class BoboDecider(BoboEngineTask,
         for phenomenon_name, dict_patterns in self._runs.items():
             for pattern_name, dict_runs in dict_patterns.items():
                 for _, run in dict_runs.items():
-                    if run.process(event):
+                    # If an internal state change occurs in the run...
+                    run_eval: bool
+                    try:
+                        run_eval = run.process(event)
+                    except (Exception,):
+                        continue
+
+                    # ...determine if completed, halted, or updated.
+                    if run_eval:
                         if run.is_halted():
                             runs_to_remove.append((
                                 phenomenon_name, pattern_name, run.run_id))
@@ -516,9 +524,18 @@ class BoboDecider(BoboEngineTask,
 
         for phenomenon in self._phenomena.values():
             for pattern in phenomenon.patterns:
-                if any(predicate.evaluate(event=event,
-                                          history=self._stub_history)
-                       for predicate in pattern.blocks[0].predicates):
+                # If any predicate in a block evaluates to True...
+                any_eval: bool = False
+                for predicate in pattern.blocks[0].predicates:
+                    try:
+                        if predicate.evaluate(event, self._stub_history):
+                            any_eval = True
+                            break
+                    except (Exception,):
+                        pass
+
+                # ...create a run.
+                if any_eval:
                     newrun = BoboRun(
                         run_id=self._gen_run_id.generate(),
                         phenomenon_name=phenomenon.name,

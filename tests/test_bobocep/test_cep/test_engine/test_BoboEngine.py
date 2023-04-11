@@ -18,7 +18,7 @@ from bobocep.cep.event import BoboEventSimple, BoboEventComplex, \
 from tests.test_bobocep.test_cep.test_action import BoboActionTrue
 from tests.test_bobocep.test_cep.test_engine import tc_engine_subs, \
     tc_run_engine
-from tests.test_bobocep.test_cep.test_phenomenon import tc_phenomenon, \
+from tests.test_bobocep.test_cep.test_phenom import tc_phenomenon, \
     tc_pattern
 
 

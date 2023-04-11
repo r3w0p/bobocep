@@ -14,7 +14,7 @@ from tests.test_bobocep.test_cep.test_action import BoboActionTrue
 from tests.test_bobocep.test_cep.test_engine.test_producer import \
     tc_producer_sub
 from tests.test_bobocep.test_cep.test_event import tc_event_simple
-from tests.test_bobocep.test_cep.test_phenomenon import tc_phenomenon
+from tests.test_bobocep.test_cep.test_phenom import tc_phenomenon
 
 
 class TestValid:

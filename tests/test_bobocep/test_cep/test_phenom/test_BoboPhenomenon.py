@@ -5,7 +5,7 @@
 import pytest
 
 from bobocep.cep.phenom.phenom import BoboPhenomenonError
-from tests.test_bobocep.test_cep.test_phenomenon import tc_phenomenon
+from tests.test_bobocep.test_cep.test_phenom import tc_phenomenon
 
 
 class TestInvalid:

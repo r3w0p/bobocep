@@ -7,7 +7,7 @@ from typing import Callable, Optional, List
 from bobocep.cep.action.action import BoboAction
 from bobocep.cep.phenom.pattern.pattern import BoboPattern
 from bobocep.cep.phenom.phenom import BoboPhenomenon
-from tests.test_bobocep.test_cep.test_phenomenon.test_pattern import tc_pattern
+from tests.test_bobocep.test_cep.test_phenom.test_pattern import tc_pattern
 
 
 def tc_phenomenon(

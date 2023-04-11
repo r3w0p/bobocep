@@ -16,7 +16,7 @@ from bobocep.dist.tcp import BoboDistributedTCP
 from tests.test_bobocep.test_cep.test_engine.test_decider import tc_run_simple, \
     tc_decider_sub
 from tests.test_bobocep.test_cep.test_event import tc_event_simple
-from tests.test_bobocep.test_cep.test_phenomenon import tc_pattern, \
+from tests.test_bobocep.test_cep.test_phenom import tc_pattern, \
     tc_phenomenon
 from tests.test_bobocep.test_dist import StubDistributedSubscriber, \
     tc_run_distributed_tcp

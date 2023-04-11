@@ -14,7 +14,7 @@ from tests.test_bobocep.test_cep.test_action import BoboActionTrue
 from tests.test_bobocep.test_cep.test_engine.test_forwarder import \
     tc_forwarder_sub
 from tests.test_bobocep.test_cep.test_event import tc_event_complex
-from tests.test_bobocep.test_cep.test_phenomenon import tc_pattern, \
+from tests.test_bobocep.test_cep.test_phenom import tc_pattern, \
     tc_phenomenon
 
 
