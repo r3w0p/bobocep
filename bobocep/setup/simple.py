@@ -20,7 +20,7 @@ from bobocep.cep.engine.receiver.validator import BoboValidator, \
 from bobocep.cep.gen.event import BoboGenEvent
 from bobocep.cep.gen.event_id import BoboGenEventIDUnique
 from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
-from bobocep.cep.phenomenon import BoboPhenomenon
+from bobocep.cep.phenom.phenom import BoboPhenomenon
 from bobocep.dist.crypto.aes import BoboDistributedCryptoAES
 from bobocep.dist.device import BoboDevice
 from bobocep.dist.tcp import BoboDistributedTCP
@@ -140,5 +140,8 @@ class BoboSetupSimpleDistributed(BoboSetup):
             decider=engine.decider,
             devices=self._devices,
             crypto=BoboDistributedCryptoAES(aes_key=self._aes_key))
+
+        engine.decider.subscribe(distributed)
+        distributed.subscribe(engine.decider)
 
         return engine, distributed

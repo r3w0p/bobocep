@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 
 from bobocep.cep.event import BoboEventSimple, BoboHistory, BoboEvent
-from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCallType
+from bobocep.cep.phenom.pattern.predicate import BoboPredicateCallType
 from tests.test_bobocep.test_cep.test_event import tc_event_simple, \
     BoboEventSimpleSubclass
 

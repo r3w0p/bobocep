@@ -2,8 +2,8 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder
-from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCall
+from bobocep.cep.phenom.pattern.builder import BoboPatternBuilder
+from bobocep.cep.phenom.pattern.predicate import BoboPredicateCall
 
 
 class TestValid:

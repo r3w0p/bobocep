@@ -8,9 +8,9 @@ Builders to assist in generating a pattern.
 import typing
 from typing import List, Union, Callable
 
-from bobocep.cep.phenomenon.pattern.pattern import BoboPatternBlock, \
+from bobocep.cep.phenom.pattern.pattern import BoboPatternBlock, \
     BoboPattern, BoboPatternError
-from bobocep.cep.phenomenon.pattern.predicate import BoboPredicate, \
+from bobocep.cep.phenom.pattern.predicate import BoboPredicate, \
     BoboPredicateCall
 
 _EXC_NAME_LEN = "name must have a length greater than 0"

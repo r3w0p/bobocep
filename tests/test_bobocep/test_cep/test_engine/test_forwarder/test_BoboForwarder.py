@@ -9,7 +9,7 @@ from bobocep.cep.action.handler import BoboActionHandlerPool, \
 from bobocep.cep.engine.forwarder.forwarder import BoboForwarderError, \
     BoboForwarder
 from bobocep.cep.gen.event_id import BoboGenEventIDUnique
-from bobocep.cep.phenomenon import BoboPhenomenon
+from bobocep.cep.phenom.phenom import BoboPhenomenon
 from tests.test_bobocep.test_cep.test_action import BoboActionTrue
 from tests.test_bobocep.test_cep.test_engine.test_forwarder import \
     tc_forwarder_sub

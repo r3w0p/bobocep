@@ -10,7 +10,7 @@ generating of a complex event.
 from typing import Tuple, List
 
 from bobocep import BoboError
-from bobocep.cep.phenomenon.pattern.predicate import BoboPredicate
+from bobocep.cep.phenom.pattern.predicate import BoboPredicate
 
 _EXC_GROUP_LEN = "'group' must have a length greater than 0"
 _EXC_PREDICATES_LEN = "'predicates' must have a length greater than 0"

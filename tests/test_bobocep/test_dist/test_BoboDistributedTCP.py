@@ -80,7 +80,6 @@ class TestValid:
             crypto=BoboDistributedCryptoAES("1234567890ABCDEF"),
             period_ping=30,
             period_resync=60,
-            subscribe=False,  # to stop interference by decider
             flag_reset=False  # to prevent initial FORCE_RESYNC
         )
 
@@ -154,7 +153,6 @@ class TestValid:
             crypto=BoboDistributedCryptoAES("1234567890ABCDEF"),
             period_ping=30,
             period_resync=60,
-            subscribe=False,  # to stop interference by decider
             flag_reset=False  # to prevent initial FORCE_RESYNC
         )
 
@@ -232,7 +230,6 @@ class TestValid:
             crypto=BoboDistributedCryptoAES("1234567890ABCDEF"),
             period_ping=30,
             period_resync=60,
-            subscribe=False,  # to stop interference by decider
             flag_reset=False  # to prevent initial FORCE_RESYNC
         )
 
@@ -319,7 +316,6 @@ class TestValid:
             crypto=BoboDistributedCryptoAES("1234567890ABCDEF"),
             period_ping=30,
             period_resync=60,
-            subscribe=False,  # to stop interference by decider
             flag_reset=True  # trigger initial FORCE_RESYNC
         )
 
@@ -379,7 +375,6 @@ class TestValid:
             crypto=BoboDistributedCryptoAES("1234567890ABCDEF"),
             period_ping=30,
             period_resync=60,
-            subscribe=False,  # to stop interference by decider
             flag_reset=True  # trigger initial FORCE_RESYNC
         )
 

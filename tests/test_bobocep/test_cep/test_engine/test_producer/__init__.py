@@ -9,7 +9,7 @@ from bobocep.cep.engine.producer.pubsub import BoboProducerSubscriber
 from bobocep.cep.event import BoboEventComplex
 from bobocep.cep.gen.event_id import BoboGenEventID, BoboGenEventIDUnique
 from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
-from bobocep.cep.phenomenon.phenomenon import BoboPhenomenon
+from bobocep.cep.phenom.phenom import BoboPhenomenon
 
 
 class StubProducerSubscriber(BoboProducerSubscriber):

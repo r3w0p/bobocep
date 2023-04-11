@@ -7,7 +7,7 @@ Decider publish-subscribe classes.
 """
 
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Tuple
 
 from bobocep.cep.engine.decider.runserial import BoboRunSerial
 
@@ -39,4 +39,16 @@ class BoboDeciderPublisher(ABC):
     def subscribe(self, subscriber: BoboDeciderSubscriber):
         """
         :param subscriber: Subscriber to add to list.
+        """
+
+    @abstractmethod
+    def snapshot(self) -> Tuple[
+        List[BoboRunSerial], List[BoboRunSerial], List[BoboRunSerial]
+    ]:
+        """
+        A snapshot of the current state of the Decider.
+
+        :return: Tuple of cached completed, cached halted, and
+            currently partially-completed runs.
+            If caching is disabled, the first two lists will be empty.
         """

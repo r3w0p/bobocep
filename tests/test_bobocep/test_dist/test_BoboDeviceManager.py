@@ -2,7 +2,8 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-from bobocep.dist.device import BoboDeviceManager, BoboDevice
+from bobocep.dist.device import BoboDevice
+from bobocep.dist.devman import BoboDeviceManager
 from tests.test_bobocep.test_cep.test_engine.test_decider import tc_run_tuple
 
 

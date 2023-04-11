@@ -6,7 +6,7 @@ import pytest
 from bobocep.cep.engine.decider.run import BoboRunError
 from bobocep.cep.event import BoboEventSimple, BoboHistory
 from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
-from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder
+from bobocep.cep.phenom.pattern.builder import BoboPatternBuilder
 from tests.test_bobocep.test_cep.test_engine.test_decider import tc_run_simple
 from tests.test_bobocep.test_cep.test_event import tc_event_simple
 from tests.test_bobocep.test_cep.test_phenomenon import tc_pattern
@@ -428,6 +428,24 @@ class TestValid:
         group_b = history.group("group_b")
         assert len(group_b) == 1
         assert group_b[0].event_id == event_b.event_id
+
+    def test_tolerate_casting_error(self):
+        pattern = BoboPatternBuilder(name="pattern") \
+            .followed_by(lambda e, h: int(e.data) == 1) \
+            .followed_by(lambda e, h: int(e.data) == 2) \
+            .followed_by(lambda e, h: int(e.data) == 3) \
+            .generate()
+
+        event_a = tc_event_simple("event_a", data=1)
+        # int(e.data) would throw ValueError on int("not_int")
+        event_b = tc_event_simple("event_a", data="not_int")
+
+        run = tc_run_simple(pattern, event_a)
+        history = run.history()
+        assert len(history.all_events()) == 1
+
+        run.process(event_b)
+        assert len(history.all_events()) == 1
 
 
 class TestInvalid:

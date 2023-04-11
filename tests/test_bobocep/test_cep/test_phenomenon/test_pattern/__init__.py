@@ -4,9 +4,9 @@
 
 from typing import Callable, Any, Optional, List
 
-from bobocep.cep.phenomenon.pattern.pattern import BoboPatternBlock, \
+from bobocep.cep.phenom.pattern.pattern import BoboPatternBlock, \
     BoboPattern
-from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCall, \
+from bobocep.cep.phenom.pattern.predicate import BoboPredicateCall, \
     BoboPredicate
 
 

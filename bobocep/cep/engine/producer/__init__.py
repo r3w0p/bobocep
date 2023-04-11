@@ -3,5 +3,5 @@
 # modified under the terms of the MIT License.
 
 """
-Producer imports.
+Producer.
 """

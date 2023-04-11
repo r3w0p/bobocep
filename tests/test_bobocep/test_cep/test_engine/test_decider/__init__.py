@@ -10,8 +10,8 @@ from bobocep.cep.engine.decider.run import BoboRun
 from bobocep.cep.engine.decider.runserial import BoboRunSerial
 from bobocep.cep.event import BoboEvent, BoboHistory
 from bobocep.cep.gen.event_id import BoboGenEventID, BoboGenEventIDUnique
-from bobocep.cep.phenomenon.pattern.pattern import BoboPattern
-from bobocep.cep.phenomenon.phenomenon import BoboPhenomenon
+from bobocep.cep.phenom.pattern.pattern import BoboPattern
+from bobocep.cep.phenom.phenom import BoboPhenomenon
 from tests.test_bobocep.test_cep.test_event import tc_event_simple
 
 

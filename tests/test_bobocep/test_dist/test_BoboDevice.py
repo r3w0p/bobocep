@@ -5,7 +5,7 @@
 import pytest
 
 from bobocep.dist.device import BoboDevice
-from bobocep.dist.dist import BoboDistributedError
+from bobocep.dist.device import BoboDeviceError
 
 
 class TestValid:
@@ -47,7 +47,7 @@ class TestValid:
 class TestInvalid:
 
     def test_addr_length_0(self):
-        with pytest.raises(BoboDistributedError):
+        with pytest.raises(BoboDeviceError):
             BoboDevice(
                 addr="",
                 port=8080,
@@ -55,7 +55,7 @@ class TestInvalid:
                 id_key="abc123")
 
     def test_addr_contains_inner_space(self):
-        with pytest.raises(BoboDistributedError):
+        with pytest.raises(BoboDeviceError):
             BoboDevice(
                 addr="127 1",
                 port=8080,
@@ -63,7 +63,7 @@ class TestInvalid:
                 id_key="abc123")
 
     def test_port_below_1(self):
-        with pytest.raises(BoboDistributedError):
+        with pytest.raises(BoboDeviceError):
             BoboDevice(
                 addr="127.0.0.1",
                 port=0,
@@ -71,7 +71,7 @@ class TestInvalid:
                 id_key="abc123")
 
     def test_port_above_65535(self):
-        with pytest.raises(BoboDistributedError):
+        with pytest.raises(BoboDeviceError):
             BoboDevice(
                 addr="127.0.0.1",
                 port=65536,
@@ -79,7 +79,7 @@ class TestInvalid:
                 id_key="abc123")
 
     def test_urn_length_0(self):
-        with pytest.raises(BoboDistributedError):
+        with pytest.raises(BoboDeviceError):
             BoboDevice(
                 addr="127.0.0.1",
                 port=8080,
@@ -87,7 +87,7 @@ class TestInvalid:
                 id_key="abc123")
 
     def test_urn_contains_inner_space(self):
-        with pytest.raises(BoboDistributedError):
+        with pytest.raises(BoboDeviceError):
             BoboDevice(
                 addr="127.0.0.1",
                 port=8080,
@@ -95,7 +95,7 @@ class TestInvalid:
                 id_key="abc123")
 
     def test_id_key_length_0(self):
-        with pytest.raises(BoboDistributedError):
+        with pytest.raises(BoboDeviceError):
             BoboDevice(
                 addr="127.0.0.1",
                 port=8080,
@@ -103,7 +103,7 @@ class TestInvalid:
                 id_key="")
 
     def test_id_key_contains_inner_space(self):
-        with pytest.raises(BoboDistributedError):
+        with pytest.raises(BoboDeviceError):
             BoboDevice(
                 addr="127.0.0.1",
                 port=8080,
@@ -120,7 +120,7 @@ class TestInvalid:
             urn="urn:test",
             id_key="abc123")
 
-        with pytest.raises(BoboDistributedError):
+        with pytest.raises(BoboDeviceError):
             device.addr = addr_new
 
         assert device.addr == addr_original
@@ -135,7 +135,7 @@ class TestInvalid:
             urn="urn:test",
             id_key="abc123")
 
-        with pytest.raises(BoboDistributedError):
+        with pytest.raises(BoboDeviceError):
             device.addr = addr_new
 
         assert device.addr == addr_original

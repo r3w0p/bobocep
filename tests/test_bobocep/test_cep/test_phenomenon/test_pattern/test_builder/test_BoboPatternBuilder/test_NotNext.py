@@ -3,9 +3,9 @@
 # modified under the terms of the MIT License.
 import pytest
 
-from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder
-from bobocep.cep.phenomenon.pattern.pattern import BoboPatternError
-from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCall
+from bobocep.cep.phenom.pattern.builder import BoboPatternBuilder
+from bobocep.cep.phenom.pattern.pattern import BoboPatternError
+from bobocep.cep.phenom.pattern.predicate import BoboPredicateCall
 
 
 class TestValid:

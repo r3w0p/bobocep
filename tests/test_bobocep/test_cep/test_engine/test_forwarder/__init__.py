@@ -10,7 +10,7 @@ from bobocep.cep.engine.forwarder.forwarder import BoboForwarder
 from bobocep.cep.engine.forwarder.pubsub import BoboForwarderSubscriber
 from bobocep.cep.event import BoboEventAction
 from bobocep.cep.gen.event_id import BoboGenEventID, BoboGenEventIDUnique
-from bobocep.cep.phenomenon.phenomenon import BoboPhenomenon
+from bobocep.cep.phenom.phenom import BoboPhenomenon
 
 
 class StubForwarderSubscriber(BoboForwarderSubscriber):

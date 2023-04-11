@@ -15,13 +15,15 @@ from threading import Thread, RLock
 from typing import Dict, Tuple, Optional, List
 
 from bobocep.bobocep import BoboJSONableError, BoboJSONable
-from bobocep.cep.engine.decider.decider import BoboDecider, BoboRunSerial
-from bobocep.cep.engine.decider.pubsub import BoboDeciderSubscriber
+from bobocep.cep.engine.decider.pubsub import BoboDeciderSubscriber, \
+    BoboDeciderPublisher
+from bobocep.cep.engine.decider.runserial import BoboRunSerial
 from bobocep.dist.crypto.crypto import BoboDistributedCrypto
-from bobocep.dist.device import BoboDevice, BoboDeviceManager
-from bobocep.dist.dist import BoboDistributed, BoboDistributedError, \
-    BoboDistributedSystemError, BoboDistributedTimeoutError, \
-    BoboDistributedJSONDecodeError
+from bobocep.dist.device import BoboDevice
+from bobocep.dist.devman import BoboDeviceManager
+from bobocep.dist.dist import BoboDistributedJSONDecodeError, BoboDistributed, \
+    BoboDistributedError, BoboDistributedSystemError, \
+    BoboDistributedTimeoutError
 from bobocep.dist.pubsub import BoboDistributedSubscriber
 
 _KEY_COMPLETED = "completed"
@@ -120,7 +122,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
     def __init__(self,
                  urn: str,
-                 decider: BoboDecider,
+                 decider: BoboDeciderPublisher,
                  devices: List[BoboDevice],
                  crypto: BoboDistributedCrypto,
                  max_size_incoming: int = 0,
@@ -135,7 +137,6 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                  timeout_send: int = 3,
                  timeout_receive: int = 3,
                  recv_bytes: int = 2048,
-                 subscribe: bool = True,
                  flag_reset: bool = True):
         """
         :param urn: A URN that is unique across devices in the network.
@@ -174,8 +175,6 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         :param recv_bytes: Number of bytes to receive at a time when receiving
             data.
             Default: 2048.
-        :param subscribe: If `True`, distributed will subscribe itself to
-            the decider and the decider to itself.
         :param flag_reset: If `True`, the RESET flag is set to indicate to
             external devices that it should reset its data on this device,
             which will trigger a resync.
@@ -193,7 +192,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         self._subscribers: List[BoboDistributedSubscriber] = []
 
         self._urn: str = urn
-        self._decider: BoboDecider = decider
+        self._decider: BoboDeciderPublisher = decider
         self._devices: Dict[str, BoboDeviceManager] = {}
         self._crypto: BoboDistributedCrypto = crypto
 
@@ -201,11 +200,6 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         self._period_resync: int = period_resync
         self._attempt_ping: int = attempt_ping
         self._attempt_resync: int = attempt_resync
-
-        # Subscribe distributed and decider to each other
-        if subscribe:
-            self.subscribe(self._decider)
-            self._decider.subscribe(self)
 
         # Check devices for duplicate URNs
         for d in devices:

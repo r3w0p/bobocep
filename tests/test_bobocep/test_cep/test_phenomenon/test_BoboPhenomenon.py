@@ -4,7 +4,7 @@
 
 import pytest
 
-from bobocep.cep.phenomenon import BoboPhenomenonError
+from bobocep.cep.phenom.phenom import BoboPhenomenonError
 from tests.test_bobocep.test_cep.test_phenomenon import tc_phenomenon
 
 

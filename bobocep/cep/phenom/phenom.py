@@ -12,7 +12,7 @@ from typing import Callable, List, Tuple, Optional
 
 from bobocep import BoboError
 from bobocep.cep.action.action import BoboAction
-from bobocep.cep.phenomenon.pattern.pattern import BoboPattern
+from bobocep.cep.phenom.pattern.pattern import BoboPattern
 
 _EXC_NAME_LEN = "name must have a length greater than 0"
 _EXC_INVALID_CALL = "datagen callable must have {} parameters, found {}"

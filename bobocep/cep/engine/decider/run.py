@@ -12,7 +12,7 @@ from typing import Dict, Tuple, List
 from bobocep import BoboError
 from bobocep.cep.engine.decider.runserial import BoboRunSerial
 from bobocep.cep.event import BoboHistory, BoboEvent
-from bobocep.cep.phenomenon.pattern.pattern import BoboPattern, \
+from bobocep.cep.phenom.pattern.pattern import BoboPattern, \
     BoboPatternBlock, BoboPredicate
 
 _EXC_RUN_ID_LEN = "run ID must have a length greater than 0"
@@ -175,27 +175,36 @@ class BoboRun:
             if self._halted:
                 return False
 
-            # Halt if run does not match against all preconditions
-            if len(self.pattern.preconditions) > 0:
-                if not all([precon.evaluate(event, self._history)
-                            for precon in self.pattern.preconditions]):
-                    self._halted = True
-                    return True
+            try:
+                # Halt if run does not match against all preconditions
+                if len(self.pattern.preconditions) > 0:
+                    if not all([precon.evaluate(event, self._history)
+                                for precon in self.pattern.preconditions]):
+                        self._halted = True
+                        return True
 
-            # Halt if run matches against any haltconditions
-            if len(self.pattern.haltconditions) > 0:
-                if any([haltcon.evaluate(event, self._history)
-                        for haltcon in self.pattern.haltconditions]):
-                    self._halted = True
-                    return True
+                # Halt if run matches against any haltconditions
+                if len(self.pattern.haltconditions) > 0:
+                    if any([haltcon.evaluate(event, self._history)
+                            for haltcon in self.pattern.haltconditions]):
+                        self._halted = True
+                        return True
 
-            temp_index = self._block_index
-            block: BoboPatternBlock = self.pattern.blocks[temp_index]
+                temp_index = self._block_index
+                block: BoboPatternBlock = self.pattern.blocks[temp_index]
 
-            if block.loop:
-                return self._process_loop(event, block, temp_index)
-            else:
-                return self._process_not_loop(event, block, temp_index)
+                if block.loop:
+                    return self._process_loop(event, block, temp_index)
+                else:
+                    return self._process_not_loop(event, block, temp_index)
+
+            except (Exception,):
+                # Exception ensures 'generic' errors within predicate
+                # will not crash BoboCEP, e.g. TypeError casting errors.
+                # Other more 'serious' exceptions, e.g. SystemExit,
+                # KeyboardInterrupt, are not caught.
+                # See Built-In Exceptions hierarchy for more information.
+                return False
 
     def _process_loop(self,
                       event: BoboEvent,

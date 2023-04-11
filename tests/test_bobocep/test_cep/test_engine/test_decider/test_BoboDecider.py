@@ -6,7 +6,7 @@ import pytest
 
 from bobocep.cep.engine.decider.decider import BoboDeciderError, BoboDecider
 from bobocep.cep.gen.event_id import BoboGenEventIDUnique
-from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder
+from bobocep.cep.phenom.pattern.builder import BoboPatternBuilder
 from tests.test_bobocep.test_cep.test_engine.test_decider import \
     tc_decider_sub, \
     tc_run_tuple
