@@ -12,13 +12,12 @@ from typing import Tuple, List
 from bobocep import BoboError
 from bobocep.cep.phenom.pattern.predicate import BoboPredicate
 
-_EXC_GROUP_LEN = "'group' must have a length greater than 0"
-_EXC_PREDICATES_LEN = "'predicates' must have a length greater than 0"
-_EXC_STRICT_OPT_TRUE = "'strict' and 'optional' must not both be True"
-_EXC_NEG_OR_OPT_LOOP_TRUE = "'negated' and 'optional' must " \
-                            "both be False if 'loop' is True"
-_EXC_NEG_AND_OPT_LOOP_FALSE = "'negated' and 'optional' must not " \
-                              "both be True if 'loop' is False"
+_EXC_PREDICATES_LEN = "predicates must have a length greater than 0"
+_EXC_STRICT_OPT_TRUE = "strict and optional must not both be True"
+_EXC_NEG_OR_OPT_LOOP_TRUE = "negated and optional must " \
+                            "both be False if loop is True"
+_EXC_NEG_AND_OPT_LOOP_FALSE = "negated and optional must not " \
+                              "both be True if loop is False"
 
 _EXC_NAME_LEN = "name must have a length greater than 0"
 _EXC_BLOCKS_LEN = "blocks must have a length greater than 0"

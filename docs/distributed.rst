@@ -5,7 +5,7 @@ Distributed
 fault-tolerant CEP at the network edge.
 
 .. note:: Distributed :code:`BoboCEP` is designed to be deployed at the edge
-          of a single network, ideally with 2-3 instances of the software.
+          of a single network, ideally with only 2-3 software instances.
 
 
 :code:`UPDATE`

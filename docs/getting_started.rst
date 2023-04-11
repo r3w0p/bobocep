@@ -9,10 +9,17 @@ The primary goal of :code:`BoboCEP` is to take streaming data that enters a
 system in a serialised and uncorrelated manner (i.e. **simple events**),
 and detect temporal **patterns** using it to infer the occurrence of some
 higher-level **phenomenon**.
-This, in turn generates a **complex event** representing the detection of the
-phenomenon, and **action events** representing the actions taken in response.
-These events are added to the data stream, where they can be used for future
-pattern detection.
+A **complex event** may be generated if a pattern of a phenomenon is fulfilled
+with relevant data.
+See `Phenomena <phenomena.html>`_ for more information.
+
+On pattern fulfilment, an **action** may be taken in response which, in turn,
+leads to the generation of an **action event** representing what happened
+during action execution and whether it was successfully executed.
+See `Actions <actions.html>`_ for more information.
+
+Complex events and action events are added back into the system's data stream,
+where they can be used for further pattern detection.
 
 For example, an office may wish to detect the phenomenon of an office fire
 through various data patterns that could infer its occurrence.
@@ -38,9 +45,15 @@ This architecture is extended by enabling state updates to be synchronised
 across multiple instances of :code:`BoboCEP` across a network for fault
 tolerance.
 
-TODO architecture diagram
+.. figure:: ./_static/img/architecture.png
+   :alt: Architecture
 
-The four subsystems of :code:`BoboCEP`:
+   :code:`BoboCEP` architecture and external systems.
+   Subsystems within dashed border are the core subsystems for a given
+   :code:`BoboCEP` instance. Dashed arrows represent data exchange to and from
+   external systems (blue, grey).
+
+The :code:`BoboCEP` subsystems are as follows:
 
 - **Receiver**.
   The entry point for data into the system. Its purpose is to validate
@@ -51,7 +64,6 @@ The four subsystems of :code:`BoboCEP`:
 - **Decider**.
   Manages **runs**, which represent **patterns** that have not yet received all
   of the data necessary to indicate the occurrence of some phenomenon.
-  See `Phenomena <phenomena.html>`_ for more information.
 
 - **Producer**.
   Generates **complex events** when it receives notification from Decider
@@ -62,11 +74,11 @@ The four subsystems of :code:`BoboCEP`:
   Forwards actions passed to it by Producer and executes them. This may involve
   communication with external services. Each action leads to the generation of
   an **action event** that details what occurred during action execution.
-  See `Actions <actions.html>`_ for more information.
 
-This architecture is extended by enabling state updates to be synchronised
-across multiple instances of :code:`BoboCEP`.
-See `Distributed <distributed.html>`_ for more information.
+- **Distributed**.
+  This architecture is extended by enabling state updates to be synchronised
+  across multiple instances of :code:`BoboCEP`.
+  See `Distributed <distributed.html>`_ for more information.
 
 
 Quick Setup
