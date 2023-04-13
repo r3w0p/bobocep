@@ -8,6 +8,7 @@ from bobocep.cep.action.handler import BoboActionHandlerPool, \
     BoboActionHandlerBlocking
 from bobocep.cep.engine.forwarder.forwarder import BoboForwarderError, \
     BoboForwarder
+from bobocep.cep.gen import BoboGenTimestampEpoch
 from bobocep.cep.gen.event_id import BoboGenEventIDUnique
 from bobocep.cep.phenom.phenom import BoboPhenomenon
 from tests.test_bobocep.test_cep.test_action import BoboActionTrue
@@ -97,4 +98,5 @@ class TestInvalid:
                 phenomena=[phenom_1, phenom_2],
                 handler=BoboActionHandlerBlocking(max_size=255),
                 gen_event_id=BoboGenEventIDUnique(),
+                gen_timestamp=BoboGenTimestampEpoch(),
                 max_size=255)

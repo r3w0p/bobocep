@@ -11,12 +11,13 @@ from queue import Queue
 from threading import RLock
 from typing import Dict, List, Optional
 
-from bobocep.cep.action.handler import BoboActionHandler
+from bobocep.cep.action.handler import BoboActionHandler, BoboHandlerResponse
 from bobocep.cep.engine.forwarder.pubsub import BoboForwarderPublisher, \
     BoboForwarderSubscriber
 from bobocep.cep.engine.producer.pubsub import BoboProducerSubscriber
 from bobocep.cep.engine.task import BoboEngineTaskError, BoboEngineTask
 from bobocep.cep.event import BoboEventAction, BoboEventComplex
+from bobocep.cep.gen import BoboGenTimestamp
 from bobocep.cep.gen.event_id import BoboGenEventID
 from bobocep.cep.phenom.phenom import BoboPhenomenon
 
@@ -41,11 +42,13 @@ class BoboForwarder(BoboEngineTask,
                  phenomena: List[BoboPhenomenon],
                  handler: BoboActionHandler,
                  gen_event_id: BoboGenEventID,
+                 gen_timestamp: BoboGenTimestamp,
                  max_size: int = 0):
         """
         :param phenomena: List of phenomena.
         :param handler: Action handler.
         :param gen_event_id: Event ID generator.
+        :param gen_timestamp: Timestamp generator.
         :param max_size: Maximum queue size.
             Default: 0 (unbounded).
         """
@@ -66,6 +69,7 @@ class BoboForwarder(BoboEngineTask,
 
         self._handler: BoboActionHandler = handler
         self._gen_event_id: BoboGenEventID = gen_event_id
+        self._gen_timestamp: BoboGenTimestamp = gen_timestamp
         self._max_size: int = max(0, max_size)
         self._queue: Queue[BoboEventComplex] = Queue(self._max_size)
 
@@ -126,13 +130,25 @@ class BoboForwarder(BoboEngineTask,
         :return: `True` if subscribers were notified of an action event
             from the action handler; `False` otherwise.
         """
-        event: Optional[BoboEventAction] = \
-            self._handler.get_action_event()
+        hres: Optional[BoboHandlerResponse] = \
+            self._handler.get_handler_response()
 
-        if event is not None:
+        if hres is not None:
+            # Generate action event from handler response
+            event = BoboEventAction(
+                event_id=self._gen_event_id.generate(),
+                timestamp=self._gen_timestamp.generate(),
+                data=hres.data,
+                phenomenon_name=hres.complex_event.phenomenon_name,
+                pattern_name=hres.complex_event.pattern_name,
+                action_name=hres.action_name,
+                success=hres.success)
+
             for subscriber in self._subscribers:
                 subscriber.on_forwarder_update(event)
+
             return True
+
         return False
 
     def on_producer_update(self, event: BoboEventComplex) -> None:

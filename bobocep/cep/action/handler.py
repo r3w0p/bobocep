@@ -11,11 +11,13 @@ from multiprocessing import Manager, Pool
 from multiprocessing.pool import AsyncResult
 from queue import Queue
 from threading import RLock
-from typing import Any, Optional
+from typing import Any, Optional, Tuple, NamedTuple
 
 from bobocep import BoboError
 from bobocep.cep.action.action import BoboAction
-from bobocep.cep.event import BoboEventAction, BoboEventComplex
+from bobocep.cep.event import BoboEventComplex
+
+_EXC_QUEUE_FULL = "queue is full (max size: {})"
 
 
 class BoboActionHandlerError(BoboError):
@@ -24,12 +26,20 @@ class BoboActionHandlerError(BoboError):
     """
 
 
+class BoboHandlerResponse(NamedTuple):
+    """
+    A handler response to action execution.
+    """
+    action_name: str
+    complex_event: BoboEventComplex
+    success: bool
+    data: Any
+
+
 class BoboActionHandler(ABC):
     """
     An abstract action handler.
     """
-
-    _EXC_QUEUE_FULL = "queue is full (max size: {})"
 
     def __init__(self, max_size: int = 0):
         """
@@ -49,6 +59,7 @@ class BoboActionHandler(ABC):
 
         :param action: The action to handle.
         :param event: The complex event that caused the action to trigger.
+
         :return: A return value from handling the action.
         """
         with self._lock:
@@ -63,7 +74,7 @@ class BoboActionHandler(ABC):
 
     def close(self) -> None:
         """
-        Closes the handler.
+        Close the handler.
         """
         with self._lock:
             try:
@@ -78,9 +89,10 @@ class BoboActionHandler(ABC):
         """
 
     @abstractmethod
-    def _execute_action(self,
-                        action: BoboAction,
-                        event: BoboEventComplex) -> Any:
+    def _execute_action(
+            self,
+            action: BoboAction,
+            event: BoboEventComplex) -> Any:
         """
         Execute an action.
 
@@ -96,9 +108,9 @@ class BoboActionHandler(ABC):
         :return: The handler queue.
         """
 
-    def get_action_event(self) -> Optional[BoboEventAction]:
+    def get_handler_response(self) -> Optional[BoboHandlerResponse]:
         """
-        :return: Action event from queue, or `None` if queue is empty.
+        :return: Action response from queue, or `None` if queue is empty.
         """
         with self._lock:
             queue = self._get_queue()
@@ -126,7 +138,7 @@ class BoboActionHandlerBlocking(BoboActionHandler):
         """
         super().__init__(max_size)
 
-        self._queue: "Queue[BoboEventAction]" = Queue(self._max_size)
+        self._queue: "Queue[BoboHandlerResponse]" = Queue(self._max_size)
 
     def _execute_action(self,
                         action: BoboAction,
@@ -135,13 +147,20 @@ class BoboActionHandlerBlocking(BoboActionHandler):
         :param action: Action to execute.
         :param event: Complex event associated with the action.
         """
-        action_event: BoboEventAction = action.execute(event)
+        action_ret: Tuple[bool, Any] = action.execute(event)
+
+        hres = BoboHandlerResponse(
+            action_name=action.name,
+            complex_event=event,
+            success=action_ret[0],
+            data=action_ret[1]
+        )
 
         if not self._queue.full():
-            self._queue.put(action_event)
+            self._queue.put(hres)
         else:
             raise BoboActionHandlerError(
-                self._EXC_QUEUE_FULL.format(self._max_size))
+                _EXC_QUEUE_FULL.format(self._max_size))
 
     def _on_closing(self) -> None:
         """
@@ -159,14 +178,30 @@ class BoboActionHandlerBlocking(BoboActionHandler):
 def _pool_execute_action(
         queue: Queue,
         action: BoboAction,
-        event: BoboEventComplex) -> None:
+        event: BoboEventComplex,
+        max_size: int
+) -> None:
     """
-    :param queue: A queue in which to put the action event that is returned
-                  after the action is executed.
+    :param queue: A queue in which to put the action response that is
+        returned after execution.
     :param action: The action to execute.
     :param event: The complex event that triggered the action being executed.
+    :param max_size: Maximum queue size.
     """
-    queue.put(action.execute(event))
+    action_ret: Tuple[bool, Any] = action.execute(event)
+
+    hres = BoboHandlerResponse(
+        action_name=action.name,
+        complex_event=event,
+        success=action_ret[0],
+        data=action_ret[1]
+    )
+
+    if not queue.full():
+        queue.put(hres)
+    else:
+        raise BoboActionHandlerError(
+            _EXC_QUEUE_FULL.format(max_size))
 
 
 class BoboActionHandlerPool(BoboActionHandler):
@@ -185,7 +220,7 @@ class BoboActionHandlerPool(BoboActionHandler):
         self._processes = processes
         self._pool = Pool(processes=processes)
         self._manager = Manager()
-        self._queue: "Queue[BoboEventAction]" = self._manager.Queue()
+        self._queue: "Queue[BoboHandlerResponse]" = self._manager.Queue()
 
     def join(self) -> None:
         """
@@ -210,10 +245,12 @@ class BoboActionHandlerPool(BoboActionHandler):
         # causes unit tests to 'hang'.
         if self._max_size > 0 and (self._queue.qsize() >= self._max_size):
             raise BoboActionHandlerError(
-                self._EXC_QUEUE_FULL.format(self._max_size))
+                _EXC_QUEUE_FULL.format(self._max_size))
 
         return self._pool.starmap_async(
-            _pool_execute_action, [(self._queue, action, event)])
+            _pool_execute_action, [
+                (self._queue, action, event, self._max_size)
+            ])
 
     def _get_queue(self) -> Queue:
         """

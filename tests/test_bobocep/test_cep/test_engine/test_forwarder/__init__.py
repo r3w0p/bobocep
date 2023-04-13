@@ -9,6 +9,7 @@ from bobocep.cep.action.handler import BoboActionHandler, \
 from bobocep.cep.engine.forwarder.forwarder import BoboForwarder
 from bobocep.cep.engine.forwarder.pubsub import BoboForwarderSubscriber
 from bobocep.cep.event import BoboEventAction
+from bobocep.cep.gen import BoboGenTimestampEpoch
 from bobocep.cep.gen.event_id import BoboGenEventID, BoboGenEventIDUnique
 from bobocep.cep.phenom.phenom import BoboPhenomenon
 
@@ -34,6 +35,7 @@ def tc_forwarder_sub(
         BoboActionHandlerBlocking(max_size=max_size),
         gen_event_id=event_id_gen if event_id_gen is not None else
         BoboGenEventIDUnique(),
+        gen_timestamp=BoboGenTimestampEpoch(),
         max_size=max_size)
 
     subscriber = StubForwarderSubscriber()

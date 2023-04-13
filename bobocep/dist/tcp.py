@@ -21,8 +21,8 @@ from bobocep.cep.engine.decider.runserial import BoboRunSerial
 from bobocep.dist.crypto.crypto import BoboDistributedCrypto
 from bobocep.dist.device import BoboDevice
 from bobocep.dist.devman import BoboDeviceManager
-from bobocep.dist.dist import BoboDistributedJSONDecodeError, BoboDistributed, \
-    BoboDistributedError, BoboDistributedSystemError, \
+from bobocep.dist.dist import BoboDistributedJSONDecodeError, \
+    BoboDistributed, BoboDistributedError, BoboDistributedSystemError, \
     BoboDistributedTimeoutError
 from bobocep.dist.pubsub import BoboDistributedSubscriber
 
@@ -129,7 +129,8 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                  max_size_outgoing: int = 0,
                  period_ping: int = 30,
                  period_resync: int = 60,
-                 attempt_ping: int = 10,
+                 attempt_stash: int = 5,
+                 attempt_ping: int = 5,
                  attempt_resync: int = 10,
                  max_listen: int = 3,
                  timeout_accept: int = 3,
@@ -153,6 +154,8 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         :param period_resync: Period of inactivity from another device
             to warrant resyncing with the device, in seconds.
             Default: 60.
+        :param attempt_stash: How frequently to attempt to send the sync stash
+            if the stash is not empty.
         :param attempt_ping: How frequently to ping another device
             if it is within the ping period, in seconds.
             Default: 10.
@@ -198,6 +201,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
         self._period_ping: int = period_ping
         self._period_resync: int = period_resync
+        self._attempt_stash: int = attempt_stash
         self._attempt_ping: int = attempt_ping
         self._attempt_resync: int = attempt_resync
 
@@ -353,31 +357,39 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     if d.urn == self._urn:
                         continue
 
-                    # If device is within the "Resync Period"...
-                    if (now - d.last_comms) >= self._period_resync:
-                        # ...and due to attempt another resync...
-                        if (now - d.last_attempt) > self._attempt_resync:
+                    comms_range: int = (now - d.last_comms)
+                    attempt_range: int = (now - d.last_attempt)
+                    queue_empty: bool = self._queue_outgoing.empty()
+
+                    # If device is within the "RESYNC Period"...
+                    if comms_range >= self._period_resync:
+                        # ...and due to attempt another RESYNC...
+                        if attempt_range >= self._attempt_resync:
                             outlist.append((d, _TYPE_RESYNC))
 
-                    # If device is within the "Ping Period"
-                    # and there is otherwise nothing to sync...
-                    elif (
-                            (now - d.last_comms) >= self._period_ping and
-                            self._queue_outgoing.empty()
+                    # If device is within the "PING Period"
+                    # and there is nothing to SYNC...
+                    elif comms_range >= self._period_ping and (
+                            queue_empty and
+                            d.size_stash() == 0
                     ):
-                        # ...and due to attempt another ping...
-                        if (now - d.last_attempt) > self._attempt_ping:
+                        # ...and due to attempt another PING...
+                        if attempt_range >= self._attempt_ping:
                             outlist.append((d, _TYPE_PING))
 
-                    # If device is within the "SYNC Period"...
+                    # If device is within the "SYNC Period"
+                    # or "PING Period" with something left to SYNC...
                     else:
-                        # ...and there is something to sync...
-                        if not self._queue_outgoing.empty():
+                        # ...and there is data in the queue or
+                        # data in the device's stash that is due to send...
+                        if (not queue_empty) or (
+                                d.size_stash() > 0 and
+                                attempt_range >= self._attempt_stash
+                        ):
                             outlist.append((d, _TYPE_SYNC))
 
-            # Used to share data across multiple devices
-            cache_resync_str: Optional[str] = None
-            cache_sync_dict: Optional[Dict[str, List[BoboRunSerial]]] = None
+            # Compiled SYNC data for sending to all devices
+            cache_sync: Optional[Dict[str, List[BoboRunSerial]]] = None
 
             for d, msg_type in outlist:
                 # Set flags
@@ -387,21 +399,20 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     msg_flags += _FLAG_RESET
 
                 if msg_type == _TYPE_RESYNC:
-                    # Stash contents not needed when sending resync
+                    # Stash contents not needed when in RESYNC Period
                     d.clear_stash()
 
-                    # Collect and cache a snapshot of decider
-                    if cache_resync_str is None:
-                        snapshot = self._decider.snapshot()
-                        cache_resync_str = self._outgoing_to_json({
-                            _KEY_COMPLETED: snapshot[0],
-                            _KEY_HALTED: snapshot[1],
-                            _KEY_UPDATED: snapshot[2]
-                        })
+                    # Collect and cache a snapshot of Decider
+                    snapshot = self._decider.snapshot()
+                    msg_json_resync = self._outgoing_to_json({
+                        _KEY_COMPLETED: snapshot[0],
+                        _KEY_HALTED: snapshot[1],
+                        _KEY_UPDATED: snapshot[2]
+                    })
 
                     # Send snapshot to remote
                     err: int = self._tcp_send(
-                        d, msg_type, msg_flags, cache_resync_str)
+                        d, msg_type, msg_flags, msg_json_resync)
 
                     # Update last comms on success
                     now = self._now()
@@ -444,10 +455,16 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     d.last_attempt = now
 
                 elif msg_type == _TYPE_SYNC:
-                    # Get data from queue
-                    if cache_sync_dict is None:
-                        # (The check for empty queue was already made above)
-                        cache_sync_dict = self._queue_outgoing.get_nowait()
+                    # Get SYNC data to send (cached for all devices to use)
+                    if cache_sync is None:
+                        if not self._queue_outgoing.empty():
+                            cache_sync = self._queue_outgoing.get_nowait()
+                        else:
+                            cache_sync = {
+                                _KEY_COMPLETED: [],
+                                _KEY_HALTED: [],
+                                _KEY_UPDATED: []
+                            }
 
                     # Get device's stash of unsent data
                     stash_c, stash_h, stash_u = d.stash()
@@ -455,11 +472,11 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     # Add stash to new data to send
                     send_sync: Dict[str, List[BoboRunSerial]] = {
                         _KEY_COMPLETED:
-                            cache_sync_dict[_KEY_COMPLETED] + stash_c,
+                            cache_sync[_KEY_COMPLETED] + stash_c,
                         _KEY_HALTED:
-                            cache_sync_dict[_KEY_HALTED] + stash_h,
+                            cache_sync[_KEY_HALTED] + stash_h,
                         _KEY_UPDATED:
-                            cache_sync_dict[_KEY_UPDATED] + stash_u
+                            cache_sync[_KEY_UPDATED] + stash_u
                     }
 
                     # Send JSON sync
@@ -485,9 +502,9 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
                         # Append stash with cache_sync on error
                         d.append_stash(
-                            completed=cache_sync_dict[_KEY_COMPLETED],
-                            halted=cache_sync_dict[_KEY_HALTED],
-                            updated=cache_sync_dict[_KEY_UPDATED])
+                            completed=cache_sync[_KEY_COMPLETED],
+                            halted=cache_sync[_KEY_HALTED],
+                            updated=cache_sync[_KEY_UPDATED])
 
                     d.last_attempt = now
 

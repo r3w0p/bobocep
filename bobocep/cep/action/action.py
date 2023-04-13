@@ -7,9 +7,10 @@ Action definitions.
 """
 
 from abc import ABC, abstractmethod
+from typing import Tuple, Any
 
 from bobocep import BoboError
-from bobocep.cep.event import BoboEventComplex, BoboEventAction
+from bobocep.cep.event import BoboEventComplex
 
 _EXC_NAME_LEN = "name must have a length greater than 0"
 
@@ -48,8 +49,9 @@ class BoboAction(ABC):
         return self._name
 
     @abstractmethod
-    def execute(self, event: BoboEventComplex) -> BoboEventAction:
+    def execute(self, event: BoboEventComplex) -> Tuple[bool, Any]:
         """
         :param event: The complex event that triggered action.
-        :return: An action event describing the action and its effect.
+        :return: Whether the action execution was successful, and
+            any additional data.
         """

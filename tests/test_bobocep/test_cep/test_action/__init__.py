@@ -1,11 +1,10 @@
 # Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
+from typing import Tuple, Any
 
 from bobocep.cep.action.action import BoboAction
-from bobocep.cep.event import BoboEventComplex, BoboEventAction
-from bobocep.cep.gen.event_id import BoboGenEventIDUnique
-from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
+from bobocep.cep.event import BoboEventComplex
 
 
 class BoboActionTrue(BoboAction):
@@ -14,29 +13,17 @@ class BoboActionTrue(BoboAction):
     def __init__(self, name: str = "action"):
         super().__init__(name)
 
-    def execute(self, event: BoboEventComplex) -> BoboEventAction:
-        return BoboEventAction(
-            event_id=BoboGenEventIDUnique().generate(),
-            timestamp=BoboGenTimestampEpoch().generate(),
-            data=True,
-            phenomenon_name=event.phenomenon_name,
-            pattern_name=event.pattern_name,
-            action_name=self.name,
-            success=True)
+    def execute(self, event: BoboEventComplex) -> Tuple[bool, Any]:
+        return True, True
 
 
 class BoboActionFalse(BoboAction):
-    """An action that is always unsuccessful."""
+    """
+    An action that is always unsuccessful
+    """
 
     def __init__(self, name: str = "action"):
         super().__init__(name)
 
-    def execute(self, event: BoboEventComplex) -> BoboEventAction:
-        return BoboEventAction(
-            event_id=BoboGenEventIDUnique().generate(),
-            timestamp=BoboGenTimestampEpoch().generate(),
-            data=False,
-            phenomenon_name=event.phenomenon_name,
-            pattern_name=event.pattern_name,
-            action_name=self.name,
-            success=False)
+    def execute(self, event: BoboEventComplex) -> Tuple[bool, Any]:
+        return False, False

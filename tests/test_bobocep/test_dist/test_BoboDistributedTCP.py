@@ -163,6 +163,8 @@ class TestValid:
         last_comms = BoboDistributedTCP._now() - 35
         dist._devices[devices[1].urn].last_comms = last_comms
 
+        sleep(1)
+
         t = Thread(target=tc_run_distributed_tcp, args=[dist])
         t.start()
 
@@ -383,9 +385,6 @@ class TestValid:
 
         # Should be an idempotent operation
         assert dist.close() is None
-
-    # TODO "Update address if remote address has changed"
-    # TODO ping with RESET FLAG
 
 
 class TestInvalid:
@@ -714,12 +713,3 @@ class TestInvalid:
                 completed=completed,
                 halted=halted,
                 updated=updated)
-
-    # TODO "Outgoing queue is full."
-
-    # TODO resync FAILURE
-    # TODO ping FAILURE
-    # TODO sync FAILURE
-
-    # TODO Check if URN is NOT a recognised device
-    # TODO Check if ID key DOES NOT MATCH expected key for URN

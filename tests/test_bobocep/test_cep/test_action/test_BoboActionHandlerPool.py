@@ -24,7 +24,9 @@ class TestValid:
         _pool_execute_action(
             queue=q,
             action=BoboActionTrue(),
-            event=tc_event_complex())
+            event=tc_event_complex(),
+            max_size=255
+        )
 
         assert q.qsize() == 1
 
@@ -74,7 +76,7 @@ class TestValid:
     def test_get_action_event_empty(self):
         handler = BoboActionHandlerPool(processes=1, max_size=255)
 
-        assert handler.get_action_event() is None
+        assert handler.get_handler_response() is None
 
     def test_get_action_event_not_empty(self):
         handler = BoboActionHandlerPool(processes=1, max_size=255)
@@ -83,7 +85,7 @@ class TestValid:
             BoboActionTrue(), tc_event_complex())
         result.wait(timeout=5)
 
-        assert handler.get_action_event() is not None
+        assert handler.get_handler_response() is not None
 
     def test_close(self):
         handler = BoboActionHandlerPool(processes=3, max_size=255)
@@ -106,3 +108,26 @@ class TestInvalid:
 
         with pytest.raises(BoboActionHandlerError):
             handler.handle(BoboActionTrue(), tc_event_complex())
+
+    def test_pool_execute_action_queue_full(self):
+        m = Manager()
+        q = m.Queue(maxsize=1)
+
+        assert q.qsize() == 0
+
+        _pool_execute_action(
+            queue=q,
+            action=BoboActionTrue(),
+            event=tc_event_complex(),
+            max_size=1
+        )
+
+        assert q.qsize() == 1
+
+        with pytest.raises(BoboActionHandlerError):
+            _pool_execute_action(
+                queue=q,
+                action=BoboActionTrue(),
+                event=tc_event_complex(),
+                max_size=1
+            )

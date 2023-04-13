@@ -216,10 +216,9 @@ class BoboDecider(BoboEngineTask,
             self,
             completed: List[BoboRunSerial],
             halted: List[BoboRunSerial],
-            updated: List[BoboRunSerial]) \
-            -> Tuple[List[BoboRunSerial],
-            List[BoboRunSerial],
-            List[BoboRunSerial]]:
+            updated: List[BoboRunSerial]) -> Tuple[List[BoboRunSerial],
+                                                   List[BoboRunSerial],
+                                                   List[BoboRunSerial]]:
         """
         Compares run changes that occurred remotely with local run states.
 
@@ -456,9 +455,7 @@ class BoboDecider(BoboEngineTask,
                 updated=updated)
 
     def _process_event(self, event: BoboEvent) -> \
-            Tuple[List[BoboRun],
-            List[BoboRun],
-            List[BoboRun]]:
+            Tuple[List[BoboRun], List[BoboRun], List[BoboRun]]:
         """
         :param event: An event.
 
@@ -470,9 +467,7 @@ class BoboDecider(BoboEngineTask,
         return (r_halt_com + p_halt_com), r_halt_incom, (r_upd + p_upd)
 
     def _check_against_runs(self, event: BoboEvent) -> \
-            Tuple[List[BoboRun],
-            List[BoboRun],
-            List[BoboRun]]:
+            Tuple[List[BoboRun], List[BoboRun], List[BoboRun]]:
         """
         :param event: An event.
 
@@ -512,8 +507,7 @@ class BoboDecider(BoboEngineTask,
         return runs_halted_complete, runs_halted_incomplete, runs_updated
 
     def _check_against_patterns(self, event: BoboEvent) -> \
-            Tuple[List[BoboRun],
-            List[BoboRun]]:
+            Tuple[List[BoboRun], List[BoboRun]]:
         """
         :param event: An event.
 

@@ -22,13 +22,13 @@ class TestValid:
     def test_get_action_event_empty(self):
         handler = BoboActionHandlerBlocking(max_size=255)
 
-        assert handler.get_action_event() is None
+        assert handler.get_handler_response() is None
 
     def test_get_action_event_not_empty(self):
         handler = BoboActionHandlerBlocking(max_size=255)
 
         handler.handle(BoboActionTrue(), tc_event_complex())
-        assert handler.get_action_event() is not None
+        assert handler.get_handler_response() is not None
 
     def test_close(self):
         handler = BoboActionHandlerBlocking(max_size=255)

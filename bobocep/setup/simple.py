@@ -35,7 +35,9 @@ class BoboSetupSimple(BoboSetup):
             phenomena: List[BoboPhenomenon],
             validator: Optional[BoboValidator] = None,
             handler: Optional[BoboActionHandler] = None,
-            gen_event: Optional[BoboGenEvent] = None):
+            gen_event: Optional[BoboGenEvent] = None,
+            urn: Optional[str] = None
+    ):
         """
         :param phenomena: A list of phenomena.
         :param validator: A data validator for the engine's Receiver task.
@@ -45,6 +47,7 @@ class BoboSetupSimple(BoboSetup):
             one less than the maximum system CPUs available.
         :param gen_event: An event generator.
             Default: None.
+        :param urn: A URN for ID generation.
         """
         super().__init__()
 
@@ -54,31 +57,33 @@ class BoboSetupSimple(BoboSetup):
         self._handler: BoboActionHandler = handler if handler is not None \
             else BoboActionHandlerPool(processes=max(1, cpu_count() - 1))
         self._gen_event: Optional[BoboGenEvent] = gen_event
+        self._urn: Optional[str] = urn
 
     def generate(self) -> BoboEngine:
         """
         :return: The CEP engine.
         """
         receiver = BoboReceiver(
-            validator=BoboValidatorAll(),
-            gen_event_id=BoboGenEventIDUnique(),
+            validator=self._validator,
+            gen_event_id=BoboGenEventIDUnique(self._urn),
             gen_timestamp=BoboGenTimestampEpoch(),
             gen_event=self._gen_event)
 
         decider = BoboDecider(
             phenomena=self._phenomena,
-            gen_event_id=BoboGenEventIDUnique(),
+            gen_event_id=BoboGenEventIDUnique(self._urn),
             gen_run_id=BoboGenEventIDUnique())
 
         producer = BoboProducer(
             phenomena=self._phenomena,
-            gen_event_id=BoboGenEventIDUnique(),
+            gen_event_id=BoboGenEventIDUnique(self._urn),
             gen_timestamp=BoboGenTimestampEpoch())
 
         forwarder = BoboForwarder(
             phenomena=self._phenomena,
             handler=self._handler,
-            gen_event_id=BoboGenEventIDUnique())
+            gen_event_id=BoboGenEventIDUnique(self._urn),
+            gen_timestamp=BoboGenTimestampEpoch())
 
         engine = BoboEngine(
             receiver=receiver,
@@ -90,7 +95,9 @@ class BoboSetupSimple(BoboSetup):
 
 
 class BoboSetupSimpleDistributed(BoboSetup):
-    """A simple setup to make distributed configuration easier."""
+    """
+    A simple setup to make distributed configuration easier.
+    """
 
     def __init__(
             self,
@@ -121,7 +128,8 @@ class BoboSetupSimpleDistributed(BoboSetup):
             validator=validator if validator is not None else
             BoboValidatorJSONable(),
             handler=handler,
-            gen_event=gen_event
+            gen_event=gen_event,
+            urn=urn
         )
 
         self._urn: str = urn

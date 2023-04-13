@@ -21,7 +21,10 @@ See `Actions <actions.html>`_ for more information.
 Complex events and action events are added back into the system's data stream,
 where they can be used for further pattern detection.
 
-For example, an office may wish to detect the phenomenon of an office fire
+Example
+-------
+
+An office may wish to detect the phenomenon of an office fire
 through various data patterns that could infer its occurrence.
 Patterns may include:
 
