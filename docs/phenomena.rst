@@ -116,8 +116,8 @@ passing the event onto the current block's predicate(s).
   match against *all* predicates, then the pattern will halt. If it does match
   against them all, then the event will be passed to the current block of
   the pattern.
-  For example, a precondition may be that all data originates from the same
-  sensor device.
+  For example, a precondition may be that all data originates from a single
+  IP address.
 
 - **Haltconditions** are predicates whereby, if an event successfully matches
   against *any* predicate, then the pattern will halt. If it does not match
@@ -126,6 +126,22 @@ passing the event onto the current block's predicate(s).
   For example, a haltcondition may be to halt if 60 seconds has passed since
   the first event in the history i.e. the pattern must reach completion
   within 60 seconds.
+
+
+.. note::
+    Preconditions will cause a pattern to halt if it encounters *any*
+    event that does not satisfy the predicates of all preconditions.
+    That is, preconditions provide strict contiguity.
+    Unless you are also using strict contiguity in all of your patterns,
+    it may be best to avoid using preconditions.
+
+
+Pattern Builder
+===============
+
+Creating a pattern is best achieved using the :code:`BoboPatternBuilder`.
+
+TODO
 
 
 Runs

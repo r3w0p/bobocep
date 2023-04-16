@@ -38,7 +38,8 @@ class TestValid:
                 history=history
             )],
             halted=[],
-            updated=[]
+            updated=[],
+            local=True
         )
 
         assert producer.size() == 1
@@ -67,7 +68,8 @@ class TestValid:
                 history=history
             )],
             halted=[],
-            updated=[]
+            updated=[],
+            local=True
         )
 
         assert producer.size() == 1
@@ -97,7 +99,8 @@ class TestValid:
                 history=history
             )],
             halted=[],
-            updated=[]
+            updated=[],
+            local=True
         )
 
         assert producer.size() == 0
@@ -122,7 +125,8 @@ class TestInvalid:
                 history=history
             )],
             halted=[],
-            updated=[]
+            updated=[],
+            local=True
         )
 
         with pytest.raises(BoboProducerError):
@@ -135,7 +139,8 @@ class TestInvalid:
                     history=history
                 )],
                 halted=[],
-                updated=[]
+                updated=[],
+                local=True
             )
 
     def test_duplicate_phenomena_names(self):
@@ -160,7 +165,8 @@ class TestInvalid:
                 history=history
             )],
             halted=[],
-            updated=[]
+            updated=[],
+            local=True
         )
 
         with pytest.raises(BoboProducerError):
@@ -180,7 +186,8 @@ class TestInvalid:
                 history=history
             )],
             halted=[],
-            updated=[]
+            updated=[],
+            local=True
         )
 
         with pytest.raises(BoboProducerError):

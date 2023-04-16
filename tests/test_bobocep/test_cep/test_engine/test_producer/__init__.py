@@ -18,7 +18,7 @@ class StubProducerSubscriber(BoboProducerSubscriber):
         super().__init__()
         self.output: List[BoboEventComplex] = []
 
-    def on_producer_update(self, event: BoboEventComplex):
+    def on_producer_update(self, event: BoboEventComplex, local: bool):
         self.output.append(event)
 
 

@@ -1,7 +1,7 @@
 # Copyright (c) 2019-2023 r3w0p
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
-
+from bobocep.cep.action import BoboActionHandlerBlocking
 from bobocep.setup import BoboSetupSimple
 from tests.test_bobocep.test_cep.test_phenom import tc_phenomenon
 
@@ -16,7 +16,9 @@ class TestValid:
         ]
 
         setup = BoboSetupSimple(
-            phenomena=phenomena)
+            phenomena=phenomena,
+            handler=BoboActionHandlerBlocking()
+        )
 
         engine = setup.generate()
         dec_phenomena = engine.decider.phenomena()

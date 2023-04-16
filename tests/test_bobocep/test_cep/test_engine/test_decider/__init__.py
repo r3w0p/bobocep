@@ -25,7 +25,8 @@ class StubDeciderSubscriber(BoboDeciderSubscriber):
     def on_decider_update(self,
                           completed: List[BoboRunSerial],
                           halted: List[BoboRunSerial],
-                          updated: List[BoboRunSerial]):
+                          updated: List[BoboRunSerial],
+                          local: bool):
         self.completed += completed
         self.halted += halted
         self.updated += updated

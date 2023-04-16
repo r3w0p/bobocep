@@ -82,7 +82,7 @@ class TestValid:
         manager.last_comms = 1
         manager.last_attempt = 1
 
-        manager.reset_last()
+        manager.clear_last()
 
         assert manager.last_comms == 0
         assert manager.last_attempt == 0

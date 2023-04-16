@@ -6,10 +6,9 @@
 Simple setup.
 """
 
-from multiprocessing import cpu_count
 from typing import List, Optional, Tuple
 
-from bobocep.cep.action.handler import BoboActionHandler, BoboActionHandlerMultiprocessing
+from bobocep.cep.action.handler import BoboActionHandler
 from bobocep.cep.engine.decider.decider import BoboDecider
 from bobocep.cep.engine.engine import BoboEngine
 from bobocep.cep.engine.forwarder.forwarder import BoboForwarder

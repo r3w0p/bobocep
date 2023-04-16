@@ -128,10 +128,10 @@ class BoboDeviceManager:
         with self._lock:
             self._last_attempt = max(0, last_attempt)
 
-    def reset_last(self) -> None:
+    def clear_last(self) -> None:
         """
-        Resets both the last communication and last attempted communication
-        time with this device to 0.
+        Clears both the last communication and last attempted communication
+        time by setting them both to 0.
         """
         with self._lock:
             self._last_comms = 0

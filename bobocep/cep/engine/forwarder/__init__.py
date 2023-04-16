@@ -5,3 +5,6 @@
 """
 Forwarder imports.
 """
+
+from bobocep.cep.engine.forwarder.forwarder import BoboForwarder, \
+    BoboForwarderError

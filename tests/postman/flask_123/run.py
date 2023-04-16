@@ -4,7 +4,7 @@ from datetime import datetime
 from flask import Flask
 
 from bobocep.cep.action import BoboAction, BoboActionHandlerMultithreading
-from bobocep.cep.engine.engine import BoboEngine
+from bobocep.cep.engine import BoboEngine
 from bobocep.cep.event import BoboEventComplex
 from bobocep.cep.phenom import BoboPattern, BoboPatternBuilder, \
     BoboPhenomenon

@@ -5,3 +5,6 @@
 """
 Producer imports.
 """
+
+from bobocep.cep.engine.producer.producer import BoboProducer, \
+    BoboProducerError

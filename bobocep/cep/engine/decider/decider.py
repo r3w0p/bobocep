@@ -127,10 +127,12 @@ class BoboDecider(BoboEngineTask,
                 internal_state_change = any(len(rl) > 0 for rl in
                                             [completed, halted, updated])
                 if internal_state_change:
-                    self._notify_subscribers(
-                        completed=completed,
-                        halted=halted,
-                        updated=updated)
+                    for subscriber in self._subscribers:
+                        subscriber.on_decider_update(
+                            completed=completed,
+                            halted=halted,
+                            updated=updated,
+                            local=True)
 
                 return internal_state_change
             return False
@@ -260,7 +262,7 @@ class BoboDecider(BoboEngineTask,
 
     def on_distributed_update(
             self,
-            completed: List['BoboRunSerial'],
+            completed: List[BoboRunSerial],
             halted: List[BoboRunSerial],
             updated: List[BoboRunSerial]) -> None:
         """
@@ -338,11 +340,13 @@ class BoboDecider(BoboEngineTask,
             # Cache remote changes
             self._maybe_cache(completed, halted)
 
-            # Send updates to subscribers
-            self._notify_subscribers(
-                completed=completed,
-                halted=halted,
-                updated=updated)
+            # Notify subscribers
+            for subscriber in self._subscribers:
+                subscriber.on_decider_update(
+                    completed=completed,
+                    halted=halted,
+                    updated=updated,
+                    local=False)
 
     def _get_pattern(self,
                      phenomenon_name: str,
@@ -436,23 +440,6 @@ class BoboDecider(BoboEngineTask,
         """
         with self._lock:
             return self._closed
-
-    def _notify_subscribers(
-            self,
-            completed: List[BoboRunSerial],
-            halted: List[BoboRunSerial],
-            updated: List[BoboRunSerial]) -> None:
-        """
-        :param completed: Completed runs.
-        :param halted: Halted runs.
-        :param updated: Updated runs.
-        """
-
-        for subscriber in self._subscribers:
-            subscriber.on_decider_update(
-                completed=completed,
-                halted=halted,
-                updated=updated)
 
     def _process_event(self, event: BoboEvent) -> \
             Tuple[List[BoboRun], List[BoboRun], List[BoboRun]]:

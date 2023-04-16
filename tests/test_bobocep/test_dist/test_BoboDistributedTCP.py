@@ -98,7 +98,8 @@ class TestValid:
         dist.on_decider_update(
             completed=completed,
             halted=halted,
-            updated=updated)
+            updated=updated,
+            local=True)
 
         sleep(3)
 
@@ -250,7 +251,8 @@ class TestValid:
         dist.on_decider_update(
             completed=completed,
             halted=halted,
-            updated=updated)
+            updated=updated,
+            local=True)
 
         sleep(3)
 
@@ -339,7 +341,8 @@ class TestValid:
         dist.on_decider_update(
             completed=completed,
             halted=halted,
-            updated=updated)
+            updated=updated,
+            local=True)
 
         sleep(3)
 
@@ -654,7 +657,8 @@ class TestInvalid:
             dist.on_decider_update(
                 completed=completed,
                 halted=halted,
-                updated=updated)
+                updated=updated,
+                local=False)
 
     def test_on_decider_update_not_running(self):
         logging.getLogger().setLevel(logging.DEBUG)
@@ -712,4 +716,5 @@ class TestInvalid:
             dist.on_decider_update(
                 completed=completed,
                 halted=halted,
-                updated=updated)
+                updated=updated,
+                local=False)

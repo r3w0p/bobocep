@@ -22,11 +22,15 @@ class BoboDeciderSubscriber(ABC):
             self,
             completed: List[BoboRunSerial],
             halted: List[BoboRunSerial],
-            updated: List[BoboRunSerial]) -> None:
+            updated: List[BoboRunSerial],
+            local: bool
+    ) -> None:
         """
         :param completed: Completed runs.
         :param halted: Halted runs.
         :param updated: Updated runs.
+        :param local: `True` if the Decider update occurred locally;
+            `False` if the update occurred on a remote (distributed) instance.
         """
 
 

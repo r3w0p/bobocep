@@ -274,9 +274,6 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         """
         # Take incoming data and pass to decider
         while not self._queue_incoming.empty():
-            logging.debug("{} _update fetching data from incoming queue"
-                          .format(self._urn))
-
             incoming: Dict[str, List[BoboRunSerial]] = \
                 self._queue_incoming.get_nowait()
 
@@ -284,24 +281,33 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
             halted: List[BoboRunSerial] = incoming[_KEY_HALTED]
             updated: List[BoboRunSerial] = incoming[_KEY_UPDATED]
 
-            logging.debug("{} _update sending data to subscribers"
+            logging.debug("{} Sending incoming queue data to subscribers"
                           .format(self._urn))
 
-            for subscriber in self._subscribers:
-                subscriber.on_distributed_update(
-                    completed=completed,
-                    halted=halted,
-                    updated=updated)
+            if (
+                    len(completed) > 0 or
+                    len(halted) > 0 or
+                    len(updated) > 0
+            ):
+                for subscriber in self._subscribers:
+                    subscriber.on_distributed_update(
+                        completed=completed,
+                        halted=halted,
+                        updated=updated)
 
     def on_decider_update(
             self,
             completed: List[BoboRunSerial],
             halted: List[BoboRunSerial],
-            updated: List[BoboRunSerial]) -> None:
+            updated: List[BoboRunSerial],
+            local: bool
+    ) -> None:
         """
         :param completed: Locally completed runs.
         :param halted: Locally halted runs.
         :param updated: Locally updated runs.
+        :param local: `True` if the Decider update occurred locally;
+            `False` if the update occurred on a remote (distributed) instance.
         """
         with self._lock_local:
             if self._closed:
@@ -310,7 +316,11 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
             if not self._running:
                 raise BoboDistributedError(_EXC_NOT_RUNNING)
 
-            logging.debug("{} on_decider_update adding local Decider changes "
+            # Prevents Decider from passing distributed data back
+            if not local:
+                return
+
+            logging.debug("{} Adding local Decider changes "
                           "to outgoing queue".format(self._urn))
 
             # Take changes to decider and pass to outgoing
@@ -418,7 +428,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     now = self._now()
 
                     if err == 0:
-                        logging.debug("{} _tcp_outgoing resync success with {}"
+                        logging.debug("{} Resync SUCCESS: {}"
                                       .format(self._urn, d.urn))
                         d.last_comms = now
 
@@ -427,7 +437,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
                     else:
                         logging.error(
-                            "{} _tcp_outgoing resync FAILURE with {} (code {})"
+                            "{} Resync FAILURE: {} (code {})"
                             .format(self._urn, d.urn, err))
 
                     d.last_attempt = now
@@ -440,7 +450,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     now = self._now()
 
                     if err == 0:
-                        logging.debug("{} _tcp_outgoing ping success with {}"
+                        logging.debug("{} Ping SUCCESS: {}"
                                       .format(self._urn, d.urn))
                         d.last_comms = now
 
@@ -449,7 +459,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
                     else:
                         logging.error(
-                            "{} _tcp_outgoing ping FAILURE with {} (code {})"
+                            "{} Ping FAILURE: {} (code {})"
                             .format(self._urn, d.urn, err))
 
                     d.last_attempt = now
@@ -486,7 +496,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
                     now = self._now()
                     if err == 0:
-                        logging.debug("{} _tcp_outgoing sync success with {}"
+                        logging.debug("{} Sync SUCCESS: {}"
                                       .format(self._urn, d.urn))
 
                         # Update last comms on success and clear stash
@@ -496,9 +506,8 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                         if (msg_flags & _FLAG_RESET) == _FLAG_RESET:
                             d.flag_reset = False
                     else:
-                        logging.error(
-                            "{} _tcp_outgoing sync FAILURE with {} (code {})"
-                            .format(self._urn, d.urn, err))
+                        logging.error("{} Sync FAILURE: {} (code {})"
+                                      .format(self._urn, d.urn, err))
 
                         # Append stash with cache_sync on error
                         d.append_stash(
@@ -522,7 +531,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         try:
-            logging.debug("{} _tcp_send sending to {} at {}:{}"
+            logging.debug("{} Sending to: {} ({}:{})"
                           .format(self._urn, d.urn, d.addr, d.port))
 
             s.settimeout(self._timeout_connect)
@@ -587,7 +596,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     s.settimeout(None)
                     client_accepted = int(time.time())
 
-                    logging.debug("{} _tcp_incoming incoming client: {}:{}"
+                    logging.debug("{} Incoming client: {}:{}"
                                   .format(self._urn, client_addr, client_port))
 
                     self._tcp_incoming_handle_client(
@@ -596,19 +605,18 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                 except (BoboDistributedSystemError,
                         BoboDistributedTimeoutError) as e:
                     # From _tcp_incoming_handle_client
-                    logging.error("{} _tcp_incoming {}: {}"
+                    logging.error("{} {}: {}"
                                   .format(self._urn, e.__class__.__name__, e))
 
                 except socket.timeout:
                     # From s.accept()
                     # Timeout is added here so that the thread can react to
                     # _thread_closed=True when no data received for a while
-                    logging.debug("{} _tcp_incoming socket timeout (ignoring)"
-                                  .format(self._urn))
+                    pass
 
                 except Exception as e:
                     # From other
-                    logging.error("{} _tcp_incoming {}: {}"
+                    logging.error("{} {}: {}"
                                   .format(self._urn, e.__class__.__name__, e))
         finally:
             s.close()
@@ -630,7 +638,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
 
                 if elapse >= self._timeout_receive:
                     raise BoboDistributedTimeoutError(
-                        "message timeout ({} seconds)"
+                        "Message timeout ({} seconds)"
                         .format(elapse))
 
                 bytes_msg = client_s.recv(self._recv_bytes)
@@ -648,15 +656,14 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                         plaintext = self._crypto.decrypt(all_bytes)
                     except ValueError as e:
                         raise BoboDistributedSystemError(
-                            "Failed to unwrap incoming message bytes: {}"
+                            "Failed to unwrap incoming message (bytes: {})"
                             .format(e))
 
                     pt_urn, pt_id, pt_type, pt_flags, pt_json = \
                         self._split_plaintext(plaintext)
 
                     logging.debug(
-                        "{} _tcp_incoming_handle_client: "
-                        "urn={} type={} flags={}"
+                        "{} Incoming: urn={}, type={}, flags={}"
                         .format(self._urn, pt_urn, pt_type, pt_flags))
 
                     # Check if URN is NOT a recognised device
@@ -674,8 +681,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     # Update address if remote address has changed
                     if client_addr != device.addr:
                         logging.debug(
-                            "{} _tcp_incoming_handle_client device {} "
-                            "address update: from '{}' to '{}'"
+                            "{} Device {} addr update: from '{}' to '{}'"
                             .format(self._urn,
                                     device.urn, device.addr, client_addr))
                         device.addr = client_addr
@@ -683,8 +689,8 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                     if pt_type == _TYPE_SYNC or pt_type == _TYPE_RESYNC:
                         incoming = self._incoming_from_json(pt_json)
 
-                        logging.debug("{} _tcp_incoming_handle_client data={}"
-                                      .format(self._urn, incoming))
+                        logging.debug("{} Data from {}: {}"
+                                      .format(self._urn, pt_urn, incoming))
 
                         # Add incoming data to queue
                         if not self._queue_incoming.full():
@@ -695,10 +701,15 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                             raise BoboDistributedSystemError(errmsg)
 
                     # (Nothing to do on PING; it exists for outgoing.)
+                    if pt_type == _TYPE_PING:
+                        logging.debug("{} Pinged by: {}"
+                                      .format(self._urn, pt_urn))
 
                     if (pt_flags & _FLAG_RESET) == _FLAG_RESET:
-                        # Resets comms for device to trigger RESYNC
-                        device.reset_last()
+                        # Clears comms for device to trigger RESYNC
+                        logging.debug("{} Reset for: {}"
+                                      .format(self._urn, pt_urn))
+                        device.clear_last()
 
                     break
         finally:
@@ -775,7 +786,7 @@ class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
                 return
 
             try:
-                logging.debug("{} close distributed".format(self._urn))
+                logging.debug("{} Close distributed".format(self._urn))
 
                 with self._lock_in_out:
                     self._thread_closed = True

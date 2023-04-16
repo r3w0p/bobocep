@@ -74,7 +74,7 @@ class TestValid:
         receiver, subscriber = tc_receiver_sub()
         assert receiver.size() == 0
 
-        receiver.on_producer_update(event=tc_event_complex())
+        receiver.on_producer_update(event=tc_event_complex(), local=True)
         assert receiver.size() == 1
 
     def test_on_forwarder_update(self):
@@ -109,7 +109,7 @@ class TestValid:
         assert receiver.is_closed()
         assert receiver.size() == 0
 
-        receiver.on_producer_update(tc_event_complex())
+        receiver.on_producer_update(tc_event_complex(), local=True)
         assert receiver.size() == 0
 
     def test_close_then_on_forwarder_update(self):

@@ -29,7 +29,7 @@ class TestValid:
         forwarder, subscriber = tc_forwarder_sub([phenom], max_size=255)
         assert len(subscriber.output) == 0
 
-        forwarder.on_producer_update(event)
+        forwarder.on_producer_update(event=event, local=True)
         forwarder.update()
         assert len(subscriber.output) == 1
 
@@ -44,7 +44,7 @@ class TestValid:
             max_size=255)
         assert len(subscriber.output) == 0
 
-        forwarder.on_producer_update(event)
+        forwarder.on_producer_update(event=event, local=True)
         forwarder.update()
 
         forwarder._handler.close()
@@ -66,7 +66,7 @@ class TestValid:
         assert forwarder.is_closed()
         assert forwarder.size() == 0
 
-        forwarder.on_producer_update(tc_event_complex())
+        forwarder.on_producer_update(tc_event_complex(), local=True)
         assert forwarder.size() == 0
 
 
@@ -75,10 +75,10 @@ class TestInvalid:
     def test_add_on_queue_full(self):
         forwarder, subscriber = tc_forwarder_sub([tc_phenomenon()], max_size=1)
 
-        forwarder.on_producer_update(tc_event_complex())
+        forwarder.on_producer_update(tc_event_complex(), local=True)
 
         with pytest.raises(BoboForwarderError):
-            forwarder.on_producer_update(tc_event_complex())
+            forwarder.on_producer_update(tc_event_complex(), local=True)
 
     def test_duplicate_phenomena_names(self):
         phenom_1 = BoboPhenomenon(

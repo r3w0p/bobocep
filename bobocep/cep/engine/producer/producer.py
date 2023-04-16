@@ -8,7 +8,7 @@ Engine task that generates complex events and triggers actions.
 
 from queue import Queue
 from threading import RLock
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 from bobocep.cep.engine.decider.pubsub import BoboDeciderSubscriber
 from bobocep.cep.engine.decider.runserial import BoboRunSerial
@@ -66,7 +66,7 @@ class BoboProducer(BoboEngineTask,
         self._gen_event_id: BoboGenEventID = gen_event_id
         self._gen_timestamp: BoboGenTimestamp = gen_timestamp
         self._max_size: int = max(0, max_size)
-        self._queue: Queue[BoboRunSerial] = Queue(self._max_size)
+        self._queue: Queue[Tuple[BoboRunSerial, bool]] = Queue(self._max_size)
 
     def subscribe(self, subscriber: BoboProducerSubscriber):
         """
@@ -85,7 +85,8 @@ class BoboProducer(BoboEngineTask,
                 return False
 
             if not self._queue.empty():
-                self._handle_completed_run(self._queue.get_nowait())
+                event, local = self._queue.get_nowait()
+                self._handle_completed_run(event, local)
                 return True
 
             return False
@@ -104,9 +105,16 @@ class BoboProducer(BoboEngineTask,
         with self._lock:
             return self._closed
 
-    def _handle_completed_run(self, runserial: BoboRunSerial) -> None:
+    def _handle_completed_run(
+            self,
+            runserial: BoboRunSerial,
+            local: bool
+    ) -> None:
         """
         :param runserial: The run to handle.
+        :param local: `True` if the run was completed locally;
+            `False` if the run was completed on a
+            remote (distributed) instance.
         """
         if runserial.phenomenon_name not in self._phenomena:
             raise BoboProducerError(runserial.phenomenon_name)
@@ -123,16 +131,21 @@ class BoboProducer(BoboEngineTask,
             history=runserial.history)
 
         for subscriber in self._subscribers:
-            subscriber.on_producer_update(event_complex)
+            subscriber.on_producer_update(event=event_complex, local=local)
 
-    def on_decider_update(self,
-                          completed: List[BoboRunSerial],
-                          halted: List[BoboRunSerial],
-                          updated: List[BoboRunSerial]) -> None:
+    def on_decider_update(
+            self,
+            completed: List[BoboRunSerial],
+            halted: List[BoboRunSerial],
+            updated: List[BoboRunSerial],
+            local: bool
+    ) -> None:
         """
         :param completed: Completed runs.
         :param halted: Halted runs.
         :param updated: Updated runs.
+        :param local: `True` if the Decider update occurred locally;
+            `False` if the update occurred on a remote (distributed) instance.
         """
         with self._lock:
             if self._closed:
@@ -140,7 +153,7 @@ class BoboProducer(BoboEngineTask,
 
             for run in completed:
                 if not self._queue.full():
-                    self._queue.put(run)
+                    self._queue.put((run, local))
                 else:
                     raise BoboProducerError(
                         _EXC_QUEUE_FULL.format(self._max_size))

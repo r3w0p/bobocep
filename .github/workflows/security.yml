@@ -5,8 +5,8 @@ on:
     branches:
       - 'master'
   schedule:
-    # At 06:00 every day.
-    - cron: '0 6 * * *'
+    # At 06:00 on Monday.
+    - cron: '0 6 * * 1'
 
 jobs:
   analyse:

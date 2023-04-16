@@ -39,8 +39,9 @@ an instance gets back up to speed; :code:`BoboCEP` does not store internal
 state to disk.
 
 
-.. note:: Distributed :code:`BoboCEP` is designed to be deployed at the edge
-          of a single network, ideally with only 2-3 software instances.
+.. note::
+    Distributed :code:`BoboCEP` is designed to be deployed at the edge
+    of a single network, ideally with only 2-3 software instances.
 
 
 Distributed :code:`BoboCEP` provides the additional benefit of
@@ -79,8 +80,9 @@ completed, halted, or updated in Decider in the meantime.
 If :code:`B` enters the :code:`RESYNC` period, its stash is wiped and it will
 be forced to fully resynchronise with all runs in the Decider in :code:`A`.
 
-.. note:: Decider is able to cache its :code:`n` most recently completed
-          and halted runs. These cached runs are sent during a :code:`RESYNC`.
+.. note::
+    Decider is able to cache its :code:`n` most recently completed
+    and halted runs. These cached runs are sent during a :code:`RESYNC`.
 
 
 Run Complete
