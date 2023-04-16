@@ -9,7 +9,7 @@ Simple setup.
 from multiprocessing import cpu_count
 from typing import List, Optional, Tuple
 
-from bobocep.cep.action.handler import BoboActionHandler, BoboActionHandlerPool
+from bobocep.cep.action.handler import BoboActionHandler, BoboActionHandlerMultiprocessing
 from bobocep.cep.engine.decider.decider import BoboDecider
 from bobocep.cep.engine.engine import BoboEngine
 from bobocep.cep.engine.forwarder.forwarder import BoboForwarder
@@ -33,18 +33,16 @@ class BoboSetupSimple(BoboSetup):
     def __init__(
             self,
             phenomena: List[BoboPhenomenon],
+            handler: BoboActionHandler,
             validator: Optional[BoboValidator] = None,
-            handler: Optional[BoboActionHandler] = None,
             gen_event: Optional[BoboGenEvent] = None,
             urn: Optional[str] = None
     ):
         """
         :param phenomena: A list of phenomena.
+        :param handler: An action handler.
         :param validator: A data validator for the engine's Receiver task.
             Default: BoboValidatorAll.
-        :param handler: An action handler.
-            Default: BoboActionHandlerPool with processes equal to
-            one less than the maximum system CPUs available.
         :param gen_event: An event generator.
             Default: None.
         :param urn: A URN for ID generation.
@@ -54,8 +52,7 @@ class BoboSetupSimple(BoboSetup):
         self._phenomena: List[BoboPhenomenon] = phenomena
         self._validator: BoboValidator = validator \
             if validator is not None else BoboValidatorAll()
-        self._handler: BoboActionHandler = handler if handler is not None \
-            else BoboActionHandlerPool(processes=max(1, cpu_count() - 1))
+        self._handler: BoboActionHandler = handler
         self._gen_event: Optional[BoboGenEvent] = gen_event
         self._urn: Optional[str] = urn
 
@@ -102,22 +99,20 @@ class BoboSetupSimpleDistributed(BoboSetup):
     def __init__(
             self,
             phenomena: List[BoboPhenomenon],
+            handler: BoboActionHandler,
             urn: str,
             devices: List[BoboDevice],
             aes_key: str,
             validator: Optional[BoboValidatorJSONable] = None,
-            handler: Optional[BoboActionHandler] = None,
             gen_event: Optional[BoboGenEvent] = None):
         """
         :param phenomena: A list of phenomena.
+        :param handler: An action handler.
         :param urn: A URN that is unique across devices in the network.
         :param devices: Devices in the network (including this device).
         :param aes_key: The AES key to use for encryption.
         :param validator: A data validator for the engine's Receiver task.
             Default: BoboValidatorAll.
-        :param handler: An action handler.
-            Default: BoboActionHandlerPool with processes equal to
-            one less than the maximum system CPUs available.
         :param gen_event: An event generator.
             Default: None.
         """
@@ -125,9 +120,9 @@ class BoboSetupSimpleDistributed(BoboSetup):
 
         self._setup_simple = BoboSetupSimple(
             phenomena=phenomena,
+            handler=handler,
             validator=validator if validator is not None else
             BoboValidatorJSONable(),
-            handler=handler,
             gen_event=gen_event,
             urn=urn
         )

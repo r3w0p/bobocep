@@ -3,5 +3,5 @@
 # modified under the terms of the MIT License.
 
 """
-Unit test package for BoboCEP.
+Testing package for BoboCEP.
 """

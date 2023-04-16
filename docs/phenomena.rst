@@ -44,8 +44,8 @@ Checking an event against a predicate is as follows.
 
 .. code:: python
 
-   def evaluate(self, event: BoboEvent, history: BoboHistory) -> bool:
-       ...
+    def evaluate(self, event: BoboEvent, history: BoboHistory) -> bool:
+        ...
 
 During evaluation, the :code:`event` being checked is passed, as well as the
 :code:`history` of all events that were previously accepted by the previous

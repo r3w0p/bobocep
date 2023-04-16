@@ -1,0 +1,80 @@
+{
+	"info": {
+		"name": "flask_123",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "data int 1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8080/data/int/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"data",
+						"int",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "data int 2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8080/data/int/2",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"data",
+						"int",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "data int 3",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8080/data/int/3",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"data",
+						"int",
+						"3"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

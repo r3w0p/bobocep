@@ -56,6 +56,9 @@ tolerance.
    :code:`BoboCEP` instance. Dashed arrows represent data exchange to and from
    external systems (blue, grey).
 
+Subsystems
+----------
+
 The :code:`BoboCEP` subsystems are as follows:
 
 - **Receiver**.
@@ -84,18 +87,26 @@ The :code:`BoboCEP` subsystems are as follows:
   See `Distributed <distributed.html>`_ for more information.
 
 
-Quick Setup
+Quick Start
 ===========
 
-For a quick setup, we will create a :code:`BoboSetup` instance.
+The key components to getting started with :code:`BoboCEP` are as follows.
 
-TODO
+#. Define the `Phenomena <phenomena.html>`_ that you would like to model by
+   defining one or more patterns per phenomenon. Use :code:`BoboPatternBuilder`
+   for defining patterns to make things much easier.
 
+#. Define `Actions <actions.html>`_ that should be executed if a phenomenon
+   were to be triggered. Allocate an action to a phenomenon if you wish, or
+   leave it blank.
 
-Next Steps
-==========
+#. Decide whether you want BoboCEP to be `Distributed <distributed.html>`_ or
+   not, and use one of the setup classes to help with setting up the system
+   engine and all of its components: :code:`BoboSetupSimple` and
+   :code:`BoboSetupSimpleDistributed` are provided for these purposes.
 
-TODO
+Check out the `Examples <examples.html>`_ page for various ways to
+set up :code:`BoboCEP` and connect it to external systems e.g. Flask.
 
 
 Why "Bobo"?

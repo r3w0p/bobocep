@@ -5,10 +5,8 @@
 """
 Handlers that coordinate the execution of actions.
 """
-
+import logging
 from abc import ABC, abstractmethod
-from multiprocessing import Manager, Pool
-from multiprocessing.pool import AsyncResult
 from queue import Queue
 from threading import RLock
 from typing import Any, Optional, Tuple, NamedTuple
@@ -188,7 +186,12 @@ def _pool_execute_action(
     :param event: The complex event that triggered the action being executed.
     :param max_size: Maximum queue size.
     """
-    action_ret: Tuple[bool, Any] = action.execute(event)
+    try:
+        action_ret: Tuple[bool, Any] = action.execute(event)
+
+    except (Exception,) as e:
+        logging.error(e)
+        raise e
 
     hres = BoboHandlerResponse(
         action_name=action.name,
@@ -204,21 +207,84 @@ def _pool_execute_action(
             _EXC_QUEUE_FULL.format(max_size))
 
 
-class BoboActionHandlerPool(BoboActionHandler):
+class BoboActionHandlerMultithreading(BoboActionHandler):
     """
-    An action handler that uses multiprocessing for action execution.
+    An action handler that uses multithreading for action execution.
     """
+    from multiprocessing.pool import AsyncResult
 
-    def __init__(self, processes: int, max_size: int = 0):
+    def __init__(self, threads: int, max_size: int = 0):
         """
-        :param processes: Number of processes to use for handling actions.
+        :param threads: Number of thread processes to use
+            for handling actions.
         :param max_size: Maximum queue size.
             Default: 0 (unbounded).
         """
+        from multiprocessing.pool import ThreadPool
+        super().__init__(max_size)
+
+        self._threads = threads
+        self._pool: ThreadPool = ThreadPool(processes=threads)
+        self._queue: Queue[BoboHandlerResponse] = Queue()
+
+    def join(self) -> None:
+        """
+        Join the multiprocessing pool.
+        """
+        with self._lock:
+            self._pool.join()
+
+    def _execute_action(self,
+                        action: BoboAction,
+                        event: BoboEventComplex) -> AsyncResult:
+        """
+        :param action: Action to execute.
+        :param event: Complex event associated with the action.
+
+        :return: Result from asynchronous action execution.
+        """
+        # The queue size is checked manually because queue.full() does not
+        # seem to work properly...
+        if self._max_size > 0 and (self._queue.qsize() >= self._max_size):
+            raise BoboActionHandlerError(
+                _EXC_QUEUE_FULL.format(self._max_size))
+
+        return self._pool.starmap_async(
+            _pool_execute_action, [
+                (self._queue, action, event, self._max_size)
+            ])
+
+    def _get_queue(self) -> Queue:
+        """
+        :return: Handler queue.
+        """
+        return self._queue
+
+    def _on_closing(self) -> None:
+        """
+        Action on closing the handler.
+        """
+        self._pool.close()
+
+
+class BoboActionHandlerMultiprocessing(BoboActionHandler):
+    """
+    An action handler that uses multiprocessing for action execution.
+    """
+    from multiprocessing.pool import AsyncResult
+
+    def __init__(self, processes: int, max_size: int = 0):
+        """
+        :param processes: Number of multicore processes to use
+            for handling actions.
+        :param max_size: Maximum queue size.
+            Default: 0 (unbounded).
+        """
+        from multiprocessing import Manager, Pool
         super().__init__(max_size)
 
         self._processes = processes
-        self._pool = Pool(processes=processes)
+        self._pool: Pool = Pool(processes=processes)
         self._manager = Manager()
         self._queue: "Queue[BoboHandlerResponse]" = self._manager.Queue()
 

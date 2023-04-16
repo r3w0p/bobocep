@@ -7,7 +7,7 @@ from multiprocessing.pool import AsyncResult
 
 import pytest
 
-from bobocep.cep.action.handler import BoboActionHandlerPool, \
+from bobocep.cep.action.handler import BoboActionHandlerMultiprocessing, \
     BoboActionHandlerError, _pool_execute_action
 from tests.test_bobocep.test_cep.test_action import BoboActionTrue
 from tests.test_bobocep.test_cep.test_event import tc_event_complex
@@ -31,7 +31,7 @@ class TestValid:
         assert q.qsize() == 1
 
     def test_handle_1_action_1_process(self):
-        handler = BoboActionHandlerPool(processes=1, max_size=255)
+        handler = BoboActionHandlerMultiprocessing(processes=1, max_size=255)
 
         assert handler.size() == 0
         result: AsyncResult = handler.handle(
@@ -41,7 +41,7 @@ class TestValid:
         assert handler.size() == 1
 
     def test_handle_10_actions_1_process(self):
-        handler = BoboActionHandlerPool(processes=1, max_size=255)
+        handler = BoboActionHandlerMultiprocessing(processes=1, max_size=255)
 
         assert handler.size() == 0
         for i in range(10):
@@ -52,7 +52,7 @@ class TestValid:
         assert handler.size() == 10
 
     def test_handle_10_actions_3_processes(self):
-        handler = BoboActionHandlerPool(processes=3, max_size=255)
+        handler = BoboActionHandlerMultiprocessing(processes=3, max_size=255)
 
         assert handler.size() == 0
         for i in range(10):
@@ -63,7 +63,7 @@ class TestValid:
         assert handler.size() == 10
 
     def test_handle_10_actions_10_processes(self):
-        handler = BoboActionHandlerPool(processes=10, max_size=255)
+        handler = BoboActionHandlerMultiprocessing(processes=10, max_size=255)
 
         assert handler.size() == 0
         for i in range(10):
@@ -74,12 +74,12 @@ class TestValid:
         assert handler.size() == 10
 
     def test_get_action_event_empty(self):
-        handler = BoboActionHandlerPool(processes=1, max_size=255)
+        handler = BoboActionHandlerMultiprocessing(processes=1, max_size=255)
 
         assert handler.get_handler_response() is None
 
     def test_get_action_event_not_empty(self):
-        handler = BoboActionHandlerPool(processes=1, max_size=255)
+        handler = BoboActionHandlerMultiprocessing(processes=1, max_size=255)
 
         result: AsyncResult = handler.handle(
             BoboActionTrue(), tc_event_complex())
@@ -88,7 +88,7 @@ class TestValid:
         assert handler.get_handler_response() is not None
 
     def test_close(self):
-        handler = BoboActionHandlerPool(processes=3, max_size=255)
+        handler = BoboActionHandlerMultiprocessing(processes=3, max_size=255)
         assert handler.is_closed() is False
 
         handler.close()
@@ -98,7 +98,7 @@ class TestValid:
 class TestInvalid:
 
     def test_add_action_event_queue_full(self):
-        handler = BoboActionHandlerPool(processes=1, max_size=1)
+        handler = BoboActionHandlerMultiprocessing(processes=1, max_size=1)
 
         result: AsyncResult = handler.handle(
             BoboActionTrue(), tc_event_complex())

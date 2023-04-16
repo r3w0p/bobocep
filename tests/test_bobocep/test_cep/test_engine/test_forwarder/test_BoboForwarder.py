@@ -4,7 +4,7 @@
 
 import pytest
 
-from bobocep.cep.action.handler import BoboActionHandlerPool, \
+from bobocep.cep.action.handler import BoboActionHandlerMultiprocessing, \
     BoboActionHandlerBlocking
 from bobocep.cep.engine.forwarder.forwarder import BoboForwarderError, \
     BoboForwarder
@@ -40,7 +40,7 @@ class TestValid:
 
         forwarder, subscriber = tc_forwarder_sub(
             phenomena=[phenom],
-            handler=BoboActionHandlerPool(processes=1, max_size=255),
+            handler=BoboActionHandlerMultiprocessing(processes=1, max_size=255),
             max_size=255)
         assert len(subscriber.output) == 0
 
