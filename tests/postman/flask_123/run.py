@@ -1,6 +1,7 @@
-from threading import RLock, Thread
-from typing import Tuple, Any, Optional
 from datetime import datetime
+from threading import RLock, Thread
+from typing import Tuple, Any
+
 from flask import Flask
 
 from bobocep.cep.action import BoboAction, BoboActionHandlerMultithreading
@@ -11,7 +12,7 @@ from bobocep.cep.phenom import BoboPattern, BoboPatternBuilder, \
 from bobocep.setup import BoboSetupSimple
 
 app = Flask(__name__)  # v2.2.3
-engine: Optional[BoboEngine] = None
+engine: BoboEngine
 
 
 # A Flask interface that enables integer data to be passed via a GET request.

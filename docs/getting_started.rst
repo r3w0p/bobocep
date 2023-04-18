@@ -56,10 +56,12 @@ tolerance.
    :code:`BoboCEP` instance. Dashed arrows represent data exchange to and from
    external systems (blue, grey).
 
+
 Subsystems
 ----------
 
-The :code:`BoboCEP` subsystems are as follows:
+:code:`BoboCEP` is powered by a :code:`BoboEngine` instance, which maintains
+data flow through its subsystems, as follows.
 
 - **Receiver**.
   The entry point for data into the system. Its purpose is to validate
@@ -67,24 +69,54 @@ The :code:`BoboCEP` subsystems are as follows:
   It also consumes **complex events** and **action events** and introduces
   these event types into the data stream.
 
+  - Data of :code:`Any` type enters :code:`BoboReceiver`
+    via the :code:`add_data` method.
+  - If the data is an instance of type :code:`BoboEvent`, then it is
+    passed to :code:`BoboDecider` as-is.
+  - Otherwise, Receiver will wrap the data in a new :code:`BoboEventSimple`
+    instance :code:`e`, where :code:`e.data` is the data passed via
+    :code:`add_data`, and will send :code:`e` to Decider instead.
+
 - **Decider**.
   Manages **runs**, which represent **patterns** that have not yet received all
   of the data necessary to indicate the occurrence of some phenomenon.
+
+  - A :code:`BoboPhenomenon` contains one or more :code:`BoboPattern`
+    instances and a :code:`BoboAction` instance.
+  - A :code:`BoboRun` is created when the first predicate of a
+    :code:`BoboPattern` is satisfied with some :code:`BoboEvent`.
+  - Once a run has had its final predicate satisfied, Producer is notified.
 
 - **Producer**.
   Generates **complex events** when it receives notification from Decider
   that a run has completed and, therefore, a phenomenon has been observed
   which the complex event represents.
 
+  - When a Run has completed, :code:`BoboProducer` will produce a
+    :code:`BoboEventComplex` instance, indicating the observation of
+    the phenomenon that the pattern is evidence of.
+  - Producer passes the complex event to Forwarder, in order to trigger
+    the phenomenon's corresponding :code:`BoboActon`.
+    It also passes the complex event to Receiver, which adds it to the
+    data stream.
+
 - **Forwarder**.
   Forwards actions passed to it by Producer and executes them. This may involve
   communication with external services. Each action leads to the generation of
   an **action event** that details what occurred during action execution.
 
+  - :code:`BoboForwarder` the complex event to determine which action is
+    needed to execute.
+  - It executes the action and produces a corresponding :code:`BoboEventAction`
+    that contains reference to the complex event which led to its execution.
+  - The :code:`BoboEventAction` is passed to Receiver and added to the
+    data stream.
+
 - **Distributed**.
   This architecture is extended by enabling state updates to be synchronised
   across multiple instances of :code:`BoboCEP`.
-  See `Distributed <distributed.html>`_ for more information.
+
+  - See `Distributed <distributed.html>`_ for more information.
 
 
 Quick Start
@@ -107,6 +139,8 @@ The key components to getting started with :code:`BoboCEP` are as follows.
 
 Check out the `Examples <examples.html>`_ page for various ways to
 set up :code:`BoboCEP` and connect it to external systems e.g. Flask.
+
+To explore the API in more detail, see `Source Code <source_code.html>`_.
 
 
 Why "Bobo"?

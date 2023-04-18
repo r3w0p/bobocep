@@ -24,8 +24,6 @@ https://github.com/r3w0p/bobocep/pulse/)
 
 [![Issues](https://img.shields.io/github/issues/r3w0p/bobocep?label=issues)](
 https://github.com/r3w0p/bobocep/issues/)
-[![SourceRank](https://img.shields.io/librariesio/sourcerank/pypi/bobocep?label=sourcerank)](
-https://libraries.io/pypi/bobocep/sourcerank/)
 [![Dependencies](https://img.shields.io/librariesio/github/r3w0p/bobocep?label=dependencies)](
 https://libraries.io/pypi/bobocep/)
 [![Coverage](https://img.shields.io/codeclimate/coverage/r3w0p/bobocep?label=coverage)](

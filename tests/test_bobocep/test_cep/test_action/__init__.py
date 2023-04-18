@@ -27,3 +27,13 @@ class BoboActionFalse(BoboAction):
 
     def execute(self, event: BoboEventComplex) -> Tuple[bool, Any]:
         return False, False
+
+
+class BoboActionRuntimeError(BoboAction):
+    """An action that always throws a RuntimeError."""
+
+    def __init__(self, name: str = "action"):
+        super().__init__(name)
+
+    def execute(self, event: BoboEventComplex) -> Tuple[bool, Any]:
+        raise RuntimeError()

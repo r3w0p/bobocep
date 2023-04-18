@@ -40,7 +40,8 @@ class TestValid:
 
         forwarder, subscriber = tc_forwarder_sub(
             phenomena=[phenom],
-            handler=BoboActionHandlerMultiprocessing(processes=1, max_size=255),
+            handler=BoboActionHandlerMultiprocessing(processes=1,
+                                                     max_size=255),
             max_size=255)
         assert len(subscriber.output) == 0
 
@@ -67,6 +68,18 @@ class TestValid:
         assert forwarder.size() == 0
 
         forwarder.on_producer_update(tc_event_complex(), local=True)
+        assert forwarder.size() == 0
+
+    def test_on_producer_update_local(self):
+        forwarder, subscriber = tc_forwarder_sub([tc_phenomenon()])
+
+        forwarder.on_producer_update(tc_event_complex(), local=True)
+        assert forwarder.size() == 1
+
+    def test_on_producer_update_not_local(self):
+        forwarder, subscriber = tc_forwarder_sub([tc_phenomenon()])
+
+        forwarder.on_producer_update(tc_event_complex(), local=False)
         assert forwarder.size() == 0
 
 

@@ -6,6 +6,7 @@
 Handlers that coordinate the execution of actions.
 """
 import logging
+import multiprocessing
 from abc import ABC, abstractmethod
 from queue import Queue
 from threading import RLock
@@ -284,7 +285,7 @@ class BoboActionHandlerMultiprocessing(BoboActionHandler):
         super().__init__(max_size)
 
         self._processes = processes
-        self._pool: Pool = Pool(processes=processes)
+        self._pool = Pool(processes=processes)
         self._manager = Manager()
         self._queue: "Queue[BoboHandlerResponse]" = self._manager.Queue()
 

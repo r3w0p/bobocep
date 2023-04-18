@@ -9,7 +9,8 @@ import pytest
 
 from bobocep.cep.action.handler import BoboActionHandlerMultithreading, \
     BoboActionHandlerError, _pool_execute_action
-from tests.test_bobocep.test_cep.test_action import BoboActionTrue
+from tests.test_bobocep.test_cep.test_action import BoboActionTrue, \
+    BoboActionRuntimeError
 from tests.test_bobocep.test_cep.test_event import tc_event_complex
 
 
@@ -131,3 +132,12 @@ class TestInvalid:
                 event=tc_event_complex(),
                 max_size=1
             )
+
+    def test_get_action_event_not_empty(self):
+        handler = BoboActionHandlerMultithreading(threads=1, max_size=255)
+
+        result: AsyncResult = handler.handle(
+            BoboActionRuntimeError(), tc_event_complex())
+        result.wait(timeout=5)
+
+        assert handler.size() == 0

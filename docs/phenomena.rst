@@ -141,7 +141,58 @@ Pattern Builder
 
 Creating a pattern is best achieved using the :code:`BoboPatternBuilder`.
 
-TODO
+
+.. code:: python
+
+    from bobocep.cep.phenom import BoboPatternBuilder, BoboPattern
+
+    builder = BoboPatternBuilder(name="my_pattern")
+
+
+- Methods :code:`next` and :code:`not_next` are used for strict contiguity
+  and negated strict contiguity, respectively;
+- Methods :code:`followed_by` and :code:`not_followed_by` for relaxed
+  contiguity;
+- Methods :code:`followed_by_any` and :code:`not_followed_by_any` for
+  non-deterministic relaxed contiguity;
+- Methods :code:`precondition` and :code:`haltcondition` to provide
+  predicates accordingly.
+
+For example, in most applications, :code:`followed_by` will be the
+most suitable choice.
+
+
+.. code:: python
+
+    builder.followed_by(
+        predicate=lambda e, h: type(e.data) == int and e.data == 15,
+        group="my_group",
+        times=3,
+        loop=False,
+        optional=False
+    )
+
+
+In the example above, predicate :code:`lambda e, h` is a function consisting
+of event :code:`e` to check and the current history :code:`h` of all previous
+events accepted by the run.
+Event :code:`e` is a subtype of :code:`BoboEvent` and :code:`h` of type
+:code:`BoboHistory`.
+
+Additionally, optional arguments have been provided:
+
+- A group name :code:`my_group` in which the history will store this event,
+  should an event be accepted by this predicate.
+- The :code:`times` option adds three blocks, in series, to the pattern,
+  all with identical characteristics. That is, The predicate will need
+  to be satisfied :code:`3` times by :code:`3` separate events.
+- The :code:`3` blocks are not self-looping.
+- The :code:`3` blocks are not optional.
+
+
+.. code:: python
+
+    pattern: BoboPattern = builder.generate()
 
 
 Runs

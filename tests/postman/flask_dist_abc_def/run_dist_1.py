@@ -1,7 +1,8 @@
 import logging
 from datetime import datetime
 from threading import Thread, RLock
-from typing import Tuple, Any, Optional
+from typing import Tuple, Any
+
 from flask import Flask
 
 from bobocep.cep.action import BoboAction, BoboActionHandlerMultithreading
@@ -11,13 +12,12 @@ from bobocep.cep.phenom import BoboPatternBuilder, BoboPhenomenon, BoboPattern
 from bobocep.dist import BoboDevice
 from bobocep.setup import BoboSetupSimpleDistributed
 
-
 app = Flask(__name__)  # v2.2.3
-engine: Optional[BoboEngine] = None
+engine: BoboEngine
 
 
 # A Flask interface that enables string data to be passed via a GET request.
-# For example: 127.0.0.1/data/int/hello
+# For example: 127.0.0.1:8080/data/int/hello
 @app.route("/data/str/<my_str>", methods=['GET'])
 def data_str(my_str):
     global engine
@@ -130,6 +130,6 @@ if __name__ == '__main__':
     # The Flask server is started.
     app.run(
         host="0.0.0.0",
-        port=9091,
+        port=8080,
         debug=True,
         use_reloader=False)
