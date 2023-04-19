@@ -4,6 +4,9 @@ Installation
 Dependencies
 ============
 
+Python
+------
+
 :code:`BoboCEP` requires :code:`Python 3.9` or later.
 If you are using `Raspberry Pi OS <https://www.raspberrypi.com/software/>`_,
 it should come with this as standard.
@@ -51,6 +54,22 @@ You can install the latest version of :code:`BoboCEP` via :code:`pip` with:
     pip install BoboCEP
 
 
+virtualenv
+----------
+
+If you would like to install :code:`BoboCEP` in a virtual environment,
+consider using the following.
+
+.. code:: console
+
+    sudo apt install python3-virtualenv -y
+
+    virtualenv venv
+    source venv/bin/activate
+    pip install BoboCEP
+    deactivate
+
+
 Build Manually
 ==============
 
@@ -61,3 +80,17 @@ You can also build :code:`BoboCEP` manually with:
     git clone https://github.com/r3w0p/bobocep.git BoboCEP
     cd BoboCEP
     pip install .
+
+
+Development
+===========
+
+If you are installing :code:`BoboCEP` for development purposes, you will
+need to install its core requirements from both
+:code:`requirements.txt` and its additional development requirements from
+:code:`requirements-dev.txt`. For example:
+
+.. code:: console
+
+    pip install -r requirements.txt
+    pip install -r requirements-dev.txt

@@ -9,7 +9,6 @@ Distributed complex event processing.
 from abc import ABC, abstractmethod
 
 from bobocep import BoboError
-from bobocep.dist.pubsub import BoboDistributedPublisher
 
 
 class BoboDistributedError(BoboError):
@@ -48,7 +47,7 @@ class BoboDistributedJSONDecodeError(BoboDistributedJSONError):
     """
 
 
-class BoboDistributed(BoboDistributedPublisher, ABC):
+class BoboDistributed(ABC):
     """
     Distributed `BoboCEP`.
     """

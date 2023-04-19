@@ -59,27 +59,31 @@ class BoboSetupSimple(BoboSetup):
         """
         :return: The CEP engine.
         """
+        gen_event_id = BoboGenEventIDUnique(self._urn)
+        gen_run_id = BoboGenEventIDUnique(self._urn)
+        gen_timestamp = BoboGenTimestampEpoch()
+
         receiver = BoboReceiver(
             validator=self._validator,
-            gen_event_id=BoboGenEventIDUnique(self._urn),
-            gen_timestamp=BoboGenTimestampEpoch(),
+            gen_event_id=gen_event_id,
+            gen_timestamp=gen_timestamp,
             gen_event=self._gen_event)
 
         decider = BoboDecider(
             phenomena=self._phenomena,
-            gen_event_id=BoboGenEventIDUnique(self._urn),
-            gen_run_id=BoboGenEventIDUnique())
+            gen_event_id=gen_event_id,
+            gen_run_id=gen_run_id)
 
         producer = BoboProducer(
             phenomena=self._phenomena,
-            gen_event_id=BoboGenEventIDUnique(self._urn),
-            gen_timestamp=BoboGenTimestampEpoch())
+            gen_event_id=gen_event_id,
+            gen_timestamp=gen_timestamp)
 
         forwarder = BoboForwarder(
             phenomena=self._phenomena,
             handler=self._handler,
-            gen_event_id=BoboGenEventIDUnique(self._urn),
-            gen_timestamp=BoboGenTimestampEpoch())
+            gen_event_id=gen_event_id,
+            gen_timestamp=gen_timestamp)
 
         engine = BoboEngine(
             receiver=receiver,

@@ -24,7 +24,8 @@ from bobocep.dist.devman import BoboDeviceManager
 from bobocep.dist.dist import BoboDistributedJSONDecodeError, \
     BoboDistributed, BoboDistributedError, BoboDistributedSystemError, \
     BoboDistributedTimeoutError
-from bobocep.dist.pubsub import BoboDistributedSubscriber
+from bobocep.dist.pubsub import BoboDistributedSubscriber, \
+    BoboDistributedPublisher
 
 _KEY_COMPLETED = "completed"
 _KEY_HALTED = "halted"
@@ -114,7 +115,9 @@ class _IncomingJSONDecoder(json.JSONDecoder):
                 "Error: {}".format(e))
 
 
-class BoboDistributedTCP(BoboDistributed, BoboDeciderSubscriber):
+class BoboDistributedTCP(BoboDistributed,
+                         BoboDistributedPublisher,
+                         BoboDeciderSubscriber):
     """
     An implementation of distributed BoboCEP that uses TCP for data
     transmission across the network.

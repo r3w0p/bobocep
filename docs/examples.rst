@@ -126,6 +126,9 @@ Advanced
 This example shows you how to set up :code:`BoboCEP` without
 relying on the :code:`BoboSetup` classes.
 
+It is the same example as :ref:`examples:Simple` above, but with the
+subsystems of :code:`BoboEngine` manually assembled.
+
 
 .. raw:: html
 
@@ -136,7 +139,183 @@ relying on the :code:`BoboSetup` classes.
 
 .. code:: python
 
-    TODO
+    from threading import Thread
+    from time import sleep
+    from typing import Tuple, Any
+
+    from bobocep.cep.action import BoboAction, BoboActionHandlerMultithreading
+    from bobocep.cep.engine import BoboEngine
+    from bobocep.cep.engine.decider import BoboDecider
+    from bobocep.cep.engine.forwarder import BoboForwarder
+    from bobocep.cep.engine.producer import BoboProducer
+    from bobocep.cep.engine.receiver import BoboReceiver
+    from bobocep.cep.engine.receiver.validator import BoboValidatorAll
+    from bobocep.cep.event import BoboEventComplex
+    from bobocep.cep.gen import BoboGenEventIDUnique, BoboGenTimestampEpoch, \
+        BoboGenEventTime
+    from bobocep.cep.phenom import BoboPatternBuilder, BoboPhenomenon, BoboPattern
+
+
+    class BoboActionPrint(BoboAction):
+        """An action that prints a string to stdout."""
+
+        def __init__(self, name: str, message: str):
+            """
+            :param name: The name of the action.
+            :param message: The message to print to stdout.
+            """
+            super().__init__(name)
+
+            self._message: str = message
+
+        def execute(self, event: BoboEventComplex) -> Tuple[bool, Any]:
+            """
+            :param event: The complex event generated when my_pattern was
+                satisfied with data: 1, 2, 3.
+
+            :return: Whether action execution was successful, followed by
+                any additional data (or None).
+            """
+            print(self._message)
+
+            return True, self._message
+
+
+    if __name__ == '__main__':
+        # A simple pattern to test BoboCEP.
+        #
+        # The pattern is called "my_pattern" and consists of three predicates.
+        # The first predicate checks if an event has data equal to 1.
+        # This must be followed by another event with data equal to 2.
+        # Finally, a third event must follow with data equal to 3.
+        #
+        # If three events are input into the BoboCEP system in this order,
+        # the pattern is fulfilled and a complex event is generated.
+        my_pattern: BoboPattern = BoboPatternBuilder("my_pattern") \
+            .followed_by(lambda e, h: int(e.data) == 1) \
+            .followed_by(lambda e, h: int(e.data) == 2) \
+            .followed_by(lambda e, h: int(e.data) == 3) \
+            .generate()
+
+        # The pattern must be associated with a phenomenon which explains what
+        # the pattern is trying to model / represent / observe.
+        #
+        # This phenomenon is called "my_phenomenon".
+        #
+        # When any of its patterns are fulfilled, its action, BoboActionPrint,
+        # will be executed. This action will print a message to stdout.
+        my_phenomenon = BoboPhenomenon(
+            name="my_phenomenon",
+            patterns=[my_pattern],
+            action=BoboActionPrint(
+                name="my_action",
+                message="Hello 123!")
+        )
+
+        # The list of all phenomena under consideration by BoboCEP
+        phenomena = [my_phenomenon]
+
+        # Custom URN to prefix before event IDs
+        urn = "urn:bobocep:"
+
+        # Accept all data types
+        validator = BoboValidatorAll()
+
+        # Unique event ID with custom URN prefixed
+        gen_event_id = BoboGenEventIDUnique(urn)
+
+        # Unique run ID with custom URN prefixed
+        gen_run_id = BoboGenEventIDUnique(urn)
+
+        # Timestamp is the time since the epoch
+        gen_timestamp = BoboGenTimestampEpoch()
+
+        # Generate simple event every second and add to Receiver data stream
+        gen_event = BoboGenEventTime(millis=1000)
+
+        # Action handler that can process five actions concurrently
+        handler = BoboActionHandlerMultithreading(threads=5)
+
+        # Create Receiver, where data are first entered into BoboCEP
+        receiver = BoboReceiver(
+            validator=validator,
+            gen_event_id=gen_event_id,
+            gen_timestamp=gen_timestamp,
+            gen_event=gen_event)
+
+        # Create Decider, where data are compared against pattern instances (runs)
+        decider = BoboDecider(
+            phenomena=phenomena,
+            gen_event_id=gen_event_id,
+            gen_run_id=gen_run_id)
+
+        # Create Producer, where complex event are generated
+        producer = BoboProducer(
+            phenomena=phenomena,
+            gen_event_id=gen_event_id,
+            gen_timestamp=gen_timestamp)
+
+        # Create Forwarder, where actions are executed and action events generated
+        forwarder = BoboForwarder(
+            phenomena=phenomena,
+            handler=handler,
+            gen_event_id=gen_event_id,
+            gen_timestamp=gen_timestamp)
+
+        # Create Engine, which operates the subsystems above
+        engine = BoboEngine(
+            receiver=receiver,
+            decider=decider,
+            producer=producer,
+            forwarder=forwarder)
+
+        # BoboCEP is started on a separate thread so that we can pass data to it
+        # on the current thread.
+        thread_engine = Thread(target=lambda: engine.run())
+        thread_engine.start()
+
+        # Data from 0 to 4 are passed to BoboCEP.
+        # When 1, 2, 3 are sent, the output will show the action's message.
+        for data in range(0, 5):
+            print(data)
+            engine.receiver.add_data(data)
+            sleep(1)
+
+        # The engine and its thread are closed.
+        engine.close()
+        thread_engine.join()
+
+
+If you want to include distributed processing to the above, then
+add these additional imports:
+
+
+.. code:: python
+
+    from typing import List
+    from bobocep.dist import BoboDistributedTCP, BoboDevice
+    from bobocep.dist.crypto import BoboDistributedCryptoAES
+
+
+Then, add the following, just after creating the :code:`BoboEngine` instance.
+
+
+.. code:: python
+
+    # Create Device list and AES key accordingly
+    devices: List[BoboDevice] = ...
+    aes_key: str = ...
+
+    # Generate Distributed TCP instance
+    distributed: BoboDistributedTCP = BoboDistributedTCP(
+        urn=urn,
+        decider=engine.decider,
+        devices=devices,
+        crypto=BoboDistributedCryptoAES(aes_key=aes_key))
+
+    # Subscribe Decider to Distributed, and vice versa
+    engine.decider.subscribe(distributed)
+    distributed.subscribe(engine.decider)
 
 
 .. raw:: html
