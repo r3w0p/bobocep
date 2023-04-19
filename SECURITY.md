@@ -1,17 +1,35 @@
 # Security Policy
 
+> _Last updated: 2023-01-04_
+
+
 ## Supported Versions
 
-The following versions of Python are currently supported:
+Below are the versions that are tested for support.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 3.10.x  | :white_check_mark: |
-| 3.9.x   | :white_check_mark: |
-| 3.8.x   | :white_check_mark: |
-| 3.7.x   | :white_check_mark: |
-| < 3.7   | :x:                |
+
+### Python
+
+|   Version    | Supported |
+|:------------:|:---------:|
+|   `> 3.10`   |  &cross;  |
+| `3.9 - 3.10` |  &check;  |
+|   `< 3.9`    |  &cross;  |
+
+
+### OS
+
+|     Version      | Supported |
+|:----------------:|:---------:|
+| `windows-latest` |  &check;  |
+|  `macos-latest`  |  &check;  |
+| `ubuntu-latest`  |  &check;  |
+
+The `*-latest` version refers to the `*-latest`
+[available environments](https://github.com/actions/virtual-environments#available-environments)
+from GitHub Actions Virtual Environments.
+
 
 ## Reporting a Vulnerability
 
-Email: rr33ww00pp [at] gmail [dot] com
+Please report vulnerabilities using the contact information [here](https://r3w0p.github.io/contact/).

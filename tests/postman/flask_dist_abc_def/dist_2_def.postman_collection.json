@@ -1,0 +1,80 @@
+{
+  "info": {
+    "name": "dist_2_def",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "data str d",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:9092/data/str/d",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "9092",
+          "path": [
+            "data",
+            "str",
+            "d"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "data str e",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:9092/data/str/e",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "9092",
+          "path": [
+            "data",
+            "str",
+            "e"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "data str f",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:9092/data/str/f",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "9092",
+          "path": [
+            "data",
+            "str",
+            "f"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

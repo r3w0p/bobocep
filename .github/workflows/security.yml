@@ -1,0 +1,32 @@
+name: Security
+
+on:
+  push:
+    branches:
+      - 'main'
+  schedule:
+    # At 06:00 on Monday.
+    - cron: '0 6 * * 1'
+
+jobs:
+  analyse:
+    name: Analyse
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ "python" ]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: CodeQL initialise
+      uses: github/codeql-action/init@v1
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: CodeQL autobuild
+      uses: github/codeql-action/autobuild@v1
+
+    - name: CodeQL analysis
+      uses: github/codeql-action/analyze@v1

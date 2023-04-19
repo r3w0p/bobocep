@@ -1,2 +1,1 @@
-bumpversion==0.5.3
-pika==1.1.0
+pycryptodome==3.17.0

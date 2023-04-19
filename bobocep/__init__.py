@@ -1,7 +1,13 @@
-# -*- coding: utf-8 -*-
+# Copyright (c) 2019-2023 r3w0p
+# The following code can be redistributed and/or
+# modified under the terms of the MIT License.
 
-"""Top-level package for bobocep."""
+"""
+Top-level package for BoboCEP.
+"""
 
 __author__ = """r3w0p"""
-__email__ = ''
-__version__ = '0.35.0'
+__email__ = "rr33ww00pp@gmail.com"
+__version__ = "0.9.18"
+
+from bobocep.bobocep import BoboError

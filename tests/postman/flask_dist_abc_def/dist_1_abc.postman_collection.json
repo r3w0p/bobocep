@@ -1,0 +1,80 @@
+{
+  "info": {
+    "name": "dist_1_abc",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "data str a",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:9091/data/str/a",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "9091",
+          "path": [
+            "data",
+            "str",
+            "a"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "data str b",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:9091/data/str/b",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "9091",
+          "path": [
+            "data",
+            "str",
+            "b"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "data str c",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:9091/data/str/c",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "9091",
+          "path": [
+            "data",
+            "str",
+            "c"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
