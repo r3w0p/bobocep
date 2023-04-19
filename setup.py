@@ -7,7 +7,7 @@ with open("requirements.txt") as f:
     install_requires = f.read().splitlines()
 
 setup(
-    name="BoboCEP",
+    name="bobocep",
     version="0.9.18",
     author="r3w0p",
     author_email="rr33ww00pp@gmail.com",
@@ -26,7 +26,7 @@ setup(
         "distributed systems"
     ],
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",

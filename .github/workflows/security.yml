@@ -3,7 +3,7 @@ name: Security
 on:
   push:
     branches:
-      - 'master'
+      - 'main'
   schedule:
     # At 06:00 on Monday.
     - cron: '0 6 * * 1'

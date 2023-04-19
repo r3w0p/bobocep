@@ -38,9 +38,7 @@ designed for [edge computing](https://en.wikipedia.org/wiki/Edge_computing) in
 to facilitate inferential reasoning and decision-making on streaming data.
 It provides [fault tolerance](https://en.wikipedia.org/wiki/Fault_tolerance) (FT) via the
 [active replication](https://en.wikipedia.org/wiki/Replication_(computing)) of
-partially completed complex events across multiple instances of the software.
-
-> **This branch is for the redesign of the software that will take the project to v1.**
+partially-completed complex events across multiple instances of the software.
 
 
 ## License

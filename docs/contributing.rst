@@ -2,7 +2,7 @@ Contributing
 ************
 
 If you would like to contribute to the :code:`BoboCEP` project, please consult
-the `CONTRIBUTING.md <https://github.com/r3w0p/bobocep/blob/develop/CONTRIBUTING.md>`_
+the `CONTRIBUTING.md <https://github.com/r3w0p/bobocep/blob/main/CONTRIBUTING.md>`_
 document for more information.
 
 Here are other ways through which you can contribute.

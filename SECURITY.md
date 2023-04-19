@@ -2,9 +2,11 @@
 
 > _Last updated: 2023-01-04_
 
+
 ## Supported Versions
 
 Below are the versions that are tested for support.
+
 
 ### Python
 
@@ -13,6 +15,7 @@ Below are the versions that are tested for support.
 |   `> 3.10`   |  &cross;  |
 | `3.9 - 3.10` |  &check;  |
 |   `< 3.9`    |  &cross;  |
+
 
 ### OS
 
@@ -25,6 +28,7 @@ Below are the versions that are tested for support.
 The `*-latest` version refers to the `*-latest`
 [available environments](https://github.com/actions/virtual-environments#available-environments)
 from GitHub Actions Virtual Environments.
+
 
 ## Reporting a Vulnerability
 

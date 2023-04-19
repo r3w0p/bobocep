@@ -26,9 +26,9 @@ Here are some important resources:
 
 When testing your code, use the same packages that are provided in the requirement files, namely:
 
-- [requirements.txt](https://github.com/r3w0p/bobocep/blob/develop/requirements.txt) for the primary dependencies of the software.
+- [requirements.txt](https://github.com/r3w0p/bobocep/blob/main/requirements.txt) for the primary dependencies of the software.
 
-- [requirements-dev.txt](https://github.com/r3w0p/bobocep/blob/develop/requirements-dev.txt) for development dependencies: testing, documentation, and so on.
+- [requirements-dev.txt](https://github.com/r3w0p/bobocep/blob/main/requirements-dev.txt) for development dependencies: testing, documentation, and so on.
 
 
 ### Coding Conventions
