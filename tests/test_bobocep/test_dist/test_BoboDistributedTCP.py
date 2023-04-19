@@ -90,6 +90,8 @@ class TestValid:
         last_comms = BoboDistributedTCP._now()
         dist._devices[devices[1].urn].last_comms = last_comms
 
+        sleep(1)
+
         t = Thread(target=tc_run_distributed_tcp, args=[dist])
         t.start()
 
@@ -242,6 +244,8 @@ class TestValid:
         # Sets Device 2 to within "RESYNC Period"
         last_comms = BoboDistributedTCP._now() - 65
         dist._devices[devices[1].urn].last_comms = last_comms
+
+        sleep(1)
 
         t = Thread(target=tc_run_distributed_tcp, args=[dist])
         t.start()
@@ -534,6 +538,8 @@ class TestInvalid:
         dist_sub = StubDistributedSubscriber()
         dist.subscribe(dist_sub)
 
+        sleep(1)
+
         t = Thread(target=tc_run_distributed_tcp, args=[dist])
         t.start()
 
@@ -574,6 +580,8 @@ class TestInvalid:
 
         dist_sub = StubDistributedSubscriber()
         dist.subscribe(dist_sub)
+
+        sleep(1)
 
         t = Thread(target=tc_run_distributed_tcp, args=[dist])
         t.start()
