@@ -4,10 +4,10 @@
 https://github.com/r3w0p/bobocep/actions/workflows/cicd.yml)
 [![Security](https://github.com/r3w0p/bobocep/actions/workflows/security.yml/badge.svg)](
 https://github.com/r3w0p/bobocep/actions/workflows/security.yml)
+[![Code Repository](https://img.shields.io/badge/code-github-171515)](
+https://github.com/r3w0p/bobocep/)
 [![Documentation Status](https://readthedocs.org/projects/bobocep/badge/?version=latest)](
 https://bobocep.readthedocs.io/)
-[![License Scan](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep.svg?type=shield)](
-https://app.fossa.com/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep?ref=badge_shield)
 [![Donate](https://img.shields.io/badge/donate-ko--fi-red?label=donate)](
 https://ko-fi.com/r3w0p)
 <br/>
@@ -24,12 +24,12 @@ https://github.com/r3w0p/bobocep/pulse/)
 
 [![Issues](https://img.shields.io/github/issues/r3w0p/bobocep?label=issues)](
 https://github.com/r3w0p/bobocep/issues/)
-[![Dependencies](https://img.shields.io/librariesio/github/r3w0p/bobocep?label=dependencies)](
-https://libraries.io/pypi/bobocep/)
 [![Coverage](https://img.shields.io/codeclimate/coverage/r3w0p/bobocep?label=coverage)](
 https://codeclimate.com/github/r3w0p/bobocep/)
 [![Maintainability](https://img.shields.io/codeclimate/maintainability/r3w0p/bobocep?label=maintainability)](
 https://codeclimate.com/github/r3w0p/bobocep/)
+[![License Scan](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep.svg?type=shield)](
+https://app.fossa.com/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep?ref=badge_shield)
 
 
 `BoboCEP` is a [Complex Event Processing](https://en.wikipedia.org/wiki/Complex_event_processing) (CEP) engine

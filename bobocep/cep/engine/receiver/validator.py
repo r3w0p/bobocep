@@ -9,8 +9,17 @@ Receiver data validators.
 from abc import ABC, abstractmethod
 from json import dumps
 from typing import Any, List, Tuple
+from jsonschema import validate as jsonschema_validate
+from jsonschema.exceptions import ValidationError, SchemaError
 
+from bobocep import BoboError
 from bobocep.cep.event import BoboEvent
+
+
+class BoboValidatorError(BoboError):
+    """
+    A validator error.
+    """
 
 
 class BoboValidator(ABC):
@@ -89,3 +98,34 @@ class BoboValidatorType(BoboValidator):
             return any(isinstance(data, t) for t in self._types)
         else:
             return any(type(data) == t for t in self._types)
+
+
+class BoboValidatorJSONSchema(BoboValidatorJSONable):
+    """
+    Validates whether the data type is valid with respect to
+    a given JSON Schema. If the data are a BoboEvent,
+    then the event's data are checked instead.
+    """
+
+    def __init__(self, schema: dict):
+        super().__init__()
+
+        self._schema: dict = schema
+
+    def is_valid(self, data: Any) -> bool:
+        """
+        :return: `True` if data are valid as per the JSON schema;
+                 `False` otherwise.
+
+        :raises: BoboValidatorError: Invalid JSON schema.
+        """
+        try:
+            jsonschema_validate(instance=data, schema=self._schema)
+
+        except ValidationError:
+            return False
+
+        except SchemaError as e:
+            raise BoboValidatorError(e)
+
+        return True
