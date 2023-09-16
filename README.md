@@ -43,7 +43,7 @@ partially-completed complex events across multiple instances of the software.
 
 ## License
 
-`BoboCEP` is open source, as per
-[The Open Source Definition](https://opensource.org/osd).
+`BoboCEP` is open source, as per the
+[Open Source Definition](https://opensource.org/osd).
 The code in this repository can be redistributed and/or modified under the terms of the 
 [MIT License](https://github.com/r3w0p/bobocep/blob/main/LICENSE).

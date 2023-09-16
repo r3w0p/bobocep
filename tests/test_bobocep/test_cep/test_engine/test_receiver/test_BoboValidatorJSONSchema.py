@@ -6,7 +6,6 @@ import pytest
 from bobocep.cep.engine.receiver.validator import BoboValidatorError, \
     BoboValidatorJSONSchema
 
-
 SCHEMA_VALID: dict = {
   "type": "object",
   "required": ["forename", "surname"],

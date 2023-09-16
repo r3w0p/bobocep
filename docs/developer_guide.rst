@@ -100,11 +100,11 @@ Documentation Coverage
 
 :code:`interrogate` is used for testing and code coverage.
 Run the following command to check :code:`BoboCEP` documentation coverage.
-It requires a minimum documentation coverage of 98%.
+It requires a minimum documentation coverage of 100%.
 
 .. code::
 
-    interrogate -vv bobocep --fail-under 98
+    interrogate -vv bobocep --fail-under 100
 
 
 Type Checking

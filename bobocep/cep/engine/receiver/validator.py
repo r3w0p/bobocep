@@ -9,6 +9,7 @@ Receiver data validators.
 from abc import ABC, abstractmethod
 from json import dumps
 from typing import Any, List, Tuple
+
 from jsonschema import validate as jsonschema_validate  # type: ignore
 from jsonschema.exceptions import ValidationError, SchemaError  # type: ignore
 

@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - 'main'
+    tags-ignore:
+      - '**'
 
 jobs:
   ci:
@@ -46,7 +48,7 @@ jobs:
 
       - name: Documentation coverage with interrogate
         run: |
-          interrogate -vv bobocep --fail-under 98
+          interrogate -vv bobocep --fail-under 100
 
       - name: Upload code coverage to Code Climate
         uses: paambaati/codeclimate-action@v2.5.3
