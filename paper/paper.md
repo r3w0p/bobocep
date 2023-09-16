@@ -10,9 +10,11 @@ tags:
 authors:
   - name: Alexander Power
     orcid: 0000-0001-5348-7068
+    affiliation: 1
 
 affiliations:
  - name: Department of Computer Science, University of Bath, United Kingdom
+   index: 1
 
 date: DD Month YYYY
 bibliography: paper.bib
