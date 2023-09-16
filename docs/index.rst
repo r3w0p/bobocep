@@ -28,4 +28,5 @@
    :hidden:
 
    source_code
+   developer_guide
    contributing

@@ -8,7 +8,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="bobocep",
-    version="1.0.1",
+    version="1.1.0",
     author="r3w0p",
     author_email="rr33ww00pp@gmail.com",
     description="A fault-tolerant Complex Event Processing engine "
@@ -19,11 +19,11 @@ setup(
     url="https://github.com/r3w0p/bobocep",
     keywords=[
         "complex event processing",
-        "internet of things",
-        "web of things",
-        "fault tolerance",
+        "distributed systems",
         "edge computing",
-        "distributed systems"
+        "fault tolerance",
+        "internet of things",
+        "web of things"
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -34,6 +34,8 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Topic :: Scientific/Engineering :: Information Analysis",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: System :: Distributed Computing",
         "Topic :: System :: Monitoring"
     ],
     install_requires=install_requires,

@@ -3,5 +3,5 @@
 # modified under the terms of the MIT License.
 
 """
-Tests for data-input testing via Postman.
+Common actions.
 """

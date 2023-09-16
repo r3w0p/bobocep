@@ -1,6 +1,6 @@
 # Security Policy
 
-> _Last updated: 2023-01-04_
+> _Last updated: 2023-09-16_
 
 
 ## Supported Versions
@@ -10,26 +10,27 @@ Below are the versions that are tested for support.
 
 ### Python
 
-|   Version    | Supported |
-|:------------:|:---------:|
-|   `> 3.10`   |  &cross;  |
-| `3.9 - 3.10` |  &check;  |
-|   `< 3.9`    |  &cross;  |
+|   Version    | Tested  |
+|:------------:|:-------:|
+|   `> 3.10`   | &cross; |
+| `3.9 - 3.10` | &check; |
+|   `< 3.9`    | &cross; |
 
 
 ### OS
 
-|     Version      | Supported |
-|:----------------:|:---------:|
-| `windows-latest` |  &check;  |
-|  `macos-latest`  |  &check;  |
-| `ubuntu-latest`  |  &check;  |
+|     Version      | Tested  |
+|:----------------:|:-------:|
+| `windows-latest` | &check; |
+|  `macos-latest`  | &check; |
+| `ubuntu-latest`  | &check; |
 
 The `*-latest` version refers to the `*-latest`
-[available environments](https://github.com/actions/virtual-environments#available-environments)
+[available environments](https://github.com/actions/runner-images)
 from GitHub Actions Virtual Environments.
 
 
 ## Reporting a Vulnerability
 
-Please report vulnerabilities using the contact information [here](https://r3w0p.github.io/contact/).
+Please report vulnerabilities using the contact information
+[here](https://r3w0p.github.io/contact/).

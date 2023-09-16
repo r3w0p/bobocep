@@ -160,8 +160,10 @@ class BoboEngine:
 
     def update(self) -> bool:
         """
-        Performs a single update from the receiver, to the decider, to the
-        producer, and finally to the forwarder.
+        Updates the receiver, then the decider, then the producer, and
+        finally to the forwarder.
+        It updates each task `n` times, depending on how many times were
+        chosen during engine instantiation.
 
         :return: `True` if engine is not set to close; `False` otherwise.
         """

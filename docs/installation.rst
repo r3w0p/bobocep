@@ -85,12 +85,6 @@ You can also build :code:`BoboCEP` manually with:
 Development
 ===========
 
-If you are installing :code:`BoboCEP` for development purposes, you will
-need to install its core requirements from both
-:code:`requirements.txt` and its additional development requirements from
-:code:`requirements-dev.txt`. For example:
-
-.. code:: console
-
-    pip install -r requirements.txt
-    pip install -r requirements-dev.txt
+If you want to develop :code:`BoboCEP`, see
+`Developer Guide <developer_guide.html>`_
+for more information.

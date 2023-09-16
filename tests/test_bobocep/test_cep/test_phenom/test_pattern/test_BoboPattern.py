@@ -10,6 +10,18 @@ from tests.test_bobocep.test_cep.test_phenom.test_pattern.test_predicate import 
     tc_predicate
 
 
+# TODO tests for valid patterns, different
+class TestValid:
+
+    def test_name_0_length(self):
+        with pytest.raises(BoboPatternError):
+            BoboPattern(name="",
+                        blocks=[tc_block(group="a")],
+                        preconditions=[tc_predicate()],
+                        haltconditions=[tc_predicate()])
+
+
+
 class TestInvalid:
 
     def test_name_0_length(self):

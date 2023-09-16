@@ -5,8 +5,8 @@
 """
 Handlers that coordinate the execution of actions.
 """
+
 import logging
-import multiprocessing
 from abc import ABC, abstractmethod
 from queue import Queue
 from threading import RLock

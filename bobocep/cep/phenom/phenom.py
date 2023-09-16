@@ -67,6 +67,7 @@ class BoboPhenomenon:
         self._patterns: Tuple[BoboPattern, ...] = tuple(patterns)
         self._datagen: Optional[Callable] = datagen
         self._action: Optional[BoboAction] = action
+        self._retain: bool = retain
 
     @property
     def name(self) -> str:
@@ -95,3 +96,10 @@ class BoboPhenomenon:
         :return: Phenomenon action, or `None`.
         """
         return self._action
+
+    @property
+    def retain(self) -> bool:
+        """
+        :return: True if retains datagen callable; False otherwise.
+        """
+        return self._retain

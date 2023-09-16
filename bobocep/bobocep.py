@@ -5,6 +5,7 @@
 """
 Core classes.
 """
+
 from abc import ABC, abstractmethod
 
 
@@ -22,7 +23,7 @@ class BoboJSONableError(BoboError):
 
 class BoboJSONable(ABC):
     """
-    A abstract interface for JSONable types.
+    An abstract interface for JSONable types.
     """
 
     @abstractmethod

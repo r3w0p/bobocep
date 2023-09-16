@@ -1,3 +1,7 @@
+# Copyright (c) 2019-2023 r3w0p
+# The following code can be redistributed and/or
+# modified under the terms of the MIT License.
+
 import logging
 from datetime import datetime
 from threading import Thread, RLock
@@ -12,7 +16,7 @@ from bobocep.cep.phenom import BoboPatternBuilder, BoboPhenomenon, BoboPattern
 from bobocep.dist import BoboDevice
 from bobocep.setup import BoboSetupSimpleDistributed
 
-app = Flask(__name__)  # v2.2.3
+app = Flask(__name__)
 engine: BoboEngine
 
 
