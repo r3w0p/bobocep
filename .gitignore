@@ -19,6 +19,8 @@
 !bobocep/**
 !docs/
 !docs/**
+!joss/
+!joss/**
 !media/
 !media/**
 !tests/
