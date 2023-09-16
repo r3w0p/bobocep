@@ -11,6 +11,8 @@ from typing import Tuple, Any, List
 from bobocep.cep.action import BoboAction, BoboActionError
 from bobocep.cep.event import BoboEventComplex
 
+_ACTIONS_MIN: int = 1
+
 
 class BoboActionMulti(BoboAction, ABC):
     """
@@ -51,9 +53,8 @@ class BoboActionMultiSequential(BoboActionMulti):
 
         if len(actions) < 1:
             raise BoboActionError(
-                "multi sequential action {} "
-                "must contain at least 1 action"
-                .format(name))
+                f"multi sequential action {name} "
+                f"must contain at least {_ACTIONS_MIN} action")
 
         self._actions: List[BoboAction] = actions
         self._stop_on_fail: bool = stop_on_fail

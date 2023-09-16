@@ -8,6 +8,9 @@ from bobocep.cep.phenom.phenom import BoboPhenomenonError
 from tests.test_bobocep.test_cep.test_phenom import tc_phenomenon
 
 
+# TODO test valid phenomenon use cases
+
+
 class TestInvalid:
 
     def test_name_length_0(self):

@@ -10,4 +10,4 @@ __author__ = """r3w0p"""
 __email__ = "rr33ww00pp@gmail.com"
 __version__ = "1.0.1"
 
-from bobocep.bobocep import BoboError
+from bobocep.bobocep import BoboError, BoboJSONable, BoboJSONableError

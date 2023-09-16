@@ -9,8 +9,8 @@ Receiver data validators.
 from abc import ABC, abstractmethod
 from json import dumps
 from typing import Any, List, Tuple
-from jsonschema import validate as jsonschema_validate
-from jsonschema.exceptions import ValidationError, SchemaError
+from jsonschema import validate as jsonschema_validate  # type: ignore
+from jsonschema.exceptions import ValidationError, SchemaError  # type: ignore
 
 from bobocep import BoboError
 from bobocep.cep.event import BoboEvent
@@ -108,6 +108,9 @@ class BoboValidatorJSONSchema(BoboValidatorJSONable):
     """
 
     def __init__(self, schema: dict):
+        """
+        :param schema: The JSON schema against which to compare data.
+        """
         super().__init__()
 
         self._schema: dict = schema
