@@ -56,6 +56,8 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_TEST_REPORTER_ID }}
         with:
           coverageCommand: coverage xml
+        continue-on-error: true
+
   cd:
     name: CD
     needs: ci
