@@ -19,10 +19,10 @@
 !bobocep/**
 !docs/
 !docs/**
-!joss/
-!joss/**
 !media/
 !media/**
+!paper/
+!paper/**
 !tests/
 !tests/**
 
