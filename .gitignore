@@ -21,10 +21,12 @@
 !docs/**
 !media/
 !media/**
-!paper/
-!paper/**
 !tests/
 !tests/**
+
+!paper/
+!paper/paper.bib
+!paper/paper.md
 
 __pycache__
 *.pyc
