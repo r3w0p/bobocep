@@ -30,7 +30,8 @@ However, despite this heterogeneity, emerging standardisation efforts [@W3C:WoT:
 
 `BoboCEP` is a *Complex Event Processing* (CEP) engine designed for edge computing in IoT systems that is able to provide a reliable platform on which to implement all three essential Thing affordances.
 This makes it a unified, dependable platform on which to base IoT system development that is privacy-focussed by keeping data flow and processing at the network edge.
-For example, a developer considers what *phenomena* they would like `BoboCEP` to be able to detect and denotes one or more *patterns* that must emerge in the data stream that, if fulfilled by the relevant data, would infer the existence of a given phenomenon.
+For example, a developer considers what *phenomenon* they would like to detect.
+They denote one or more *patterns* that must emerge in the data stream that, if fulfilled by relevant data, infer the existence of the phenomenon.
 On pattern fulfilment, an action may be executed.
 The data stream represents properties from various Things, the fulfilment of a pattern represents event detection, and the action affordance is applicable on event detection.
 
@@ -41,9 +42,21 @@ It adopts an *information flow processing* (IFP) architecture that consumes a da
 These data enter the system in a serialised and uncorrelated manner (i.e., *simple* events), which are then compared against user-designed *patterns* that seek to recognise temporal relationships.
 If data satisfies its conditions, then a *complex* event is generated and an action may be executed consequently.
 
-Unlike other CEP systems, which focus on cloud-based big data platforms [@Giatrakos:2020], `BoboCEP` is designed for dependable edge computing in IoT systems by extending the IFP architecture to additionally provide *fault tolerance* (FT) via the active replication of partially completed complex events across multiple instances of the software.
+`BoboCEP` is designed for dependable edge computing in IoT systems by extending the IFP architecture to additionally provide *fault tolerance* (FT) via the active replication of partially completed complex events across multiple instances of the software.
 That is, it can be deployed on $n$ devices across the network edge and is able to protect the system against, at most, $n-1$ software failures.
 This is crucial to ensure that valuable insights into patterns emerging across the ever-changing cyber-physical environment are not missed, leading to events not being recognised and necessary actions not triggering.
+
+Many existing CEP systems in literature focus on cloud-based big data platforms [@Giatrakos:2020], or provide 'distributed' computing in a different sense.
+`CEPchain` is a solution for integrating CEP and blockchain, but is neither designed for IoT nor edge computing [@Boubeta:2021].
+`SAT-CEP-monitor` considers CEP in the context of satellite remote sensing and air quality monitoring only [@Semlali:2021], whereas `BoboCEP` is a generic CEP tool for all edge-based IoT applications.
+`CaFtR` focuses on CEP for fuzzy logic and includes a fault-tolerant platform using active replication like `BoboCEP` does [@Xiao:2022], whereas `BoboCEP` is designed for predicate logic because it leads to deterministic processing behaviour, and has used active replication years before their solution.
+`EdgeCEP` is the closest system to `BoboCEP` in terms of design and functionality [@Choochotkaew:2017].
+However, `BoboCEP` provides resilient event processing in a distributed CEP environment via active replication, whereas `EdgeCEP` is distributed in the sense that it is deployed across a self-organised ad-hoc wireless sensor and actuator network, which does not provide full redundancy to node failure.
+
+Moreover, edge computing is considered an innovative strategy that brings data processing and storage nearer to the end users, not only to alleviate the data processing burden on cloud systems, but also to ensure that private data does not leave the local network [@Alwarafy:2020].
+For applications such as smart homes, smart vehicles, and health monitoring, deploying the most appropriate solutions to the edge reduces the probability risk of data leakage.
+For example, data leaks from home camera/microphone streams and GPS have the ability to cause great distress to the end users and lead to poor adoption of the IoT solution.
+Whereas at the edge, sensitive data can be preprocessed on-site with a layer of anonymisation, and only then be sent to the cloud for further analysis [@Fazeldehkordi:2022].
 
 # Use Case
 
@@ -52,7 +65,7 @@ For example, [@Rocha:2021] recognise the need for Smart Home solutions that are 
 This is accomplished through sensors that trigger events with minimal or unconventional means of interaction by the end user, such as through voice, eye movement, bespoke GUIs/controllers, or simply human presence.
 Actuators, such as plugs, locks, kitchen appliances, and alarms, can trigger because of this minimal human input.
 
-Assisted living can leverage low-latency event detection and actuation provided by `BoboCEP` to ensure a reliable and rapid response to environmental phenomena.
+Assisted living can leverage low-latency event detection and actuation from `BoboCEP` to ensure a reliable and rapid response to events.
 For example, if an elderly resident were to fall in their home and require an ambulance, then this 'phenomenon' could be detected through one-or-more different patterns of correlated, temporal data.
 The patterns may be:
 
@@ -71,7 +84,7 @@ Indeed, the assisted living scenario is directly applicable: most data can stay 
 
 Due to the critical nature of assisted living, `BoboCEP` may run in a distributed manner over multiple devices/software instances.
 This mode uses active replication to maintain consistent state over each instance so that, if one instance fails, then detecting and reporting phenomena would not be impeded.
-This design provides the additional benefit of being able to load-balance data input across all instances, which helps the solution to scale to a vast number of sensors and actuators.
+This design provides the additional benefit of being able to load-balance data across all instances, which helps to scale to a vast number of sensors and actuators.
 
 # Acknowledgements
 
