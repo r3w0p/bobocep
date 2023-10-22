@@ -8,7 +8,7 @@
    installation
    getting_started
    examples
-   use_case
+   use_cases
 
 
 .. toctree::
