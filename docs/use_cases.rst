@@ -18,6 +18,10 @@ Assisted Living can leverage the low-latency event detection and actuation
 from :code:`BoboCEP` to ensure a reliable and rapid response to events.
 
 
+.. note::
+    The example below is for illustrative purposes only.
+
+
 Phenomenon
 ----------
 
@@ -37,7 +41,7 @@ detected through one or more different patterns of correlated, temporal data.
 
     phenom_fall = BoboPhenomenon(
         name="Fall",
-        patterns=[pattern_1, pattern_2, pattern_3],
+        patterns=[pattern_1, pattern_2],
         action=action_fall
     )
 
@@ -50,8 +54,8 @@ detected through one or more different patterns of correlated, temporal data.
 Pattern #1
 ^^^^^^^^^^
 
-A person is detected entering a room and they have not been detected moving
-for at least :code:`60` seconds, nor detected leaving the room.
+A person is detected entering the living room and they have not been detected
+moving for at least :code:`60` seconds, nor detected in any other room.
 
 .. raw:: html
 
@@ -61,7 +65,27 @@ for at least :code:`60` seconds, nor detected leaving the room.
 
 .. code:: python
 
-    TODO
+    from bobocep.cep.phenom import BoboPattern, BoboPatternBuilder
+
+    # Living room motion starts the pattern, where event data is a dict that
+    # contains keys "room" and "motion".
+    fb1 = lambda e, h: e.data["room"] == "living_room" and e.data["motion"] == 1
+
+    # No motion in living room after 60 seconds. The duration between the event
+    # accepted during fb1 and the event being evaluated with fb2 is used to
+    # determine duration, where timestamp is milliseconds since the epoch.
+    fb2 = lambda e, h: e.data["room"] == "living_room" and e.data["motion"] == 0 \
+                       and (e.timestamp - h.first().timestamp) / 1000 >= 60
+
+    # Any motion in any room halts the pattern.
+    hc1 = lambda e, h: e.data["motion"] == 1
+
+    my_pattern: BoboPattern = BoboPatternBuilder("pattern_1") \
+        .followed_by(fb1) \
+        .followed_by(fb2) \
+        .haltcondition(hc1) \
+        .generate()
+
 
 .. raw:: html
 
@@ -72,7 +96,9 @@ for at least :code:`60` seconds, nor detected leaving the room.
 Pattern #2
 ^^^^^^^^^^
 
-A heart-rate sensor has been consistently reporting dangerously low readings.
+A heart-rate sensor was operating at healthy levels (for example, between
+60 to 140 beats per minute), but has started to consistently report values
+outside of this range.
 
 .. raw:: html
 
@@ -82,33 +108,28 @@ A heart-rate sensor has been consistently reporting dangerously low readings.
 
 .. code:: python
 
-    TODO
+    from bobocep.cep.phenom import BoboPattern, BoboPatternBuilder
+
+    # Initial indication that heart-rate sensor operates within normal levels
+    fb1 = lambda e, h: 60 <= int(e.data) <= 140
+
+    # Abnormal heart rates. Using the `times` parameter in the `followed_by`
+    # method below, 10 events that match fb2 must occur in sequence.
+    fb2 = lambda e, h: not(60 <= int(e.data) <= 140)
+
+    # Halts if still operating within normal levels.
+    hc1 = lambda e, h: 60 <= int(e.data) <= 140
+
+    my_pattern: BoboPattern = BoboPatternBuilder("pattern_1") \
+        .followed_by(fb1) \
+        .followed_by(fb2, times=10) \
+        .haltcondition(hc1) \
+        .generate()
 
 .. raw:: html
 
     </details>
     </br>
-
-
-Pattern #3
-^^^^^^^^^^
-
-Rapid change in accelerometer readings on smart wearable device, followed by
-no significant movement and calls for help via the nearby microphone.
-
-.. raw:: html
-
-    <details>
-    <summary><a>Code</a></summary>
-    </br>
-
-.. code:: python
-
-    TODO
-
-.. raw:: html
-
-    </details>
     </br>
 
 
