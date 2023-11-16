@@ -44,19 +44,19 @@ If data satisfies its conditions, then a *complex* event is generated and an act
 
 `BoboCEP` is designed for dependable edge computing in IoT systems by extending the IFP architecture to additionally provide *fault tolerance* (FT) via the active replication of partially completed complex events across multiple instances of the software.
 That is, it can be deployed on $n$ devices across the network edge and is able to protect the system against, at most, $n-1$ software failures.
-This is crucial to ensure that valuable insights into patterns emerging across the ever-changing cyber-physical environment are not missed, leading to events not being recognised and necessary actions not triggering.
+This is crucial to ensure that valuable insights emerging from the ever-changing cyber-physical environment are not missed, which could lead to events not being detected and actions not executing.
 
-Many existing CEP systems in literature focus on cloud-based big data platforms [@Giatrakos:2020], or provide 'distributed' computing in a different sense.
+Edge computing is considered an innovative strategy that brings data processing and storage nearer to the end users, not only to alleviate the data processing burden on cloud systems, but also to ensure that private data does not leave the local network [@Alwarafy:2020].
+For applications such as smart homes, smart vehicles, and health monitoring, deploying the most appropriate solutions to the edge reduces the probability of data leakage.
+For example, data leaks from home cameras and microphones have the ability to cause great distress to end users and lead to the poor adoption of IoT solutions.
+Whereas, at the edge, sensitive data can be anonymously processed on-site, with controlled cloud use for further analysis [@Fazeldehkordi:2022].
+
+Many existing CEP systems focus on cloud-based big data platforms [@Giatrakos:2020], or provide 'distributed' computing in a different sense.
 `CEPchain` is a solution for integrating CEP and blockchain, but is neither designed for IoT nor edge computing [@Boubeta:2021].
 `SAT-CEP-monitor` considers CEP in the context of satellite remote sensing and air quality monitoring only [@Semlali:2021], whereas `BoboCEP` is a generic CEP tool for all edge-based IoT applications.
-`CaFtR` focuses on CEP for fuzzy logic and includes a fault-tolerant platform using active replication like `BoboCEP` does [@Xiao:2022], whereas `BoboCEP` is designed for predicate logic because it leads to deterministic processing behaviour, and has used active replication years before their solution.
+`CaFtR` focuses on CEP for *fuzzy logic* and uses active replication like `BoboCEP` does [@Xiao:2022], whereas `BoboCEP` is designed around *predicate logic* for deterministic processing behaviour and has used active replication years before their solution.
 `EdgeCEP` is the closest system to `BoboCEP` in terms of design and functionality [@Choochotkaew:2017].
 However, `BoboCEP` provides resilient event processing in a distributed CEP environment via active replication, whereas `EdgeCEP` is distributed in the sense that it is deployed across a self-organised ad-hoc wireless sensor and actuator network, which does not provide full redundancy to node failure.
-
-Moreover, edge computing is considered an innovative strategy that brings data processing and storage nearer to the end users, not only to alleviate the data processing burden on cloud systems, but also to ensure that private data does not leave the local network [@Alwarafy:2020].
-For applications such as smart homes, smart vehicles, and health monitoring, deploying the most appropriate solutions to the edge reduces the probability risk of data leakage.
-For example, data leaks from home camera/microphone streams and GPS have the ability to cause great distress to the end users and lead to poor adoption of the IoT solution.
-Whereas at the edge, sensitive data can be preprocessed on-site with a layer of anonymisation, and only then be sent to the cloud for further analysis [@Fazeldehkordi:2022].
 
 # Use Case
 
@@ -70,7 +70,7 @@ For example, if an elderly resident were to fall in their home and require an am
 The patterns may be:
 
 1. A person is detected entering a room and they have not been detected moving for at least `30` seconds, nor detected leaving the room, nor any indication through some other modality (e.g., microphone, interaction with home appliances).
-2. An attached heart-rate sensor has stopped providing data, or has been consistently reporting dangerously low readings.
+2. An attached heart-rate sensor has stopped providing data or has been consistently reporting dangerously low readings.
 3. Calls for help are heard via the microphone or a virtual assistant system.
 
 On fulfilment of the phenomenon via any pattern, a complex event is generated and an action may be triggered to:
