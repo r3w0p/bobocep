@@ -58,8 +58,9 @@ Run the following command to test :code:`BoboCEP`.
 
 .. code::
 
-    coverage run --source=bobocep -m pytest tests
+    coverage run -m pytest tests
 
+The coverage configuration can be found in :code:`.coveragerc`.
 GitHub Actions additionally enforces a minimum coverage of 98%.
 You can check that this requirement has been satisfied using the following.
 
@@ -126,3 +127,9 @@ Versioning
 :code:`BoboCEP` uses `Semantic Versioning <https://semver.org/>`_ and
 the :code:`bump2version` tool for editing the software version.
 See `here <https://pypi.org/project/bump2version/>`_ for more information.
+The :code:`major`, :code:`minor`, or :code:`patch` components of the version
+number can be changed with the following:
+
+.. code::
+
+    bump2version patch

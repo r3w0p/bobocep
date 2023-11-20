@@ -43,7 +43,7 @@ jobs:
 
       - name: Code coverage with coverage and pytest
         run: |
-          coverage run --source=bobocep -m pytest tests
+          coverage run -m pytest tests
           coverage report --fail-under=98
 
       - name: Documentation coverage with interrogate

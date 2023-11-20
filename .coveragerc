@@ -1,0 +1,4 @@
+[run]
+source = bobocep
+omit =
+    bobocep/dist/tcp.py
