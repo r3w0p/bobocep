@@ -245,12 +245,12 @@ class TestValid:
         last_comms = BoboDistributedTCP._now() - 65
         dist._devices[devices[1].urn].last_comms = last_comms
 
-        sleep(1)
+        sleep(3)
 
         t = Thread(target=tc_run_distributed_tcp, args=[dist])
         t.start()
 
-        sleep(1)
+        sleep(3)
 
         dist.on_decider_update(
             completed=completed,
@@ -264,6 +264,8 @@ class TestValid:
         dist.join()
         t.join()
         assert dist.is_closed()
+
+        sleep(3)
 
         assert len(dist_sub.completed) == 1
         assert len(dist_sub.halted) == 1
