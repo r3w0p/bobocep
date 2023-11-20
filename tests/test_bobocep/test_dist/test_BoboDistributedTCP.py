@@ -166,7 +166,7 @@ class TestValid:
         last_comms = BoboDistributedTCP._now() - 35
         dist._devices[devices[1].urn].last_comms = last_comms
 
-        sleep(1)
+        sleep(3)
 
         t = Thread(target=tc_run_distributed_tcp, args=[dist])
         t.start()
