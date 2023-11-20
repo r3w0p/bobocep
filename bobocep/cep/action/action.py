@@ -51,7 +51,9 @@ class BoboAction(ABC):
     @abstractmethod
     def execute(self, event: BoboEventComplex) -> Tuple[bool, Any]:
         """
-        :param event: The complex event that triggered action.
-        :return: Whether the action execution was successful, and
-            any additional data.
+        :param event: The complex event that triggered the action.
+
+        :return: A tuple containing:
+                 whether the action execution was successful; and
+                 any additional data.
         """

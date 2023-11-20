@@ -62,9 +62,11 @@ class BoboActionMultiSequential(BoboActionMulti):
     def execute(self, event: BoboEventComplex) \
             -> Tuple[bool, List[Tuple[bool, Any]]]:
         """
-        :param event: The complex event that triggered action.
-        :return: Whether the action execution was successful, and
-            any additional data.
+        :param event: The complex event that triggered the action.
+
+        :return: A tuple containing:
+                 whether all actions were successful; and
+                 a list of the output from each individual action.
         """
         success = True
         data: List[Tuple[bool, Any]] = []
