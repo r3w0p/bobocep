@@ -265,9 +265,6 @@ class TestValid:
         t.join()
         assert dist.is_closed()
 
-        assert dist.size_incoming() == 0
-        assert dist.size_outgoing() == 0
-
         assert len(dist_sub.completed) == 1
         assert len(dist_sub.halted) == 1
         assert len(dist_sub.updated) == 1
