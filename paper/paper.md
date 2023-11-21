@@ -61,7 +61,7 @@ However, `BoboCEP` provides resilient event processing in a distributed CEP envi
 # Use Case
 
 The dependable processing of live data streams at the network edge presents many possibilities for IoT applications.
-For example, [@Rocha:2021] recognise the need for Smart Home solutions that are designed for people with disability and mobility needs in order to provide independent *assisted living*.
+For example, @Rocha:2021 recognise the need for Smart Home solutions that are designed for people with disability and mobility needs in order to provide independent *assisted living*.
 This is accomplished through sensors that trigger events with minimal or unconventional means of interaction by the end user, such as through voice, eye movement, bespoke GUIs/controllers, or simply human presence.
 Actuators, such as plugs, locks, kitchen appliances, and alarms, can trigger because of this minimal human input.
 
@@ -79,7 +79,7 @@ On fulfilment of the phenomenon via any pattern, a complex event is generated an
 - Notify neighbours.
 - Unlock the front door.
 
-Furthermore, [@Scattone:2021] cite `BoboCEP` as a relevant technology even in the context of large-scale solutions, such as Smart Cities, where `BoboCEP` may only send events of high importance to the cloud.
+Furthermore, @Scattone:2021 cite `BoboCEP` as a relevant technology even in the context of large-scale solutions, such as Smart Cities, where `BoboCEP` may only send events of high importance to the cloud.
 Indeed, the assisted living scenario is directly applicable: most data can stay privately within the home network (e.g., heart-rate data, location of people in their homes), but calling for an ambulance and notifying neighbours can leverage cloud services.
 
 Due to the critical nature of assisted living, `BoboCEP` may run in a distributed manner over multiple devices/software instances.
