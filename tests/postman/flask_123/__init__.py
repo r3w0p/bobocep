@@ -1,4 +1,7 @@
+# Copyright (c) 2019-2023 r3w0p
+# The following code can be redistributed and/or
+# modified under the terms of the MIT License.
+
 """
-A simple, non-distributed test using Postman and Flask.
-A Postman script is provided for you to import and use with "Run collection".
+A test using Non-distributed BoboCEP with Postman and Flask.
 """

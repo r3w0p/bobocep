@@ -32,8 +32,8 @@ or more predicates.
 
    A series of blocks for a pattern.
    White circles represent predicates.
-   Starting block is orange, intermediary blocks are blue,
-   and final block is green.
+   The starting block is orange, intermediary blocks are blue, and the final
+   block is green.
 
 Fulfilling a pattern starts with an event that satisfies the predicate of
 the first block of the pattern.
@@ -205,8 +205,11 @@ if the first predicate of the pattern is satisfied multiple times.
 .. figure:: ./_static/img/runs.png
    :alt: Runs
 
-   Run :code:`r` serves as an instance of pattern :code:`p` and
-   keeps track of its state across the pattern's blocks.
+   A run is as an instance of a pattern that keeps track of its state across
+   the pattern's blocks.
+   The run's current block is indicated in red.
+   For this run to complete, it must be passed an event that satisfies the
+   predicate in the final block (green).
 
 Runs work as follows:
 
@@ -225,6 +228,6 @@ Runs work as follows:
    exists). Once it has finished execution, whether successful or not,
    an **action event** is produced and sent to the Receiver.
 
-If a run needs to end before reaching the final state (e.g. because of a
+If a run needs to end before reaching the final state (e.g., because of a
 contiguity requirement or satisfied haltcondition), then it enters a
 **halted** state and is removed from the list of active runs.

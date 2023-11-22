@@ -3,13 +3,13 @@
 # modified under the terms of the MIT License.
 
 """
-Tests that ensure complex event generation occurs when expected.
-The tests contain typical patterns that may be built by the user
-with the pattern builder.
+Integration tests that ensure complex event generation occurs when expected.
+The tests contain typical patterns that may be built by the user with the
+pattern builder.
 
 This is not an exhaustive list due to the sheer number of possible
-combinations. However, the tests are representative of some of the
-common patterns that are likely to frequently occur.
+combinations. However, the tests are representative of some of the common
+patterns that are likely to frequently occur.
 """
 
 from threading import RLock
