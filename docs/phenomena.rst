@@ -124,8 +124,8 @@ passing the event onto the current block's predicate(s).
   any haltcondition, then the event will be passed to the current block of
   the pattern.
   For example, a haltcondition may be to halt if 60 seconds has passed since
-  the first event in the history i.e. the pattern must reach completion
-  within 60 seconds.
+  the first event in the history (i.e., the pattern must reach completion
+  within 60 seconds).
 
 
 .. note::
