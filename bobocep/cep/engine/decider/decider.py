@@ -529,8 +529,18 @@ class BoboDecider(BoboEngineTask,
                     if newrun.is_halted() and newrun.is_complete():
                         runs_halted_complete.append(newrun)
                     else:
-                        self._add_run(phenomenon.name, pattern.name, newrun)
-                        runs_updated.append(newrun)
+                        runs = self.runs_from(phenomenon.name, pattern.name)
+
+                        if (
+                                (not pattern.singleton) or
+                                (pattern.singleton and len(runs) == 0)
+                        ):
+                            self._add_run(
+                                phenomenon.name,
+                                pattern.name,
+                                newrun)
+
+                            runs_updated.append(newrun)
 
         return runs_halted_complete, runs_updated
 
