@@ -144,12 +144,15 @@ class BoboPattern:
                  name: str,
                  blocks: List[BoboPatternBlock],
                  preconditions: List[BoboPredicate],
-                 haltconditions: List[BoboPredicate]):
+                 haltconditions: List[BoboPredicate],
+                 singleton: bool = False):
         """
         :param name: The pattern name.
         :param blocks: The pattern blocks.
         :param preconditions: The pattern preconditions.
         :param haltconditions: The pattern haltconditions.
+        :param singleton: If `True`, the pattern can only have one active run
+            at a time.
         """
         super().__init__()
 
@@ -181,6 +184,7 @@ class BoboPattern:
         self._blocks: Tuple[BoboPatternBlock, ...] = tuple(blocks)
         self._preconditions: Tuple[BoboPredicate, ...] = tuple(preconditions)
         self._haltconditions: Tuple[BoboPredicate, ...] = tuple(haltconditions)
+        self._singleton: bool = singleton
 
     @property
     def name(self) -> str:
@@ -209,3 +213,11 @@ class BoboPattern:
         :return: Pattern haltconditions.
         """
         return self._haltconditions
+
+    @property
+    def singleton(self) -> bool:
+        """
+        :return: `True` if pattern can only have one active run
+            at a time; `False` otherwise.
+        """
+        return self._singleton

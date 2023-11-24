@@ -365,6 +365,21 @@ class TestValid:
         assert len(engine.decider.all_runs()) == 0
         assert action.counter == 1
 
+    def test_fb_fb_fb_data_exact_singleton(self):
+        pattern_1: BoboPattern = BoboPatternBuilder("pattern_1") \
+            .followed_by(lambda e, h: int(e.data) == 1) \
+            .followed_by(lambda e, h: int(e.data) == 2) \
+            .followed_by(lambda e, h: int(e.data) == 3) \
+            .generate()
+
+        engine, action = _setup([pattern_1])
+
+        for i in [1, 2, 3]:
+            engine.receiver.add_data(i)
+            engine.update()
+
+        assert len(engine.decider.all_runs()) == 0
+        assert action.counter == 1
 
 class TestInvalid:
 
