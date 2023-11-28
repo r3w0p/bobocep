@@ -33,7 +33,9 @@ def tc_pattern(
         name: str = "pattern",
         data_blocks: Optional[List[Any]] = None,
         data_pres: Optional[List[Any]] = None,
-        data_halts: Optional[List[Any]] = None) -> BoboPattern:
+        data_halts: Optional[List[Any]] = None,
+        singleton: bool = False
+) -> BoboPattern:
     if data_blocks is None:
         data_blocks = [1]
 
@@ -63,4 +65,6 @@ def tc_pattern(
         name=name,
         blocks=blocks,
         preconditions=preconditions,
-        haltconditions=haltconditions)
+        haltconditions=haltconditions,
+        singleton=singleton
+    )

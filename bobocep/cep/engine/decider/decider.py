@@ -182,7 +182,7 @@ class BoboDecider(BoboEngineTask,
             completed: List[BoboRunSerial],
             halted: List[BoboRunSerial]) -> None:
         """
-        Caches completed and halted runs, if caching is enabled.#
+        Caches completed and halted runs, if caching is enabled.
 
         :param completed: Completed runs.
         :param halted: Halted runs.
@@ -270,88 +270,130 @@ class BoboDecider(BoboEngineTask,
         :param halted: Halted runs.
         :param updated: Updated runs.
         """
-
         with self._lock:
             if self._closed:
                 return
+
+            remove_indices_completed = []
+            remove_indices_halted = []
+            remove_indices_updated = []
 
             # Remove any invalid remote changes
             completed, halted, updated = \
                 self._maybe_check_against_cache(completed, halted, updated)
 
-            # TODO (singleton) when caching halt or complete,
-            #  store local and remote IDs if they differ...
+            # Cache remote changes
+            # Note that completed and halted may be edited during the local
+            # application of remote changes. Namely, if a singleton pattern
+            # has two runs with differing IDs, then the local ID will replace
+            # the remote ID in completed and halted, and the local ID will be
+            # sent to the subscribers instead. Local IDs will also be cached
+            # along with remote ones.
+            self._maybe_cache(completed, halted)
 
-            # Remove runs that were completed remotely
-            # TODO remove singleton
-            for runremcom in completed:
-                self._remove_run(
-                    runremcom.phenomenon_name,
-                    runremcom.pattern_name,
-                    runremcom.run_id,
-                    quiet=True)
-
-            # Remove runs that were halted remotely
-            # TODO remove singleton
-            for runremhal in halted:
-                self._remove_run(
-                    runremhal.phenomenon_name,
-                    runremhal.pattern_name,
-                    runremhal.run_id,
-                    quiet=True)
-
-            # Update existing runs, or add new run that was started remotely
-            update_remove_indices = []
-
-            for i, runremupd in enumerate(updated):
-                runs = self.runs_from(runremupd.phenomenon_name, pattern.name)
-
-                if pattern.singleton and len(runs) > 0:
-                    # If singleton, use active run...
-                    runlocal = runs[0]
-                else:
-                    # ...else use run with corresponding ID
-                    runlocal: Optional[BoboRun] = self.run_at(
-                        runremupd.phenomenon_name,
-                        runremupd.pattern_name,
-                        runremupd.run_id)
-
-                if runlocal is not None:
-                    # If run exists, update its internal state...
-                    if runremupd.block_index > runlocal.block_index:
-                        runlocal.set_block(
-                            block_index=runremupd.block_index,
-                            history=runremupd.history)
-
-                else:
-                    # ... else create new run
+            # Remove runs that were completed or halted remotely
+            for i, remlist in enumerate((completed, halted)):
+                for k, runremote in enumerate(remlist):
                     pattern: Optional[BoboPattern] = self._get_pattern(
-                        runremupd.phenomenon_name, runremupd.pattern_name)
+                        runremote.phenomenon_name, runremote.pattern_name)
 
                     # Ignore if pattern does not exist
                     if pattern is None:
-                        update_remove_indices.append(i)
+                        if i == 0:
+                            remove_indices_completed.append(k)
+                        else:
+                            remove_indices_halted.append(k)
+
                         continue
 
-                    # Add new run that was started remotely
+                    runs = self.runs_from(
+                        runremote.phenomenon_name, pattern.name)
+
+                    if pattern.singleton and len(runs) > 0:
+                        # If singleton run exists, remove...
+                        runlocal: BoboRun = runs[0]
+
+                        self._remove_run(
+                            runlocal.phenomenon_name,
+                            runlocal.pattern.name,
+                            runlocal.run_id,
+                            quiet=True)
+
+                        # If remote run ID differs to local,
+                        # replace with local run instead
+                        if runremote.run_id != runlocal.run_id:
+                            runlocalserial = runlocal.serialize()
+                            remlist[k] = runlocalserial
+
+                            self._maybe_cache(
+                                completed=[runlocalserial] if i == 0 else [],
+                                halted=[runlocalserial] if i == 1 else [])
+                    else:
+                        # ...else remove run with corresponding ID
+                        self._remove_run(
+                            runremote.phenomenon_name,
+                            runremote.pattern_name,
+                            runremote.run_id,
+                            quiet=True)
+
+            # Update existing runs, or add new run that was started remotely
+            for k, runremote in enumerate(updated):
+                pattern: Optional[BoboPattern] = self._get_pattern(
+                    runremote.phenomenon_name, runremote.pattern_name)
+
+                # Ignore if pattern does not exist
+                if pattern is None:
+                    remove_indices_updated.append(k)
+                    continue
+
+                if pattern.singleton:
+                    # If singleton, use active run if exists...
+                    runs = self.runs_from(
+                        runremote.phenomenon_name, pattern.name)
+                    runlocal = runs[0] if len(runs) > 0 else None
+                else:
+                    # ...else use run with corresponding ID
+                    runlocal: Optional[BoboRun] = self.run_at(
+                        runremote.phenomenon_name,
+                        runremote.pattern_name,
+                        runremote.run_id)
+
+                if runlocal is not None:
+                    # If run exists, update its internal state...
+                    if runremote.block_index > runlocal.block_index:
+                        runlocal.set_block(
+                            block_index=runremote.block_index,
+                            history=runremote.history)
+
+                    # If singleton and run ID mismatch, replace with local
+                    # run instead
+                    if (
+                            pattern.singleton and
+                            runremote.run_id != runlocal.run_id
+                    ):
+                        updated[k] = runlocal.serialize()
+                else:
+                    # ... else add new run that was started remotely
                     new_run = BoboRun(
-                        run_id=runremupd.run_id,
-                        phenomenon_name=runremupd.phenomenon_name,
+                        run_id=runremote.run_id,
+                        phenomenon_name=runremote.phenomenon_name,
                         pattern=pattern,
-                        block_index=runremupd.block_index,
-                        history=runremupd.history)
+                        block_index=runremote.block_index,
+                        history=runremote.history)
 
                     self._add_run(
-                        runremupd.phenomenon_name,
-                        runremupd.pattern_name,
+                        runremote.phenomenon_name,
+                        runremote.pattern_name,
                         new_run)
 
             # Remove any updates for which a pattern could not be found
-            for i in sorted(update_remove_indices, reverse=True):
-                del updated[i]
-
-            # Cache remote changes
-            self._maybe_cache(completed, halted)
+            for remlist, remind in [
+                (completed, remove_indices_completed),
+                (halted, remove_indices_halted),
+                (updated, remove_indices_updated)
+            ]:
+                for i in sorted(remind, reverse=True):
+                    del remlist[i]
 
             # Notify subscribers
             for subscriber in self._subscribers:
@@ -544,6 +586,7 @@ class BoboDecider(BoboEngineTask,
                     else:
                         runs = self.runs_from(phenomenon.name, pattern.name)
 
+                        # If not singleton, or is and no active runs
                         if (
                                 (not pattern.singleton) or
                                 (pattern.singleton and len(runs) == 0)
