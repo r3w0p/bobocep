@@ -21,7 +21,7 @@ engine: BoboEngine
 
 
 # A Flask interface that enables string data to be passed via a GET request.
-# For example: 127.0.0.1:8080/data/int/hello
+# For example: 127.0.0.1:9090/data/int/hello
 @app.route("/data/str/<my_str>", methods=['GET'])
 def data_str(my_str):
     global engine
@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
     # A simple pattern: "a" followed by "b" followed by "c".
     # Halt on "h".
-    my_pattern: BoboPattern = BoboPatternBuilder("my_pattern") \
+    my_pattern: BoboPattern = BoboPatternBuilder("pattern_abch") \
         .followed_by(lambda e, h: str(e.data) == "a") \
         .followed_by(lambda e, h: str(e.data) == "b") \
         .followed_by(lambda e, h: str(e.data) == "c") \
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     # When the pattern is fulfilled, its action, BoboActionCounter,
     # increments its internal counter and prints a message to stdout.
     my_phenomenon = BoboPhenomenon(
-        name="my_phenomenon",
+        name="phenom_abch",
         patterns=[my_pattern],
         action=BoboActionCounter()
     )
@@ -92,17 +92,17 @@ if __name__ == '__main__':
     # - ID keys are expected to be kept secret, and are used for identifying
     #   devices even if their addr / port were to change over time.
     devices = [
-        # This is you.
-        BoboDevice(
-            addr="127.0.0.1",
-            port=8081,
-            urn="urn:bobocep:device:1",
-            id_key="id_key_device_1"
-        ),
         # This is some other BoboCEP instance on the network.
         BoboDevice(
             addr="127.0.0.1",
-            port=8082,
+            port=7070,
+            urn="urn:bobocep:device:1",
+            id_key="id_key_device_1"
+        ),
+        # This is you.
+        BoboDevice(
+            addr="127.0.0.1",
+            port=7071,
             urn="urn:bobocep:device:2",
             id_key="id_key_device_2"
         )
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     engine, dist = BoboSetupSimpleDistributed(
         phenomena=[my_phenomenon],
         handler=BoboActionHandlerMultithreading(threads=5),
-        urn="urn:bobocep:device:1",
+        urn="urn:bobocep:device:2",
         devices=devices,
         aes_key="1234567890ABCDEF"
     ).generate()
@@ -134,6 +134,8 @@ if __name__ == '__main__':
     # The Flask server is started.
     app.run(
         host="0.0.0.0",
-        port=8080,
+        port=8081,
         debug=True,
         use_reloader=False)
+
+    # TODO counter not update on alternate instance when completed

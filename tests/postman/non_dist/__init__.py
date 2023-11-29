@@ -3,5 +3,5 @@
 # modified under the terms of the MIT License.
 
 """
-A test using Non-distributed BoboCEP with Postman and Flask.
+Tests of non-distributed BoboCEP using Postman.
 """

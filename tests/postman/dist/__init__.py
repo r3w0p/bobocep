@@ -3,5 +3,5 @@
 # modified under the terms of the MIT License.
 
 """
-A test using Distributed BoboCEP with Postman and Flask.
+Tests of distributed BoboCEP using Postman.
 """

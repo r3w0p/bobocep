@@ -277,6 +277,7 @@ class BoboDecider(BoboEngineTask,
             remove_indices_completed = []
             remove_indices_halted = []
             remove_indices_updated = []
+            runlocal: Optional[BoboRun] = None  # here because of mypy...
 
             # Remove any invalid remote changes
             completed, halted, updated = \
@@ -311,7 +312,7 @@ class BoboDecider(BoboEngineTask,
 
                     if pattern.singleton and len(runs) > 0:
                         # If singleton run exists, remove...
-                        runlocal: BoboRun = runs[0]
+                        runlocal = runs[0]
 
                         self._remove_run(
                             runlocal.phenomenon_name,
@@ -338,7 +339,7 @@ class BoboDecider(BoboEngineTask,
 
             # Update existing runs, or add new run that was started remotely
             for k, runremote in enumerate(updated):
-                pattern: Optional[BoboPattern] = self._get_pattern(
+                pattern = self._get_pattern(
                     runremote.phenomenon_name, runremote.pattern_name)
 
                 # Ignore if pattern does not exist
@@ -353,7 +354,7 @@ class BoboDecider(BoboEngineTask,
                     runlocal = runs[0] if len(runs) > 0 else None
                 else:
                     # ...else use run with corresponding ID
-                    runlocal: Optional[BoboRun] = self.run_at(
+                    runlocal = self.run_at(
                         runremote.phenomenon_name,
                         runremote.pattern_name,
                         runremote.run_id)
