@@ -70,7 +70,8 @@ if __name__ == '__main__':
 
     # A simple pattern: "a" followed by "b" followed by "c".
     # Halt on "h".
-    my_pattern: BoboPattern = BoboPatternBuilder("pattern_abch") \
+    my_pattern: BoboPattern = BoboPatternBuilder(
+        "pattern_abch_singleton", singleton=True) \
         .followed_by(lambda e, h: str(e.data) == "a") \
         .followed_by(lambda e, h: str(e.data) == "b") \
         .followed_by(lambda e, h: str(e.data) == "c") \

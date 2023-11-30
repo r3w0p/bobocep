@@ -32,6 +32,10 @@ is responsible for executing actions and passing the action's response
 back.
 The Forwarder then generates an action event which is sent to Receiver.
 
+.. note::
+    In Distributed :code:`BoboCEP`, only the instance that first completes a
+    run will be the instance that handles the action.
+
 The default action handlers provided by :code:`BoboCEP` are as follows.
 
 

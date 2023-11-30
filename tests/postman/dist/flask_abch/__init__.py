@@ -9,4 +9,8 @@ across two BoboCEP instances. The pattern accepts characters "a", followed by
 
 The test demonstrates how the pattern's runs can be updated, completed, and
 halted when the characters are sent by either BoboCEP instance.
+
+Note that, in Distributed :code:`BoboCEP`, only the instance that first
+completes a run will be the instance that handles the action. Therefore, the
+action counter will only increment on the instance that completes its run.
 """

@@ -1,0 +1,104 @@
+{
+  "info": {
+    "name": "flask_abch_singleton_dist_2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "data str a",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8081/data/str/a",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8081",
+          "path": [
+            "data",
+            "str",
+            "a"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "data str b",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8081/data/str/b",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8081",
+          "path": [
+            "data",
+            "str",
+            "b"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "data str c",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8081/data/str/c",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8081",
+          "path": [
+            "data",
+            "str",
+            "c"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "data str h",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8081/data/str/h",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8081",
+          "path": [
+            "data",
+            "str",
+            "h"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
