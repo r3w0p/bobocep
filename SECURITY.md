@@ -1,6 +1,6 @@
 # Security Policy
 
-> _Last updated: 2023-09-16_
+> _Last updated: 2023-11-23_
 
 
 ## Supported Versions
@@ -12,8 +12,8 @@ Below are the versions that are tested for support.
 
 |   Version    | Tested  |
 |:------------:|:-------:|
-|   `> 3.10`   | &cross; |
-| `3.9 - 3.10` | &check; |
+|   `> 3.12`   | &cross; |
+| `3.9 - 3.12` | &check; |
 |   `< 3.9`    | &cross; |
 
 

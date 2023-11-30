@@ -3,5 +3,6 @@
 # modified under the terms of the MIT License.
 
 """
-Tests for unit testing via pytest.
+Unit and integration tests that check internal BoboCEP components are operating
+as expected. These tests are used to determine code coverage.
 """

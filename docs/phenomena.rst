@@ -32,8 +32,8 @@ or more predicates.
 
    A series of blocks for a pattern.
    White circles represent predicates.
-   Starting block is orange, intermediary blocks are blue,
-   and final block is green.
+   The starting block is orange, intermediary blocks are blue, and the final
+   block is green.
 
 Fulfilling a pattern starts with an event that satisfies the predicate of
 the first block of the pattern.
@@ -124,8 +124,8 @@ passing the event onto the current block's predicate(s).
   any haltcondition, then the event will be passed to the current block of
   the pattern.
   For example, a haltcondition may be to halt if 60 seconds has passed since
-  the first event in the history i.e. the pattern must reach completion
-  within 60 seconds.
+  the first event in the history (i.e., the pattern must reach completion
+  within 60 seconds).
 
 
 .. note::
@@ -144,10 +144,32 @@ Creating a pattern is best achieved using the :code:`BoboPatternBuilder`.
 
 .. code:: python
 
-    from bobocep.cep.phenom import BoboPatternBuilder, BoboPattern
+    from bobocep.cep.phenom import BoboPatternBuilder
 
     builder = BoboPatternBuilder(name="my_pattern")
 
+
+The constructor requires a :code:`name` for the pattern's name, and can
+optionally have its :code:`singleton` parameter set to :code:`True`
+(the default is :code:`False`).
+
+
+.. code:: python
+
+    builder = BoboPatternBuilder(name="my_pattern", singleton=True)
+
+
+Setting :code:`singleton` to :code:`True` means that only one run for this
+pattern can be active at any given time.
+For a new run to be instantiated, the existing run must first be completed or
+halted.
+If it is :code:`False`, then an unlimited number of runs can be created from
+the pattern.
+
+The pattern builder uses various methods to determine the flow of the pattern
+from one block to another, specifying the predicates and contiguity along
+the way.
+The methods are as follows.
 
 - Methods :code:`next` and :code:`not_next` are used for strict contiguity
   and negated strict contiguity, respectively;
@@ -158,8 +180,13 @@ Creating a pattern is best achieved using the :code:`BoboPatternBuilder`.
 - Methods :code:`precondition` and :code:`haltcondition` to provide
   predicates accordingly.
 
-For example, in most applications, :code:`followed_by` will be the
-most suitable choice.
+For example, calling :code:`next` on the pattern builder means that the block
+being added to the pattern contains a predicate that must be satisfied by the
+*very next event* that enters the system.
+If this event does not satisfy, the run is halted.
+The :code:`followed_by` method adds a block that will wait until any future
+event satisfies it.
+For most applications, :code:`followed_by` will be the most suitable choice.
 
 
 .. code:: python
@@ -192,6 +219,8 @@ Additionally, optional arguments have been provided:
 
 .. code:: python
 
+    from bobocep.cep.phenom import BoboPattern
+
     pattern: BoboPattern = builder.generate()
 
 
@@ -205,8 +234,11 @@ if the first predicate of the pattern is satisfied multiple times.
 .. figure:: ./_static/img/runs.png
    :alt: Runs
 
-   Run :code:`r` serves as an instance of pattern :code:`p` and
-   keeps track of its state across the pattern's blocks.
+   A run is as an instance of a pattern that keeps track of its state across
+   the pattern's blocks.
+   The run's current block is indicated in red.
+   For this run to complete, it must be passed an event that satisfies the
+   predicate in the final block (green).
 
 Runs work as follows:
 
@@ -225,6 +257,6 @@ Runs work as follows:
    exists). Once it has finished execution, whether successful or not,
    an **action event** is produced and sent to the Receiver.
 
-If a run needs to end before reaching the final state (e.g. because of a
+If a run needs to end before reaching the final state (e.g., because of a
 contiguity requirement or satisfied haltcondition), then it enters a
 **halted** state and is removed from the list of active runs.

@@ -1,2 +1,2 @@
-jsonschema==4.19.0
-pycryptodome==3.18.0
+jsonschema==4.20.0
+pycryptodome==3.19.0

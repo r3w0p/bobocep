@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "dist_1_abc",
+    "name": "flask_abch_singleton_dist_1",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -10,7 +10,7 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:9091/data/str/a",
+          "raw": "http://127.0.0.1:8080/data/str/a",
           "protocol": "http",
           "host": [
             "127",
@@ -18,7 +18,7 @@
             "0",
             "1"
           ],
-          "port": "9091",
+          "port": "8080",
           "path": [
             "data",
             "str",
@@ -34,7 +34,7 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:9091/data/str/b",
+          "raw": "http://127.0.0.1:8080/data/str/b",
           "protocol": "http",
           "host": [
             "127",
@@ -42,7 +42,7 @@
             "0",
             "1"
           ],
-          "port": "9091",
+          "port": "8080",
           "path": [
             "data",
             "str",
@@ -58,7 +58,7 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:9091/data/str/c",
+          "raw": "http://127.0.0.1:8080/data/str/c",
           "protocol": "http",
           "host": [
             "127",
@@ -66,11 +66,35 @@
             "0",
             "1"
           ],
-          "port": "9091",
+          "port": "8080",
           "path": [
             "data",
             "str",
             "c"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "data str h",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8080/data/str/h",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8080",
+          "path": [
+            "data",
+            "str",
+            "h"
           ]
         }
       },

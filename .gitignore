@@ -28,6 +28,7 @@
 !paper/
 !paper/paper.bib
 !paper/paper.md
+!paper/paper.pdf
 
 __pycache__
 *.pyc

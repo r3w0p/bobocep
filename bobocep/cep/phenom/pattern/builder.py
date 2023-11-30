@@ -33,7 +33,7 @@ class BoboPatternBuilder:
     A pattern builder.
     """
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, singleton: bool = False):
         """
         :param name: Pattern name.
         """
@@ -42,6 +42,8 @@ class BoboPatternBuilder:
             raise BoboPatternBuilderError(_EXC_NAME_LEN)
 
         self._name: str = name
+        self._singleton: bool = singleton
+
         self._blocks: List[BoboPatternBlock] = []
         self._preconditions: List[BoboPredicate] = []
         self._haltconditions: List[BoboPredicate] = []
@@ -58,7 +60,8 @@ class BoboPatternBuilder:
             name=self._name,
             blocks=self._blocks,
             preconditions=self._preconditions,
-            haltconditions=self._haltconditions
+            haltconditions=self._haltconditions,
+            singleton=self._singleton
         )
 
     @typing.no_type_check

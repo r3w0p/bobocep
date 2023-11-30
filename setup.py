@@ -8,7 +8,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="bobocep",
-    version="1.1.1",
+    version="1.2.0",
     author="r3w0p",
     author_email="rr33ww00pp@gmail.com",
     description="A fault-tolerant Complex Event Processing engine "
@@ -33,6 +33,8 @@ setup(
         "Natural Language :: English",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Topic :: Scientific/Engineering :: Information Analysis",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: System :: Distributed Computing",

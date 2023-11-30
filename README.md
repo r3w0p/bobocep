@@ -12,14 +12,14 @@ https://bobocep.readthedocs.io/)
 https://ko-fi.com/r3w0p)
 <br/>
 
+[![JOSS](https://joss.theoj.org/papers/10.21105/joss.05858/status.svg)](
+https://doi.org/10.21105/joss.05858)
 [![License](https://img.shields.io/github/license/r3w0p/bobocep?color=blue&label=license)](
 https://github.com/r3w0p/bobocep/blob/main/LICENSE/)
 [![PyPI](https://img.shields.io/pypi/v/bobocep?color=blue&label=pypi)](
 https://pypi.org/project/bobocep/)
 [![Python](https://img.shields.io/pypi/pyversions/bobocep?color=blue&label=python)](
 https://pypi.org/project/bobocep/)
-[![Repo Size](https://img.shields.io/github/repo-size/r3w0p/bobocep?label=repo%20size)](
-https://github.com/r3w0p/bobocep/pulse/)
 <br/>
 
 [![Issues](https://img.shields.io/github/issues/r3w0p/bobocep?label=issues)](

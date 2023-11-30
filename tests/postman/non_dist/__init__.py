@@ -3,5 +3,5 @@
 # modified under the terms of the MIT License.
 
 """
-BoboCEP tests.
+Tests of non-distributed BoboCEP using Postman.
 """

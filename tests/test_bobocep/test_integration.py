@@ -3,13 +3,13 @@
 # modified under the terms of the MIT License.
 
 """
-Tests that ensure complex event generation occurs when expected.
-The tests contain typical patterns that may be built by the user
-with the pattern builder.
+Integration tests that ensure complex event generation occurs when expected.
+The tests contain typical patterns that may be built by the user with the
+pattern builder.
 
 This is not an exhaustive list due to the sheer number of possible
-combinations. However, the tests are representative of some of the
-common patterns that are likely to frequently occur.
+combinations. However, the tests are representative of some of the common
+patterns that are likely to frequently occur.
 """
 
 from threading import RLock
@@ -364,6 +364,58 @@ class TestValid:
 
         assert len(engine.decider.all_runs()) == 0
         assert action.counter == 1
+
+    def test_singleton_instantiate_one_run_only(self):
+        pattern_1: BoboPattern = BoboPatternBuilder(
+            "pattern_1", singleton=True) \
+            .followed_by(lambda e, h: int(e.data) == 1) \
+            .followed_by(lambda e, h: int(e.data) == 2) \
+            .followed_by(lambda e, h: int(e.data) == 3) \
+            .generate()
+
+        engine, action = _setup([pattern_1])
+
+        # First run instantiated
+        engine.receiver.add_data(1)
+        engine.update()
+
+        runs = engine.decider.all_runs()
+        assert len(runs) == 1
+        original_run_id = runs[0].run_id
+
+        # Second run not instantiated
+        engine.receiver.add_data(1)
+        engine.update()
+
+        runs = engine.decider.all_runs()
+        assert len(runs) == 1
+        assert runs[0].run_id == original_run_id
+
+    def test_singleton_instantiate_second_run_after_first_completed(self):
+        pattern_1: BoboPattern = BoboPatternBuilder(
+            "pattern_1", singleton=True) \
+            .followed_by(lambda e, h: int(e.data) == 1) \
+            .followed_by(lambda e, h: int(e.data) == 2) \
+            .followed_by(lambda e, h: int(e.data) == 3) \
+            .generate()
+
+        engine, action = _setup([pattern_1])
+
+        # First run completed
+        for i in [1, 2, 1, 3]:
+            engine.receiver.add_data(i)
+            engine.update()
+
+        assert len(engine.decider.all_runs()) == 0
+        assert action.counter == 1
+
+        # Second run completed
+        for i in [1, 2, 1, 3]:
+            engine.receiver.add_data(i)
+            engine.update()
+
+        assert len(engine.decider.all_runs()) == 0
+        assert action.counter == 2
 
 
 class TestInvalid:

@@ -70,7 +70,8 @@ if __name__ == '__main__':
 
     # A simple pattern: "a" followed by "b" followed by "c".
     # Halt on "h".
-    my_pattern: BoboPattern = BoboPatternBuilder("my_pattern") \
+    my_pattern: BoboPattern = BoboPatternBuilder(
+        "pattern_abch_singleton", singleton=True) \
         .followed_by(lambda e, h: str(e.data) == "a") \
         .followed_by(lambda e, h: str(e.data) == "b") \
         .followed_by(lambda e, h: str(e.data) == "c") \
@@ -80,7 +81,7 @@ if __name__ == '__main__':
     # When the pattern is fulfilled, its action, BoboActionCounter,
     # increments its internal counter and prints a message to stdout.
     my_phenomenon = BoboPhenomenon(
-        name="my_phenomenon",
+        name="phenom_abch",
         patterns=[my_pattern],
         action=BoboActionCounter()
     )
@@ -95,14 +96,14 @@ if __name__ == '__main__':
         # This is you.
         BoboDevice(
             addr="127.0.0.1",
-            port=8081,
+            port=7070,
             urn="urn:bobocep:device:1",
             id_key="id_key_device_1"
         ),
         # This is some other BoboCEP instance on the network.
         BoboDevice(
             addr="127.0.0.1",
-            port=8082,
+            port=7071,
             urn="urn:bobocep:device:2",
             id_key="id_key_device_2"
         )

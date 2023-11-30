@@ -49,6 +49,14 @@ being able to **load-balance** data input into the system,
 by simply delegating sensors to different :code:`BoboCEP` instances and
 having them exchange their run changes accordingly.
 
+For Distributed :code:`BoboCEP` to operate correctly, all data in the system
+must be serialisable.
+This can be enforced by using an appropriate validator for the Receiver.
+For example, :code:`BoboValidatorJSONable` ensures that all data are valid
+JSON, and this is the required validator for the
+:code:`BoboSetupSimpleDistributed` setup class.
+See `Examples <examples.html>`_ for how to use this setup class.
+
 
 Recovery Scenarios
 ==================

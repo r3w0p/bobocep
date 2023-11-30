@@ -755,3 +755,489 @@ class TestInvalid:
 
         # Run should not have changed block index
         assert run.block_index == 1
+
+    def test_on_distributed_update_nonexistent_pattern_in_completed(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc_pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4])
+
+        phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc_decider_sub([phenomenon], max_cache=10)
+
+        decider.on_receiver_update(tc_event_simple(data=1))
+        assert decider.update()
+
+        decider.on_receiver_update(tc_event_simple(data=2))
+        assert decider.update()
+
+        # Check that subscriber received updates
+        assert len(subscriber.updated) == 2
+
+        # Only one run should have been generated
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 1
+
+        # Run should be at its second block
+        run = runs[0]
+        assert run.block_index == 2
+
+        completed = [tc_run_tuple(
+            run_id=run.run_id,
+            phenomenon_name=run.phenomenon_name,
+            pattern_name="nonexistent_pattern_name",
+            block_index=3
+        )]
+
+        decider.on_distributed_update(
+            completed=completed,
+            halted=[],
+            updated=[]
+        )
+
+        # Check that subscriber has not received another update
+        assert len(subscriber.updated) == 2
+
+        # Run should not have changed block index
+        assert run.block_index == 2
+
+    def test_on_distributed_update_nonexistent_phenomenon_in_completed(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc_pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4])
+
+        phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc_decider_sub([phenomenon], max_cache=10)
+
+        decider.on_receiver_update(tc_event_simple(data=1))
+        assert decider.update()
+
+        decider.on_receiver_update(tc_event_simple(data=2))
+        assert decider.update()
+
+        # Check that subscriber received updates
+        assert len(subscriber.updated) == 2
+
+        # Only one run should have been generated
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 1
+
+        # Run should be at its second block
+        run = runs[0]
+        assert run.block_index == 2
+
+        completed = [tc_run_tuple(
+            run_id=run.run_id,
+            phenomenon_name="nonexistent_phenomenon_name",
+            pattern_name=run.pattern.name,
+            block_index=3
+        )]
+
+        decider.on_distributed_update(
+            completed=completed,
+            halted=[],
+            updated=[]
+        )
+
+        # Check that subscriber has not received another update
+        assert len(subscriber.updated) == 2
+
+        # Run should not have changed block index
+        assert run.block_index == 2
+
+    def test_on_distributed_update_nonexistent_pattern_in_halted(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc_pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4])
+
+        phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc_decider_sub([phenomenon], max_cache=10)
+
+        decider.on_receiver_update(tc_event_simple(data=1))
+        assert decider.update()
+
+        decider.on_receiver_update(tc_event_simple(data=2))
+        assert decider.update()
+
+        # Check that subscriber received updates
+        assert len(subscriber.updated) == 2
+
+        # Only one run should have been generated
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 1
+
+        # Run should be at its second block
+        run = runs[0]
+        assert run.block_index == 2
+
+        halted = [tc_run_tuple(
+            run_id=run.run_id,
+            phenomenon_name=run.phenomenon_name,
+            pattern_name="nonexistent_pattern_name",
+            block_index=4
+        )]
+
+        decider.on_distributed_update(
+            completed=[],
+            halted=halted,
+            updated=[]
+        )
+
+        # Check that subscriber has not received another update
+        assert len(subscriber.updated) == 2
+
+        # Run should not have changed block index
+        assert run.block_index == 2
+
+    def test_on_distributed_update_nonexistent_phenomenon_in_halted(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc_pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4])
+
+        phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc_decider_sub([phenomenon], max_cache=10)
+
+        decider.on_receiver_update(tc_event_simple(data=1))
+        assert decider.update()
+
+        decider.on_receiver_update(tc_event_simple(data=2))
+        assert decider.update()
+
+        # Check that subscriber received updates
+        assert len(subscriber.updated) == 2
+
+        # Only one run should have been generated
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 1
+
+        # Run should be at its second block
+        run = runs[0]
+        assert run.block_index == 2
+
+        halted = [tc_run_tuple(
+            run_id=run.run_id,
+            phenomenon_name="nonexistent_phenomenon_name",
+            pattern_name=run.pattern.name,
+            block_index=4
+        )]
+
+        decider.on_distributed_update(
+            completed=[],
+            halted=halted,
+            updated=[]
+        )
+
+        # Check that subscriber has not received another update
+        assert len(subscriber.updated) == 2
+
+        # Run should not have changed block index
+        assert run.block_index == 2
+
+    def test_on_distributed_update_singleton_different_run_id_updated(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc_pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4],
+            singleton=True)
+
+        phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc_decider_sub([phenomenon], max_cache=10)
+
+        decider.on_receiver_update(tc_event_simple(data=1))
+        assert decider.update()
+
+        # Check that subscriber received update
+        assert len(subscriber.updated) == 1
+
+        # Only one run should have been generated
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 1
+
+        # Run should be at its first block
+        run = runs[0]
+        assert run.block_index == 1
+
+        updated = [tc_run_tuple(
+            run_id="different_run_id",
+            phenomenon_name=run.phenomenon_name,
+            pattern_name=run.pattern.name,
+            block_index=2
+        )]
+
+        decider.on_distributed_update(
+            completed=[],
+            halted=[],
+            updated=updated
+        )
+
+        # Subscriber should have received second update despite different IDs
+        assert len(subscriber.updated) == 2
+
+        # Local run should have changed to remote's updated block index
+        assert run.block_index == 2
+
+    def test_on_distributed_update_singleton_same_run_id_updated(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc_pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4],
+            singleton=True)
+
+        phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc_decider_sub([phenomenon], max_cache=10)
+
+        decider.on_receiver_update(tc_event_simple(data=1))
+        assert decider.update()
+
+        # Check that subscriber received update
+        assert len(subscriber.updated) == 1
+
+        # Only one run should have been generated
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 1
+
+        # Run should be at its first block
+        run = runs[0]
+        assert run.block_index == 1
+
+        updated = [tc_run_tuple(
+            run_id=run.run_id,
+            phenomenon_name=run.phenomenon_name,
+            pattern_name=run.pattern.name,
+            block_index=2
+        )]
+
+        decider.on_distributed_update(
+            completed=[],
+            halted=[],
+            updated=updated
+        )
+
+        # Subscriber should have received second update despite different IDs
+        assert len(subscriber.updated) == 2
+
+        # Local run should have changed to remote's updated block index
+        assert run.block_index == 2
+
+    def test_on_distributed_update_singleton_different_run_id_completed(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc_pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4],
+            singleton=True)
+
+        phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc_decider_sub([phenomenon], max_cache=10)
+
+        decider.on_receiver_update(tc_event_simple(data=1))
+        assert decider.update()
+
+        decider.on_receiver_update(tc_event_simple(data=2))
+        assert decider.update()
+
+        # Check that subscriber received update
+        assert len(subscriber.updated) == 2
+
+        # Only one run should have been generated
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 1
+
+        # Run should be at its second block
+        run = runs[0]
+        assert run.block_index == 2
+
+        completed = [tc_run_tuple(
+            run_id="different_run_id",
+            phenomenon_name=run.phenomenon_name,
+            pattern_name=run.pattern.name,
+            block_index=3
+        )]
+
+        decider.on_distributed_update(
+            completed=completed,
+            halted=[],
+            updated=[]
+        )
+
+        # Subscriber should have completed run despite different IDs
+        assert len(subscriber.completed) == 1
+
+        # Run should have been removed from active list
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 0
+
+    def test_on_distributed_update_singleton_same_run_id_completed(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc_pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4],
+            singleton=True)
+
+        phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc_decider_sub([phenomenon], max_cache=10)
+
+        decider.on_receiver_update(tc_event_simple(data=1))
+        assert decider.update()
+
+        decider.on_receiver_update(tc_event_simple(data=2))
+        assert decider.update()
+
+        # Check that subscriber received update
+        assert len(subscriber.updated) == 2
+
+        # Only one run should have been generated
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 1
+
+        # Run should be at its second block
+        run = runs[0]
+        assert run.block_index == 2
+
+        completed = [tc_run_tuple(
+            run_id=run.run_id,
+            phenomenon_name=run.phenomenon_name,
+            pattern_name=run.pattern.name,
+            block_index=3
+        )]
+
+        decider.on_distributed_update(
+            completed=completed,
+            halted=[],
+            updated=[]
+        )
+
+        # Subscriber should have completed run despite different IDs
+        assert len(subscriber.completed) == 1
+
+        # Run should have been removed from active list
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 0
+
+    def test_on_distributed_update_singleton_different_run_id_halted(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc_pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4],
+            singleton=True)
+
+        phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc_decider_sub([phenomenon], max_cache=10)
+
+        decider.on_receiver_update(tc_event_simple(data=1))
+        assert decider.update()
+
+        # Check that subscriber received update
+        assert len(subscriber.updated) == 1
+
+        # Only one run should have been generated
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 1
+
+        # Run should be at its second block
+        run = runs[0]
+        assert run.block_index == 1
+
+        halted = [tc_run_tuple(
+            run_id="different_run_id",
+            phenomenon_name=run.phenomenon_name,
+            pattern_name=run.pattern.name,
+        )]
+
+        decider.on_distributed_update(
+            completed=[],
+            halted=halted,
+            updated=[]
+        )
+
+        # Subscriber should have halted run despite different IDs
+        assert len(subscriber.halted) == 1
+
+        # Run should have been removed from active list
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 0
+
+    def test_on_distributed_update_singleton_same_run_id_halted(self):
+        pattern_name = "pattern"
+        phenom_name = "phenom"
+
+        pattern = tc_pattern(
+            name=pattern_name,
+            data_blocks=[1, 2, 3],
+            data_halts=[4],
+            singleton=True)
+
+        phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
+
+        decider, subscriber = tc_decider_sub([phenomenon], max_cache=10)
+
+        decider.on_receiver_update(tc_event_simple(data=1))
+        assert decider.update()
+
+        # Check that subscriber received update
+        assert len(subscriber.updated) == 1
+
+        # Only one run should have been generated
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 1
+
+        # Run should be at its second block
+        run = runs[0]
+        assert run.block_index == 1
+
+        halted = [tc_run_tuple(
+            run_id=run.run_id,
+            phenomenon_name=run.phenomenon_name,
+            pattern_name=run.pattern.name,
+        )]
+
+        decider.on_distributed_update(
+            completed=[],
+            halted=halted,
+            updated=[]
+        )
+
+        # Subscriber should have halted run despite different IDs
+        assert len(subscriber.halted) == 1
+
+        # Run should have been removed from active list
+        runs = decider.runs_from(phenom_name, pattern_name)
+        assert len(runs) == 0

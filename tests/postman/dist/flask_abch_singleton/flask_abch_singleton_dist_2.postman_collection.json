@@ -1,16 +1,16 @@
 {
   "info": {
-    "name": "dist_2_def",
+    "name": "flask_abch_singleton_dist_2",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "data str d",
+      "name": "data str a",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:9092/data/str/d",
+          "raw": "http://127.0.0.1:8081/data/str/a",
           "protocol": "http",
           "host": [
             "127",
@@ -18,23 +18,23 @@
             "0",
             "1"
           ],
-          "port": "9092",
+          "port": "8081",
           "path": [
             "data",
             "str",
-            "d"
+            "a"
           ]
         }
       },
       "response": []
     },
     {
-      "name": "data str e",
+      "name": "data str b",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:9092/data/str/e",
+          "raw": "http://127.0.0.1:8081/data/str/b",
           "protocol": "http",
           "host": [
             "127",
@@ -42,23 +42,23 @@
             "0",
             "1"
           ],
-          "port": "9092",
+          "port": "8081",
           "path": [
             "data",
             "str",
-            "e"
+            "b"
           ]
         }
       },
       "response": []
     },
     {
-      "name": "data str f",
+      "name": "data str c",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:9092/data/str/f",
+          "raw": "http://127.0.0.1:8081/data/str/c",
           "protocol": "http",
           "host": [
             "127",
@@ -66,11 +66,35 @@
             "0",
             "1"
           ],
-          "port": "9092",
+          "port": "8081",
           "path": [
             "data",
             "str",
-            "f"
+            "c"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "data str h",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8081/data/str/h",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8081",
+          "path": [
+            "data",
+            "str",
+            "h"
           ]
         }
       },
