@@ -8,6 +8,6 @@ Top-level package for BoboCEP.
 
 __author__ = """r3w0p"""
 __email__ = "rr33ww00pp@gmail.com"
-__version__ = "1.1.1"
+__version__ = "1.2.0"
 
 from bobocep.bobocep import BoboError, BoboJSONable, BoboJSONableError
