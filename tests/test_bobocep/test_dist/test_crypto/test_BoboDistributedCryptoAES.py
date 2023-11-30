@@ -10,6 +10,21 @@ from bobocep.dist.crypto.crypto import BoboDistributedCryptoError
 
 class TestValid:
 
+    def test_end_bytes(self):
+        crypto = BoboDistributedCryptoAES(aes_key="1234567890123456")
+
+        assert crypto.end_bytes() == "BOBO".encode("UTF-8")
+
+    def test_min_length(self):
+        crypto = BoboDistributedCryptoAES(aes_key="1234567890123456")
+
+        assert crypto.min_length() == (
+                16 +  # pad modulo
+                16 +  # nonce length default
+                16 +  # mac length default
+                len("BOBO".encode("UTF-8"))  # length end bytes
+        )
+
     def test_encrypt_aes_key_16(self):
         crypto = BoboDistributedCryptoAES(aes_key="1234567890123456")
 

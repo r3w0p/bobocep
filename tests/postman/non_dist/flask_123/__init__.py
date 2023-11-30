@@ -3,5 +3,6 @@
 # modified under the terms of the MIT License.
 
 """
-A test using non-distributed BoboCEP with Postman and Flask.
+A simple test that consumes integers via a Flask interface to satisfy a basic
+pattern: 1, followed by 2, followed by 3.
 """

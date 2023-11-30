@@ -21,7 +21,7 @@ engine: BoboEngine
 
 
 # A Flask interface that enables string data to be passed via a GET request.
-# For example: 127.0.0.1:9090/data/int/hello
+# For example: 127.0.0.1:8081/data/int/hello
 @app.route("/data/str/<my_str>", methods=['GET'])
 def data_str(my_str):
     global engine
