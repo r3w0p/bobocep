@@ -5,6 +5,7 @@ Flask==2.3.3
 interrogate==1.5.0
 mypy==1.5.1
 pytest==7.4.2
+setuptools==70.1.1
 sphinx==5.0.0
 sphinx-mdinclude==0.5.3
 sphinx-rtd-theme==1.1.1
