@@ -45,7 +45,7 @@ jobs:
       - name: Code coverage with coverage and pytest
         run: |
           coverage run -m pytest tests
-          coverage report --fail-under=98
+          coverage report --fail-under=100
 
       - name: Upload coverage reports to Codecov
         if: matrix.os == 'ubuntu-latest'

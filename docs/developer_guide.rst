@@ -62,12 +62,16 @@ Run the following command to test :code:`BoboCEP`.
     coverage run -m pytest tests
 
 The coverage configuration can be found in :code:`.coveragerc`.
-GitHub Actions additionally enforces a minimum coverage of 98%.
+GitHub Actions additionally enforces a minimum coverage of 100%.
 You can check that this requirement has been satisfied using the following.
 
 .. code::
 
-    coverage report --fail-under=98
+    coverage report --fail-under=100
+
+.. note::
+    If you are unable to achieve 100% coverage with your code contribution,
+    you can omit code from testing in :code:`.coveragerc`.
 
 You can locally inspect the code coverage with an HTML output by running
 the following.
