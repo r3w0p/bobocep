@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.abspath('..'))
 project = "BoboCEP"
 copyright = "2019-2024 r3w0p"
 author = "r3w0p"
-version = "1.2.1"
+version = "1.2.2"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
