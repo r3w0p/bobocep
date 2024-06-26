@@ -1,5 +1,6 @@
+---------
 Phenomena
-*********
+---------
 
 A data stream contains uncorrelated, simple events, e.g. sensor data on a
 room's temperature at a given point in time.

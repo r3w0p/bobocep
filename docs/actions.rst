@@ -1,5 +1,6 @@
+-------
 Actions
-*******
+-------
 
 On the completion of a pattern's run, the Producer is notified and
 produces a complex event in response, which represents the detection

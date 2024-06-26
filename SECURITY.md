@@ -1,11 +1,11 @@
 # Security Policy
 
-> _Last updated: 2023-11-23_
+> _Last updated: 2024-06-26_
 
 
 ## Supported Versions
 
-Below are the versions that are tested for support.
+Below are the versions that have been tested for support.
 
 
 ### Python
@@ -32,5 +32,9 @@ from GitHub Actions Virtual Environments.
 
 ## Reporting a Vulnerability
 
-Please report vulnerabilities using the contact information
+Report general bugs using
+the [Issues](https://github.com/r3w0p/bobocep/issues) system.
+
+For more sensitive vulnerabilities, please report them using
+the contact information
 [here](https://r3w0p.github.io/contact/).

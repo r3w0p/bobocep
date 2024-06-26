@@ -1,5 +1,6 @@
+-----------
 Source Code
-***********
+-----------
 
 Explore the :code:`BoboCEP` source code below by clicking through
 the modules.
