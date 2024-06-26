@@ -7,7 +7,7 @@ on:
     tags-ignore:
       - '**'
   schedule:
-    # At 06:00 on Monday.
+    # At 06:00 on Monday morning
     - cron: '0 6 * * 1'
 
 jobs:

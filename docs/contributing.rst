@@ -1,5 +1,6 @@
+------------
 Contributing
-************
+------------
 
 If you would like to contribute to the :code:`BoboCEP` project, please consult
 the `CONTRIBUTING.md <https://github.com/r3w0p/bobocep/blob/main/CONTRIBUTING.md>`_

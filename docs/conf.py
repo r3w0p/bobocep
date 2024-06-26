@@ -14,9 +14,9 @@ sys.path.insert(0, os.path.abspath('..'))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "BoboCEP"
-copyright = "2019-2023 r3w0p"
+copyright = "2019-2024 r3w0p"
 author = "r3w0p"
-version = "1.2.0"
+version = "1.2.1"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
