@@ -28,7 +28,6 @@ https://doi.org/10.21105/joss.05858)
 https://ko-fi.com/r3w0p)
 <br/>
 
-
 `BoboCEP` is a [Complex Event Processing](https://en.wikipedia.org/wiki/Complex_event_processing) (CEP) engine
 designed for [edge computing](https://en.wikipedia.org/wiki/Edge_computing) in
 [Internet of Things](https://en.wikipedia.org/wiki/Internet_of_things) (IoT) systems
@@ -37,10 +36,16 @@ It provides [fault tolerance](https://en.wikipedia.org/wiki/Fault_tolerance) (FT
 [active replication](https://en.wikipedia.org/wiki/Replication_(computing)) of
 partially-completed complex events across multiple instances of the software.
 
-
 ## License
 
-`BoboCEP` is open source, as per the
+It is an open source project, as per the
 [Open Source Definition](https://opensource.org/osd).
-The code in this repository can be redistributed and/or modified under the terms of the 
+The [source code](https://github.com/r3w0p/bobocep)
+can be redistributed and/or modified under the terms of the 
 [MIT License](https://github.com/r3w0p/bobocep/blob/main/LICENSE).
+
+## Documentation
+
+Documentation is hosted by [Read the Docs](https://bobocep.readthedocs.io),
+which also provides a
+[PDF version](https://bobocep.readthedocs.io/_/downloads/en/latest/pdf/).

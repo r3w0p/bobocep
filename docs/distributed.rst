@@ -1,6 +1,6 @@
------------
+===========
 Distributed
------------
+===========
 
 :code:`BoboCEP` is able to be distributed over multiple devices for
 fault-tolerant CEP at the network edge.
