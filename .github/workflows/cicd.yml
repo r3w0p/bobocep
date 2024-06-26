@@ -46,16 +46,16 @@ jobs:
           coverage run -m pytest tests
           coverage report --fail-under=100
 
-      - name: Documentation coverage with interrogate
-        run: |
-          interrogate -vv bobocep --fail-under 100
-
       - name: Upload coverage reports to Codecov
-        if: matrix.os == 'ubuntu-latest'
+        if: ${{ (matrix.os == 'ubuntu-latest') && (matrix.python-version == '3.9') }}
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
+
+      - name: Documentation coverage with interrogate
+        run: |
+          interrogate -vv bobocep --fail-under 100
 
   cd:
     name: CD
