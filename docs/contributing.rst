@@ -1,6 +1,6 @@
-------------
+============
 Contributing
-------------
+============
 
 If you would like to contribute to the :code:`BoboCEP` project, please consult
 the `CONTRIBUTING.md <https://github.com/r3w0p/bobocep/blob/main/CONTRIBUTING.md>`_
@@ -14,8 +14,4 @@ Here are other ways through which you can contribute.
 * `Report any security vulnerabilities <https://github.com/r3w0p/bobocep/security/policy>`_
   that you become aware of.
 
-* Donate to the project via the following.
-
-.. image:: https://ko-fi.com/img/githubbutton_sm.svg
-   :alt: Ko-fi
-   :target: https://ko-fi.com/r3w0p
+* Donate to the project via `Ko-fi <https://ko-fi.com/r3w0p>`_.
