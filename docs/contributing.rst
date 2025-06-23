@@ -13,5 +13,3 @@ Here are other ways through which you can contribute.
 
 * `Report any security vulnerabilities <https://github.com/r3w0p/bobocep/security/policy>`_
   that you become aware of.
-
-* Donate to the project via `Ko-fi <https://ko-fi.com/r3w0p>`_.

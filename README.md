@@ -24,8 +24,6 @@ https://app.fossa.com/projects/git%2Bgithub.com%2Fr3w0p%2Fbobocep?ref=badge_shie
 
 [![JOSS](https://img.shields.io/badge/10.21105/joss.05858-red?label=JOSS)](
 https://doi.org/10.21105/joss.05858)
-[![Donate](https://img.shields.io/badge/ko--fi-red?label=donate)](
-https://ko-fi.com/r3w0p)
 <br/>
 
 `BoboCEP` is a [Complex Event Processing](https://en.wikipedia.org/wiki/Complex_event_processing) (CEP) engine

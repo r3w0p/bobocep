@@ -57,3 +57,41 @@ jobs:
       - name: Documentation coverage with interrogate
         run: |
           interrogate -vv bobocep --fail-under 100
+
+  cd:
+    name: CD
+    needs: ci
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ "3.9" ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install pypa/build
+        run: >-
+          python -m
+          pip install
+          build
+          --user
+
+      - name: Build binary wheel and source tarball
+        run: >-
+          python -m
+          build
+          --sdist
+          --wheel
+          --outdir dist/
+
+      - name: Publish to PyPI Test
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_TEST_TOKEN }}
+          repository-url: https://test.pypi.org/legacy/
