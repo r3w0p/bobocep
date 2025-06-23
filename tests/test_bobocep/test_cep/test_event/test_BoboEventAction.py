@@ -28,13 +28,6 @@ class TestValid:
         assert event_original.action_name == event_new.action_name
         assert event_original.success == event_new.success
 
-    def test_cast_str_to_int(self):
-        event = tc_event_action(data="123")
-        assert type(event.data) == str
-
-        event_cast = event.cast(int)
-        assert type(event_cast.data) == int
-
 
 class TestInvalid:
 

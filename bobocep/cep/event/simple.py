@@ -33,18 +33,6 @@ class BoboEventSimple(BoboEvent):
             timestamp=timestamp,
             data=data)
 
-    def cast(self, dtype: type) -> 'BoboEventSimple':
-        """
-        :param dtype: The type to which the event's data is cast.
-        :return: A new BoboEventSimple instance with its data cast to `dtype`
-            and all other properties identical to the original event.
-        """
-        return BoboEventSimple(
-            event_id=self._event_id,
-            timestamp=self._timestamp,
-            data=dtype(self._data)
-        )
-
     def to_json_dict(self) -> dict:
         """
         :return: A JSON `dict` representation of the event.

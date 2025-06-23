@@ -34,18 +34,6 @@ class BoboValidator(ABC):
         """
 
 
-class BoboValidatorAll(BoboValidator):
-    """
-    Validator that accepts all data.
-    """
-
-    def is_valid(self, data: Any) -> bool:
-        """
-        :return: Always returns `True`.
-        """
-        return True
-
-
 class BoboValidatorJSONable(BoboValidator):
     """
     Validates whether the data type is JSONable. If the data are a

@@ -40,10 +40,10 @@ class BoboReceiver(BoboEngineTask,
     """
 
     def __init__(self,
-                 validator: BoboValidator,
                  gen_event_id: BoboGenEventID,
                  gen_timestamp: BoboGenTimestamp,
                  gen_event: Optional[BoboGenEvent] = None,
+                 validator: Optional[BoboValidator] = None,
                  max_size: int = 0):
         """
         :param validator: Incoming data validator.
@@ -59,10 +59,11 @@ class BoboReceiver(BoboEngineTask,
         self._closed: bool = False
         self._subscribers: List[BoboReceiverSubscriber] = []
 
-        self._validator: BoboValidator = validator
         self._gen_event_id: BoboGenEventID = gen_event_id
         self._gen_timestamp: BoboGenTimestamp = gen_timestamp
         self._gen_event: Optional[BoboGenEvent] = gen_event
+
+        self._validator: Optional[BoboValidator] = validator
 
         self._max_size: int = max(0, max_size)
         self._queue: Queue[Any] = Queue(self._max_size)
@@ -85,6 +86,12 @@ class BoboReceiver(BoboEngineTask,
             if self._closed:
                 return
 
+            if (
+                    self._validator is not None and
+                    not self._validator.is_valid(data)
+            ):
+                return None
+
             if not self._queue.full():
                 self._queue.put(data)
             else:
@@ -95,9 +102,6 @@ class BoboReceiver(BoboEngineTask,
         """
         :param data: Data to process.
         """
-        if not self._validator.is_valid(data):
-            return None
-
         if isinstance(data, BoboEvent):
             event = data
         else:

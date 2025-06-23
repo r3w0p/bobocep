@@ -60,21 +60,6 @@ class BoboEventComplex(BoboEvent):
         self._pattern_name: str = pattern_name
         self._history: BoboHistory = history
 
-    def cast(self, dtype: type) -> 'BoboEventComplex':
-        """
-        :param dtype: The type to which the event's data is cast.
-        :return: A new BoboEventComplex instance with its data cast to `dtype`
-            and all other properties identical to the original event.
-        """
-        return BoboEventComplex(
-            event_id=self._event_id,
-            timestamp=self._timestamp,
-            data=dtype(self._data),
-            phenomenon_name=self._phenomenon_name,
-            pattern_name=self._pattern_name,
-            history=self._history
-        )
-
     @property
     def phenomenon_name(self) -> str:
         """

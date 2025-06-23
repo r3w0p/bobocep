@@ -69,22 +69,6 @@ class BoboEventAction(BoboEvent):
         self._action_name: str = action_name
         self._success: bool = success
 
-    def cast(self, dtype: type) -> 'BoboEventAction':
-        """
-        :param dtype: The type to which the event's data is cast.
-        :return: A new BoboEventAction instance with its data cast to `dtype`
-            and all other properties identical to the original event.
-        """
-        return BoboEventAction(
-            event_id=self._event_id,
-            timestamp=self._timestamp,
-            data=dtype(self._data),
-            phenomenon_name=self._phenomenon_name,
-            pattern_name=self._pattern_name,
-            action_name=self._action_name,
-            success=self._success
-        )
-
     @property
     def phenomenon_name(self) -> str:
         """

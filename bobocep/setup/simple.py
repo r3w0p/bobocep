@@ -15,7 +15,7 @@ from bobocep.cep.engine.forwarder.forwarder import BoboForwarder
 from bobocep.cep.engine.producer.producer import BoboProducer
 from bobocep.cep.engine.receiver.receiver import BoboReceiver
 from bobocep.cep.engine.receiver.validator import BoboValidator, \
-    BoboValidatorAll, BoboValidatorJSONable
+    BoboValidatorJSONable
 from bobocep.cep.gen.event import BoboGenEvent
 from bobocep.cep.gen.event_id import BoboGenEventIDUnique
 from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
@@ -41,7 +41,7 @@ class BoboSetupSimple(BoboSetup):
         :param phenomena: A list of phenomena.
         :param handler: An action handler.
         :param validator: A data validator for the engine's Receiver task.
-            Default: BoboValidatorAll.
+            Default: None.
         :param gen_event: An event generator.
             Default: None.
         :param urn: A URN for ID generation.
@@ -49,8 +49,7 @@ class BoboSetupSimple(BoboSetup):
         super().__init__()
 
         self._phenomena: List[BoboPhenomenon] = phenomena
-        self._validator: BoboValidator = validator \
-            if validator is not None else BoboValidatorAll()
+        self._validator: BoboValidator = validator
         self._handler: BoboActionHandler = handler
         self._gen_event: Optional[BoboGenEvent] = gen_event
         self._urn: Optional[str] = urn

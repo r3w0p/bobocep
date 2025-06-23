@@ -20,10 +20,3 @@ class TestValid:
         assert event_original.event_id == event_new.event_id
         assert event_original.timestamp == event_new.timestamp
         assert event_original.data == event_new.data
-
-    def test_cast_str_to_int(self):
-        event = tc_event_simple(data="123")
-        assert type(event.data) == str
-
-        event_cast = event.cast(int)
-        assert type(event_cast.data) == int

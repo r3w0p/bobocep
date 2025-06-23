@@ -51,14 +51,6 @@ class BoboEvent(BoboJSONable, ABC):
         self._timestamp: int = timestamp
         self._data: Any = data
 
-    @abstractmethod
-    def cast(self, dtype: type) -> 'BoboEvent':
-        """
-        :param dtype: The type to which the event's data is cast.
-        :return: A new BoboEvent instance with its data cast to `dtype`
-            and all other properties identical to the original event.
-        """
-
     @property
     def event_id(self) -> str:
         """

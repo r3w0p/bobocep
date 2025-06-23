@@ -6,8 +6,7 @@ from typing import Optional, List, Any
 
 from bobocep.cep.engine.receiver.pubsub import BoboReceiverSubscriber
 from bobocep.cep.engine.receiver.receiver import BoboReceiver
-from bobocep.cep.engine.receiver.validator import BoboValidator, \
-    BoboValidatorAll
+from bobocep.cep.engine.receiver.validator import BoboValidator
 from bobocep.cep.event import BoboEvent
 from bobocep.cep.gen.event import BoboGenEvent, BoboGenEventNone
 from bobocep.cep.gen.event_id import BoboGenEventID, BoboGenEventIDUnique
@@ -29,8 +28,7 @@ def tc_receiver_sub(
         event_gen: Optional[BoboGenEvent] = None,
         max_size: int = 255):
     receiver = BoboReceiver(
-        validator=validator if validator is not None else
-        BoboValidatorAll(),
+        validator=validator,
         gen_event_id=event_id_gen if event_id_gen is not None else
         BoboGenEventIDUnique(),
         gen_timestamp=BoboGenTimestampEpoch(),

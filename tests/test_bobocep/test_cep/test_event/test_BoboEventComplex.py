@@ -29,13 +29,6 @@ class TestValid:
         assert isinstance(event_original.history, BoboHistory)
         assert event_original.history.all_events == event_new.history.all_events
 
-    def test_cast_str_to_int(self):
-        event = tc_event_complex(data="123")
-        assert type(event.data) == str
-
-        event_cast = event.cast(int)
-        assert type(event_cast.data) == int
-
 
 class TestInvalid:
 
