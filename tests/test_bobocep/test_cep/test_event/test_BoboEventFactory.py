@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 
 from json import dumps
-from typing import Any, Tuple, List
+from typing import Any, List
 
 import pytest
 
