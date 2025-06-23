@@ -568,6 +568,7 @@ class BoboDistributedTCP(BoboDistributed,
 
         finally:
             s.close()
+            return 0
 
     def _tcp_incoming(self) -> None:
         """

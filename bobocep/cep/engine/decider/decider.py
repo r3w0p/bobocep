@@ -419,12 +419,12 @@ class BoboDecider(BoboEngineTask,
                     return pattern
         return None
 
-    def phenomena(self) -> Tuple[BoboPhenomenon, ...]:
+    def phenomena(self) -> List[BoboPhenomenon]:
         """
         :return: All phenomena under consideration by the decider.
         """
         with self._lock:
-            return tuple(self._phenomena.values())
+            return [*self._phenomena.values()]
 
     def all_runs(self) -> Tuple[BoboRun, ...]:
         """
@@ -440,7 +440,7 @@ class BoboDecider(BoboEngineTask,
 
     def runs_from(self,
                   phenomenon_name: str,
-                  pattern_name: str) -> Tuple[BoboRun, ...]:
+                  pattern_name: str) -> List[BoboRun]:
         """
         :param phenomenon_name: A phenomenon name.
         :param pattern_name: A pattern name.
@@ -452,9 +452,10 @@ class BoboDecider(BoboEngineTask,
                     phenomenon_name in self._runs and
                     pattern_name in self._runs[phenomenon_name]
             ):
-                return tuple(
-                    self._runs[phenomenon_name][pattern_name].values())
-            return tuple()
+                return [
+                    *self._runs[phenomenon_name][pattern_name].values()
+                ]
+            return []
 
     def run_at(self,
                phenomenon_name: str,

@@ -7,7 +7,7 @@ Event history.
 """
 
 from json import dumps, loads
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 from bobocep.bobocep import BoboJSONable
 from bobocep.cep.event.event import BoboEvent
@@ -31,12 +31,12 @@ class BoboHistory(BoboJSONable):
         self._last: Optional[BoboEvent] = None
 
         if events is not None:
-            for name, event_list in events.items():
+            for group, event_list in events.items():
                 for event in event_list:
-                    if name not in self._events:
-                        self._events[name] = []
+                    if group not in self._events:
+                        self._events[group] = []
 
-                    self._events[name].append(event)
+                    self._events[group].append(event)
 
                     if self._first is None or \
                             event.timestamp < self._first.timestamp:
@@ -46,20 +46,70 @@ class BoboHistory(BoboJSONable):
                             event.timestamp > self._last.timestamp:
                         self._last = event
 
+    def events(self, group: str) -> List[BoboEvent]:
+        """
+        :param group: A group name.
+        :return: The history events associated with `group`.
+        """
+        if group in self._events:
+            return [*self._events[group]]
+        else:
+            return []
+
     @property
-    def events(self) -> Dict[str, List[BoboEvent]]:
+    def all_events(self) -> List[BoboEvent]:
         """
-        :return: All history events, indexed by group.
+        :return: All events in the history.
         """
-        eventscopy: Dict[str, List[BoboEvent]] = {}
+        all_events = []
 
-        for grp in self._events.keys():
-            if grp not in eventscopy:
-                eventscopy[grp] = []
+        for group in self._events:
+            all_events += self._events[group]
 
-            eventscopy[grp] = [eve for eve in self._events[grp]]
+        return all_events
 
-        return eventscopy
+    @property
+    def all_groups(self) -> List[str]:
+        """
+        :return: All groups in the history.
+        """
+        return [*self._events]
+
+    @property
+    def first(self) -> Optional[BoboEvent]:
+        """
+        :return: The BoboEvent with the oldest timestamp.
+        """
+        return self._first
+
+    @property
+    def last(self) -> Optional[BoboEvent]:
+        """
+        :return: The BoboEvent with the most recent timestamp.
+        """
+        return self._last
+
+    def add(self, group: str, event: BoboEvent) -> 'BoboHistory':
+        """
+        :param group: A group name.
+        :param event: The event to add.
+
+        :return: A new BoboHistory instance with `event` in `group`.
+        """
+        new_events: Dict[str, List[BoboEvent]] = {}
+
+        # Copy events from existing history
+        for g in self._events:
+            new_events[g] = [*self._events[g]]
+
+        # Add in new event (and group if new)
+        if group not in new_events:
+            new_events[group] = []
+
+        new_events[group].append(event)
+
+        # Create new history
+        return BoboHistory(events=new_events)
 
     def size(self) -> int:
         """
@@ -67,49 +117,10 @@ class BoboHistory(BoboJSONable):
         """
         count = 0
 
-        for grp in self._events.keys():
-            count += len(self._events[grp])
+        for group in self._events:
+            count += len(self._events[group])
 
         return count
-
-    def all_groups(self) -> Tuple[str, ...]:
-        """
-        :return: All history groups in a tuple.
-        """
-        return tuple(self._events.keys())
-
-    def all_events(self) -> Tuple[BoboEvent, ...]:
-        """
-        :return: All history events in a tuple.
-        """
-        all_events = []
-        for grp in self._events.keys():
-            all_events += self._events[grp]
-        return tuple(all_events)
-
-    def group(self, group: str) -> Tuple[BoboEvent, ...]:
-        """
-        :param group: A group name.
-        :return: The BoboEvent instances associated with `group`.
-        """
-        if group in self._events:
-            return tuple(self._events[group])
-        else:
-            return tuple()
-
-    def first(self) -> Optional[BoboEvent]:
-        """
-        :return: The BoboEvent with the oldest timestamp,
-            if there is at least one BoboEvent in the history.
-        """
-        return self._first
-
-    def last(self) -> Optional[BoboEvent]:
-        """
-        :return: The BoboEvent with the most recent timestamp,
-            if there is at least one BoboEvent in the history.
-        """
-        return self._last
 
     def to_json_dict(self) -> dict:
         """
@@ -117,8 +128,8 @@ class BoboHistory(BoboJSONable):
         """
         d: Dict[str, List[BoboEvent]] = {}
 
-        for key in self._events:
-            d[key] = [e for e in self._events[key]]
+        for group in self._events:
+            d[group] = [*self._events[group]]
 
         return d
 

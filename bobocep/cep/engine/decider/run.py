@@ -7,7 +7,7 @@ A run.
 """
 
 from threading import RLock
-from typing import Dict, Tuple, List
+from typing import Tuple
 
 from bobocep import BoboError
 from bobocep.cep.engine.decider.runserial import BoboRunSerial
@@ -213,7 +213,7 @@ class BoboRun:
         match = self._is_match(event, block.predicates)
 
         if match:
-            self._add_event(event, block)
+            self._history = self._history.add(block.group, event)
             return True
         else:
             # Looping block can be neither negated nor optional.
@@ -294,20 +294,6 @@ class BoboRun:
         return any(predicate.evaluate(event, self._history)
                    for predicate in predicates)
 
-    def _add_event(self, event: BoboEvent, block: BoboPatternBlock) -> None:
-        """
-        :param event: Event to add to history.
-        :param block: Block to determine which group to add event to
-            in the history.
-        """
-        newevents: Dict[str, List[BoboEvent]] = self._history.events
-
-        if block.group not in newevents:
-            newevents[block.group] = []
-
-        newevents[block.group].append(event)
-        self._history = BoboHistory(events=newevents)
-
     def _move_forward(self,
                       event: BoboEvent,
                       block: BoboPatternBlock,
@@ -319,6 +305,6 @@ class BoboRun:
         :param block: A block.
         :param temp_index: Temporary index used during processing.
         """
-        self._add_event(event, block)
+        self._history = self._history.add(block.group, event)
         self._block_index = temp_index + 1
         self._halted = self.is_complete()

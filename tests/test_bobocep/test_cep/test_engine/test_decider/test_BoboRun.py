@@ -29,7 +29,7 @@ class TestValid:
         assert run.pattern == pattern
         assert run.block_index == 1
         assert run.history().size() == 1
-        assert run.history().all_events()[0].event_id == "event_id"
+        assert run.history().all_events[0].event_id == "event_id"
         assert run.is_halted() is False
 
     def test_set_block(self):
@@ -45,7 +45,7 @@ class TestValid:
 
         assert run.block_index == 1
         assert run.history().size() == 1
-        assert run.history().all_events()[0].event_id == event_a.event_id
+        assert run.history().all_events[0].event_id == event_a.event_id
         assert run.is_halted() is False
 
         run.set_block(2, BoboHistory({
@@ -55,8 +55,8 @@ class TestValid:
 
         assert run.block_index == 2
         assert run.history().size() == 2
-        assert run.history().all_events()[0].event_id == event_a.event_id
-        assert run.history().all_events()[1].event_id == event_b.event_id
+        assert run.history().all_events[0].event_id == event_a.event_id
+        assert run.history().all_events[1].event_id == event_b.event_id
         assert run.is_halted() is False
 
     def test_pattern_1_block_halt_complete_on_init(self):
@@ -421,11 +421,11 @@ class TestValid:
 
         history = run.history()
 
-        group_a = history.group("group_a")
+        group_a = history.events("group_a")
         assert len(group_a) == 1
         assert group_a[0].event_id == event_a.event_id
 
-        group_b = history.group("group_b")
+        group_b = history.events("group_b")
         assert len(group_b) == 1
         assert group_b[0].event_id == event_b.event_id
 

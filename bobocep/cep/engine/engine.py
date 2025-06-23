@@ -181,7 +181,7 @@ class BoboEngine:
                     while task.update():
                         pass
                 else:
-                    for i in range(times):
+                    for _ in range(times):
                         if not task.update() and self._early_stop:
                             break
 

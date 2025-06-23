@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 
 from json import dumps
-from typing import Any, Tuple
+from typing import Any, Tuple, List
 
 import pytest
 
@@ -78,7 +78,7 @@ class TestValid:
         assert event.pattern_name == pattern_name
         assert isinstance(event.history, BoboHistory)
 
-        group: Tuple[BoboEvent, ...] = event.history.group(group_history)
+        group: List[BoboEvent] = event.history.events(group_history)
         assert len(group) == 1
         assert isinstance(group[0], BoboEventSimple)
         assert group[0].event_id == event_history.event_id

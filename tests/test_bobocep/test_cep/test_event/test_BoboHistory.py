@@ -26,8 +26,8 @@ class TestValid:
         json_history = history_original.to_json_str()
         history_new = BoboHistory.from_json_str(json_history)
 
-        f_ori = history_original.first()
-        f_new = history_new.first()
+        f_ori = history_original.first
+        f_new = history_new.first
 
         assert f_ori is not None
         assert f_new is not None
@@ -35,8 +35,8 @@ class TestValid:
         assert f_ori.timestamp == f_new.timestamp
         assert f_ori.data == f_new.data
 
-        l_ori = history_original.last()
-        l_new = history_new.last()
+        l_ori = history_original.last
+        l_new = history_new.last
 
         assert l_ori is not None
         assert l_new is not None
@@ -44,8 +44,8 @@ class TestValid:
         assert l_ori.timestamp == l_new.timestamp
         assert l_ori.data == l_new.data
 
-        g_ori = history_original.group(group_original)
-        g_new = history_new.group(group_original)
+        g_ori = history_original.events(group_original)
+        g_new = history_new.events(group_original)
 
         assert len(g_ori) == 1
         assert len(g_new) == 1
@@ -53,8 +53,8 @@ class TestValid:
         assert g_ori[0].timestamp == g_new[0].timestamp
         assert g_ori[0].data == g_new[0].data
 
-        all_ori = history_original.all_events()
-        all_new = history_new.all_events()
+        all_ori = history_original.all_events
+        all_new = history_new.all_events
 
         assert len(all_ori) == 1
         assert len(all_new) == 1
@@ -65,9 +65,9 @@ class TestValid:
     def test_empty_history(self):
         history = BoboHistory(events={})
 
-        assert history.all_events() == tuple()
-        assert history.first() is None
-        assert history.last() is None
+        assert len(history.all_events) == 0
+        assert history.first is None
+        assert history.last is None
 
     def test_1_group_1_event(self):
         group = "group"
@@ -77,10 +77,10 @@ class TestValid:
 
         history = BoboHistory(events={group: [event]})
 
-        assert history.all_events() == (event,)
-        assert history.group(group=group) == (event,)
-        assert history.first() == event
-        assert history.last() == event
+        assert history.all_events == [event]
+        assert history.events(group=group) == [event]
+        assert history.first == event
+        assert history.last == event
 
     def test_first_last_2_groups_2_events(self):
         timegen = BoboGenTimestampEpoch()
@@ -98,10 +98,10 @@ class TestValid:
             group_high: [event_high]
         })
 
-        assert history.first() == event_low
-        assert history.last() == event_high
+        assert history.first == event_low
+        assert history.last == event_high
 
     def test_group_name_that_does_not_exist(self):
         history = BoboHistory(events={})
 
-        assert history.group(group="group") == tuple()
+        assert len(history.events(group="group")) == 0

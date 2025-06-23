@@ -28,8 +28,8 @@ class TestValid:
         assert runserial.pattern_name == "pattern_name"
         assert runserial.block_index == 1
         assert runserial.history.size() == 1
-        assert runserial.history.all_groups()[0] == "pattern_group"
-        assert runserial.history.all_events()[0].event_id == "event_id"
+        assert runserial.history.all_groups[0] == "pattern_group"
+        assert runserial.history.all_events[0].event_id == "event_id"
 
     def test_to_json_str_to_instance(self):
         run_id = "run_id"
@@ -59,11 +59,11 @@ class TestValid:
         assert rs_fromstr.pattern_name == rs.pattern_name
         assert rs_fromstr.block_index == rs.block_index
 
-        h_groups = rs_fromstr.history.all_groups()
+        h_groups = rs_fromstr.history.all_groups
         assert len(h_groups) == 1
         assert h_groups[0] == pattern_group
 
-        h_events = rs_fromstr.history.all_events()
+        h_events = rs_fromstr.history.all_events
         assert len(h_events) == 1
         assert h_events[0].event_id == event_id
 
@@ -95,11 +95,11 @@ class TestValid:
         assert rs_fromstr.pattern_name == rs.pattern_name
         assert rs_fromstr.block_index == rs.block_index
 
-        h_groups = rs_fromstr.history.all_groups()
+        h_groups = rs_fromstr.history.all_groups
         assert len(h_groups) == 1
         assert h_groups[0] == pattern_group
 
-        h_events = rs_fromstr.history.all_events()
+        h_events = rs_fromstr.history.all_events
         assert len(h_events) == 1
         assert h_events[0].event_id == event_id
 

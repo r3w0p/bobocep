@@ -73,9 +73,9 @@ class TestValid:
         assert dec_sub.completed[0].phenomenon_name == "phenomenon_a"
         assert dec_sub.completed[0].pattern_name == "pattern_123"
         dec_history = dec_sub.completed[0].history
-        assert dec_history.group("g1")[0].data == 1
-        assert dec_history.group("g2")[0].data == 2
-        assert dec_history.group("g3")[0].data == 3
+        assert dec_history.events("g1")[0].data == 1
+        assert dec_history.events("g2")[0].data == 2
+        assert dec_history.events("g3")[0].data == 3
 
         # Producer output: complex event
         assert len(pro_sub.output) == 1
@@ -84,7 +84,7 @@ class TestValid:
         assert pro_sub.output[0].phenomenon_name == "phenomenon_a"
         assert pro_sub.output[0].pattern_name == "pattern_123"
         assert pro_sub.output[
-                   0].history.all_events() == dec_history.all_events()
+                   0].history.all_events == dec_history.all_events
 
         # Forwarder output: action event
         assert len(fwd_sub.output) == 1
@@ -164,9 +164,9 @@ class TestValid:
         assert dec_sub.completed[0].phenomenon_name == "phenomenon_a"
         assert dec_sub.completed[0].pattern_name == "pattern_123"
         dec_history = dec_sub.completed[0].history
-        assert dec_history.group("g1")[0].data == 1
-        assert dec_history.group("g2")[0].data == 2
-        assert dec_history.group("g3")[0].data == 3
+        assert dec_history.events("g1")[0].data == 1
+        assert dec_history.events("g2")[0].data == 2
+        assert dec_history.events("g3")[0].data == 3
 
         # Producer output: complex event
         assert len(pro_sub.output) == 1
@@ -175,7 +175,7 @@ class TestValid:
         assert pro_sub.output[0].phenomenon_name == "phenomenon_a"
         assert pro_sub.output[0].pattern_name == "pattern_123"
         assert pro_sub.output[
-                   0].history.all_events() == dec_history.all_events()
+                   0].history.all_events == dec_history.all_events
 
         # Forwarder output: action event
         assert len(fwd_sub.output) == 1
