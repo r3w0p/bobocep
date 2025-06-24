@@ -61,9 +61,10 @@ class TestValid:
             result_update = decider.update()
             assert result_update is True
             assert decider.size() == 0
-            assert len(decider.runs_from(phenomenon_name, pattern.name)) == 1
-            assert decider.runs_from(phenomenon_name,
-                                     pattern.name)[0].pattern == pattern
+            assert len(decider.runs_pattern(
+                phenomenon_name, pattern.name)) == 1
+            assert decider.runs_pattern(
+                phenomenon_name, pattern.name)[0].pattern == pattern
 
     def test_3_patterns_same_blocks(self):
         pattern_123_1 = tc_pattern("pattern_123_1", data_blocks=[1, 2, 3])
@@ -83,9 +84,12 @@ class TestValid:
         assert result_update is True
         assert decider.size() == 0
         assert len(decider.all_runs()) == 3
-        assert len(decider.runs_from(phenomenon_name, pattern_123_1.name)) == 1
-        assert len(decider.runs_from(phenomenon_name, pattern_123_2.name)) == 1
-        assert len(decider.runs_from(phenomenon_name, pattern_123_3.name)) == 1
+        assert len(decider.runs_pattern(
+            phenomenon_name, pattern_123_1.name)) == 1
+        assert len(decider.runs_pattern(
+            phenomenon_name, pattern_123_2.name)) == 1
+        assert len(decider.runs_pattern(
+            phenomenon_name, pattern_123_3.name)) == 1
 
     def test_1_pattern_init_3_runs(self):
         pattern_123 = tc_pattern(data_blocks=[1, 2, 3])
@@ -98,8 +102,8 @@ class TestValid:
             decider.on_receiver_update(event=tc_event_simple(data=1))
             result_update = decider.update()
             assert result_update is True
-            assert len(decider.runs_from(phenom_name,
-                                         pattern_123.name)) == i + 1
+            assert len(decider.runs_pattern(
+                phenom_name, pattern_123.name)) == i + 1
 
     def test_1_pattern_to_completion(self):
         pattern_123 = tc_pattern(data_blocks=[1, 2, 3])
@@ -118,7 +122,7 @@ class TestValid:
             phenom_name = decider.phenomena()[0].name
 
             assert result_update is True
-            assert len(decider.runs_from(
+            assert len(decider.runs_pattern(
                 phenom_name, pattern_123.name)) == length
 
         assert len(subscriber.completed) == 1
@@ -130,7 +134,7 @@ class TestValid:
         decider, subscriber = tc_decider_sub([phenom])
         phenom_name = decider.phenomena()[0].name
 
-        assert len(decider.runs_from(phenom_name, "pattern_unknown")) == 0
+        assert len(decider.runs_pattern(phenom_name, "pattern_unknown")) == 0
 
     def test_1_block_pattern_init_run_immediately_completes(self):
         pattern = tc_pattern(
@@ -307,7 +311,7 @@ class TestInvalid:
         decider.on_receiver_update(event=tc_event_simple(data=1))
         assert decider.update()
 
-        all_runs = decider.runs_from(phenomenon.name, pattern.name)
+        all_runs = decider.runs_pattern(phenomenon.name, pattern.name)
         assert len(all_runs) == 1
 
         run = decider.run_at(phenomenon.name, pattern.name, all_runs[0].run_id)
@@ -548,7 +552,7 @@ class TestInvalid:
         assert len(subscriber.updated) == 1
 
         # Only one run should have been generated
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 1
 
         run = runs[0]
@@ -593,7 +597,7 @@ class TestInvalid:
         assert len(subscriber.updated) == 1
 
         # Only one run should have been generated
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 1
 
         run = runs[0]
@@ -638,7 +642,7 @@ class TestInvalid:
         assert len(subscriber.updated) == 1
 
         # Only one run should have been generated
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 1
 
         # Run should be at its first block
@@ -684,7 +688,7 @@ class TestInvalid:
         assert len(subscriber.updated) == 1
 
         # Only one run should have been generated
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 1
 
         # Run should be at its first block
@@ -730,7 +734,7 @@ class TestInvalid:
         assert len(subscriber.updated) == 1
 
         # Only one run should have been generated
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 1
 
         # Run should be at its first block
@@ -779,7 +783,7 @@ class TestInvalid:
         assert len(subscriber.updated) == 2
 
         # Only one run should have been generated
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 1
 
         # Run should be at its second block
@@ -828,7 +832,7 @@ class TestInvalid:
         assert len(subscriber.updated) == 2
 
         # Only one run should have been generated
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 1
 
         # Run should be at its second block
@@ -877,7 +881,7 @@ class TestInvalid:
         assert len(subscriber.updated) == 2
 
         # Only one run should have been generated
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 1
 
         # Run should be at its second block
@@ -926,7 +930,7 @@ class TestInvalid:
         assert len(subscriber.updated) == 2
 
         # Only one run should have been generated
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 1
 
         # Run should be at its second block
@@ -973,7 +977,7 @@ class TestInvalid:
         assert len(subscriber.updated) == 1
 
         # Only one run should have been generated
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 1
 
         # Run should be at its first block
@@ -1020,7 +1024,7 @@ class TestInvalid:
         assert len(subscriber.updated) == 1
 
         # Only one run should have been generated
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 1
 
         # Run should be at its first block
@@ -1070,7 +1074,7 @@ class TestInvalid:
         assert len(subscriber.updated) == 2
 
         # Only one run should have been generated
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 1
 
         # Run should be at its second block
@@ -1094,7 +1098,7 @@ class TestInvalid:
         assert len(subscriber.completed) == 1
 
         # Run should have been removed from active list
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 0
 
     def test_on_distributed_update_singleton_same_run_id_completed(self):
@@ -1121,7 +1125,7 @@ class TestInvalid:
         assert len(subscriber.updated) == 2
 
         # Only one run should have been generated
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 1
 
         # Run should be at its second block
@@ -1145,7 +1149,7 @@ class TestInvalid:
         assert len(subscriber.completed) == 1
 
         # Run should have been removed from active list
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 0
 
     def test_on_distributed_update_singleton_different_run_id_halted(self):
@@ -1169,7 +1173,7 @@ class TestInvalid:
         assert len(subscriber.updated) == 1
 
         # Only one run should have been generated
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 1
 
         # Run should be at its second block
@@ -1192,7 +1196,7 @@ class TestInvalid:
         assert len(subscriber.halted) == 1
 
         # Run should have been removed from active list
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 0
 
     def test_on_distributed_update_singleton_same_run_id_halted(self):
@@ -1216,7 +1220,7 @@ class TestInvalid:
         assert len(subscriber.updated) == 1
 
         # Only one run should have been generated
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 1
 
         # Run should be at its second block
@@ -1239,5 +1243,5 @@ class TestInvalid:
         assert len(subscriber.halted) == 1
 
         # Run should have been removed from active list
-        runs = decider.runs_from(phenom_name, pattern_name)
+        runs = decider.runs_pattern(phenom_name, pattern_name)
         assert len(runs) == 0

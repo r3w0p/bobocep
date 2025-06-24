@@ -28,6 +28,8 @@ class BoboEventAction(BoboEvent):
     ACTION_NAME = "action_name"
     SUCCESS = "success"
 
+    __slots__ = ("_event_id", "_timestamp", "_data", "_phenomenon_name",
+                 "_pattern_name", "_action_name", "_success")
     def __init__(self,
                  event_id,
                  timestamp: int,

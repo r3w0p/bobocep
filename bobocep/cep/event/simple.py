@@ -19,6 +19,7 @@ class BoboEventSimple(BoboEvent):
 
     TYPE_SIMPLE = "type_simple"
 
+    __slots__ = ("_event_id", "_timestamp", "_data")
     def __init__(self,
                  event_id: str,
                  timestamp: int,

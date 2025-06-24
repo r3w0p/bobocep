@@ -27,6 +27,8 @@ class BoboEventComplex(BoboEvent):
     PATTERN_NAME = "pattern_name"
     HISTORY = "history"
 
+    __slots__ = ("_event_id", "_timestamp", "_data", "_phenomenon_name",
+                 "_pattern_name", "_history")
     def __init__(self,
                  event_id: str,
                  timestamp: int,

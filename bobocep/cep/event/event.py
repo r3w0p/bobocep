@@ -6,7 +6,7 @@
 Abstract event.
 """
 
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Any
 
 from bobocep import BoboError, BoboJSONable

@@ -18,6 +18,7 @@ class BoboHistory(BoboJSONable):
     An event history.
     """
 
+    __slots__ = ("_events", "_first", "_last")
     def __init__(self, events: Dict[str, List[BoboEvent]]):
         """
         :param events: The history of events.
