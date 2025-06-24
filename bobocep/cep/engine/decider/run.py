@@ -32,6 +32,8 @@ class BoboRun:
     A run that tracks the progress of a partially completed complex event.
     """
 
+    __slots__ = ("_lock", "_run_id", "_phenomenon_name", "_pattern",
+                 "_block_index", "_history", "_halted")
     def __init__(self,
                  run_id: str,
                  phenomenon_name: str,

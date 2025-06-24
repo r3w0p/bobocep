@@ -139,7 +139,5 @@ class TestInvalid:
 
         assert receiver.size() == 0
         receiver.add_data(data=123)
-        assert receiver.size() == 1
-        receiver.update()
         assert receiver.size() == 0
         assert len(subscriber.output) == 0

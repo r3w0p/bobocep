@@ -35,6 +35,8 @@ class BoboRunSerial(BoboJSONable):
     BLOCK_INDEX = "block_index"
     HISTORY = "history"
 
+    __slots__ = ("_run_id", "_phenomenon_name", "_pattern_name",
+                 "_block_index", "_history")
     def __init__(self,
                  run_id: str,
                  phenomenon_name: str,
