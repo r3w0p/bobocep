@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 import pytest
 
-from bobocep.cep.engine.receiver.validator import BoboValidatorError, \
+from bobocep.cep.validator.validator import BoboValidatorError, \
     BoboValidatorJSONSchema
 
 SCHEMA_VALID: dict = {

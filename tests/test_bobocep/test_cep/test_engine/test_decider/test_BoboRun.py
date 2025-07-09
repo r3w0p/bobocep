@@ -5,8 +5,8 @@ import pytest
 
 from bobocep.cep.engine.decider.run import BoboRunError
 from bobocep.cep.event import BoboEventSimple, BoboHistory
-from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
-from bobocep.cep.phenom.pattern.builder import BoboPatternBuilder
+from bobocep.cep.generator.timestamp import BoboGenTimestampEpoch
+from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder
 from tests.test_bobocep.test_cep.test_engine.test_decider import tc_run_simple
 from tests.test_bobocep.test_cep.test_event import tc_event_simple
 from tests.test_bobocep.test_cep.test_phenom import tc_pattern

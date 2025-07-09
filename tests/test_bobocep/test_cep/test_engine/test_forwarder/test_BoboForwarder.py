@@ -8,9 +8,9 @@ from bobocep.cep.action.handler import BoboActionHandlerMultiprocessing, \
     BoboActionHandlerBlocking
 from bobocep.cep.engine.forwarder.forwarder import BoboForwarderError, \
     BoboForwarder
-from bobocep.cep.gen import BoboGenTimestampEpoch
-from bobocep.cep.gen.event_id import BoboGenEventIDUnique
-from bobocep.cep.phenom.phenom import BoboPhenomenon
+from bobocep.cep.generator import BoboGenTimestampEpoch
+from bobocep.cep.generator.event_id import BoboGenEventIDUnique
+from bobocep.cep.phenomenon.phenomenon import BoboPhenomenon
 from tests.test_bobocep.test_cep.test_action import BoboActionTrue
 from tests.test_bobocep.test_cep.test_engine.test_forwarder import \
     tc_forwarder_sub
@@ -95,13 +95,13 @@ class TestInvalid:
 
     def test_duplicate_phenomena_names(self):
         phenom_1 = BoboPhenomenon(
-            name="phenom",
+            name="phenomenon",
             datagen=lambda p, h: True,
             patterns=[tc_pattern()],
             action=None)
 
         phenom_2 = BoboPhenomenon(
-            name="phenom",
+            name="phenomenon",
             datagen=lambda p, h: True,
             patterns=[tc_pattern()],
             action=None)

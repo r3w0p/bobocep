@@ -17,8 +17,8 @@ from typing import Tuple, Any, List
 
 from bobocep.cep.action import BoboAction, BoboActionHandlerBlocking
 from bobocep.cep.event import BoboEventComplex
-from bobocep.cep.phenom import BoboPattern, BoboPhenomenon
-from bobocep.cep.phenom.pattern.builder import BoboPatternBuilder
+from bobocep.cep.phenomenon import BoboPattern, BoboPhenomenon
+from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder
 from bobocep.setup import BoboSetupSimple
 
 
@@ -61,7 +61,7 @@ def _setup(patterns: List[BoboPattern]):
     action = BoboActionCounter(name="action")
 
     phenom = BoboPhenomenon(
-        name="phenom",
+        name="phenomenon",
         patterns=patterns,
         action=action)
 

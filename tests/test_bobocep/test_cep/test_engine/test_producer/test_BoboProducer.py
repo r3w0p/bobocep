@@ -8,8 +8,8 @@ from bobocep.cep.engine.decider.runserial import BoboRunSerial
 from bobocep.cep.engine.producer.producer import BoboProducerError, \
     BoboProducer
 from bobocep.cep.event import BoboHistory
-from bobocep.cep.gen.event_id import BoboGenEventIDUnique
-from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
+from bobocep.cep.generator.event_id import BoboGenEventIDUnique
+from bobocep.cep.generator.timestamp import BoboGenTimestampEpoch
 from tests.test_bobocep.test_cep.test_action import BoboActionTrue
 from tests.test_bobocep.test_cep.test_engine.test_producer import \
     tc_producer_sub
@@ -21,7 +21,7 @@ class TestValid:
 
     def test_produce_complex_event_on_run(self):
         phenom = tc_phenomenon(
-            name="phenom",
+            name="phenomenon",
             datagen=lambda p, h: True,
             action=BoboActionTrue())
 
@@ -32,7 +32,7 @@ class TestValid:
         producer.on_decider_update(
             completed=[BoboRunSerial(
                 run_id="run_id",
-                phenomenon_name="phenom",
+                phenomenon_name="phenomenon",
                 pattern_name="pattern",
                 block_index=3,
                 history=history
@@ -49,7 +49,7 @@ class TestValid:
         assert len(subscriber.output) == 1
 
         assert subscriber.output[0].data is True
-        assert subscriber.output[0].phenomenon_name == "phenom"
+        assert subscriber.output[0].phenomenon_name == "phenomenon"
         assert subscriber.output[0].pattern_name == "pattern"
         assert subscriber.output[0].history == history
 
@@ -62,7 +62,7 @@ class TestValid:
         producer.on_decider_update(
             completed=[BoboRunSerial(
                 run_id="run_id",
-                phenomenon_name="phenom",
+                phenomenon_name="phenomenon",
                 pattern_name="pattern",
                 block_index=3,
                 history=history
@@ -93,7 +93,7 @@ class TestValid:
         producer.on_decider_update(
             completed=[BoboRunSerial(
                 run_id="run_id",
-                phenomenon_name="phenom",
+                phenomenon_name="phenomenon",
                 pattern_name="pattern",
                 block_index=3,
                 history=history

@@ -6,7 +6,7 @@ import pytest
 
 from bobocep.cep.engine.receiver.receiver import BoboReceiverError
 from bobocep.cep.event import BoboEventSimple
-from bobocep.cep.gen.event import BoboGenEventTime
+from bobocep.cep.generator.event import BoboGenEventTime
 from tests.test_bobocep.test_cep.test_engine.test_receiver import \
     BoboValidatorRejectAll, tc_receiver_sub
 from tests.test_bobocep.test_cep.test_event import tc_event_action, \

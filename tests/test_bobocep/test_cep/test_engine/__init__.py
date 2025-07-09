@@ -6,10 +6,10 @@ from typing import List, Optional
 
 from bobocep.cep.action.handler import BoboActionHandler
 from bobocep.cep.engine.engine import BoboEngine
-from bobocep.cep.engine.receiver.validator import BoboValidator
-from bobocep.cep.gen.event import BoboGenEvent
-from bobocep.cep.gen.event_id import BoboGenEventID
-from bobocep.cep.phenom.phenom import BoboPhenomenon
+from bobocep.cep.validator.validator import BoboValidator
+from bobocep.cep.generator.event import BoboGenEvent
+from bobocep.cep.generator.event_id import BoboGenEventID
+from bobocep.cep.phenomenon.phenomenon import BoboPhenomenon
 from tests.test_bobocep.test_cep.test_engine.test_decider import tc_decider_sub
 from tests.test_bobocep.test_cep.test_engine.test_forwarder import \
     tc_forwarder_sub

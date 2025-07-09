@@ -9,9 +9,9 @@ from bobocep.cep.action.handler import BoboActionHandler, \
 from bobocep.cep.engine.forwarder.forwarder import BoboForwarder
 from bobocep.cep.engine.forwarder.pubsub import BoboForwarderSubscriber
 from bobocep.cep.event import BoboEventAction
-from bobocep.cep.gen import BoboGenTimestampEpoch
-from bobocep.cep.gen.event_id import BoboGenEventID, BoboGenEventIDUnique
-from bobocep.cep.phenom.phenom import BoboPhenomenon
+from bobocep.cep.generator import BoboGenTimestampEpoch
+from bobocep.cep.generator.event_id import BoboGenEventID, BoboGenEventIDUnique
+from bobocep.cep.phenomenon.phenomenon import BoboPhenomenon
 
 
 class StubForwarderSubscriber(BoboForwarderSubscriber):

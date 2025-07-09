@@ -2,7 +2,7 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 
-from bobocep.cep.gen.event_id import BoboGenEventID
+from bobocep.cep.generator.event_id import BoboGenEventID
 
 
 class BoboSameEveryTimeEventID(BoboGenEventID):

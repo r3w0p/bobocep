@@ -11,7 +11,7 @@ from flask import Flask
 from bobocep.cep.action import BoboAction, BoboActionHandlerMultithreading
 from bobocep.cep.engine import BoboEngine
 from bobocep.cep.event import BoboEventComplex
-from bobocep.cep.phenom import BoboPattern, BoboPatternBuilder, \
+from bobocep.cep.phenomenon import BoboPattern, BoboPatternBuilder, \
     BoboPhenomenon
 from bobocep.setup import BoboSetupSimple
 

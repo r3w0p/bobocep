@@ -12,7 +12,7 @@ from typing import Tuple
 from bobocep import BoboError
 from bobocep.cep.engine.decider.runserial import BoboRunSerial
 from bobocep.cep.event import BoboHistory, BoboEvent
-from bobocep.cep.phenom.pattern.pattern import BoboPattern, \
+from bobocep.cep.phenomenon.pattern.pattern import BoboPattern, \
     BoboPatternBlock, BoboPredicate
 
 _EXC_RUN_ID_LEN = "run ID must have a length greater than 0"

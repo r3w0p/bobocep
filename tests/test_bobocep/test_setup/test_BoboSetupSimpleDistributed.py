@@ -2,7 +2,7 @@
 # The following code can be redistributed and/or
 # modified under the terms of the MIT License.
 from bobocep.cep.action import BoboActionHandlerBlocking
-from bobocep.cep.phenom import BoboPattern, BoboPatternBuilder, BoboPhenomenon
+from bobocep.cep.phenomenon import BoboPattern, BoboPatternBuilder, BoboPhenomenon
 from bobocep.dist.device import BoboDevice
 from bobocep.setup.simple import BoboSetupSimpleDistributed
 

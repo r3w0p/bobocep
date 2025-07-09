@@ -3,7 +3,7 @@
 # modified under the terms of the MIT License.
 
 from bobocep.cep.event import BoboEventSimple
-from bobocep.cep.gen.event import BoboGenEventTime
+from bobocep.cep.generator.event import BoboGenEventTime
 
 
 class TestValid:

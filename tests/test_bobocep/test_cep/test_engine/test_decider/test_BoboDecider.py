@@ -5,8 +5,8 @@
 import pytest
 
 from bobocep.cep.engine.decider.decider import BoboDeciderError, BoboDecider
-from bobocep.cep.gen.event_id import BoboGenEventIDUnique
-from bobocep.cep.phenom.pattern.builder import BoboPatternBuilder
+from bobocep.cep.generator.event_id import BoboGenEventIDUnique
+from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder
 from tests.test_bobocep.test_cep.test_engine.test_decider import \
     tc_decider_sub, \
     tc_run_tuple
@@ -395,7 +395,7 @@ class TestInvalid:
 
     def test_on_distributed_update_empty_decider_caching(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -441,7 +441,7 @@ class TestInvalid:
 
     def test_on_distributed_update_empty_decider_closed_before_call(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -488,7 +488,7 @@ class TestInvalid:
 
     def test_on_distributed_update_empty_decider_not_caching(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -534,7 +534,7 @@ class TestInvalid:
 
     def test_on_distributed_update_remove_run_completed_remotely_caching(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -579,7 +579,7 @@ class TestInvalid:
 
     def test_on_distributed_update_remove_run_halted_remotely_caching(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -624,7 +624,7 @@ class TestInvalid:
 
     def test_on_distributed_update_update_existing_run_caching(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -670,7 +670,7 @@ class TestInvalid:
 
     def test_on_distributed_update_nonexistent_pattern_in_updated(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -716,7 +716,7 @@ class TestInvalid:
 
     def test_on_distributed_update_nonexistent_phenomenon_in_updated(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -762,7 +762,7 @@ class TestInvalid:
 
     def test_on_distributed_update_nonexistent_pattern_in_completed(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -811,7 +811,7 @@ class TestInvalid:
 
     def test_on_distributed_update_nonexistent_phenomenon_in_completed(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -860,7 +860,7 @@ class TestInvalid:
 
     def test_on_distributed_update_nonexistent_pattern_in_halted(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -909,7 +909,7 @@ class TestInvalid:
 
     def test_on_distributed_update_nonexistent_phenomenon_in_halted(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -958,7 +958,7 @@ class TestInvalid:
 
     def test_on_distributed_update_singleton_different_run_id_updated(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -1005,7 +1005,7 @@ class TestInvalid:
 
     def test_on_distributed_update_singleton_same_run_id_updated(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -1052,7 +1052,7 @@ class TestInvalid:
 
     def test_on_distributed_update_singleton_different_run_id_completed(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -1103,7 +1103,7 @@ class TestInvalid:
 
     def test_on_distributed_update_singleton_same_run_id_completed(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -1154,7 +1154,7 @@ class TestInvalid:
 
     def test_on_distributed_update_singleton_different_run_id_halted(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,
@@ -1201,7 +1201,7 @@ class TestInvalid:
 
     def test_on_distributed_update_singleton_same_run_id_halted(self):
         pattern_name = "pattern"
-        phenom_name = "phenom"
+        phenom_name = "phenomenon"
 
         pattern = tc_pattern(
             name=pattern_name,

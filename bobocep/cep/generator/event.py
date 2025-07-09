@@ -12,7 +12,7 @@ from types import MethodType
 from typing import Optional, Callable
 
 from bobocep.cep.event import BoboEvent, BoboEventSimple
-from bobocep.cep.gen.timestamp import BoboGenTimestamp, BoboGenTimestampEpoch
+from bobocep.cep.generator.timestamp import BoboGenTimestamp, BoboGenTimestampEpoch
 
 
 class BoboGenEvent(ABC):

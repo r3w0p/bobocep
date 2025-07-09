@@ -6,8 +6,8 @@ from typing import Optional
 
 from bobocep.cep.event import BoboEventSimple, BoboHistory, BoboEventComplex, \
     BoboEventAction
-from bobocep.cep.gen.event_id import BoboGenEventIDUnique
-from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
+from bobocep.cep.generator.event_id import BoboGenEventIDUnique
+from bobocep.cep.generator.timestamp import BoboGenTimestampEpoch
 
 
 class BoboEventSimpleSubclass(BoboEventSimple):

@@ -7,9 +7,9 @@ from typing import Optional, List
 from bobocep.cep.engine.producer.producer import BoboProducer
 from bobocep.cep.engine.producer.pubsub import BoboProducerSubscriber
 from bobocep.cep.event import BoboEventComplex
-from bobocep.cep.gen.event_id import BoboGenEventID, BoboGenEventIDUnique
-from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
-from bobocep.cep.phenom.phenom import BoboPhenomenon
+from bobocep.cep.generator.event_id import BoboGenEventID, BoboGenEventIDUnique
+from bobocep.cep.generator.timestamp import BoboGenTimestampEpoch
+from bobocep.cep.phenomenon.phenomenon import BoboPhenomenon
 
 
 class StubProducerSubscriber(BoboProducerSubscriber):

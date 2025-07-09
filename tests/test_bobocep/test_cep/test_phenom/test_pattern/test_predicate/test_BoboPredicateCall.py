@@ -5,8 +5,8 @@
 import pytest
 
 from bobocep.cep.event import BoboEventSimple, BoboHistory
-from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
-from bobocep.cep.phenom.pattern.predicate import BoboPredicateCall, \
+from bobocep.cep.generator.timestamp import BoboGenTimestampEpoch
+from bobocep.cep.phenomenon.pattern.predicate import BoboPredicateCall, \
     BoboPredicateError
 
 

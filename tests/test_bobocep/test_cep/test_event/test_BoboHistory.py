@@ -5,7 +5,7 @@
 from time import sleep
 
 from bobocep.cep.event import BoboHistory, BoboEventSimple
-from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
+from bobocep.cep.generator.timestamp import BoboGenTimestampEpoch
 from tests.test_bobocep.test_cep.test_event import tc_event_simple
 
 

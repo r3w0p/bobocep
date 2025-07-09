@@ -14,12 +14,12 @@ from bobocep.cep.engine.engine import BoboEngine
 from bobocep.cep.engine.forwarder.forwarder import BoboForwarder
 from bobocep.cep.engine.producer.producer import BoboProducer
 from bobocep.cep.engine.receiver.receiver import BoboReceiver
-from bobocep.cep.engine.receiver.validator import BoboValidator, \
+from bobocep.cep.validator.validator import BoboValidator, \
     BoboValidatorJSONable
-from bobocep.cep.gen.event import BoboGenEvent
-from bobocep.cep.gen.event_id import BoboGenEventIDUnique
-from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
-from bobocep.cep.phenom.phenom import BoboPhenomenon
+from bobocep.cep.generator.event import BoboGenEvent
+from bobocep.cep.generator.event_id import BoboGenEventIDUnique
+from bobocep.cep.generator.timestamp import BoboGenTimestampEpoch
+from bobocep.cep.phenomenon.phenomenon import BoboPhenomenon
 from bobocep.dist.crypto.aes import BoboDistributedCryptoAES
 from bobocep.dist.device import BoboDevice
 from bobocep.dist.tcp import BoboDistributedTCP

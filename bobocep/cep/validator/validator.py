@@ -33,29 +33,6 @@ class BoboValidator(ABC):
         :return: `True` if data are valid; `False` otherwise.
         """
 
-
-class BoboValidatorJSONable(BoboValidator):
-    """
-    Validates whether the data type is JSONable. If the data are a
-    BoboEvent, then the event's data are checked instead.
-    """
-
-    def is_valid(self, data: Any) -> bool:
-        """
-        :return: `True` if data are valid JSON; `False` otherwise.
-        """
-        if isinstance(data, BoboEvent):
-            data = data.data
-
-        try:
-            dumps(data)
-
-        except (RecursionError, TypeError, ValueError):
-            return False
-
-        return True
-
-
 class BoboValidatorType(BoboValidator):
     """
     Validates whether the entity type matches any of the given data types.
@@ -87,6 +64,28 @@ class BoboValidatorType(BoboValidator):
             return any(isinstance(data, t) for t in self._types)
         else:
             return any(type(data) == t for t in self._types)
+
+
+class BoboValidatorJSONable(BoboValidator):
+    """
+    Validates whether the data type is JSONable. If the data are a
+    BoboEvent, then the event's data are checked instead.
+    """
+
+    def is_valid(self, data: Any) -> bool:
+        """
+        :return: `True` if data are valid JSON; `False` otherwise.
+        """
+        if isinstance(data, BoboEvent):
+            data = data.data
+
+        try:
+            dumps(data)
+
+        except (RecursionError, TypeError, ValueError):
+            return False
+
+        return True
 
 
 class BoboValidatorJSONSchema(BoboValidatorJSONable):

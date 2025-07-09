@@ -16,9 +16,9 @@ from bobocep.cep.engine.producer.pubsub import BoboProducerPublisher, \
     BoboProducerSubscriber
 from bobocep.cep.engine.task import BoboEngineTaskError, BoboEngineTask
 from bobocep.cep.event import BoboEventComplex
-from bobocep.cep.gen.event_id import BoboGenEventID
-from bobocep.cep.gen.timestamp import BoboGenTimestamp
-from bobocep.cep.phenom.phenom import BoboPhenomenon
+from bobocep.cep.generator.event_id import BoboGenEventID
+from bobocep.cep.generator.timestamp import BoboGenTimestamp
+from bobocep.cep.phenomenon.phenomenon import BoboPhenomenon
 
 _EXC_PHENOM_NAME_DUP = "duplicate name in phenomena: {}"
 _EXC_QUEUE_FULL = "queue is full (max size: {})"

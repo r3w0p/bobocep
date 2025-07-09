@@ -4,7 +4,7 @@
 
 import pytest
 
-from bobocep.cep.phenom.pattern.builder import BoboPatternBuilder, \
+from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder, \
     BoboPatternBuilderError
 
 

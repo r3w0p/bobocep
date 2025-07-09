@@ -19,9 +19,9 @@ from bobocep.cep.engine.decider.runserial import BoboRunSerial
 from bobocep.cep.engine.receiver.pubsub import BoboReceiverSubscriber
 from bobocep.cep.engine.task import BoboEngineTaskError, BoboEngineTask
 from bobocep.cep.event import BoboHistory, BoboEvent
-from bobocep.cep.gen.event_id import BoboGenEventID
-from bobocep.cep.phenom.pattern.pattern import BoboPattern
-from bobocep.cep.phenom.phenom import BoboPhenomenon
+from bobocep.cep.generator.event_id import BoboGenEventID
+from bobocep.cep.phenomenon.pattern.pattern import BoboPattern
+from bobocep.cep.phenomenon.phenomenon import BoboPhenomenon
 from bobocep.dist.pubsub import BoboDistributedSubscriber
 
 _EXC_PHENOM_NAME_DUP = "duplicate name in phenomena: {}"

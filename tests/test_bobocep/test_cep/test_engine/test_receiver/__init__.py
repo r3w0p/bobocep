@@ -6,11 +6,11 @@ from typing import Optional, List, Any
 
 from bobocep.cep.engine.receiver.pubsub import BoboReceiverSubscriber
 from bobocep.cep.engine.receiver.receiver import BoboReceiver
-from bobocep.cep.engine.receiver.validator import BoboValidator
+from bobocep.cep.validator.validator import BoboValidator
 from bobocep.cep.event import BoboEvent
-from bobocep.cep.gen.event import BoboGenEvent, BoboGenEventNone
-from bobocep.cep.gen.event_id import BoboGenEventID, BoboGenEventIDUnique
-from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
+from bobocep.cep.generator.event import BoboGenEvent, BoboGenEventNone
+from bobocep.cep.generator.event_id import BoboGenEventID, BoboGenEventIDUnique
+from bobocep.cep.generator.timestamp import BoboGenTimestampEpoch
 
 
 class StubReceiverSubscriber(BoboReceiverSubscriber):

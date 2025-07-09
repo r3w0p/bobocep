@@ -5,7 +5,7 @@
 import pytest
 
 from bobocep.cep.event import BoboHistory, BoboEventComplex, BoboEventError
-from bobocep.cep.gen.timestamp import BoboGenTimestampEpoch
+from bobocep.cep.generator.timestamp import BoboGenTimestampEpoch
 from tests.test_bobocep.test_cep.test_event import tc_event_complex
 
 
@@ -38,7 +38,7 @@ class TestInvalid:
                 event_id="",
                 timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
-                phenomenon_name="phenom",
+                phenomenon_name="phenomenon",
                 pattern_name="pattern",
                 history=BoboHistory(events={}))
 
@@ -58,6 +58,6 @@ class TestInvalid:
                 event_id="event_id",
                 timestamp=BoboGenTimestampEpoch().generate(),
                 data=None,
-                phenomenon_name="phenom",
+                phenomenon_name="phenomenon",
                 pattern_name="",
                 history=BoboHistory(events={}))

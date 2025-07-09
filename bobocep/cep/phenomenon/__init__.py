@@ -6,11 +6,11 @@
 Phenomenon imports.
 """
 
-from bobocep.cep.phenom.pattern.builder import BoboPatternBuilder, \
+from bobocep.cep.phenomenon.pattern.builder import BoboPatternBuilder, \
     BoboPatternBuilderError
-from bobocep.cep.phenom.pattern.pattern import BoboPattern, \
+from bobocep.cep.phenomenon.pattern.pattern import BoboPattern, \
     BoboPatternBlock, BoboPatternError, BoboPatternBlockError
-from bobocep.cep.phenom.pattern.predicate import BoboPredicate, \
+from bobocep.cep.phenomenon.pattern.predicate import BoboPredicate, \
     BoboPredicateError, BoboPredicateCall
-from bobocep.cep.phenom.phenom import BoboPhenomenon, \
+from bobocep.cep.phenomenon.phenomenon import BoboPhenomenon, \
     BoboPhenomenonError
