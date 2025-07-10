@@ -25,15 +25,15 @@ class TestValid:
                              times=1,
                              loop=False,
                              optional=False) \
-            .precondition(predicate=predicate_pre_a) \
-            .haltcondition(predicate=predicate_halt_a)
+            .strict_condition(predicate=predicate_pre_a) \
+            .halt_condition(predicate=predicate_halt_a)
 
         pattern = builder.generate()
 
         assert pattern.name == name
         assert len(pattern.blocks) == 1
-        assert len(pattern.preconditions) == 1
-        assert len(pattern.haltconditions) == 1
+        assert len(pattern.strict_conditions) == 1
+        assert len(pattern.halt_conditions) == 1
 
         assert len(pattern.blocks[0].predicates) == 3
 
@@ -46,8 +46,8 @@ class TestValid:
         assert pattern.blocks[0].negated is False
         assert pattern.blocks[0].optional is False
 
-        assert pattern.preconditions[0] == predicate_pre_a
-        assert pattern.haltconditions[0] == predicate_halt_a
+        assert pattern.strict_conditions[0] == predicate_pre_a
+        assert pattern.halt_conditions[0] == predicate_halt_a
 
     def test_1_block_3_pred_3_times(self):
         predicate_block_a_1 = BoboPredicateCall(call=lambda e, h: True)
@@ -66,8 +66,8 @@ class TestValid:
         pattern = builder.generate()
 
         assert len(pattern.blocks) == 3
-        assert len(pattern.preconditions) == 0
-        assert len(pattern.haltconditions) == 0
+        assert len(pattern.strict_conditions) == 0
+        assert len(pattern.halt_conditions) == 0
 
         assert len(pattern.blocks[0].predicates) == 3
         assert len(pattern.blocks[1].predicates) == 3
@@ -128,18 +128,18 @@ class TestValid:
                              times=1,
                              loop=False,
                              optional=False) \
-            .precondition(predicate=predicate_pre_a) \
-            .precondition(predicate=predicate_pre_b) \
-            .precondition(predicate=predicate_pre_c) \
-            .haltcondition(predicate=predicate_halt_a) \
-            .haltcondition(predicate=predicate_halt_b) \
-            .haltcondition(predicate=predicate_halt_c)
+            .strict_condition(predicate=predicate_pre_a) \
+            .strict_condition(predicate=predicate_pre_b) \
+            .strict_condition(predicate=predicate_pre_c) \
+            .halt_condition(predicate=predicate_halt_a) \
+            .halt_condition(predicate=predicate_halt_b) \
+            .halt_condition(predicate=predicate_halt_c)
 
         pattern = builder.generate()
 
         assert len(pattern.blocks) == 3
-        assert len(pattern.preconditions) == 3
-        assert len(pattern.haltconditions) == 3
+        assert len(pattern.strict_conditions) == 3
+        assert len(pattern.halt_conditions) == 3
 
         assert len(pattern.blocks[0].predicates) == 3
         assert len(pattern.blocks[1].predicates) == 3

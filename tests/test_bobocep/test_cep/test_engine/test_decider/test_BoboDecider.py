@@ -16,6 +16,7 @@ from tests.test_bobocep.test_cep.test_gen.test_event_id import \
 from tests.test_bobocep.test_cep.test_phenom import tc_phenomenon
 from tests.test_bobocep.test_cep.test_phenom.test_pattern import tc_pattern
 
+# TODO tests for relaxed_conditions
 
 class TestValid:
 
@@ -139,8 +140,8 @@ class TestValid:
     def test_1_block_pattern_init_run_immediately_completes(self):
         pattern = tc_pattern(
             data_blocks=[1],
-            data_pres=[],
-            data_halts=[])
+            data_scon=[],
+            data_hcon=[])
 
         decider, subscriber = tc_decider_sub(
             [tc_phenomenon(patterns=[pattern])])
@@ -151,11 +152,11 @@ class TestValid:
         assert result_update is True
         assert len(subscriber.completed) == 1
 
-    def test_3_block_pattern_halt_incomplete_triggered_haltcondition(self):
+    def test_3_block_pattern_halt_incomplete_triggered_halt_condition(self):
         pattern = tc_pattern(
             data_blocks=[1, 2, 3],
-            data_pres=[],
-            data_halts=[5])
+            data_scon=[],
+            data_hcon=[5])
 
         decider, subscriber = tc_decider_sub(
             [tc_phenomenon(patterns=[pattern])])
@@ -172,12 +173,12 @@ class TestValid:
         decider.update()
         assert len(subscriber.halted) == 1
 
-    def test_3_block_pattern_halt_incomplete_failed_precondition(self):
+    def test_3_block_pattern_halt_incomplete_failed_strict_condition(self):
         pattern = BoboPatternBuilder(name="pattern") \
             .next(lambda e, h: e.data == 10) \
             .next(lambda e, h: e.data == 11) \
             .next(lambda e, h: e.data == 12) \
-            .precondition(lambda e, h: e.data > 9) \
+            .strict_condition(lambda e, h: e.data > 9) \
             .generate()
 
         decider, subscriber = tc_decider_sub(
@@ -324,7 +325,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name="pattern",
             data_blocks=[1, 2, 3],
-            data_halts=[4])
+            data_hcon=[4])
         phenomenon = tc_phenomenon(name="phenomenon", patterns=[pattern])
 
         decider, subscriber = tc_decider_sub([phenomenon], max_cache=10)
@@ -348,7 +349,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name="pattern",
             data_blocks=[1, 2, 3],
-            data_halts=[4])
+            data_hcon=[4])
         phenomenon = tc_phenomenon(name="phenomenon", patterns=[pattern])
 
         decider, subscriber = tc_decider_sub([phenomenon], max_cache=10)
@@ -372,7 +373,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name="pattern",
             data_blocks=[1, 2, 3],
-            data_halts=[4])
+            data_hcon=[4])
 
         phenomenon = tc_phenomenon(name="phenomenon", patterns=[pattern])
 
@@ -400,7 +401,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4])
+            data_hcon=[4])
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
 
@@ -446,7 +447,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4])
+            data_hcon=[4])
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
 
         decider, subscriber = tc_decider_sub([phenomenon], max_cache=10)
@@ -493,7 +494,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4])
+            data_hcon=[4])
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
 
@@ -539,7 +540,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4])
+            data_hcon=[4])
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
 
@@ -584,7 +585,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4])
+            data_hcon=[4])
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
 
@@ -629,7 +630,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4])
+            data_hcon=[4])
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
 
@@ -675,7 +676,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4])
+            data_hcon=[4])
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
 
@@ -721,7 +722,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4])
+            data_hcon=[4])
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
 
@@ -767,7 +768,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4])
+            data_hcon=[4])
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
 
@@ -816,7 +817,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4])
+            data_hcon=[4])
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
 
@@ -865,7 +866,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4])
+            data_hcon=[4])
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
 
@@ -914,7 +915,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4])
+            data_hcon=[4])
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
 
@@ -963,7 +964,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4],
+            data_hcon=[4],
             singleton=True)
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
@@ -1010,7 +1011,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4],
+            data_hcon=[4],
             singleton=True)
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
@@ -1057,7 +1058,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4],
+            data_hcon=[4],
             singleton=True)
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
@@ -1108,7 +1109,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4],
+            data_hcon=[4],
             singleton=True)
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
@@ -1159,7 +1160,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4],
+            data_hcon=[4],
             singleton=True)
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])
@@ -1206,7 +1207,7 @@ class TestInvalid:
         pattern = tc_pattern(
             name=pattern_name,
             data_blocks=[1, 2, 3],
-            data_halts=[4],
+            data_hcon=[4],
             singleton=True)
 
         phenomenon = tc_phenomenon(name=phenom_name, patterns=[pattern])

@@ -143,14 +143,16 @@ class BoboPattern:
     def __init__(self,
                  name: str,
                  blocks: List[BoboPatternBlock],
-                 preconditions: List[BoboPredicate],
-                 haltconditions: List[BoboPredicate],
+                 strict_conditions: List[BoboPredicate],
+                 relaxed_conditions: List[BoboPredicate],
+                 halt_conditions: List[BoboPredicate],
                  singleton: bool = False):
         """
         :param name: The pattern name.
         :param blocks: The pattern blocks.
-        :param preconditions: The pattern preconditions.
-        :param haltconditions: The pattern haltconditions.
+        :param strict_conditions: The pattern's strict conditions.
+        :param relaxed_conditions: The pattern's relaxed conditions.
+        :param halt_conditions: The pattern's halt conditions.
         :param singleton: If `True`, the pattern can only have one active run
             at a time.
         """
@@ -182,8 +184,9 @@ class BoboPattern:
 
         self._name: str = name
         self._blocks: Tuple[BoboPatternBlock, ...] = tuple(blocks)
-        self._preconditions: Tuple[BoboPredicate, ...] = tuple(preconditions)
-        self._haltconditions: Tuple[BoboPredicate, ...] = tuple(haltconditions)
+        self._strict_conditions: Tuple[BoboPredicate, ...] = tuple(strict_conditions)
+        self._relaxed_conditions: Tuple[BoboPredicate, ...] = tuple(relaxed_conditions)
+        self._halt_conditions: Tuple[BoboPredicate, ...] = tuple(halt_conditions)
         self._singleton: bool = singleton
 
     @property
@@ -201,18 +204,25 @@ class BoboPattern:
         return self._blocks
 
     @property
-    def preconditions(self) -> Tuple[BoboPredicate, ...]:
+    def strict_conditions(self) -> Tuple[BoboPredicate, ...]:
         """
-        :return: Pattern preconditions.
+        :return: Strict conditions.
         """
-        return self._preconditions
+        return self._strict_conditions
 
     @property
-    def haltconditions(self) -> Tuple[BoboPredicate, ...]:
+    def relaxed_conditions(self) -> Tuple[BoboPredicate, ...]:
         """
-        :return: Pattern haltconditions.
+        :return: Relaxed conditions.
         """
-        return self._haltconditions
+        return self._relaxed_conditions
+
+    @property
+    def halt_conditions(self) -> Tuple[BoboPredicate, ...]:
+        """
+        :return: Halt conditions.
+        """
+        return self._halt_conditions
 
     @property
     def singleton(self) -> bool:

@@ -32,18 +32,22 @@ def tc_lambda_event_data_equal(d: Any):
 def tc_pattern(
         name: str = "pattern",
         data_blocks: Optional[List[Any]] = None,
-        data_pres: Optional[List[Any]] = None,
-        data_halts: Optional[List[Any]] = None,
+        data_scon: Optional[List[Any]] = None,
+        data_rcon: Optional[List[Any]] = None,
+        data_hcon: Optional[List[Any]] = None,
         singleton: bool = False
 ) -> BoboPattern:
     if data_blocks is None:
         data_blocks = [1]
 
-    if data_pres is None:
-        data_pres = []
+    if data_scon is None:
+        data_scon = []
 
-    if data_halts is None:
-        data_halts = []
+    if data_rcon is None:
+        data_rcon = []
+
+    if data_hcon is None:
+        data_hcon = []
 
     blocks: List[BoboPatternBlock] = []
     for i in range(len(data_blocks)):
@@ -51,20 +55,26 @@ def tc_pattern(
             group="g{}".format(i + 1),
             call=tc_lambda_event_data_equal(data_blocks[i])))
 
-    preconditions: List[BoboPredicate] = []
-    for i in range(len(data_pres)):
-        preconditions.append(BoboPredicateCall(
-            call=tc_lambda_event_data_equal(data_pres[i])))
+    strict_conditions: List[BoboPredicate] = []
+    for i in range(len(data_scon)):
+        strict_conditions.append(BoboPredicateCall(
+            call=tc_lambda_event_data_equal(data_scon[i])))
 
-    haltconditions: List[BoboPredicate] = []
-    for i in range(len(data_halts)):
-        haltconditions.append(BoboPredicateCall(
-            call=tc_lambda_event_data_equal(data_halts[i])))
+    relaxed_conditions: List[BoboPredicate] = []
+    for i in range(len(data_scon)):
+        relaxed_conditions.append(BoboPredicateCall(
+            call=tc_lambda_event_data_equal(data_rcon[i])))
+
+    halt_conditions: List[BoboPredicate] = []
+    for i in range(len(data_hcon)):
+        halt_conditions.append(BoboPredicateCall(
+            call=tc_lambda_event_data_equal(data_hcon[i])))
 
     return BoboPattern(
         name=name,
         blocks=blocks,
-        preconditions=preconditions,
-        haltconditions=haltconditions,
+        strict_conditions=strict_conditions,
+        relaxed_conditions=relaxed_conditions,
+        halt_conditions=halt_conditions,
         singleton=singleton
     )

@@ -14,7 +14,7 @@ class TestValid:
             .followed_by(lambda e, h: str(e.data) == "a") \
             .followed_by(lambda e, h: str(e.data) == "b") \
             .followed_by(lambda e, h: str(e.data) == "c") \
-            .haltcondition(lambda e, h: str(e.data) == "h") \
+            .halt_condition(lambda e, h: str(e.data) == "h") \
             .generate()
 
         phenomenon = BoboPhenomenon(

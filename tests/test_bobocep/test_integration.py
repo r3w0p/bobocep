@@ -240,7 +240,7 @@ class TestValid:
             .followed_by(lambda e, h: int(e.data) == 1) \
             .followed_by(lambda e, h: int(e.data) == 2) \
             .followed_by(lambda e, h: int(e.data) == 3) \
-            .precondition(lambda e, h: int(e.data) > 0) \
+            .strict_condition(lambda e, h: int(e.data) > 0) \
             .generate()
 
         engine, action = _setup([pattern_1])
@@ -257,7 +257,7 @@ class TestValid:
             .followed_by(lambda e, h: int(e.data) == 1) \
             .followed_by(lambda e, h: int(e.data) == 2) \
             .followed_by(lambda e, h: int(e.data) == 3) \
-            .haltcondition(lambda e, h: int(e.data) == 10) \
+            .halt_condition(lambda e, h: int(e.data) == 10) \
             .generate()
 
         engine, action = _setup([pattern_1])
@@ -425,7 +425,7 @@ class TestInvalid:
             .followed_by(lambda e, h: int(e.data) == 1) \
             .followed_by(lambda e, h: int(e.data) == 2) \
             .followed_by(lambda e, h: int(e.data) == 3) \
-            .precondition(lambda e, h: int(e.data) > 0) \
+            .strict_condition(lambda e, h: int(e.data) > 0) \
             .generate()
 
         engine, action = _setup([pattern_1])
@@ -442,7 +442,7 @@ class TestInvalid:
             .followed_by(lambda e, h: int(e.data) == 1) \
             .followed_by(lambda e, h: int(e.data) == 2) \
             .followed_by(lambda e, h: int(e.data) == 3) \
-            .haltcondition(lambda e, h: int(e.data) == 10) \
+            .halt_condition(lambda e, h: int(e.data) == 10) \
             .generate()
 
         engine, action = _setup([pattern_1])

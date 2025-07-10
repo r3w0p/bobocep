@@ -6,7 +6,7 @@ import pytest
 from bobocep.cep.validator.validator import BoboValidatorError, \
     BoboValidatorJSONSchema
 
-SCHEMA_VALID: dict = {
+SCHEMA_VALID_DICT: dict = {
   "type": "object",
   "required": ["forename", "surname"],
   "properties": {
@@ -19,7 +19,8 @@ SCHEMA_VALID: dict = {
   }
 }
 
-SCHEMA_INVALID: str = "abc123"
+SCHEMA_INVALID_STR: str = "abc123"
+# TODO other tests of invalid input: int, etc.
 
 
 class TestValid:
@@ -30,26 +31,26 @@ class TestValid:
             "surname": "Bar"
         }
 
-        validator = BoboValidatorJSONSchema(schema=SCHEMA_VALID)
+        validator = BoboValidatorJSONSchema(schema=SCHEMA_VALID_DICT)
 
         assert validator.is_valid(data=data)
 
 
 class TestInvalid:
 
-    def test_invalid_schema(self):
+    def test_invalid_schema_str(self):
         data: dict = {}
 
-        validator = BoboValidatorJSONSchema(schema=SCHEMA_INVALID)
+        validator = BoboValidatorJSONSchema(schema=SCHEMA_INVALID_STR)
 
         with pytest.raises(BoboValidatorError):
-            assert validator.is_valid(data=data)
+            validator.is_valid(data=data)
 
-    def test_valid_schema_invalid_instance(self):
+    def test_invalid_data_for_valid_schema(self):
         data: dict = {
             "forename": "Foo"
         }
 
-        validator = BoboValidatorJSONSchema(schema=SCHEMA_VALID)
+        validator = BoboValidatorJSONSchema(schema=SCHEMA_VALID_DICT)
 
         assert not validator.is_valid(data=data)

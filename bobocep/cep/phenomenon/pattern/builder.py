@@ -43,10 +43,10 @@ class BoboPatternBuilder:
 
         self._name: str = name
         self._singleton: bool = singleton
-
         self._blocks: List[BoboPatternBlock] = []
-        self._preconditions: List[BoboPredicate] = []
-        self._haltconditions: List[BoboPredicate] = []
+        self._strict_conditions: List[BoboPredicate] = []
+        self._relaxed_conditions: List[BoboPredicate] = []
+        self._halt_conditions: List[BoboPredicate] = []
 
     def generate(self) -> BoboPattern:
         """
@@ -59,8 +59,9 @@ class BoboPatternBuilder:
         return BoboPattern(
             name=self._name,
             blocks=self._blocks,
-            preconditions=self._preconditions,
-            haltconditions=self._haltconditions,
+            strict_conditions=self._strict_conditions,
+            relaxed_conditions=self._relaxed_conditions,
+            halt_conditions=self._halt_conditions,
             singleton=self._singleton
         )
 
@@ -264,7 +265,7 @@ class BoboPatternBuilder:
         return self
 
     @typing.no_type_check
-    def precondition(
+    def strict_condition(
             self, predicate: Union[BoboPredicate, Callable]) \
             -> 'BoboPatternBuilder':
         """
@@ -280,17 +281,17 @@ class BoboPatternBuilder:
         if isinstance(predicate, Callable):
             predicate = BoboPredicateCall(call=predicate)
 
-        self._preconditions.append(predicate)
+        self._strict_conditions.append(predicate)
         return self
 
     @typing.no_type_check
-    def haltcondition(
+    def relaxed_condition(
             self, predicate: Union[BoboPredicate, Callable]) \
             -> 'BoboPatternBuilder':
         """
-        Adds a haltcondition.
+        Adds a relaxed condition.
 
-        :param predicate: The haltcondition predicate.
+        :param predicate: The relaxed condition predicate.
             If a Callable is provided, it will be wrapped in a
             BoboPredicateCall instance.
 
@@ -300,5 +301,25 @@ class BoboPatternBuilder:
         if isinstance(predicate, Callable):
             predicate = BoboPredicateCall(call=predicate)
 
-        self._haltconditions.append(predicate)
+        self._relaxed_conditions.append(predicate)
+        return self
+
+    @typing.no_type_check
+    def halt_condition(
+            self, predicate: Union[BoboPredicate, Callable]) \
+            -> 'BoboPatternBuilder':
+        """
+        Adds a halt condition.
+
+        :param predicate: The halt condition predicate.
+            If a Callable is provided, it will be wrapped in a
+            BoboPredicateCall instance.
+
+        :return: The BoboPatternBuilder instance that made the function call.
+        """
+
+        if isinstance(predicate, Callable):
+            predicate = BoboPredicateCall(call=predicate)
+
+        self._halt_conditions.append(predicate)
         return self

@@ -102,6 +102,7 @@ class BoboValidatorJSONSchema(BoboValidatorJSONable):
         super().__init__()
 
         self._schema: dict = schema
+        # TODO validate schema in constructor (SchemaError)
 
     def is_valid(self, data: Any) -> bool:
         """

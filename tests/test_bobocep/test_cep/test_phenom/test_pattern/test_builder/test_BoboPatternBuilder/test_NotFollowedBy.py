@@ -30,18 +30,18 @@ class TestValid:
                              predicate=predicate_block_b) \
             .next(group="group_c",
                   predicate=predicate_block_c) \
-            .precondition(predicate=predicate_pre_a) \
-            .precondition(predicate=predicate_pre_b) \
-            .precondition(predicate=predicate_pre_c) \
-            .haltcondition(predicate=predicate_halt_a) \
-            .haltcondition(predicate=predicate_halt_b) \
-            .haltcondition(predicate=predicate_halt_c)
+            .strict_condition(predicate=predicate_pre_a) \
+            .strict_condition(predicate=predicate_pre_b) \
+            .strict_condition(predicate=predicate_pre_c) \
+            .halt_condition(predicate=predicate_halt_a) \
+            .halt_condition(predicate=predicate_halt_b) \
+            .halt_condition(predicate=predicate_halt_c)
 
         pattern = builder.generate()
 
         assert len(pattern.blocks) == 3
-        assert len(pattern.preconditions) == 3
-        assert len(pattern.haltconditions) == 3
+        assert len(pattern.strict_conditions) == 3
+        assert len(pattern.halt_conditions) == 3
 
         assert len(pattern.blocks[0].predicates) == 1
         assert len(pattern.blocks[1].predicates) == 1
@@ -58,8 +58,8 @@ class TestInvalid:
         builder = BoboPatternBuilder(name="pattern") \
             .not_followed_by(group="group_a",
                              predicate=predicate_block_a) \
-            .precondition(predicate=predicate_pre_a) \
-            .haltcondition(predicate=predicate_halt_a)
+            .strict_condition(predicate=predicate_pre_a) \
+            .halt_condition(predicate=predicate_halt_a)
 
         with pytest.raises(BoboPatternError):
             builder.generate()

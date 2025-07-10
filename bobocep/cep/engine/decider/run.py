@@ -177,17 +177,23 @@ class BoboRun:
             if self._halted:
                 return False
 
-            # Halt if run does not match against all preconditions
-            if len(self.pattern.preconditions) > 0:
-                if not all([precon.evaluate(event, self._history)
-                            for precon in self.pattern.preconditions]):
+            # Halt if run does not satisfy all strict conditions
+            if len(self.pattern.strict_conditions) > 0:
+                if not all([s_con.evaluate(event, self._history)
+                            for s_con in self.pattern.strict_conditions]):
                     self._halted = True
                     return True
 
-            # Halt if run matches against any haltconditions
-            if len(self.pattern.haltconditions) > 0:
-                if any([haltcon.evaluate(event, self._history)
-                        for haltcon in self.pattern.haltconditions]):
+            # Return if run does not satisfy all relaxed conditions
+            if len(self.pattern.relaxed_conditions) > 0:
+                if not all([r_con.evaluate(event, self._history)
+                            for r_con in self.pattern.relaxed_conditions]):
+                    return False
+
+            # Halt if run satisfies any halt condition
+            if len(self.pattern.halt_conditions) > 0:
+                if any([h_con.evaluate(event, self._history)
+                        for h_con in self.pattern.halt_conditions]):
                     self._halted = True
                     return True
 
