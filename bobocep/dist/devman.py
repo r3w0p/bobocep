@@ -138,7 +138,9 @@ class BoboDeviceManager:
             self._last_attempt = 0
 
     def stash(self) -> Tuple[
-        List[BoboRunSerial], List[BoboRunSerial], List[BoboRunSerial]
+        List[BoboRunSerial],
+        List[BoboRunSerial],
+        List[BoboRunSerial]
     ]:
         """
         :return: The device's stash.

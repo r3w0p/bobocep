@@ -228,12 +228,12 @@ class BoboDecider(BoboEngineTask,
                 rl_completed, rl_halted, rl_updated = \
                     self._process_event(self._queue.get_nowait())
 
-                completed: Tuple[BoboRunSerial, ...] = \
-                    tuple(run_c.serialize() for run_c in rl_completed)
-                halted: Tuple[BoboRunSerial, ...] = \
-                    tuple(run_h.serialize() for run_h in rl_halted)
-                updated: Tuple[BoboRunSerial, ...] = \
-                    tuple(run_u.serialize() for run_u in rl_updated)
+                completed: List[BoboRunSerial] = \
+                    [run_c.serialize() for run_c in rl_completed]
+                halted: List[BoboRunSerial] = \
+                    [run_h.serialize() for run_h in rl_halted]
+                updated: List[BoboRunSerial] = \
+                    [run_u.serialize() for run_u in rl_updated]
 
                 # Cache local changes
                 self._maybe_cache(completed, halted)
@@ -268,7 +268,11 @@ class BoboDecider(BoboEngineTask,
             if self._closed:
                 return [], [], []
 
-            if self._caching:
+            if (
+                    self._caching and
+                    self._cache_completed is not None and
+                    self._cache_halted is not None
+            ):
                 # Get completed from cache
                 r_completed = [c for c in self._cache_completed]
 
@@ -290,9 +294,9 @@ class BoboDecider(BoboEngineTask,
 
     def on_distributed_update(
             self,
-            completed: Tuple[BoboRunSerial, ...],
-            halted: Tuple[BoboRunSerial, ...],
-            updated: Tuple[BoboRunSerial, ...]) -> None:
+            completed: List[BoboRunSerial],
+            halted: List[BoboRunSerial],
+            updated: List[BoboRunSerial]) -> None:
         """
         :param completed: Completed runs.
         :param halted: Halted runs.
@@ -305,7 +309,10 @@ class BoboDecider(BoboEngineTask,
             remove_indices_completed = []
             remove_indices_halted = []
             remove_indices_updated = []
-            runlocal: Optional[BoboRun] = None  # here because of mypy...
+
+            # here because of mypy...
+            runlocal: Optional[BoboRun] = None
+            runs: Optional[List[BoboRun]] = None
 
             # Remove any invalid remote changes
             completed, halted, updated = \
@@ -335,7 +342,7 @@ class BoboDecider(BoboEngineTask,
 
                         continue
 
-                    runs: List[BoboRun] = self.runs_pattern(
+                    runs = self.runs_pattern(
                         runremote.phenomenon_name,
                         pattern.name
                     )
@@ -379,7 +386,7 @@ class BoboDecider(BoboEngineTask,
 
                 if pattern.singleton:
                     # If singleton, use active run if exists...
-                    runs: List[BoboRun] = self.runs_pattern(
+                    runs = self.runs_pattern(
                         runremote.phenomenon_name,
                         pattern.name
                     )
@@ -429,10 +436,6 @@ class BoboDecider(BoboEngineTask,
                     del remlist[i]
 
             # Notify subscribers
-            completed = tuple(completed)
-            halted = tuple(halted)
-            updated = tuple(updated)
-
             for subscriber in self._subscribers:
                 subscriber.on_decider_update(
                     completed=completed,
@@ -630,7 +633,11 @@ class BoboDecider(BoboEngineTask,
         :param completed: Completed runs.
         :param halted: Halted runs.
         """
-        if self._caching:
+        if (
+                self._caching and
+                self._cache_completed is not None and
+                self._cache_halted is not None
+        ):
             # Cache runs that have been locally completed
             for c in completed:
                 self._cache_completed.append(c)
@@ -641,9 +648,9 @@ class BoboDecider(BoboEngineTask,
 
     def _maybe_check_against_cache(
             self,
-            completed: Tuple[BoboRunSerial, ...],
-            halted: Tuple[BoboRunSerial, ...],
-            updated: Tuple[BoboRunSerial, ...]) \
+            completed: List[BoboRunSerial],
+            halted: List[BoboRunSerial],
+            updated: List[BoboRunSerial]) \
             -> Tuple[
                 List[BoboRunSerial],
                 List[BoboRunSerial],
@@ -661,7 +668,11 @@ class BoboDecider(BoboEngineTask,
             (2) halted runs kept if not halted locally; and
             (3) updated runs kept if not completed or halted locally.
         """
-        if self._caching:
+        if (
+                self._caching and
+                self._cache_completed is not None and
+                self._cache_halted is not None
+        ):
             # Keep completed IDs if not completed locally
             # Complete takes precedent over halt and update
             completed = [

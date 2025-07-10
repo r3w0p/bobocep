@@ -20,9 +20,9 @@ class BoboDeciderSubscriber(ABC):
     @abstractmethod
     def on_decider_update(
             self,
-            completed: Tuple[BoboRunSerial, ...],
-            halted: Tuple[BoboRunSerial, ...],
-            updated: Tuple[BoboRunSerial, ...],
+            completed: List[BoboRunSerial],
+            halted: List[BoboRunSerial],
+            updated: List[BoboRunSerial],
             local: bool
     ) -> None:
         """

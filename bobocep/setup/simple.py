@@ -49,7 +49,7 @@ class BoboSetupSimple(BoboSetup):
         super().__init__()
 
         self._phenomena: List[BoboPhenomenon] = phenomena
-        self._validator: BoboValidator = validator
+        self._validator: Optional[BoboValidator] = validator
         self._handler: BoboActionHandler = handler
         self._gen_event: Optional[BoboGenEvent] = gen_event
         self._urn: Optional[str] = urn
