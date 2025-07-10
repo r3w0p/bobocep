@@ -44,7 +44,7 @@ jobs:
 
       - name: Code coverage with coverage and pytest
         run: |
-          coverage run -m pytest tests
+          coverage run -m pytest tests -v
           coverage report --fail-under=100
 
       - name: Upload coverage reports to Codecov
